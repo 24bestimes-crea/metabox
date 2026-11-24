@@ -1,1430 +1,489 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>آفاق التكنولوجيا الحيوية — واجهة النجاة الهولوجرامية</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AETHERIA 3D — البقاء، البناء، وترويض المخلوقات الأسطورية</title>
 
-  <style>
-    /* =========================================================================
-       المتغيرات اللونية والهوية البصرية الهولوجرامية (Dark Glassmorphism)
-       ========================================================================= */
-    :root {
-      --holo-cyan: #00f2fe;
-      --holo-cyan-dim: rgba(0, 242, 254, 0.16);
-      --holo-cyan-glow: rgba(0, 242, 254, 0.45);
-      --holo-gold: #f1c40f;
-      --holo-gold-dim: rgba(241, 196, 15, 0.16);
-      --holo-gold-glow: rgba(241, 196, 15, 0.45);
-      --holo-wild: #ff3b5c;
-      --holo-wild-glow: rgba(255, 59, 92, 0.45);
-      --glass-bg: rgba(7, 15, 26, 0.62);
-      --glass-bg-elevated: rgba(11, 23, 40, 0.78);
-      --surface-dark: #040811;
-      --text-primary: #eef9ff;
-      --text-muted: #8fb3c9;
-    }
+    <!-- خط Cairo العربي الداعم للهوية الهندسية العصرية -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
-    * {
-      box-sizing: border-box;
-      scrollbar-width: thin;
-      scrollbar-color: rgba(0, 242, 254, 0.35) transparent;
-    }
+    <!-- ملف التنسيق الرئيسي -->
+    <link rel="stylesheet" href="style.css">
 
-    body {
-      font-family: 'Cairo', sans-serif;
-      background-color: var(--surface-dark);
-      color: var(--text-primary);
-      margin: 0;
-      min-height: 100vh;
-      overflow-x: hidden;
-      user-select: none;
-    }
-
-    /* خطوط المسح الضوئي الخفيفة لإضفاء طابع الهولوجرام */
-    .holo-scanlines {
-      background-image: repeating-linear-gradient(
-        to bottom,
-        rgba(0, 242, 254, 0.03) 0px,
-        rgba(0, 242, 254, 0.03) 1px,
-        transparent 1px,
-        transparent 4px
-      );
-    }
-
-    /* شبكة الفضاء الهندسية الخلفية */
-    .holo-grid {
-      background-size: 56px 56px;
-      background-image:
-        linear-gradient(to right, rgba(0, 242, 254, 0.05) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(0, 242, 254, 0.05) 1px, transparent 1px);
-    }
-
-    /* البطاقات والألواح الزجاجية الهولوجرامية */
-    .glass-panel {
-      background: var(--glass-bg);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(0, 242, 254, 0.28);
-      box-shadow:
-        0 10px 35px rgba(0, 0, 0, 0.55),
-        inset 0 0 22px rgba(0, 242, 254, 0.05);
-      border-radius: 18px;
-      transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
-    }
-
-    .glass-panel-gold {
-      background: var(--glass-bg-elevated);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      border: 1px solid rgba(241, 196, 15, 0.42);
-      box-shadow:
-        0 12px 38px rgba(0, 0, 0, 0.6),
-        inset 0 0 20px rgba(241, 196, 15, 0.07);
-      border-radius: 18px;
-    }
-
-    .holo-card {
-      background: rgba(8, 18, 32, 0.68);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px solid rgba(0, 242, 254, 0.22);
-      border-radius: 16px;
-      transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    .holo-card:hover {
-      border-color: var(--holo-cyan);
-      box-shadow: 0 0 24px rgba(0, 242, 254, 0.22), inset 0 0 14px rgba(0, 242, 254, 0.08);
-      transform: translateY(-2px);
-    }
-
-    .holo-card.is-active {
-      border-color: var(--holo-cyan);
-      background: rgba(0, 242, 254, 0.11);
-      box-shadow: 0 0 28px rgba(0, 242, 254, 0.3), inset 0 0 18px rgba(0, 242, 254, 0.12);
-    }
-
-    .holo-card.is-gold-focus {
-      border-color: var(--holo-gold);
-      box-shadow: 0 0 24px rgba(241, 196, 15, 0.25), inset 0 0 14px rgba(241, 196, 15, 0.08);
-    }
-
-    /* أزرار التنقل الهولوجرامية */
-    .nav-tab {
-      position: relative;
-      border: 1px solid rgba(0, 242, 254, 0.2);
-      background: rgba(8, 19, 34, 0.55);
-      color: var(--text-muted);
-      border-radius: 12px;
-      transition: all 0.22s ease;
-    }
-
-    .nav-tab:hover {
-      color: var(--text-primary);
-      border-color: rgba(0, 242, 254, 0.55);
-      background: rgba(0, 242, 254, 0.08);
-    }
-
-    .nav-tab.active {
-      color: var(--text-primary);
-      border-color: var(--holo-cyan);
-      background: linear-gradient(135deg, rgba(0, 242, 254, 0.22), rgba(0, 242, 254, 0.05));
-      box-shadow: 0 0 20px rgba(0, 242, 254, 0.28), inset 0 0 10px rgba(0, 242, 254, 0.12);
-    }
-
-    .nav-tab.active::after {
-      content: '';
-      position: absolute;
-      bottom: -1px;
-      left: 18%;
-      right: 18%;
-      height: 2px;
-      background: var(--holo-gold);
-      box-shadow: 0 0 10px var(--holo-gold);
-      border-radius: 999px;
-    }
-
-    /* أزرار الإجراءات */
-    .btn-cyan {
-      background: linear-gradient(135deg, rgba(0, 242, 254, 0.24), rgba(0, 175, 215, 0.14));
-      border: 1px solid var(--holo-cyan);
-      color: #ffffff;
-      box-shadow: 0 0 16px rgba(0, 242, 254, 0.22);
-      transition: all 0.2s ease;
-    }
-
-    .btn-cyan:hover:not(:disabled) {
-      background: linear-gradient(135deg, rgba(0, 242, 254, 0.38), rgba(0, 242, 254, 0.2));
-      box-shadow: 0 0 24px rgba(0, 242, 254, 0.42);
-      transform: translateY(-1px);
-    }
-
-    .btn-gold {
-      background: linear-gradient(135deg, rgba(241, 196, 15, 0.28), rgba(212, 160, 12, 0.14));
-      border: 1px solid var(--holo-gold);
-      color: #fff6cf;
-      box-shadow: 0 0 16px rgba(241, 196, 15, 0.24);
-      transition: all 0.2s ease;
-    }
-
-    .btn-gold:hover:not(:disabled) {
-      background: linear-gradient(135deg, rgba(241, 196, 15, 0.42), rgba(241, 196, 15, 0.22));
-      box-shadow: 0 0 24px rgba(241, 196, 15, 0.45);
-      transform: translateY(-1px);
-    }
-
-    /* منصة الهولوجرام الدوارة في المنتصف (Holo-Pad) */
-    @keyframes spinHoloPad {
-      0% { transform: rotateX(72deg) rotateZ(0deg); }
-      100% { transform: rotateX(72deg) rotateZ(360deg); }
-    }
-
-    @keyframes spinHoloRingReverse {
-      0% { transform: rotateX(72deg) rotateZ(360deg); }
-      100% { transform: rotateX(72deg) rotateZ(0deg); }
-    }
-
-    @keyframes floatExplorer {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-7px); }
-    }
-
-    @keyframes pulseBeam {
-      0%, 100% { opacity: 0.25; }
-      50% { opacity: 0.55; }
-    }
-
-    @keyframes jetParticle {
-      0% {
-        transform: translateY(0) scale(1);
-        opacity: 0.95;
-      }
-      100% {
-        transform: translateY(34px) scale(0.2);
-        opacity: 0;
-      }
-    }
-
-    .holo-pad-outer {
-      transform-style: preserve-3d;
-      animation: spinHoloPad 18s linear infinite;
-    }
-
-    .holo-pad-inner {
-      transform-style: preserve-3d;
-      animation: spinHoloRingReverse 11s linear infinite;
-    }
-
-    .explorer-float {
-      animation: floatExplorer 4.2s ease-in-out infinite;
-    }
-
-    .holo-beam {
-      animation: pulseBeam 3.2s ease-in-out infinite;
-    }
-
-    .jet-spark {
-      animation: jetParticle 1.1s ease-out infinite;
-    }
-
-    /* حالة إخفاء الواجهة لعرض مساحة اللعب الحية */
-    body.hud-hidden .hud-chrome {
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(-10px);
-    }
-
-    .hud-chrome {
-      transition: opacity 0.35s ease, transform 0.35s ease;
-    }
-
-    .live-view-badge {
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.35s ease;
-    }
-
-    body.hud-hidden .live-view-badge {
-      opacity: 1;
-      pointer-events: auto;
-    }
-  </style>
+    <!-- استيراد مكتبة Three.js وملحقاتها (GLTFLoader, DRACOLoader, OrbitControls) -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
 </head>
-
-<body class="relative min-h-screen overflow-x-hidden">
-  <!-- =======================================================================
-       خلفية بيئية متحركة (Canvas للجزيئات + شبكة هولوجرامية + طبقات إضاءة)
-       ======================================================================= -->
-  <div id="ambient-backdrop" class="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-    <!-- طبقة تدرج لون العالم النشط -->
-    <div id="world-atmosphere-layer" class="absolute inset-0 transition-all duration-700"
-         style="background: radial-gradient(circle at 50% 35%, rgba(0, 242, 254, 0.14), rgba(5, 16, 28, 0.92) 68%, #03070e 100%);">
-    </div>
-    <!-- شبكة هندسية وخطوط مسح -->
-    <div class="absolute inset-0 holo-grid opacity-80"></div>
-    <div class="absolute inset-0 holo-scanlines"></div>
-    <!-- كانفاس الجزيئات الضوئية الحيوية -->
-    <canvas id="bio-particles-canvas" class="absolute inset-0 w-full h-full"></canvas>
-  </div>
-
-  <!-- زر استعادة الواجهة عند تفعيل وضع المعاينة الحية للكانفاس -->
-  <div class="live-view-badge fixed bottom-5 left-1/2 -translate-x-1/2 z-50">
-    <button id="restore-hud-btn" type="button"
-      class="btn-cyan px-6 py-3 rounded-full text-sm font-bold tracking-wide flex items-center gap-2.5 cursor-pointer">
-      <span class="w-2.5 h-2.5 rounded-full bg-[#00f2fe] shadow-[0_0_10px_#00f2fe]"></span>
-      <span>إظهار الواجهة الهولوجرامية</span>
-    </button>
-  </div>
-
-  <!-- =======================================================================
-       الحاوية الرئيسية للواجهة الهولوجرامية
-       ======================================================================= -->
-  <div class="hud-chrome relative z-10 max-w-[1440px] mx-auto px-3 sm:px-6 py-3 sm:py-5 flex flex-col min-h-screen gap-4">
+<body>
 
     <!-- =====================================================================
-         الشريط العلوي المبسط (Minimalist Top HUD Bar)
+         1. المشهد ثلاثي الأبعاد الرئيسي (Three.js WebGL Canvas)
+         يعمل في الخلفية منذ شاشة الدخول وحتى داخل العوالم والاستوديو
          ===================================================================== -->
-    <header class="glass-panel px-4 py-3 flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-3">
-      <!-- الهوية ومؤشرات الحالة الحيوية -->
-      <div class="flex flex-wrap items-center justify-between sm:justify-start gap-3 sm:gap-5">
-        <!-- شعار النظام -->
-        <div class="flex items-center gap-2.5 pl-2 border-l border-[#00f2fe]/20">
-          <div class="w-9 h-9 rounded-xl border border-[#00f2fe]/60 bg-[#00f2fe]/10 flex items-center justify-center shadow-[0_0_15px_rgba(0,242,254,0.25)]">
-            <svg class="w-5 h-5 text-[#00f2fe]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-              <polygon points="12 2 21 7 21 17 12 22 3 17 3 7 12 2"></polygon>
-              <circle cx="12" cy="12" r="3" class="text-[#f1c40f]" stroke="currentColor"></circle>
-            </svg>
-          </div>
-          <div>
-            <div class="text-xs text-[#00f2fe] font-semibold tracking-wider">نظام النجاة الحيوي</div>
-            <div class="text-sm font-extrabold text-white">أفق التكنولوجيا الحيوية</div>
-          </div>
+    <div id="game-canvas-container"></div>
+
+    <!-- طبقة الملصقات العائمة (أسماء اللاعبين، رسائل الدردشة فوق الرأس، أضرار القتال) -->
+    <div id="floating-labels-container"></div>
+
+    <!-- =====================================================================
+         2. شاشة تسجيل الدخول والترحيب (Auth & Animated 3D Gateway)
+         ===================================================================== -->
+    <section id="auth-screen" class="screen-overlay active">
+        <div class="auth-container glass-panel neon-border-cyan">
+            <div class="game-logo">
+                <span class="logo-badge">AETHERIA WEBGL • عوالم متصلة</span>
+                <h1>AETHERIA</h1>
+                <p>بقاء • بناء تدريجي • ترويض الأساطير • أبراج الفخاخ</p>
+            </div>
+
+            <div class="auth-tabs">
+                <button type="button" class="tab-btn active" data-tab="login">تسجيل الدخول</button>
+                <button type="button" class="tab-btn" data-tab="register">إنشاء حساب</button>
+            </div>
+
+            <form id="auth-form" class="auth-form">
+                <div class="input-group" id="username-group" style="display: none;">
+                    <label for="reg-username">اسم المغامر في العالم</label>
+                    <input type="text" id="reg-username" placeholder="مثال: صائد التنانين" maxlength="16">
+                </div>
+                <div class="input-group">
+                    <label for="auth-email">البريد الإلكتروني</label>
+                    <input type="email" id="auth-email" placeholder="player@aetheria.game" required>
+                </div>
+                <div class="input-group">
+                    <label for="auth-password">كلمة المرور</label>
+                    <input type="password" id="auth-password" placeholder="••••••••" required>
+                </div>
+                <button type="submit" id="auth-submit-btn" class="btn-primary neon-glow-cyan">دخول إلى العالم</button>
+            </form>
+
+            <div class="divider"><span>أو عبر الدخول السريع</span></div>
+
+            <div class="quick-auth-buttons">
+                <button type="button" id="google-login-btn" class="btn-glass">
+                    <svg width="18" height="18" viewBox="0 0 24 24">
+                        <path fill="#f1c40f" d="M21.35 11.1h-9.17v2.73h6.51c-.33 3.81-3.5 5.44-6.5 5.44C8.36 19.27 5 16.25 5 12c0-4.1 3.2-7.27 7.2-7.27c3.09 0 4.9 1.97 4.9 1.97L19 4.72S16.56 2 12.1 2C6.42 2 2.03 6.8 2.03 12c0 5.05 4.13 10 10.22 10c5.35 0 9.25-3.67 9.25-9.09c0-1.15-.15-1.81-.15-1.81Z"/>
+                    </svg>
+                    تسجيل الدخول عبر Google
+                </button>
+                <button type="button" id="guest-login-btn" class="btn-glass border-gold">
+                    دخول تجريبي فوري (ضيف)
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- =====================================================================
+         3. شاشة بوابات العوالم الأربعة (4 Worlds Portal Hub)
+         ===================================================================== -->
+    <section id="portal-hub-screen" class="screen-overlay">
+        <div class="hub-header glass-panel neon-border-cyan">
+            <div>
+                <h2>بوابات العوالم المتوازية</h2>
+                <p>كل عالم يمتلك بيئة، طقساً متغيراً، مخلوقات أسطورية، وأكثر من 10 تحديات خاصة</p>
+            </div>
+            <div class="hub-actions">
+                <button type="button" id="open-studio-from-hub" class="btn-gold">الملف الشخصي والمتجر</button>
+                <button type="button" id="close-portal-hub" class="btn-close">إغلاق ✕</button>
+            </div>
         </div>
 
-        <!-- الطاقة الحيوية / الصحة (Bio-Energy / Health) -->
-        <div class="min-w-[135px] sm:min-w-[155px]">
-          <div class="flex items-center justify-between text-xs mb-1">
-            <span class="text-[#8fb3c9] font-medium">الطاقة الحيوية</span>
-            <span id="hud-health-val" class="font-bold text-[#00f2fe]">88%</span>
-          </div>
-          <div class="h-2 rounded-full bg-white/10 overflow-hidden border border-[#00f2fe]/25">
-            <div id="hud-health-bar" class="h-full rounded-full transition-all duration-300"
-                 style="width: 88%; background: linear-gradient(90deg, #00c6ff, #00f2fe); box-shadow: 0 0 10px #00f2fe;"></div>
-          </div>
+        <div class="portals-grid">
+            <!-- العالم 1: غابة الليل المتوهجة -->
+            <div class="portal-card glass-panel" data-world="forest">
+                <div class="portal-banner forest-bg">
+                    <span class="world-level">المستوى: 1 - 20</span>
+                    <span class="world-tag">بقاء وبناء وترويض</span>
+                </div>
+                <div class="portal-info">
+                    <h3>غابة الليل المتوهجة</h3>
+                    <p>أشجار عملاقة، نباتات حيوية مضيئة، أعشاش بيض المخلوقات، ومنزل قابل للتطوير تدريجياً.</p>
+                    <ul class="world-features">
+                        <li>المخلوقات: ذئب الكريستال، تنين الغابة، غزال الأثير</li>
+                        <li>المميزات: تقطيع الأشجار، سرقة البيض، برج الفخاخ</li>
+                    </ul>
+                    <button type="button" class="btn-enter-world" data-world="forest">دخول غابة الليل</button>
+                </div>
+            </div>
+
+            <!-- العالم 2: وادي الصهارة والسبج -->
+            <div class="portal-card glass-panel" data-world="volcano">
+                <div class="portal-banner volcano-bg">
+                    <span class="world-level">المستوى: 15 - 40</span>
+                    <span class="world-tag">أكشن وقتال</span>
+                </div>
+                <div class="portal-info">
+                    <h3>وادي الصهارة والسبج</h3>
+                    <p>صخور بركانية سوداء وأنهار حمم برتقالية، معارك قتالية سريعة، ومخلوقات نارية أسطورية.</p>
+                    <ul class="world-features">
+                        <li>المخلوقات: تنين الحمم، عملاق السبج، فينيق النار</li>
+                        <li>المميزات: حلبات قتال، فخاخ الحمم، غنائم نادرة</li>
+                    </ul>
+                    <button type="button" class="btn-enter-world" data-world="volcano">دخول وادي الصهارة</button>
+                </div>
+            </div>
+
+            <!-- العالم 3: القمم الجليدية الشفقية -->
+            <div class="portal-card glass-panel" data-world="ice">
+                <div class="portal-banner ice-bg">
+                    <span class="world-level">المستوى: 20 - 50</span>
+                    <span class="world-tag">رعب وغموض</span>
+                </div>
+                <div class="portal-info">
+                    <h3>القمم الجليدية الشفقية</h3>
+                    <p>ثلوج تعكس أضواء الشفق القطبي، ضباب كثيف، أصوات مرعبة، وكائنات شبحية تطارد المتسللين.</p>
+                    <ul class="world-features">
+                        <li>المخلوقات: نمر الجليد، وحش الشفق، طيف الصقيع</li>
+                        <li>المميزات: أجواء رعب وتوتر، كهوف متاهة، كنوز متجمدة</li>
+                    </ul>
+                    <button type="button" class="btn-enter-world" data-world="ice">دخول القمم الجليدية</button>
+                </div>
+            </div>
+
+            <!-- العالم 4: الجزر السماوية المعلقة -->
+            <div class="portal-card glass-panel" data-world="sky">
+                <div class="portal-banner sky-bg">
+                    <span class="world-level">المستوى: 30 - 70</span>
+                    <span class="world-tag">مرح وسباقات وتحليق</span>
+                </div>
+                <div class="portal-info">
+                    <h3>الجزر السماوية المعلقة</h3>
+                    <p>صخور طائرة في السماء، مسارات قفز وسباقات جوية، وتحليق حر بالتنانين والحقائب النفاثة.</p>
+                    <ul class="world-features">
+                        <li>المخلوقات: تنين السماء الذهبي، نسر البرق، قندس السحاب</li>
+                        <li>المميزات: تحديات رياضية وقفز، حلقات سرعة، جاذبية خفيفة</li>
+                    </ul>
+                    <button type="button" class="btn-enter-world" data-world="sky">دخول الجزر السماوية</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- =====================================================================
+         4. واجهة اللعب الرئيسية (In-Game HUD)
+         ===================================================================== -->
+    <div id="game-hud" class="hidden">
+
+        <!-- الشريط العلوي: حالة اللاعب، الموارد والطقس، وأزرار القوائم -->
+        <header class="hud-top">
+            <div class="player-status-card glass-panel" id="hud-profile-trigger" title="فتح الملف الشخصي">
+                <div class="avatar-ring">
+                    <span id="hud-player-level">1</span>
+                </div>
+                <div class="player-bars">
+                    <div class="player-name-row">
+                        <span id="hud-player-name">المغامر</span>
+                        <span id="hud-world-badge" class="badge-cyan">غابة الليل المتوهجة</span>
+                    </div>
+                    <div class="stat-bar health-bar">
+                        <div class="fill" id="hud-hp-fill" style="width: 100%;"></div>
+                        <span id="hud-hp-text">100 / 100</span>
+                    </div>
+                    <div class="stat-bar stamina-bar">
+                        <div class="fill" id="hud-stamina-fill" style="width: 100%;"></div>
+                    </div>
+                    <div class="stat-bar xp-bar">
+                        <div class="fill" id="hud-xp-fill" style="width: 10%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="resources-bar glass-panel">
+                <div class="resource-item" title="العملات">
+                    <span class="res-dot gold"></span>
+                    <span id="res-coins">500</span>
+                </div>
+                <div class="resource-item" title="كريستال الترويض">
+                    <span class="res-dot cyan"></span>
+                    <span id="res-crystals">20</span>
+                </div>
+                <div class="resource-item" title="الحطب والأخشاب">
+                    <span class="res-dot wood"></span>
+                    <span id="res-wood">30</span>
+                </div>
+                <div class="resource-item" title="الصخور والمعادن">
+                    <span class="res-dot stone"></span>
+                    <span id="res-stone">15</span>
+                </div>
+                <div class="weather-indicator" id="hud-weather">
+                    <span id="weather-time">شفق ليلي • نسيم هادئ</span>
+                </div>
+            </div>
+
+            <nav class="hud-quick-menu">
+                <button type="button" class="hud-icon-btn glass-panel" id="btn-open-studio">الملف والمتجر</button>
+                <button type="button" class="hud-icon-btn glass-panel" id="btn-open-pets">المخلوقات والبيض</button>
+                <button type="button" class="hud-icon-btn glass-panel" id="btn-open-buildbook">كتيب البناء والمنزل</button>
+                <button type="button" class="hud-icon-btn glass-panel" id="btn-open-quests">التحديات والبرج</button>
+                <button type="button" class="hud-icon-btn glass-panel border-cyan" id="btn-open-portals">البوابات</button>
+                <button type="button" class="hud-icon-btn glass-panel" id="btn-toggle-sound">الصوت: مفعل</button>
+                <button type="button" class="hud-icon-btn glass-panel" id="btn-toggle-perf">الأداء: عالي</button>
+            </nav>
+        </header>
+
+        <!-- مؤشر الاستهداف في منتصف الشاشة -->
+        <div id="crosshair-container">
+            <div id="crosshair"></div>
+            <div id="target-info-box" class="glass-panel hidden">
+                <h4 id="target-name">مخلوق بري</h4>
+                <div class="target-meta">
+                    <span id="target-level">المستوى: 1</span>
+                    <span id="target-status" class="status-wild">حالة المخلوق</span>
+                </div>
+                <div class="target-hp-bar">
+                    <div id="target-hp-fill" style="width: 100%;"></div>
+                </div>
+                <p id="target-hint">[انقر / ضرب] للتفاعل • [F] للترويض أو سرقة البيضة • [R] للركوب</p>
+            </div>
         </div>
 
-        <!-- الأكسجين / الدرع (Oxygen / Shield) -->
-        <div class="min-w-[135px] sm:min-w-[155px]">
-          <div class="flex items-center justify-between text-xs mb-1">
-            <span class="text-[#8fb3c9] font-medium">الأكسجين والدرع</span>
-            <span id="hud-shield-val" class="font-bold text-[#f1c40f]">94%</span>
-          </div>
-          <div class="h-2 rounded-full bg-white/10 overflow-hidden border border-[#f1c40f]/25">
-            <div id="hud-shield-bar" class="h-full rounded-full transition-all duration-300"
-                 style="width: 94%; background: linear-gradient(90deg, #d4ac0d, #f1c40f); box-shadow: 0 0 10px #f1c40f;"></div>
-          </div>
+        <!-- تنبيهات المطاردة والسرقة والأحداث -->
+        <div id="game-notifications"></div>
+
+        <!-- صندوق الدردشة بين اللاعبين المتصلين -->
+        <aside class="chat-widget glass-panel" id="chat-widget">
+            <div class="chat-header">
+                <span>دردشة اللاعبين (<b id="online-count">12</b> متصل)</span>
+                <button type="button" id="toggle-chat-btn">−</button>
+            </div>
+            <div class="chat-messages" id="chat-messages">
+                <div class="chat-msg system">مرحباً بك! استخدم WASD للحركة، الماوس للنظر، R للركوب، و F للترويض أو سرقة البيض.</div>
+            </div>
+            <form id="chat-form" class="chat-input-row">
+                <input type="text" id="chat-input" placeholder="أرسل رسالة لتظهر فوق شخصيتك..." maxlength="65" autocomplete="off">
+                <button type="submit">إرسال</button>
+            </form>
+        </aside>
+
+        <!-- شريط الأدوات السفلية (Hotbar) -->
+        <div class="hotbar-container glass-panel" id="hotbar">
+            <div class="hotbar-slot active" data-slot="0">
+                <span class="slot-key">1</span>
+                <span class="slot-name">فأس التقطيع</span>
+            </div>
+            <div class="hotbar-slot" data-slot="1">
+                <span class="slot-key">2</span>
+                <span class="slot-name">سيف القتال</span>
+            </div>
+            <div class="hotbar-slot" data-slot="2">
+                <span class="slot-key">3</span>
+                <span class="slot-name">كريستال الترويض</span>
+            </div>
+            <div class="hotbar-slot" data-slot="3">
+                <span class="slot-key">4</span>
+                <span class="slot-name">مكعب بناء</span>
+            </div>
+            <div class="hotbar-slot" data-slot="4">
+                <span class="slot-key">5</span>
+                <span class="slot-name">إشعال نار</span>
+            </div>
+            <div class="hotbar-slot" data-slot="5">
+                <span class="slot-key">6</span>
+                <span class="slot-name">هدم / إزالة</span>
+            </div>
         </div>
 
-        <!-- المخلوقات المروّضة والرصيد الذهبي -->
-        <div class="flex items-center gap-2.5">
-          <div class="px-3 py-1.5 rounded-xl bg-[#00f2fe]/10 border border-[#00f2fe]/35 flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-[#00f2fe] shadow-[0_0_8px_#00f2fe]"></span>
-            <span class="text-xs text-[#8fb3c9]">مروّضة:</span>
-            <span id="hud-tamed-count" class="text-xs sm:text-sm font-extrabold text-[#00f2fe]">2 / 4</span>
-          </div>
+        <!-- أدوات التحكم باللمس للهواتف والتابلت -->
+        <div id="mobile-controls" class="mobile-only">
+            <div id="joystick-zone">
+                <div id="joystick-base">
+                    <div id="joystick-stick"></div>
+                </div>
+            </div>
 
-          <div class="px-3 py-1.5 rounded-xl bg-[#f1c40f]/10 border border-[#f1c40f]/40 flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-[#f1c40f] shadow-[0_0_8px_#f1c40f]"></span>
-            <span id="hud-credits" class="text-xs sm:text-sm font-extrabold text-[#f1c40f]">1,450</span>
-            <span class="text-[11px] text-[#f1c40f]/80">وحدة</span>
-          </div>
+            <div class="mobile-action-buttons">
+                <button type="button" class="m-btn btn-jump" id="m-btn-jump">قفز / طيران</button>
+                <button type="button" class="m-btn btn-attack" id="m-btn-attack">ضرب / جمع</button>
+                <button type="button" class="m-btn btn-tame" id="m-btn-tame">ترويض / بيض</button>
+                <button type="button" class="m-btn btn-mount" id="m-btn-mount">ركوب [R]</button>
+                <button type="button" class="m-btn btn-build" id="m-btn-build">بناء / نار</button>
+            </div>
         </div>
-      </div>
-
-      <!-- التبويبات ومؤشر العالم الحالي وزر إخفاء الواجهة -->
-      <div class="flex flex-wrap items-center justify-between xl:justify-end gap-2">
-        <!-- مؤشر العالم النشط -->
-        <div id="hud-current-world"
-             class="px-3 py-1.5 rounded-xl bg-white/5 border border-white/15 text-xs font-semibold text-[#eef9ff] flex items-center gap-2">
-          <span id="hud-world-dot" class="w-2 h-2 rounded-full bg-[#00f2fe] shadow-[0_0_8px_#00f2fe]"></span>
-          <span id="hud-world-name">غابة الليل المتوهجة</span>
-        </div>
-
-        <!-- تبويبات التنقل الأربعة -->
-        <nav aria-label="القوائم الرئيسية" class="flex flex-wrap items-center gap-1.5 sm:gap-2">
-          <button type="button" data-tab="store" class="nav-tab px-3 sm:px-4 py-2 text-xs sm:text-sm font-bold cursor-pointer">
-            المتجر
-          </button>
-          <button type="button" data-tab="customization" class="nav-tab active px-3 sm:px-4 py-2 text-xs sm:text-sm font-bold cursor-pointer">
-            التخصيص
-          </button>
-          <button type="button" data-tab="worlds" class="nav-tab px-3 sm:px-4 py-2 text-xs sm:text-sm font-bold cursor-pointer">
-            اختيار العوالم
-          </button>
-          <button type="button" data-tab="codex" class="nav-tab px-3 sm:px-4 py-2 text-xs sm:text-sm font-bold cursor-pointer">
-            الموسوعة
-          </button>
-        </nav>
-
-        <!-- زر إخفاء الواجهة / معاينة الكانفاس المباشر -->
-        <button id="toggle-hud-btn" type="button" title="إخفاء الواجهة لمعاينة ساحة اللعب"
-          class="px-3 py-2 rounded-xl border border-[#f1c40f]/45 bg-[#f1c40f]/10 hover:bg-[#f1c40f]/20 text-[#f1c40f] text-xs font-bold transition cursor-pointer flex items-center gap-1.5">
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-            <circle cx="12" cy="12" r="3"></circle>
-          </svg>
-          <span>معاينة حية</span>
-        </button>
-      </div>
-    </header>
-
-    <!-- شريط إشعارات تفاعلي خفيف (بديل أنيق عن التنبيهات التقليدية) -->
-    <div id="holo-toast"
-         class="hidden glass-panel-gold px-4 py-2.5 text-xs sm:text-sm font-semibold text-[#fff6cf] flex items-center justify-between gap-3">
-      <div class="flex items-center gap-2.5">
-        <span class="w-2 h-2 rounded-full bg-[#f1c40f] shadow-[0_0_10px_#f1c40f]"></span>
-        <span id="holo-toast-text">تم تحديث النظام الهولوجرامي.</span>
-      </div>
-      <button id="holo-toast-close" type="button" class="text-[#f1c40f]/80 hover:text-white text-xs px-2 cursor-pointer">
-        إغلاق
-      </button>
     </div>
 
     <!-- =====================================================================
-         منطقة المحتوى الديناميكي (تُبقي المساحة المركزية مفتوحة قدر الإمكان)
+         5. استوديو التخصيص والمتجر والملف الشخصي (Studio Mode)
          ===================================================================== -->
-    <main class="flex-1 flex flex-col justify-between gap-4">
-
-      <!-- -------------------------------------------------------------------
-           1. عرض التخصيص والمتجر (Customization & Store View)
-           ------------------------------------------------------------------- -->
-      <section id="view-customization-store" class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center my-auto">
-
-        <!-- العمود الأيمن: فئات المعدات والبطاقات الشفافة -->
-        <div class="lg:col-span-4 flex flex-col gap-3">
-          <div class="glass-panel p-4">
-            <div class="flex items-center justify-between mb-3">
-              <div>
-                <span id="mode-badge" class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#00f2fe]/15 text-[#00f2fe] border border-[#00f2fe]/35">
-                  وحدة التخصيص المباشر
-                </span>
-                <h1 id="panel-main-title" class="text-lg sm:text-xl font-extrabold text-white mt-1.5">
-                  تخصيص مستكشف التكنولوجيا الحيوية
-                </h1>
-              </div>
-              <!-- زر تبديل سريع بين التخصيص والمتجر -->
-              <button id="switch-store-custom-btn" type="button"
-                class="btn-gold px-3 py-1.5 rounded-xl text-xs font-bold cursor-pointer">
-                فتح المتجر
-              </button>
+    <section id="studio-overlay" class="studio-mode hidden">
+        <!-- لوحة الملف الشخصي وتحديد الجنس والاسم والممتلكات -->
+        <div class="studio-panel right-panel glass-panel neon-border-cyan">
+            <div class="panel-header">
+                <h3>الملف الشخصي والممتلكات</h3>
+                <button type="button" class="btn-close-panel" data-close="studio-overlay">✕</button>
             </div>
 
-            <!-- أزرار فئات التجهيز الأربع -->
-            <div id="category-tabs" class="grid grid-cols-2 gap-2">
-              <button type="button" data-category="suits" class="cat-btn nav-tab active px-3 py-2 text-xs font-bold text-right cursor-pointer">
-                الأزياء والبدلات
-              </button>
-              <button type="button" data-category="jetpacks" class="cat-btn nav-tab px-3 py-2 text-xs font-bold text-right cursor-pointer">
-                الحقائب النفاثة
-              </button>
-              <button type="button" data-category="hair" class="cat-btn nav-tab px-3 py-2 text-xs font-bold text-right cursor-pointer">
-                قصات الشعر المتوهجة
-              </button>
-              <button type="button" data-category="tools" class="cat-btn nav-tab px-3 py-2 text-xs font-bold text-right cursor-pointer">
-                الأدوات الهولوجرامية
-              </button>
-            </div>
-          </div>
-
-          <!-- قائمة البطاقات الشفافة للعناصر -->
-          <div id="items-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2.5 max-h-[420px] overflow-y-auto pl-1">
-            <!-- تُملأ ديناميكياً عبر JavaScript -->
-          </div>
-        </div>
-
-        <!-- العمود الأوسط: منصة الهولوجرام الدوارة والشخصية ثلاثية الأبعاد التمثيلية -->
-        <div class="lg:col-span-4 flex flex-col items-center justify-center relative py-4 min-h-[420px] sm:min-h-[470px]">
-          <!-- عمود الضوء الهولوجرامي الخلفي الخفيف -->
-          <div class="holo-beam absolute top-8 bottom-14 w-48 sm:w-56 rounded-full pointer-events-none"
-               style="background: linear-gradient(to top, rgba(0, 242, 254, 0.22), rgba(0, 242, 254, 0.04) 65%, transparent);">
-          </div>
-
-          <!-- شارة معلومات الشخصية العلوية -->
-          <div class="relative z-20 glass-panel px-4 py-1.5 text-center mb-2">
-            <div class="text-[11px] text-[#00f2fe] font-bold">نموذج الاستعراض الحي (GLB جاهز)</div>
-            <div id="rig-status-caption" class="text-xs text-[#eef9ff] font-semibold">بدلة النجاة الأساسية — رمادي داكن</div>
-          </div>
-
-          <!-- مجسم المستكشف التمثيلي المتفاعل مع التجهيزات -->
-          <div class="explorer-float relative z-20 flex flex-col items-center justify-center my-1">
-            <svg id="explorer-rig-svg" class="w-44 h-64 sm:w-52 sm:h-72 drop-shadow-[0_0_22px_rgba(0,242,254,0.35)]" viewBox="0 0 220 310" fill="none">
-              <!-- هالة الطاقة الخلفية للشخصية -->
-              <ellipse id="rig-aura" cx="110" cy="155" rx="68" ry="115" fill="rgba(0, 242, 254, 0.06)" />
-
-              <!-- الحقيبة النفاثة الخلفية (تظهر أو تتغير حسب الاختيار) -->
-              <g id="rig-jetpack" opacity="0.25">
-                <rect x="62" y="92" width="24" height="68" rx="8" fill="#132238" stroke="#00f2fe" stroke-width="1.6" />
-                <rect x="134" y="92" width="24" height="68" rx="8" fill="#132238" stroke="#00f2fe" stroke-width="1.6" />
-                <path id="rig-jet-nozzle-l" d="M66 160 L82 160 L85 170 L63 170 Z" fill="#00f2fe" />
-                <path id="rig-jet-nozzle-r" d="M138 160 L154 160 L157 170 L135 170 Z" fill="#00f2fe" />
-              </g>
-
-              <!-- شرارات الجزيئات النفاثة -->
-              <g id="rig-jet-particles" opacity="0">
-                <circle class="jet-spark" cx="74" cy="178" r="3.5" fill="#00f2fe" />
-                <circle class="jet-spark" cx="146" cy="178" r="3.5" fill="#f1c40f" style="animation-delay: 0.45s;" />
-              </g>
-
-              <!-- الأرجل -->
-              <path d="M90 175 L84 268 L98 268 L106 185 Z" fill="#1b2432" stroke="#5b7891" stroke-width="1.5" />
-              <path d="M130 175 L136 268 L122 268 L114 185 Z" fill="#1b2432" stroke="#5b7891" stroke-width="1.5" />
-              <!-- أشرطة توهج الأرجل -->
-              <line id="rig-leg-glow-l" x1="91" y1="205" x2="88" y2="252" stroke="#00f2fe" stroke-width="2" opacity="0.5" />
-              <line id="rig-leg-glow-r" x1="129" y1="205" x2="132" y2="252" stroke="#00f2fe" stroke-width="2" opacity="0.5" />
-
-              <!-- الجذع والبدلة / الدرع -->
-              <path id="rig-torso" d="M82 90 L138 90 L130 178 L90 178 Z" fill="#232c3b" stroke="#7d9bb5" stroke-width="1.8" />
-              <!-- خطوط الدرع الحيوي -->
-              <path id="rig-armor-accent" d="M92 104 L110 124 L128 104" stroke="#00f2fe" stroke-width="2.2" fill="none" />
-              <circle id="rig-core" cx="110" cy="136" r="7" fill="#00f2fe" opacity="0.7" />
-
-              <!-- الذراع اليمنى + الأداة الهولوجرامية -->
-              <path d="M82 96 L58 142 L68 148 L88 112 Z" fill="#232c3b" stroke="#7d9bb5" stroke-width="1.5" />
-              <!-- الأداة الهولوجرامية (فأس ليزري / قوس طاقة / سوار ترويض) -->
-              <g id="rig-tool">
-                <line x1="56" y1="145" x2="36" y2="112" stroke="#00f2fe" stroke-width="2.5" />
-                <path id="rig-tool-blade" d="M26 105 Q40 96 50 112 Q36 118 26 105 Z" fill="rgba(0,242,254,0.35)" stroke="#00f2fe" stroke-width="1.6" />
-              </g>
-
-              <!-- الذراع اليسرى + سوار الترويض على المعصم -->
-              <path d="M138 96 L162 142 L152 148 L132 112 Z" fill="#232c3b" stroke="#7d9bb5" stroke-width="1.5" />
-              <ellipse id="rig-wristband" cx="157" cy="144" rx="8" ry="4" fill="none" stroke="#f1c40f" stroke-width="2.2" />
-
-              <!-- الرأس -->
-              <circle cx="110" cy="60" r="22" fill="#283548" stroke="#94b5cf" stroke-width="1.8" />
-              <!-- قناع / نظارة هولوجرامية -->
-              <path id="rig-visor" d="M91 57 Q110 51 129 57 L126 65 Q110 61 94 65 Z" fill="rgba(0,242,254,0.35)" stroke="#00f2fe" stroke-width="1.5" />
-
-              <!-- الشعر المتوهج (يتغير حسب القصة المختارة) -->
-              <path id="rig-hair" d="M86 54 Q88 26 112 25 Q136 26 135 55 Q126 38 110 38 Q94 38 86 54 Z"
-                    fill="rgba(0,242,254,0.28)" stroke="#00f2fe" stroke-width="1.8" />
-            </svg>
-          </div>
-
-          <!-- منصة الهولوجرام الدوارة (Holo-Pad) -->
-          <div class="relative w-64 sm:w-72 h-24 -mt-8 flex items-center justify-center pointer-events-none">
-            <div class="holo-pad-outer absolute w-60 h-60 rounded-full border-2 border-[#00f2fe]/70 shadow-[0_0_25px_rgba(0,242,254,0.4)] flex items-center justify-center">
-              <span class="w-3 h-3 rounded-full bg-[#f1c40f] shadow-[0_0_12px_#f1c40f] -mt-56"></span>
-            </div>
-            <div class="holo-pad-inner absolute w-44 h-44 rounded-full border border-dashed border-[#f1c40f]/75 flex items-center justify-center">
-              <div class="w-24 h-24 rounded-full border border-[#00f2fe]/40 bg-[#00f2fe]/10"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- العمود الأيسر: المواصفات الفنية للعنصر المحدد وإجراء التجهيز أو الشراء -->
-        <div class="lg:col-span-4">
-          <div id="inspector-card" class="glass-panel-gold p-5 flex flex-col gap-4">
-            <div class="flex items-start justify-between gap-2 border-b border-[#f1c40f]/25 pb-3">
-              <div>
-                <div id="insp-category-label" class="text-xs font-bold text-[#f1c40f]">البدلة النشطة</div>
-                <h2 id="insp-title" class="text-xl font-extrabold text-white mt-0.5">بدلة النجاة الأساسية</h2>
-              </div>
-              <div id="insp-price-badge" class="px-3 py-1 rounded-xl bg-[#f1c40f]/15 border border-[#f1c40f]/45 text-xs font-extrabold text-[#f1c40f]">
-                مجاني / مملوك
-              </div>
-            </div>
-
-            <p id="insp-desc" class="text-xs sm:text-sm text-[#c4dfee] leading-relaxed">
-              بدلة رمادية داكنة أساسية مصممة لتحمل الظروف البيئية الأولى وتوفير مرونة حركة عالية قبل تركيب الدروع الحيوية.
-            </p>
-
-            <!-- مؤشرات الأداء والطاقة للعنصر -->
-            <div class="space-y-2.5 bg-black/25 p-3.5 rounded-xl border border-white/10">
-              <div>
-                <div class="flex justify-between text-xs mb-1">
-                  <span class="text-[#8fb3c9]">كفاءة الحماية والدرع</span>
-                  <span id="insp-stat-defense" class="font-bold text-[#00f2fe]">+15%</span>
+            <div class="profile-editor">
+                <label for="profile-name-input">اسم الشخصية</label>
+                <div class="name-edit-row">
+                    <input type="text" id="profile-name-input" maxlength="16">
+                    <button type="button" id="save-profile-name" class="btn-small-cyan">حفظ</button>
                 </div>
-                <div class="h-1.5 rounded-full bg-white/10 overflow-hidden">
-                  <div id="insp-bar-defense" class="h-full bg-[#00f2fe] rounded-full transition-all duration-300" style="width: 30%;"></div>
-                </div>
-              </div>
 
-              <div>
-                <div class="flex justify-between text-xs mb-1">
-                  <span class="text-[#8fb3c9]">التناغم الطاقي الحيوي</span>
-                  <span id="insp-stat-energy" class="font-bold text-[#f1c40f]">+20%</span>
+                <label>جنس / هيئة الشخصية</label>
+                <div class="gender-selector">
+                    <button type="button" class="gender-btn active" data-gender="male">ذكر</button>
+                    <button type="button" class="gender-btn" data-gender="female">أنثى</button>
                 </div>
-                <div class="h-1.5 rounded-full bg-white/10 overflow-hidden">
-                  <div id="insp-bar-energy" class="h-full bg-[#f1c40f] rounded-full transition-all duration-300" style="width: 40%;"></div>
+
+                <label>لون التوهج الحيوي (السوار والدرع)</label>
+                <div class="color-swatches" id="glow-color-swatches">
+                    <button type="button" class="swatch active" data-color="#00f2fe" style="background:#00f2fe;"></button>
+                    <button type="button" class="swatch" data-color="#f1c40f" style="background:#f1c40f;"></button>
+                    <button type="button" class="swatch" data-color="#ff2a85" style="background:#ff2a85;"></button>
+                    <button type="button" class="swatch" data-color="#00ff88" style="background:#00ff88;"></button>
+                    <button type="button" class="swatch" data-color="#a855f7" style="background:#a855f7;"></button>
                 </div>
-              </div>
             </div>
 
-            <!-- ملخص التجهيز الحالي الكامل للشخصية -->
-            <div class="grid grid-cols-2 gap-2 text-xs">
-              <div class="p-2.5 rounded-xl bg-white/5 border border-[#00f2fe]/20">
-                <div class="text-[#8fb3c9] text-[11px]">الزي الحالي</div>
-                <div id="summary-suit" class="font-bold text-white truncate mt-0.5">بدلة النجاة الأساسية</div>
-              </div>
-              <div class="p-2.5 rounded-xl bg-white/5 border border-[#00f2fe]/20">
-                <div class="text-[#8fb3c9] text-[11px]">الحقيبة النفاثة</div>
-                <div id="summary-jetpack" class="font-bold text-white truncate mt-0.5">بدون حقيبة</div>
-              </div>
-              <div class="p-2.5 rounded-xl bg-white/5 border border-[#00f2fe]/20">
-                <div class="text-[#8fb3c9] text-[11px]">الشعر المتوهج</div>
-                <div id="summary-hair" class="font-bold text-white truncate mt-0.5">خصلة فيروزية هادئة</div>
-              </div>
-              <div class="p-2.5 rounded-xl bg-white/5 border border-[#00f2fe]/20">
-                <div class="text-[#8fb3c9] text-[11px]">الأداة الهولوجرامية</div>
-                <div id="summary-tool" class="font-bold text-white truncate mt-0.5">فأس ليزري</div>
-              </div>
-            </div>
-
-            <!-- زر التجهيز أو الشراء -->
-            <button id="insp-action-btn" type="button"
-              class="btn-cyan w-full py-3 rounded-xl text-sm font-extrabold cursor-pointer">
-              مجهّز حالياً على الشخصية
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <!-- -------------------------------------------------------------------
-           2. عرض اختيار العوالم الأربعة (Worlds Selection View)
-           ------------------------------------------------------------------- -->
-      <section id="view-worlds" class="hidden my-auto space-y-4">
-        <div class="glass-panel p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <span class="text-xs font-bold text-[#00f2fe]">الانتقال الفضائي والبيئي</span>
-            <h2 class="text-xl sm:text-2xl font-extrabold text-white">اختيار العوالم الأربعة</h2>
-            <p class="text-xs sm:text-sm text-[#8fb3c9] mt-0.5">
-              كل عالم يمتلك إضاءة درامية خاصة، ضباباً جوياً متفاعلاً، وموارد حيوية فريدة للتشييد والترويض.
-            </p>
-          </div>
-          <div class="px-3.5 py-2 rounded-xl bg-[#00f2fe]/10 border border-[#00f2fe]/35 text-xs font-bold text-[#00f2fe] self-start sm:self-auto">
-            محرك الإضاءة والضباب: نشط
-          </div>
-        </div>
-
-        <div id="worlds-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-          <!-- تُملأ ديناميكياً عبر JavaScript -->
-        </div>
-      </section>
-
-      <!-- -------------------------------------------------------------------
-           3. عرض الموسوعة الحيوية للمخلوقات (Codex / Bestiary View)
-           ------------------------------------------------------------------- -->
-      <section id="view-codex" class="hidden my-auto space-y-4">
-        <div class="glass-panel p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <span class="text-xs font-bold text-[#f1c40f]">سجل الكائنات الحيوية المتوهجة</span>
-            <h2 class="text-xl sm:text-2xl font-extrabold text-white">موسوعة المخلوقات والترويض</h2>
-            <p class="text-xs sm:text-sm text-[#8fb3c9] mt-0.5">
-              تتحول عروق المخلوق من التوهج الأحمر البري إلى التوهج الفيروزي الهادئ عند الترويض مع تفعيل السرج الضوئي للركوب والطيران.
-            </p>
-          </div>
-          <div class="flex items-center gap-2 text-xs font-bold">
-            <span class="px-3 py-1.5 rounded-xl bg-[#ff3b5c]/15 border border-[#ff3b5c]/45 text-[#ff7b91]">
-              بري: عروق حمراء
-            </span>
-            <span class="px-3 py-1.5 rounded-xl bg-[#00f2fe]/15 border border-[#00f2fe]/45 text-[#00f2fe]">
-              مروّض: توهج فيروزي وسرج ضوئي
-            </span>
-          </div>
-        </div>
-
-        <div id="codex-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <!-- تُملأ ديناميكياً عبر JavaScript -->
-        </div>
-      </section>
-
-    </main>
-  </div>
-
-  <!-- =======================================================================
-       منطق الواجهة التفاعلية، إدارة الحالة، وجزيئات الخلفية (Interactive JS)
-       ======================================================================= -->
-  <script>
-    (function () {
-      'use strict';
-
-      // =====================================================================
-      // 1. بيانات الحالة والتجهيزات والعوالم والمخلوقات
-      // =====================================================================
-      const state = {
-        activeTab: 'customization', // 'store' | 'customization' | 'worlds' | 'codex'
-        activeCategory: 'suits',    // 'suits' | 'jetpacks' | 'hair' | 'tools'
-        selectedItemId: 'suit-base',
-        credits: 1450,
-        health: 88,
-        shield: 94,
-        currentWorldId: 'night-forest',
-        hudHidden: false,
-
-        ownedIds: new Set([
-          'suit-base',
-          'jet-none',
-          'hair-cyan',
-          'tool-laser-axe'
-        ]),
-
-        equipped: {
-          suits: 'suit-base',
-          jetpacks: 'jet-none',
-          hair: 'hair-cyan',
-          tools: 'tool-laser-axe'
-        }
-      };
-
-      const catalog = {
-        suits: [
-          {
-            id: 'suit-base',
-            name: 'بدلة النجاة الأساسية',
-            price: 0,
-            tag: 'أساسي',
-            desc: 'بدلة رمادية داكنة أساسية بدون إضافات، تمنح توازناً أولياً للبقاء واستكشاف البيئات المجهولة.',
-            defense: 15,
-            energy: 20,
-            torsoFill: '#232c3b',
-            accentColor: '#7d9bb5'
-          },
-          {
-            id: 'suit-tactical',
-            name: 'درع تكتيكي مضيء',
-            price: 450,
-            tag: 'درع طاقي',
-            desc: 'صفائح درع تكتيكية مزودة بمسارات ضوئية فيروزية تمتص الصدمات وتعزز مقاومة الإشعاع البيئي.',
-            defense: 68,
-            energy: 60,
-            torsoFill: '#0e2235',
-            accentColor: '#00f2fe'
-          },
-          {
-            id: 'suit-bioweave',
-            name: 'بدلة النسيج الحيوي الذهبية',
-            price: 850,
-            tag: 'نخبة حيوية',
-            desc: 'ألياف عضوية متطورة تتفاعل مع نبض الطاقة الحيوية وتدعم التناغم مع المخلوقات المروّضة.',
-            defense: 88,
-            energy: 92,
-            torsoFill: '#1a202c',
-            accentColor: '#f1c40f'
-          }
-        ],
-        jetpacks: [
-          {
-            id: 'jet-none',
-            name: 'بدون حقيبة نفاثة',
-            price: 0,
-            tag: 'قياسي',
-            desc: 'حركة أرضية مباشرة دون نظام دفع خلفي.',
-            defense: 0,
-            energy: 10,
-            active: false,
-            sparkColor: '#00f2fe'
-          },
-          {
-            id: 'jet-cyan',
-            name: 'حقيبة الدفع الفيروزية',
-            price: 520,
-            tag: 'جزيئات ضوئية',
-            desc: 'حقيبة ظهر تقنية تطلق جزيئات فيروزية متوهجة للقفزات الطويلة والانزلاق فوق المنحدرات.',
-            defense: 25,
-            energy: 75,
-            active: true,
-            sparkColor: '#00f2fe'
-          },
-          {
-            id: 'jet-gold-flux',
-            name: 'حقيبة التدفق الشمسي الذهبية',
-            price: 920,
-            tag: 'تحليق متقدم',
-            desc: 'نظام دفع عالي الكفاءة يولد شرارات ذهبية وفيروزية مع استهلاك منخفض للطاقة.',
-            defense: 40,
-            energy: 96,
-            active: true,
-            sparkColor: '#f1c40f'
-          }
-        ],
-        hair: [
-          {
-            id: 'hair-cyan',
-            name: 'خصلة فيروزية هادئة',
-            price: 0,
-            tag: 'متوهج',
-            desc: 'قصة شعر انسيابية ذات أطراف مضيئة باللون الفيروزي تعزز الرؤية في الظلام.',
-            defense: 5,
-            energy: 35,
-            color: '#00f2fe'
-          },
-          {
-            id: 'hair-gold-crest',
-            name: 'تاج الطاقة الذهبي',
-            price: 380,
-            tag: 'هولوجرامي',
-            desc: 'خصلات متوهجة بتدرجات ذهبية دافئة مع ألياف ضوئية نشطة.',
-            defense: 10,
-            energy: 65,
-            color: '#f1c40f'
-          },
-          {
-            id: 'hair-aurora-pulse',
-            name: 'نبض الشفق الحيوي',
-            price: 640,
-            tag: 'نبض حيوي',
-            desc: 'توهج متناغم يتفاعل مع كثافة الطاقة المحيطة بالمستكشف.',
-            defense: 15,
-            energy: 85,
-            color: '#38f9d7'
-          }
-        ],
-        tools: [
-          {
-            id: 'tool-laser-axe',
-            name: 'فأس ليزري',
-            price: 0,
-            tag: 'بناء وحصاد',
-            desc: 'أداة قطع هولوجرامية عالية الدقة لجمع الأخشاب الحيوية والكريستالات وتشييد القواعد.',
-            defense: 20,
-            energy: 45,
-            color: '#00f2fe',
-            shape: 'axe'
-          },
-          {
-            id: 'tool-energy-bow',
-            name: 'قوس طاقة',
-            price: 490,
-            tag: 'دفاع بعيد المدى',
-            desc: 'قوس ضوئي يطلق نبضات طاقة مركزة للدفاع ضد التهديدات البرية.',
-            defense: 55,
-            energy: 78,
-            color: '#f1c40f',
-            shape: 'bow'
-          },
-          {
-            id: 'tool-taming-band',
-            name: 'سوار الترويض على المعصم',
-            price: 680,
-            tag: 'ترويض وركوب',
-            desc: 'جهاز معصم هولوجرامي يبث موجات تهدئة حيوية لتحويل المخلوقات البرية إلى رفاق مروّضين.',
-            defense: 35,
-            energy: 95,
-            color: '#00f2fe',
-            shape: 'band'
-          }
-        ]
-      };
-
-      const worlds = [
-        {
-          id: 'night-forest',
-          name: 'غابة الليل المتوهجة',
-          badge: 'أبواغ فيروزية وفطر عملاق',
-          lighting: 'إضاءة ليلية درامية + ضباب أخضر وفيروزي',
-          desc: 'أشجار عملاقة تتشابك مع فطر ونباتات مضيئة في الظلام، تنبعث منها إضاءات نقطية خافتة وجزيئات حية.',
-          gradient: 'radial-gradient(circle at 50% 30%, rgba(0, 242, 254, 0.2), rgba(5, 26, 28, 0.92) 65%, #03090c 100%)',
-          accent: '#00f2fe',
-          particleColor: '0, 242, 254'
-        },
-        {
-          id: 'magma-valley',
-          name: 'وادي الصهارة والسبج',
-          badge: 'صخور سبج وأنهار حمم',
-          lighting: 'تباين ناري داكن + توهج برتقالي وذهبي',
-          desc: 'منحدرات من السبج الأسود اللامع تتخللها أنهار صهارة برتقالية متوهجة مع بلورات حرارية نادرة.',
-          gradient: 'radial-gradient(circle at 50% 35%, rgba(255, 115, 29, 0.22), rgba(26, 10, 8, 0.94) 68%, #070303 100%)',
-          accent: '#ff7b29',
-          particleColor: '255, 140, 45'
-        },
-        {
-          id: 'auroral-peaks',
-          name: 'القمم الجليدية الشفقية',
-          badge: 'شفق قطبي أخضر وبنفسجي',
-          lighting: 'جليد عاكس + ستائر شفق قطبي متموجة',
-          desc: 'قمم ثلجية شاهقة تعكس أضواء الشفق القطبي الأخضر والبنفسجي في سماء قطبية صافية وضباب بارد.',
-          gradient: 'radial-gradient(circle at 50% 25%, rgba(168, 85, 247, 0.2), rgba(8, 24, 38, 0.92) 68%, #040b14 100%)',
-          accent: '#a855f7',
-          particleColor: '120, 255, 214'
-        },
-        {
-          id: 'sky-islands',
-          name: 'الجزر السماوية المعلقة',
-          badge: 'صخور طائرة وجسور ضوئية',
-          lighting: 'أفق سماوي عميق + شلالات وجسور طاقة',
-          desc: 'كتل صخرية معلقة في السماء تربطها جسور ضوئية وشلالات تنساب نحو السحب في فضاء مفتوح.',
-          gradient: 'radial-gradient(circle at 50% 30%, rgba(241, 196, 15, 0.18), rgba(10, 22, 42, 0.92) 68%, #040914 100%)',
-          accent: '#f1c40f',
-          particleColor: '241, 196, 15'
-        }
-      ];
-
-      const creatures = [
-        {
-          id: 'dragon',
-          name: 'تنين الشفق الحيوي',
-          type: 'مخلوق مجنّح ضخم',
-          habitat: 'القمم الجليدية الشفقية والجزر السماوية',
-          tamed: true,
-          wildNote: 'عروق متوهجة باللون الأحمر القرمزي مع هجمات نارية وطاقية عنيفة.',
-          tamedNote: 'توهج فيروزي هادئ على امتداد الأجنحة والعروق مع سرج ضوئي للركوب والتحليق الحر.',
-          saddleLabel: 'سرج ضوئي للطيران نشط'
-        },
-        {
-          id: 'wolf',
-          name: 'ذئب الليل الكريستالي',
-          type: 'مفترس سريع للحزم',
-          habitat: 'غابة الليل المتوهجة',
-          tamed: true,
-          wildNote: 'عروق متوهجة باللون الأحمر ونظرات عدائية عند اقتراب المستكشف.',
-          tamedNote: 'توهج فيروزي هادئ يرافق الخطوات السريعة مع سرج ضوئي خفيف للركوب الأرضي.',
-          saddleLabel: 'سرج ضوئي للركوب الأرضي نشط'
-        },
-        {
-          id: 'tiger',
-          name: 'نمر السبج الناري',
-          type: 'صياد خفي عالي الرشاقة',
-          habitat: 'وادي الصهارة والسبج',
-          tamed: false,
-          wildNote: 'عروق متوهجة باللون الأحمر الناري وتخفٍ سريع بين صخور السبج.',
-          tamedNote: 'يتحول إلى توهج فيروزي متوازن بعد الترويض ويفتح سرجاً ضوئياً للقفز والركوب.',
-          saddleLabel: 'بانتظار الترويض لتفعيل السرج'
-        },
-        {
-          id: 'leviathan',
-          name: 'مخلوق طائر — ليفياثان السحب',
-          type: 'كائن سماوي انسيابي',
-          habitat: 'الجزر السماوية المعلقة',
-          tamed: false,
-          wildNote: 'عروق متوهجة باللون الأحمر أثناء الدوران حول الجزر المعلقة.',
-          tamedNote: 'توهج فيروزي هادئ وسرج ضوئي واسع للرحلات الطويلة بين الجزر.',
-          saddleLabel: 'بانتظار الترويض لتفعيل السرج'
-        }
-      ];
-
-      // =====================================================================
-      // 2. عناصر الواجهة (DOM References)
-      // =====================================================================
-      const views = {
-        store: document.getElementById('view-customization-store'),
-        customization: document.getElementById('view-customization-store'),
-        worlds: document.getElementById('view-worlds'),
-        codex: document.getElementById('view-codex')
-      };
-
-      const navTabs = document.querySelectorAll('.nav-tab[data-tab]');
-      const categoryBtns = document.querySelectorAll('.cat-btn[data-category]');
-      const itemsGrid = document.getElementById('items-grid');
-      const worldsGrid = document.getElementById('worlds-grid');
-      const codexGrid = document.getElementById('codex-grid');
-
-      const toastEl = document.getElementById('holo-toast');
-      const toastTextEl = document.getElementById('holo-toast-text');
-      const toastCloseBtn = document.getElementById('holo-toast-close');
-
-      // =====================================================================
-      // 3. دوال المساعدة والإشعارات
-      // =====================================================================
-      let toastTimer = null;
-      function showToast(message) {
-        toastTextEl.textContent = message;
-        toastEl.classList.remove('hidden');
-        clearTimeout(toastTimer);
-        toastTimer = setTimeout(() => {
-          toastEl.classList.add('hidden');
-        }, 3800);
-      }
-
-      toastCloseBtn.addEventListener('click', () => {
-        toastEl.classList.add('hidden');
-      });
-
-      function findItemById(id) {
-        for (const cat of Object.keys(catalog)) {
-          const found = catalog[cat].find((item) => item.id === id);
-          if (found) return { item: found, category: cat };
-        }
-        return null;
-      }
-
-      // =====================================================================
-      // 4. تحديث الشريط العلوي (Top HUD)
-      // =====================================================================
-      function updateTopHud() {
-        const tamedCount = creatures.filter((c) => c.tamed).length;
-        const activeWorld = worlds.find((w) => w.id === state.currentWorldId) || worlds[0];
-
-        document.getElementById('hud-health-val').textContent = `${state.health}%`;
-        document.getElementById('hud-health-bar').style.width = `${state.health}%`;
-
-        document.getElementById('hud-shield-val').textContent = `${state.shield}%`;
-        document.getElementById('hud-shield-bar').style.width = `${state.shield}%`;
-
-        document.getElementById('hud-tamed-count').textContent = `${tamedCount} / ${creatures.length}`;
-        document.getElementById('hud-credits').textContent = state.credits.toLocaleString('en-US');
-
-        document.getElementById('hud-world-name').textContent = activeWorld.name;
-        document.getElementById('hud-world-dot').style.backgroundColor = activeWorld.accent;
-        document.getElementById('hud-world-dot').style.boxShadow = `0 0 8px ${activeWorld.accent}`;
-
-        document.getElementById('world-atmosphere-layer').style.background = activeWorld.gradient;
-      }
-
-      // =====================================================================
-      // 5. تحديث مجسم الشخصية الهولوجرامي في المنتصف
-      // =====================================================================
-      function updateExplorerRig() {
-        const suit = catalog.suits.find((i) => i.id === state.equipped.suits) || catalog.suits[0];
-        const jet = catalog.jetpacks.find((i) => i.id === state.equipped.jetpacks) || catalog.jetpacks[0];
-        const hair = catalog.hair.find((i) => i.id === state.equipped.hair) || catalog.hair[0];
-        const tool = catalog.tools.find((i) => i.id === state.equipped.tools) || catalog.tools[0];
-
-        // البدلة والدرع
-        const torso = document.getElementById('rig-torso');
-        const accent = document.getElementById('rig-armor-accent');
-        const core = document.getElementById('rig-core');
-        torso.setAttribute('fill', suit.torsoFill);
-        torso.setAttribute('stroke', suit.accentColor);
-        accent.setAttribute('stroke', suit.accentColor);
-        core.setAttribute('fill', suit.accentColor);
-
-        // الحقيبة النفاثة والجزيئات
-        const jetGroup = document.getElementById('rig-jetpack');
-        const jetParticles = document.getElementById('rig-jet-particles');
-        const nozzleL = document.getElementById('rig-jet-nozzle-l');
-        const nozzleR = document.getElementById('rig-jet-nozzle-r');
-
-        if (jet.active) {
-          jetGroup.setAttribute('opacity', '1');
-          jetParticles.setAttribute('opacity', '1');
-          nozzleL.setAttribute('fill', jet.sparkColor);
-          nozzleR.setAttribute('fill', jet.sparkColor);
-          jetParticles.querySelectorAll('circle').forEach((c) => c.setAttribute('fill', jet.sparkColor));
-        } else {
-          jetGroup.setAttribute('opacity', '0.2');
-          jetParticles.setAttribute('opacity', '0');
-        }
-
-        // الشعر المتوهج
-        const hairEl = document.getElementById('rig-hair');
-        hairEl.setAttribute('stroke', hair.color);
-        hairEl.setAttribute('fill', `${hair.color}38`);
-
-        // الأداة الهولوجرامية
-        const toolBlade = document.getElementById('rig-tool-blade');
-        toolBlade.setAttribute('stroke', tool.color);
-        toolBlade.setAttribute('fill', `${tool.color}44`);
-
-        // نص الحالة وملخص التجهيز
-        document.getElementById('rig-status-caption').textContent = `${suit.name} — ${tool.name}`;
-        document.getElementById('summary-suit').textContent = suit.name;
-        document.getElementById('summary-jetpack').textContent = jet.name;
-        document.getElementById('summary-hair').textContent = hair.name;
-        document.getElementById('summary-tool').textContent = tool.name;
-      }
-
-      // =====================================================================
-      // 6. رسم بطاقات المتجر والتخصيص ولوحة الفحص
-      // =====================================================================
-      function renderCatalogItems() {
-        const list = catalog[state.activeCategory] || [];
-        const isStoreMode = state.activeTab === 'store';
-
-        document.getElementById('mode-badge').textContent = isStoreMode
-          ? 'متجر المعدات الحيوية'
-          : 'وحدة التخصيص المباشر';
-        document.getElementById('panel-main-title').textContent = isStoreMode
-          ? 'اقتناء وتطوير التجهيزات'
-          : 'تخصيص مستكشف التكنولوجيا الحيوية';
-        document.getElementById('switch-store-custom-btn').textContent = isStoreMode
-          ? 'إلى التخصيص'
-          : 'فتح المتجر';
-
-        categoryBtns.forEach((btn) => {
-          btn.classList.toggle('active', btn.dataset.category === state.activeCategory);
-        });
-
-        itemsGrid.innerHTML = '';
-        list.forEach((item) => {
-          const isOwned = state.ownedIds.has(item.id);
-          const isEquipped = state.equipped[state.activeCategory] === item.id;
-          const isSelected = state.selectedItemId === item.id;
-
-          const card = document.createElement('div');
-          card.className = `holo-card p-3.5 cursor-pointer flex items-center justify-between gap-3 ${
-            isSelected ? 'is-active' : ''
-          }`;
-
-          const statusText = isEquipped
-            ? 'مجهّز'
-            : isOwned
-              ? 'مملوك'
-              : `${item.price} وحدة`;
-
-          const statusBadgeClass = isEquipped
-            ? 'bg-[#00f2fe]/20 text-[#00f2fe] border-[#00f2fe]/50'
-            : isOwned
-              ? 'bg-white/10 text-[#eef9ff] border-white/25'
-              : 'bg-[#f1c40f]/15 text-[#f1c40f] border-[#f1c40f]/45';
-
-          card.innerHTML = `
-            <div class="min-w-0">
-              <div class="flex items-center gap-2">
-                <span class="text-[11px] font-bold text-[#00f2fe]">${item.tag}</span>
-              </div>
-              <div class="text-sm font-extrabold text-white truncate mt-0.5">${item.name}</div>
-              <div class="text-[11px] text-[#8fb3c9] mt-1">
-                حماية +${item.defense}% | تناغم +${item.energy}%
-              </div>
-            </div>
-            <span class="shrink-0 px-2.5 py-1 rounded-lg border text-xs font-bold ${statusBadgeClass}">
-              ${statusText}
-            </span>
-          `;
-
-          card.addEventListener('click', () => {
-            state.selectedItemId = item.id;
-            renderCatalogItems();
-            renderInspector();
-          });
-
-          itemsGrid.appendChild(card);
-        });
-      }
-
-      function renderInspector() {
-        const found = findItemById(state.selectedItemId);
-        if (!found) return;
-
-        const { item, category } = found;
-        const isOwned = state.ownedIds.has(item.id);
-        const isEquipped = state.equipped[category] === item.id;
-
-        const categoryNames = {
-          suits: 'فئة الأزياء والبدلات',
-          jetpacks: 'فئة الحقائب النفاثة',
-          hair: 'فئة قصات الشعر المتوهجة',
-          tools: 'فئة الأدوات الهولوجرامية'
-        };
-
-        document.getElementById('insp-category-label').textContent = categoryNames[category] || 'تجهيز';
-        document.getElementById('insp-title').textContent = item.name;
-        document.getElementById('insp-desc').textContent = item.desc;
-
-        document.getElementById('insp-price-badge').textContent =
-          item.price === 0 ? 'أساسي مجاني' : `${item.price} وحدة طاقة`;
-
-        document.getElementById('insp-stat-defense').textContent = `+${item.defense}%`;
-        document.getElementById('insp-bar-defense').style.width = `${Math.min(100, item.defense)}%`;
-
-        document.getElementById('insp-stat-energy').textContent = `+${item.energy}%`;
-        document.getElementById('insp-bar-energy').style.width = `${Math.min(100, item.energy)}%`;
-
-        const actionBtn = document.getElementById('insp-action-btn');
-
-        if (isEquipped) {
-          actionBtn.textContent = 'مجهّز حالياً على الشخصية';
-          actionBtn.className = 'btn-cyan w-full py-3 rounded-xl text-sm font-extrabold opacity-80 cursor-default';
-          actionBtn.disabled = true;
-          actionBtn.onclick = null;
-        } else if (isOwned) {
-          actionBtn.textContent = 'تجهيز على الشخصية الآن';
-          actionBtn.className = 'btn-cyan w-full py-3 rounded-xl text-sm font-extrabold cursor-pointer';
-          actionBtn.disabled = false;
-          actionBtn.onclick = () => {
-            state.equipped[category] = item.id;
-            updateExplorerRig();
-            renderCatalogItems();
-            renderInspector();
-            showToast(`تم تجهيز "${item.name}" على المستكشف.`);
-          };
-        } else {
-          const canAfford = state.credits >= item.price;
-          actionBtn.textContent = canAfford
-            ? `شراء وتجهيز (${item.price} وحدة)`
-            : `الرصيد غير كافٍ (${item.price} وحدة)`;
-          actionBtn.className = `btn-gold w-full py-3 rounded-xl text-sm font-extrabold ${
-            canAfford ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'
-          }`;
-          actionBtn.disabled = !canAfford;
-          actionBtn.onclick = () => {
-            if (state.credits < item.price) return;
-            state.credits -= item.price;
-            state.ownedIds.add(item.id);
-            state.equipped[category] = item.id;
-            updateTopHud();
-            updateExplorerRig();
-            renderCatalogItems();
-            renderInspector();
-            showToast(`تم شراء وتجهيز "${item.name}" بنجاح.`);
-          };
-        }
-      }
-
-      // =====================================================================
-      // 7. رسم عرض العوالم الأربعة (Worlds Selection)
-      // =====================================================================
-      function renderWorlds() {
-        worldsGrid.innerHTML = '';
-
-        worlds.forEach((world) => {
-          const isCurrent = state.currentWorldId === world.id;
-          const card = document.createElement('div');
-          card.className = `holo-card p-5 flex flex-col justify-between gap-4 ${
-            isCurrent ? 'is-active' : ''
-          }`;
-
-          card.innerHTML = `
-            <div class="space-y-3">
-              <div class="h-28 rounded-xl border border-white/15 relative overflow-hidden flex flex-col justify-between p-3"
-                   style="background: ${world.gradient};">
-                <div class="flex items-center justify-between gap-2">
-                  <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-black/45 border border-white/20 text-white">
-                    ${world.badge}
-                  </span>
-                  <span class="w-2.5 h-2.5 rounded-full" style="background: ${world.accent}; box-shadow: 0 0 12px ${world.accent};"></span>
+            <div class="inventory-summary">
+                <h4>إحصائيات وممتلكات اللاعب</h4>
+                <div class="stats-grid">
+                    <div class="stat-box"><span>المستوى</span><b id="stat-lvl">1</b></div>
+                    <div class="stat-box"><span>قوة الهجوم</span><b id="stat-atk">15</b></div>
+                    <div class="stat-box"><span>المخلوقات</span><b id="stat-pets">0</b></div>
+                    <div class="stat-box"><span>الممتلكات</span><b id="stat-owned">0</b></div>
                 </div>
-                <div class="text-[11px] font-semibold text-white/90 bg-black/40 px-2.5 py-1 rounded-lg w-fit">
-                  ${world.lighting}
-                </div>
-              </div>
+                <div id="owned-items-list" class="owned-badges-wrap"></div>
+            </div>
+        </div>
 
-              <div>
-                <h3 class="text-lg font-extrabold text-white">${world.name}</h3>
-                <p class="text-xs sm:text-sm text-[#8fb3c9] leading-relaxed mt-1">${world.desc}</p>
-              </div>
+        <!-- وسط الشاشة الشفاف لرؤية الشخصية فوق منصة Holo-Pad الدوارة -->
+        <div class="studio-center-controls">
+            <div class="holo-badge">اسحب لتدوير الشخصية 360° • منصة Holo-Pad</div>
+            <button type="button" id="exit-studio-btn" class="btn-primary neon-glow-gold">العودة إلى العالم</button>
+        </div>
+
+        <!-- لوحة المتجر: الأزياء، الحقائب النفاثة، قصات الشعر المتوهجة، الأسلحة، والمهارات -->
+        <div class="studio-panel left-panel glass-panel neon-border-gold">
+            <div class="panel-header">
+                <h3>متجر السكنات والأسلحة والمهارات</h3>
+                <span class="studio-coins">العملات: <b id="studio-coins-val">500</b></span>
             </div>
 
-            <button type="button"
-              class="${isCurrent ? 'btn-cyan opacity-85 cursor-default' : 'btn-gold cursor-pointer'} w-full py-2.5 rounded-xl text-xs sm:text-sm font-extrabold">
-              ${isCurrent ? 'العالم النشط حالياً' : 'الانتقال إلى هذا العالم'}
-            </button>
-          `;
+            <div class="shop-categories">
+                <button type="button" class="shop-cat-btn active" data-cat="armor">الأزياء والدروع</button>
+                <button type="button" class="shop-cat-btn" data-cat="jetpack">الحقائب النفاثة</button>
+                <button type="button" class="shop-cat-btn" data-cat="hair">الشعر المتوهج</button>
+                <button type="button" class="shop-cat-btn" data-cat="weapon">أدوات الليزر</button>
+                <button type="button" class="shop-cat-btn" data-cat="skill">المهارات</button>
+            </div>
 
-          const btn = card.querySelector('button');
-          if (!isCurrent) {
-            btn.addEventListener('click', () => {
-              state.currentWorldId = world.id;
-              updateTopHud();
-              renderWorlds();
-              showToast(`تم تفعيل بيئة "${world.name}" وإعدادات الإضاءة والضباب.`);
-            });
-          }
+            <div class="shop-items-grid" id="shop-items-container"></div>
+        </div>
+    </section>
 
-          worldsGrid.appendChild(card);
-        });
-      }
+    <!-- =====================================================================
+         6. نافذة المخلوقات، النمو، سرقة البيض، والحاضنة (Pets & Eggs Modal)
+         ===================================================================== -->
+    <div id="pets-modal" class="modal-backdrop hidden">
+        <div class="modal-window glass-panel neon-border-cyan">
+            <div class="panel-header">
+                <h3>المخلوقات الأسطورية وحاضنة البيض</h3>
+                <button type="button" class="btn-close-panel" data-close="pets-modal">✕</button>
+            </div>
 
-      // =====================================================================
-      // 8. رسم عرض الموسوعة والمخلوقات (Codex / Bestiary)
-      // =====================================================================
-      function renderCodex() {
-        codexGrid.innerHTML = '';
+            <div class="modal-tabs">
+                <button type="button" class="m-tab-btn active" data-mtab="tamed-list">مخلوقاتي (نمو بالوقت)</button>
+                <button type="button" class="m-tab-btn" data-mtab="egg-incubator">حاضنة البيض المسروق</button>
+                <button type="button" class="m-tab-btn" data-mtab="bestiary">موسوعة المخلوقات</button>
+            </div>
 
-        creatures.forEach((creature) => {
-          const isTamed = creature.tamed;
-          const veinColor = isTamed ? '#00f2fe' : '#ff3b5c';
-          const veinGlow = isTamed ? 'rgba(0, 242, 254, 0.45)' : 'rgba(255, 59, 92, 0.45)';
+            <div class="m-tab-content active" id="tab-tamed-list">
+                <p class="hint-text">لترويض مخلوق مباشر: يجب أن يكون مستواك ضعف مستواه (2x) على الأقل. إن لم يكن مستواك كافياً، ابحث عن أعشاش البيض واسرق بيضة واحذر مطاردة الأم!</p>
+                <div class="cards-grid" id="tamed-pets-grid"></div>
+            </div>
 
-          const card = document.createElement('div');
-          card.className = 'holo-card p-5 flex flex-col justify-between gap-4';
-          card.style.borderColor = isTamed ? 'rgba(0, 242, 254, 0.38)' : 'rgba(255, 59, 92, 0.38)';
+            <div class="m-tab-content" id="tab-egg-incubator">
+                <p class="hint-text">البيض المسروق ينمو تلقائياً في منزلك، ويمكنك تسريع فقسه فوراً عبر العملات أو مشاهدة مقطع فيديو مكافأة.</p>
+                <div class="cards-grid" id="incubator-eggs-grid"></div>
+            </div>
 
-          card.innerHTML = `
-            <div class="space-y-3">
-              <div class="flex items-start justify-between gap-3">
+            <div class="m-tab-content" id="tab-bestiary">
+                <div class="cards-grid" id="bestiary-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================================
+         7. كتيب البناء التدريجي والمنزل وخزنة الحماية (The Forest Style)
+         ===================================================================== -->
+    <div id="buildbook-modal" class="modal-backdrop hidden">
+        <div class="modal-window glass-panel neon-border-gold">
+            <div class="panel-header">
+                <h3>كتيب البناء التدريجي والمنزل الآمن</h3>
+                <button type="button" class="btn-close-panel" data-close="buildbook-modal">✕</button>
+            </div>
+
+            <div class="build-layout">
+                <div class="build-blueprints">
+                    <h4>اختر مخططاً للبناء في العالم (حدائق، بيوت، أبراج مراقبة، مواقد نار)</h4>
+                    <p class="small-desc" style="margin-bottom: 10px;">كلما قطعت أشجاراً وجلبت الحطب، يتقدم بناء هيكل منزلك خطوة بخطوة حتى يكتمل كما في ألعاب البقاء الواقعية.</p>
+                    <div class="cards-grid" id="blueprints-grid"></div>
+                </div>
+
+                <div class="home-vault-section glass-panel">
+                    <h4>خزنة المنزل ومراقبة السرقة</h4>
+                    <p class="small-desc">احفظ غنائمك في خزنة المنزل. في حال تسلل لص أو لاعب آخر إلى منزلك، يُسمح له بأخذ غرض واحد كحد أقصى في الغارة الواحدة.</p>
+
+                    <div class="vault-storage-list">
+                        <div class="vault-row">
+                            <span>حطب في الخزنة: <b id="vault-wood">0</b></span>
+                            <button type="button" class="btn-small-cyan" id="deposit-wood-btn">إيداع 10 حطب</button>
+                        </div>
+                        <div class="vault-row">
+                            <span>كريستال في الخزنة: <b id="vault-crystal">0</b></span>
+                            <button type="button" class="btn-small-cyan" id="deposit-crystal-btn">إيداع 5 كريستال</button>
+                        </div>
+                        <div class="vault-row">
+                            <span>عملات في الخزنة: <b id="vault-coins">0</b></span>
+                            <button type="button" class="btn-small-cyan" id="deposit-coins-btn">إيداع 100 عملة</button>
+                        </div>
+                    </div>
+
+                    <div class="house-progress-box">
+                        <span>اكتمال بناء المنزل الرئيسي: <b id="house-completion-pct">0%</b></span>
+                        <div class="stat-bar">
+                            <div class="fill" id="house-progress-fill" style="width: 0%; background: var(--gold);"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================================
+         8. نافذة التحديات (فوق 10 لكل عالم) وبرج الفخاخ
+         ===================================================================== -->
+    <div id="quests-modal" class="modal-backdrop hidden">
+        <div class="modal-window glass-panel neon-border-cyan">
+            <div class="panel-header">
+                <h3>تحديات العوالم وبرج الفخاخ</h3>
+                <button type="button" class="btn-close-panel" data-close="quests-modal">✕</button>
+            </div>
+
+            <div class="tower-banner glass-panel">
                 <div>
-                  <span class="text-xs font-bold" style="color: ${veinColor};">${creature.type}</span>
-                  <h3 class="text-lg sm:text-xl font-extrabold text-white mt-0.5">${creature.name}</h3>
-                  <div class="text-xs text-[#8fb3c9] mt-0.5">الموطن: ${creature.habitat}</div>
+                    <h4>برج الفخاخ والتحديات (مسامير، حمم، منصات متحركة، وحراس)</h4>
+                    <p>تسلّق الطوابق وتجاوز الفخاخ للوصول إلى القمة والحصول على كنوز أسطورية وعملات ضخمة.</p>
                 </div>
-
-                <span class="px-3 py-1 rounded-full text-xs font-extrabold border shrink-0"
-                      style="color: ${veinColor}; border-color: ${veinColor}; background: ${veinGlow}22;">
-                  ${isTamed ? 'مروّض — توهج فيروزي' : 'بري — عروق حمراء'}
-                </span>
-              </div>
-
-              <!-- مخطط بصري لحالة العروق والسرج الضوئي -->
-              <div class="p-3.5 rounded-xl bg-black/35 border border-white/10 flex items-center justify-between gap-4">
-                <div class="space-y-1 text-xs">
-                  <div class="font-bold text-white">
-                    ${isTamed ? 'حالة العروق والركوب:' : 'حالة العروق البرية:'}
-                  </div>
-                  <p class="text-[#c4dfee] leading-relaxed">
-                    ${isTamed ? creature.tamedNote : creature.wildNote}
-                  </p>
-                </div>
-
-                <!-- مؤشر بصري للعروق والسرج الضوئي -->
-                <div class="shrink-0 flex flex-col items-center gap-1.5">
-                  <div class="w-12 h-12 rounded-full border-2 flex items-center justify-center"
-                       style="border-color: ${veinColor}; box-shadow: 0 0 18px ${veinGlow};">
-                    <span class="w-4 h-4 rounded-full" style="background: ${veinColor}; box-shadow: 0 0 12px ${veinColor};"></span>
-                  </div>
-                  <span class="text-[10px] font-bold text-center max-w-[92px]" style="color: ${isTamed ? '#00f2fe' : '#f1c40f'};">
-                    ${isTamed ? creature.saddleLabel : 'سرج ضوئي غير نشط'}
-                  </span>
-                </div>
-              </div>
+                <button type="button" id="teleport-tower-btn" class="btn-gold">انتقال إلى مدخل البرج</button>
             </div>
 
-            <div class="flex items-center justify-between gap-3 pt-1">
-              <span class="text-xs text-[#8fb3c9]">
-                ${isTamed ? 'جاهز للركوب والطيران في العوالم' : 'استخدم سوار الترويض لتحويل التوهج'}
-              </span>
-              <button type="button"
-                class="${isTamed ? 'btn-cyan' : 'btn-gold'} px-4 py-2 rounded-xl text-xs font-extrabold cursor-pointer">
-                ${isTamed ? 'إعادة للوضع البري' : 'ترويض وتفعيل السرج'}
-              </button>
-            </div>
-          `;
+            <h4 style="margin: 12px 0 6px;">تحديات العالم الحالي (12 تحدياً لكل عالم)</h4>
+            <div class="quests-list" id="world-quests-list"></div>
+        </div>
+    </div>
 
-          const btn = card.querySelector('button');
-          btn.addEventListener('click', () => {
-            creature.tamed = !creature.tamed;
-            updateTopHud();
-            renderCodex();
-            showToast(
-              creature.tamed
-                ? `تم ترويض "${creature.name}" وتحويل عروقه إلى الفيروزي مع تفعيل السرج الضوئي.`
-                : `عاد "${creature.name}" إلى الحالة البرية مع عروق متوهجة باللون الأحمر.`
-            );
-          });
-
-          codexGrid.appendChild(card);
-        });
-      }
-
-      // =====================================================================
-      // 9. التبديل بين التبويبات ووضع المعاينة الحية
-      // =====================================================================
-      function switchTab(tabName) {
-        state.activeTab = tabName;
-
-        navTabs.forEach((tab) => {
-          tab.classList.toggle('active', tab.dataset.tab === tabName);
-        });
-
-        views.customization.classList.add('hidden');
-        views.worlds.classList.add('hidden');
-        views.codex.classList.add('hidden');
-
-        if (tabName === 'store' || tabName === 'customization') {
-          views.customization.classList.remove('hidden');
-          renderCatalogItems();
-          renderInspector();
-        } else if (tabName === 'worlds') {
-          views.worlds.classList.remove('hidden');
-          renderWorlds();
-        } else if (tabName === 'codex') {
-          views.codex.classList.remove('hidden');
-          renderCodex();
-        }
-      }
-
-      navTabs.forEach((tab) => {
-        tab.addEventListener('click', () => switchTab(tab.dataset.tab));
-      });
-
-      categoryBtns.forEach((btn) => {
-        btn.addEventListener('click', () => {
-          state.activeCategory = btn.dataset.category;
-          const firstItem = catalog[state.activeCategory][0];
-          if (firstItem) {
-            state.selectedItemId = firstItem.id;
-          }
-          renderCatalogItems();
-          renderInspector();
-        });
-      });
-
-      document.getElementById('switch-store-custom-btn').addEventListener('click', () => {
-        switchTab(state.activeTab === 'store' ? 'customization' : 'store');
-      });
-
-      document.getElementById('toggle-hud-btn').addEventListener('click', () => {
-        state.hudHidden = true;
-        document.body.classList.add('hud-hidden');
-      });
-
-      document.getElementById('restore-hud-btn').addEventListener('click', () => {
-        state.hudHidden = false;
-        document.body.classList.remove('hud-hidden');
-      });
-
-      // =====================================================================
-      // 10. كانفاس الجزيئات الحيوية المتحركة في الخلفية
-      // =====================================================================
-      const canvas = document.getElementById('bio-particles-canvas');
-      const ctx = canvas.getContext('2d');
-      let particles = [];
-
-      function resizeParticlesCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-      }
-
-      function initParticles() {
-        const count = Math.min(65, Math.floor((window.innerWidth * window.innerHeight) / 24000));
-        particles = Array.from({ length: count }, () => ({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          r: Math.random() * 2.2 + 0.7,
-          vx: (Math.random() - 0.5) * 0.35,
-          vy: -(Math.random() * 0.45 + 0.12),
-          alpha: Math.random() * 0.55 + 0.2
-        }));
-      }
-
-      function animateParticles() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const activeWorld = worlds.find((w) => w.id === state.currentWorldId) || worlds[0];
-        const rgb = activeWorld.particleColor;
-
-        for (const p of particles) {
-          p.x += p.vx;
-          p.y += p.vy;
-
-          if (p.y < -10) {
-            p.y = canvas.height + 10;
-            p.x = Math.random() * canvas.width;
-          }
-          if (p.x < -10) p.x = canvas.width + 10;
-          if (p.x > canvas.width + 10) p.x = -10;
-
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(${rgb}, ${p.alpha})`;
-          ctx.fill();
-        }
-
-        requestAnimationFrame(animateParticles);
-      }
-
-      window.addEventListener('resize', () => {
-        resizeParticlesCanvas();
-        initParticles();
-      });
-
-      // =====================================================================
-      // 11. التهيئة الأولية
-      // =====================================================================
-      resizeParticlesCanvas();
-      initParticles();
-      animateParticles();
-
-      updateTopHud();
-      updateExplorerRig();
-      switchTab('customization');
-    })();
-  </script>
+    <!-- الدخول إلى منطق اللعبة الرئيسي -->
+    <script type="module" src="game.js"></script>
 </body>
 </html>
