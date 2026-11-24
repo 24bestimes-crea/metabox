@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Metaverse World - Step 1</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { overflow: hidden; font-family: 'Segoe UI', sans-serif; }
+
+  /* ===== شاشة الدخول ===== */
+  #login-screen {
+    position: fixed; inset: 0; z-index: 9999;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    color: white; transition: opacity 0.6s ease;
+  }
+  #login-screen h1 {
+    font-size: 2.2rem; margin-bottom: 0.5rem;
+    background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  #login-screen p { color: #8899aa; margin-bottom: 2rem; font-size: 0.9rem; }
+  .btn {
+    padding: 14px 40px; margin: 8px; border: none; border-radius: 12px;
+    font-size: 1rem; font-weight: 600; cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    width: 280px;
+  }
+  .btn:hover { transform: scale(1.03); }
+  .btn-google {
+    background: #4285f4; color: white;
+    box-shadow: 0 4px 15px rgba(66,133,244,0.4);
+  }
+  .btn-guest {
+    background: transparent; color: #00d2ff;
+    border: 2px solid #00d2ff;
+  }
+  .btn-guest:hover { background: rgba(0,210,255,0.1); }
+
+  /* ===== شاشة العالم ===== */
+  #world-screen {
+    display: none; position: fixed; inset: 0;
+    background: #000;
+  }
+  #canvas-container { width: 100%; height: 100%; display: block; }
+
+  /* ===== HUD ===== */
+  #hud {
+    position: absolute; top: 16px; left: 16px;
+    color: white; background: rgba(0,0,0,0.5);
+    padding: 8px 16px; border-radius: 8px;
+    font-size: 0.85rem; pointer-events: none;
+    backdrop-filter: blur(4px);
+  }
+  #hud .name { color: #00d2ff; font-weight: 600; }
+
+  /* ===== زر الخروج ===== */
+  #btn-logout {
+    position: absolute; top: 16px; right: 16px;
+    padding: 8px 20px; border: none; border-radius: 8px;
+    background: rgba(255,60,60,0.8); color: white;
+    cursor: pointer; font-size: 0.85rem;
+    backdrop-filter: blur(4px);
+  }
+  #btn-logout:hover { background: rgba(255,60,60,1); }
+
+  /* ===== عصا التحكم للهاتف (تظهر لاحقاً) ===== */
+  #joystick-zone {
+    display: none; position: absolute; bottom: 30px; left: 30px;
+    width: 120px; height: 120px; border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    border: 2px solid rgba(255,255,255,0.3);
+  }
+  #joystick-knob {
+    position: absolute; top: 50%; left: 50%;
+    width: 50px; height: 50px; border-radius: 50%;
+    background: rgba(0,210,255,0.6);
+    transform: translate(-50%, -50%);
+    transition: transform 0.05s;
+  }
+
+  @media (pointer: coarse) {
+    #joystick-zone { display: block; }
+    #hud { font-size: 0.75rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== شاشة الدخول ===== -->
+<div id="login-screen">
+  <h1>🌍 Metaverse World</h1>
+  <p>عالم افتراضي يجمع Roblox و Minecraft و ARK</p>
+  <button id="btn-google" class="btn btn-google">تسجيل الدخول بـ Google</button>
+  <button id="btn-guest" class="btn btn-guest">دخول تجريبي</button>
+</div>
+
+<!-- ===== شاشة العالم ===== -->
+<div id="world-screen">
+  <div id="canvas-container"></div>
+  <div id="hud">مرحباً، <span class="name" id="player-name">لاعب</span> | WASD للحركة | انقر لتدوير الكاميرا</div>
+  <button id="btn-logout">خروج</button>
+  <div id="joystick-zone"><div id="joystick-knob"></div></div>
+</div>
+
+<!-- ===== Three.js ===== -->
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<!-- ===== Firebase ===== -->
+<script type="module">
+import * as THREE from 'three';
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut }
+  from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+// ⚠️⚠️⚠️ إعدادات Firebase الخاصة بك (التي نسختها من لوحة التحكم) ⚠️⚠️⚠️
+const firebaseConfig = {
+  apiKey: "AIzaSyAQposIwGN_F9EbUqpxarN7guZ_IaZjvOQ",
+  authDomain: "metaverse-metabox.firebaseapp.com",
+  projectId: "metaverse-metabox",
+  storageBucket: "metaverse-metabox.firebasestorage.app",
+  messagingSenderId: "509642391976",
+  appId: "1:509642391976:web:93746bbba00ad47bcb5d9d"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+// ===== عناصر DOM =====
+const loginScreen = document.getElementById('login-screen');
+const worldScreen = document.getElementById('world-screen');
+const playerNameEl = document.getElementById('player-name');
+const btnLogout = document.getElementById('btn-logout');
+
+// ===== متغيرات عامة =====
+let currentUser = null;
+let scene, camera, renderer, player, clock;
+let keys = {};
+let yaw = 0, pitch = 0;
+let isLocked = false;
+let joystickActive = false, joystickX = 0, joystickY = 0;
+
+// ===== تسجيل الدخول =====
+document.getElementById('btn-google').addEventListener('click', async () => {
+  const provider = new GoogleAuthProvider();
+  try {
+    await signInWithPopup(auth, provider);
+  } catch (e) {
+    console.error(e);
+    alert('فشل تسجيل الدخول: ' + e.message);
+  }
+});
+
+document.getElementById('btn-guest').addEventListener('click', () => {
+  enterWorld({ displayName: 'لاعب زائر', isGuest: true, uid: 'guest_' + Date.now() });
+});
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    enterWorld(user);
+  }
+});
+
+btnLogout.addEventListener('click', () => {
+  if (currentUser && !currentUser.isGuest) {
+    signOut(auth);
+  }
+  exitWorld();
+});
+
+// ===== دخول / خروج العالم =====
+function enterWorld(user) {
+  currentUser = user;
+  const name = user.displayName || (user.email ? user.email.split('@')[0] : 'لاعب');
+  playerNameEl.textContent = name;
+  loginScreen.style.opacity = '0';
+  setTimeout(() => {
+    loginScreen.style.display = 'none';
+    worldScreen.style.display = 'block';
+    initWorld();
+  }, 600);
+}
+
+function exitWorld() {
+  if (renderer) {
+    renderer.dispose();
+    renderer = null;
+  }
+  scene = null;
+  camera = null;
+  player = null;
+  keys = {};
+  worldScreen.style.display = 'none';
+  loginScreen.style.display = 'flex';
+  loginScreen.style.opacity = '1';
+  currentUser = null;
+}
+
+// ===== المشهد ثلاثي الأبعاد =====
+function initWorld() {
+  // --- Scene ---
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x87CEEB);
+  scene.fog = new THREE.Fog(0x87CEEB, 30, 80);
+
+  // --- Camera ---
+  camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 200);
+  camera.position.set(0, 3, 8);
+
+  // --- Renderer ---
+  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.shadowMap.enabled = true;
+  document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+  // --- الإضاءة ---
+  // ضوء الشمس (اتجاهي مع ظلال)
+  const sunLight = new THREE.DirectionalLight(0xffffff, 2);
+  sunLight.position.set(20, 40, 20);
+  sunLight.castShadow = true;
+  sunLight.shadow.mapSize.width = 2048;
+  sunLight.shadow.mapSize.height = 2048;
+  sunLight.shadow.camera.left = -40;
+  sunLight.shadow.camera.right = 40;
+  sunLight.shadow.camera.top = 40;
+  sunLight.shadow.camera.bottom = -40;
+  scene.add(sunLight);
+
+  // ضوء محيط
+  scene.add(new THREE.AmbientLight(0x404060, 1.5));
+
+  // --- الأرضية ---
+  const groundGeo = new THREE.PlaneGeometry(100, 100);
+  const groundMat = new THREE.MeshStandardMaterial({
+    color: 0x3a7d44,
+    roughness: 0.8,
+    metalness: 0.1
+  });
+  const ground = new THREE.Mesh(groundGeo, groundMat);
+  ground.rotation.x = -Math.PI / 2;
+  ground.receiveShadow = true;
+  scene.add(ground);
+
+  // شبكة خفيفة لإظهار الحركة
+  const grid = new THREE.GridHelper(100, 50, 0x2d5a3a, 0x2d5a3a);
+  grid.position.y = 0.01;
+  scene.add(grid);
+
+  // --- الشخصية (بديل مؤقت - capsule) ---
+  const playerGeo = new THREE.CapsuleGeometry(0.4, 1, 8, 16);
+  const playerMat = new THREE.MeshStandardMaterial({ color: 0x4a90d9 });
+  player = new THREE.Mesh(playerGeo, playerMat);
+  player.position.set(0, 1, 0);
+  player.castShadow = true;
+  scene.add(player);
+
+  // --- بعض الصناديق للتجربة ---
+  for (let i = 0; i < 10; i++) {
+    const size = 0.5 + Math.random() * 1.5;
+    const box = new THREE.Mesh(
+      new THREE.BoxGeometry(size, size, size),
+      new THREE.MeshStandardMaterial({ color: Math.random() * 0xffffff })
+    );
+    box.position.set(
+      (Math.random() - 0.5) * 30,
+      size / 2,
+      (Math.random() - 0.5) * 30
+    );
+    box.castShadow = true;
+    box.receiveShadow = true;
+    scene.add(box);
+  }
+
+  // --- الساعة ---
+  clock = new THREE.Clock();
+
+  // --- أحداث الإدخال ---
+  setupInput();
+
+  // --- بدء الحلقة ---
+  animate();
+}
+
+// ===== التحكم بالإدخال =====
+function setupInput() {
+  // لوحة المفاتيح
+  document.addEventListener('keydown', (e) => {
+    keys[e.code] = true;
+  });
+  document.addEventListener('keyup', (e) => {
+    keys[e.code] = false;
+  });
+  window.addEventListener('blur', () => { keys = {}; });
+
+  // الماوس - قفل المؤشر
+  renderer.domElement.addEventListener('click', () => {
+    if (!isLocked) {
+      renderer.domElement.requestPointerLock();
+    }
+  });
+
+  document.addEventListener('pointerlockchange', () => {
+    isLocked = document.pointerLockElement === renderer.domElement;
+  });
+
+  // حركة الماوس (للكاميرا)
+  document.addEventListener('mousemove', (e) => {
+    if (!isLocked) return;
+    const sensitivity = 0.002;
+    yaw -= e.movementX * sensitivity;
+    pitch -= e.movementY * sensitivity;
+    pitch = Math.max(-1.4, Math.min(1.4, pitch));
+  });
+
+  // حجم النافذة
+  window.addEventListener('resize', () => {
+    if (!camera || !renderer) return;
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+
+  // --- عصا التحكم للهاتف ---
+  const zone = document.getElementById('joystick-zone');
+  const knob = document.getElementById('joystick-knob');
+  const maxDist = 40;
+
+  zone.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    joystickActive = true;
+  }, { passive: false });
+
+  zone.addEventListener('touchmove', (e) => {
+    if (!joystickActive) return;
+    e.preventDefault();
+    const rect = zone.getBoundingClientRect();
+    const touch = e.touches[0];
+    let dx = touch.clientX - (rect.left + rect.width / 2);
+    let dy = touch.clientY - (rect.top + rect.height / 2);
+    const dist = Math.hypot(dx, dy);
+    if (dist > maxDist) {
+      dx = (dx / dist) * maxDist;
+      dy = (dy / dist) * maxDist;
+    }
+    knob.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+    joystickX = dx / maxDist;
+    joystickY = dy / maxDist;
+  }, { passive: false });
+
+  const endTouch = (e) => {
+    e.preventDefault();
+    joystickActive = false;
+    joystickX = 0;
+    joystickY = 0;
+    knob.style.transform = 'translate(-50%, -50%)';
+  };
+
+  zone.addEventListener('touchend', endTouch);
+  zone.addEventListener('touchcancel', endTouch);
+}
+
+// ===== حلقة الرسم =====
+function animate() {
+  if (!renderer) return;
+  requestAnimationFrame(animate);
+
+  const dt = Math.min(clock.getDelta(), 0.05);
+
+  // --- حركة اللاعب ---
+  const speed = 6;
+  let moveX = 0, moveZ = 0;
+
+  // WASD (حاسوب)
+  if (keys['KeyW'] || keys['ArrowUp']) moveZ -= 1;
+  if (keys['KeyS'] || keys['ArrowDown']) moveZ += 1;
+  if (keys['KeyA'] || keys['ArrowLeft']) moveX -= 1;
+  if (keys['KeyD'] || keys['ArrowRight']) moveX += 1;
+
+  // Joystick (هاتف)
+  if (joystickActive) {
+    moveX += joystickX;
+    moveZ += joystickY;
+  }
+
+  // تطبيع الحركة
+  const len = Math.hypot(moveX, moveZ);
+  if (len > 0) {
+    moveX /= len;
+    moveZ /= len;
+
+    // تحويل الحركة حسب اتجاه الكاميرا (yaw)
+    const s = Math.sin(yaw);
+    const c = Math.cos(yaw);
+    const worldX = moveX * c - moveZ * s;
+    const worldZ = moveX * s + moveZ * c;
+
+    player.position.x += worldX * speed * dt;
+    player.position.z += worldZ * speed * dt;
+
+    // حدود العالم
+    player.position.x = Math.max(-45, Math.min(45, player.position.x));
+    player.position.z = Math.max(-45, Math.min(45, player.position.z));
+
+    // دوران الشخصية نحو اتجاه الحركة
+    const targetAngle = Math.atan2(worldX, worldZ);
+    player.rotation.y = THREE.MathUtils.lerp(player.rotation.y, targetAngle, 0.2);
+  }
+
+  // --- الكاميرا (شخص ثالث) ---
+  const camDist = 7;
+  const camHeight = 3.5;
+  const camX = player.position.x + Math.sin(yaw) * camDist;
+  const camZ = player.position.z + Math.cos(yaw) * camDist;
+  const camY = player.position.y + camHeight + Math.sin(pitch) * 3;
+
+  camera.position.lerp(new THREE.Vector3(camX, camY, camZ), 0.15);
+  camera.lookAt(player.position.x, player.position.y + 1.2, player.position.z);
+
+  renderer.render(scene, camera);
+}
+</script>
+</body>
+</html>
