@@ -1,1689 +1,944 @@
-أهلاً بك! قمت بإضافة مجموعة ألعاب جديدة ومتنوعة وتجهيز سيناريو مرحلي متكامل لكل لعبة بحيث يستغرق إنهاء اللعبة حوالي 10 دقائق للاعب الذكي وسريع الفهم (عبر مراحل/أهداف واضحة وتدرج منطقي في التحدي دون تعقيد عشوائي).
-كيف تم ضبط مدة الإنهاء لتكون ~10 دقائق للاعب الذكي؟
- * هيكل سيناريو من 3 فصول/مراحل مترابطة داخل كل لعبة (مثلاً: الفصل 1: كشف المسار وجمع المفاتيح/العملات ◀ الفصل 2: تجاوز الفخاخ وتصفية الحراس ◀ الفصل 3: مواجهة الزعيم/الوصول إلى منصة التاج الأخيرة).
- * مؤقت جلسة مباشر (الوقت: 00:00) وأهداف واضحة في الأعلى لتعرف متى أنهيت اللعبة وحصلت على مكافأة الإتمام الكبرى (+100 عملة و+250 نقطة).
-سيناريوهات الألعاب المضافة والمطوّرة (~10 دقائق لكل لعبة)
- * King of Fight Blox (ملك القتال — Y8):
-   * السيناريو: تبدأ في الحلبة الخارجية لتدريب حركتك وهجومك (F) وإسقاط الحراس الأولين وجمع عملات الحلبة. في منتصف الجلسة تنفتح المواجهة المركزية مع حراس أسرع وفخاخ منتصف الحلبة، ثم تظهر موجة الزعيم النهائي؛ إن فهمت توقيت الهجوم والمراوغة بالقفز المزدوج (Space) ستنهي الجولة وتظفر بلقب الملك خلال ~10 دقائق.
- * Minecraft Realistic Blox (كهوف وممرات التلال — FrivMax):
-   * السيناريو: تنطلق من السطح العشبي بين الأشجار لجمع العملات السطحية وبناء مكعبات (B) للوصول إلى التلال المرتفعة. بعدها تنزل إلى الممرات الحجرية تحت التلال لتجاوز فخ الممر وجمع كنز الكهف، ثم تصعد للقمة لتصفية حراس القمة وإنهاء سيناريو الاستكشاف في ~10 دقائق.
- * Fireboy & Watergirl Blox (توأم العناصر — Friv):
-   * السيناريو: سيناريو منصات يعتمد على قراءة إيقاع القفزات والمنصات المتدرجة وجمع عملات المسار العلوي والسفلي دون السقوط في الفخاخ، وصولاً إلى المنصة الذهبية النهائية وتصفية حراسها خلال ~10 دقائق.
- * Slope 3D Blocky (منحدر السرعة — Y8):
-   * السيناريو: تحدٍ يعتمد على رد الفعل السريع وتوجيه الكاميرا والحركة (WASD) لتفادي الفخاخ على المنحدرات والمنصات المعلقة وجمع العملات عالية القيمة وصولاً إلى منصة النهاية وتجاوز موجات الحراس في ~10 دقائق.
- * Tank Fury Y8 Blox (غضب الدبابات — Y8):
-   * السيناريو: استخدام السواتر المكعبة للاختباء من مطاردة الأعداء، ثم الانقضاض بهجوم (F) وبناء مكعبات دفاعية (B) عند الحاجة حتى إنهاء موجات ساحة القتال خلال ~10 دقائق.
- * Zombie Survival Y8 Blox (نجاة الزومبي — Y8):
-   * السيناريو: إدارة صحتك واستغلال ترقية التجدد والقفز المزدوج للهروب من الحشود وتفريغ ضرباتك على الأعداء المتقدمين عبر موجات متصاعدة حتى إتمام سيناريو النجاة في ~10 دقائق.
- * FrivMax Gold Miner Blox (منقّب الذهب — FrivMax):
-   * السيناريو: مسح المنصات الجانبية والعلوية لجمع أكبر قدر من العملات الذهبية وتوظيفها فوراً في بناء جسور/مكعبات (B) وتصفية حراس الكنز لإنهاء المهمة في ~10 دقائق.
- * FrivMax Mega Parkour (باركور التحدي — FrivMax):
-   * السيناريو: سلسلة قفزات مزدوجة دقيقة بين المنصات المرتفعة مع تجنب الفخاخ وهزيمة حراس نهاية المضمار لإتمام السباق في ~10 دقائق.
-الكود الكامل وجاهز للتشغيل
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>BloxHub Pro - 10-Min Scenario Games & Full Icons</title>
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
-  html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Segoe UI', Tahoma, sans-serif; background: #18191b; color: #ffffff; }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StreamFlix + Firebase — أفلام، مسلسلات، وأنمي</title>
+  <style>
+    :root {
+      --bg: #141414;
+      --bg-elev: #1f1f1f;
+      --bg-card: #242424;
+      --text: #ffffff;
+      --muted: #b3b3b3;
+      --red: #e50914;
+      --accent: #38bdf8;
+      --green: #10b981;
+      --radius: 7px;
+    }
 
-  /* ═══════════════════════════════════════════════════════
-     HOME SCREEN + ANIMATED GEOMETRIC BG
-     ═══════════════════════════════════════════════════════ */
-  #home-screen {
-    position: fixed; inset: 0; display: flex; flex-direction: column;
-    background: radial-gradient(circle at 20% 15%, rgba(37, 99, 235, 0.16), transparent 45%),
-                radial-gradient(circle at 85% 75%, rgba(139, 92, 246, 0.14), transparent 50%),
-                #18191b;
-    z-index: 30; transition: opacity 0.25s ease;
-  }
-  #home-screen.hidden { opacity: 0; pointer-events: none; visibility: hidden; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  #bg-shapes-layer {
-    position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
-  }
-  #bg-3d-canvas, #bg-2d-canvas {
-    position: absolute; inset: 0; width: 100%; height: 100%; display: block;
-  }
-  #bg-2d-canvas { opacity: 0.55; }
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
 
-  .top-nav {
-    position: relative; z-index: 2;
-    height: 52px; background: rgba(35, 37, 39, 0.9); backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 18px; gap: 14px; flex-shrink: 0;
-  }
-  .nav-left { display: flex; align-items: center; gap: 16px; }
-  .brand-logo {
-    width: 28px; height: 28px; border-radius: 6px; border: 3px solid #fff;
-    display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.78rem;
-    cursor: pointer;
-  }
-  .nav-title { font-size: 1.05rem; font-weight: 700; color: #fff; cursor: pointer; }
-  .search-wrap {
-    flex: 1; max-width: 440px; position: relative; display: flex; align-items: center;
-  }
-  .search-wrap input {
-    width: 100%; height: 34px; border-radius: 8px;
-    border: 1px solid rgba(255,255,255,0.14); background: rgba(20, 21, 23, 0.92);
-    color: #fff; padding: 0 34px 0 12px; font-size: 0.85rem; outline: none;
-    transition: border-color 0.2s;
-  }
-  .search-wrap input:focus { border-color: #38bdf8; }
-  .search-icon { position: absolute; right: 10px; color: #9ca3af; font-size: 0.85rem; pointer-events: none; }
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 4%;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.92), rgba(0,0,0,0));
+      transition: background-color 0.25s ease;
+      flex-wrap: wrap;
+    }
 
-  .nav-right { display: flex; align-items: center; gap: 10px; }
-  .hud-chip {
-    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 999px; padding: 5px 12px; font-size: 0.8rem; font-weight: 700;
-    display: flex; align-items: center; gap: 6px; cursor: pointer; transition: background 0.15s;
-  }
-  .hud-chip:hover { background: rgba(255,255,255,0.16); }
-  .hud-chip .coin-dot {
-    width: 15px; height: 15px; border-radius: 50%; background: #facc15; color: #111827;
-    display: inline-flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 900;
-  }
+    header.scrolled {
+      background: rgba(20, 20, 20, 0.97);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.55);
+    }
 
-  .home-body { position: relative; z-index: 2; flex: 1; display: flex; overflow: hidden; }
+    .brand {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--red);
+      text-decoration: none;
+    }
 
-  .side-rail {
-    width: 56px; background: rgba(30, 32, 34, 0.9); backdrop-filter: blur(10px);
-    border-left: 1px solid rgba(255,255,255,0.06);
-    display: flex; flex-direction: column; align-items: center; padding: 14px 0; gap: 16px;
-    flex-shrink: 0;
-  }
-  .rail-btn {
-    width: 38px; height: 38px; border-radius: 10px; border: none;
-    background: transparent; color: #d1d5db; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; font-size: 1.05rem;
-    transition: background 0.15s, color 0.15s, transform 0.15s;
-  }
-  .rail-btn:hover, .rail-btn.active { background: rgba(255,255,255,0.14); color: #fff; transform: scale(1.05); }
-  .rail-avatar {
-    width: 34px; height: 34px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.28);
-    background: linear-gradient(135deg, #38bdf8, #2563eb);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.72rem; font-weight: 800; color: #fff; cursor: pointer;
-    transition: transform 0.15s, box-shadow 0.15s;
-  }
-  .rail-avatar:hover { transform: scale(1.08); box-shadow: 0 0 12px rgba(56,189,248,0.5); }
+    .nav-tabs, .controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
 
-  .feed-scroll {
-    flex: 1; overflow-y: auto; padding: 20px 26px 56px;
-    display: flex; flex-direction: column; gap: 26px;
-  }
-  .user-greeting {
-    display: flex; align-items: center; gap: 12px; cursor: pointer;
-    width: fit-content; padding: 6px 12px 6px 8px; border-radius: 14px;
-    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
-    transition: background 0.15s;
-  }
-  .user-greeting:hover { background: rgba(255,255,255,0.09); }
-  .user-greeting .mini-p {
-    width: 40px; height: 40px; border-radius: 50%;
-    background: linear-gradient(135deg, #ef4444, #f59e0b);
-    display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem;
-    border: 2px solid rgba(255,255,255,0.22);
-  }
-  .user-greeting h2 { font-size: 1.32rem; font-weight: 800; }
-  .user-greeting small { color: #9ca3af; font-size: 0.74rem; }
+    .tab-btn {
+      background: rgba(255,255,255,0.08);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 999px;
+      padding: 6px 13px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
 
-  .section-block h3 {
-    font-size: 1.08rem; font-weight: 700; margin-bottom: 12px;
-    display: flex; align-items: center; gap: 6px; color: #f3f4f6;
-  }
-  .section-block h3 span.arrow { color: #9ca3af; font-size: 0.9rem; }
+    .tab-btn.active { background: var(--red); border-color: var(--red); }
 
-  .friends-row {
-    display: flex; gap: 16px; overflow-x: auto; padding-bottom: 6px;
-    scrollbar-width: thin;
-  }
-  .friend-card {
-    width: 78px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 6px;
-    cursor: pointer; transition: transform 0.15s;
-  }
-  .friend-card:hover { transform: translateY(-2px); }
-  .friend-pic-wrap { position: relative; width: 64px; height: 64px; }
-  .friend-pic {
-    width: 64px; height: 64px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 800; font-size: 1rem; color: #fff;
-    border: 2px solid rgba(255,255,255,0.14);
-  }
-  .friend-add {
-    width: 64px; height: 64px; border-radius: 50%;
-    background: rgba(43, 45, 48, 0.92); border: 2px solid rgba(255,255,255,0.18);
-    display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #e5e7eb;
-  }
-  .status-dot {
-    position: absolute; bottom: 1px; right: 1px; width: 15px; height: 15px;
-    border-radius: 50%; border: 2.5px solid #18191b;
-  }
-  .status-online { background: #22c55e; }
-  .status-studio { background: #38bdf8; }
-  .friend-name {
-    font-size: 0.72rem; color: #e5e7eb; text-align: center;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 78px;
-  }
-  .friend-sub {
-    font-size: 0.66rem; color: #9ca3af; text-align: center;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 78px; margin-top: -4px;
-  }
+    .controls input,
+    .controls select,
+    .modal select,
+    .modal input,
+    .modal textarea {
+      background: #121212;
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: var(--radius);
+      padding: 7px 11px;
+      font-size: 0.86rem;
+      outline: none;
+      font-family: inherit;
+    }
 
-  .games-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(156px, 1fr)); gap: 16px;
-  }
-  .game-tile {
-    cursor: pointer; display: flex; flex-direction: column; gap: 7px;
-    transition: transform 0.16s ease;
-  }
-  .game-tile:hover { transform: translateY(-4px); }
-  .thumb-box {
-    aspect-ratio: 1 / 1; border-radius: 12px; overflow: hidden;
-    position: relative; background: #26282c;
-    border: 1px solid rgba(255,255,255,0.1);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.38);
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    padding: 10px; text-align: center;
-  }
-  .thumb-badge {
-    position: absolute; top: 8px; left: 8px;
-    font-size: 0.62rem; font-weight: 800; padding: 2px 7px; border-radius: 5px;
-    background: rgba(0,0,0,0.65); color: #fff; letter-spacing: 0.3px;
-  }
-  .thumb-badge.new { background: #22c55e; color: #052e16; }
-  .thumb-badge.hot { background: #ef4444; color: #fff; }
-  .thumb-badge.y8 { background: #38bdf8; color: #082f49; }
-  .thumb-badge.friv { background: #facc15; color: #1c1917; }
-  .thumb-art {
-    font-size: 0.98rem; font-weight: 900; line-height: 1.25;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.65);
-  }
-  .thumb-sub { font-size: 0.64rem; opacity: 0.92; margin-top: 5px; font-weight: 700; }
-  .game-title {
-    font-size: 0.84rem; font-weight: 700; color: #f9fafb;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .game-meta {
-    display: flex; align-items: center; gap: 10px; font-size: 0.72rem; color: #9ca3af; font-weight: 600;
-  }
-  .game-meta .like { color: #d1d5db; }
+    .status-bar {
+      margin-top: 66px;
+      padding: 8px 4%;
+      background: #1b1b1b;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-size: 0.84rem;
+      color: var(--muted);
+    }
 
-  /* ═══════════════════════════════════════════════════════
-     MODAL DIALOGS
-     ═══════════════════════════════════════════════════════ */
-  #modal-backdrop {
-    position: fixed; inset: 0; background: rgba(0, 0, 0, 0.72); backdrop-filter: blur(6px);
-    display: none; align-items: center; justify-content: center; z-index: 50; padding: 16px;
-  }
-  #modal-backdrop.open { display: flex; }
-  .modal-card {
-    width: 100%; max-width: 460px; background: #232528;
-    border: 1px solid rgba(255,255,255,0.14); border-radius: 16px;
-    padding: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.55);
-    display: flex; flex-direction: column; gap: 14px; max-height: 86vh; overflow-y: auto;
-  }
-  .modal-head {
-    display: flex; align-items: center; justify-content: space-between;
-    border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 10px;
-  }
-  .modal-head h3 { font-size: 1.05rem; font-weight: 800; }
-  .modal-close {
-    width: 30px; height: 30px; border-radius: 8px; border: none;
-    background: rgba(255,255,255,0.08); color: #fff; font-weight: 800; cursor: pointer;
-  }
-  .modal-input {
-    width: 100%; height: 38px; border-radius: 10px; padding: 0 12px;
-    border: 1px solid rgba(255,255,255,0.16); background: #141517; color: #fff;
-    font-size: 0.88rem; outline: none;
-  }
-  .modal-input:focus { border-color: #38bdf8; }
-  .color-swatches { display: flex; gap: 10px; flex-wrap: wrap; }
-  .swatch-btn {
-    width: 32px; height: 32px; border-radius: 50%; border: 2px solid transparent;
-    cursor: pointer; transition: transform 0.15s;
-  }
-  .swatch-btn.selected { border-color: #fff; transform: scale(1.15); }
-  .stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-  .stat-box {
-    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 10px; padding: 10px; text-align: center;
-  }
-  .stat-box strong { display: block; font-size: 1.05rem; color: #38bdf8; }
-  .stat-box span { font-size: 0.72rem; color: #9ca3af; }
-  .upgrade-item {
-    display: flex; align-items: center; justify-content: space-between; gap: 10px;
-    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 10px; padding: 10px 12px;
-  }
-  .m-btn {
-    border: none; border-radius: 9px; padding: 9px 14px; font-weight: 700;
-    font-size: 0.84rem; cursor: pointer; color: #fff; background: #2563eb;
-    transition: background 0.15s, transform 0.15s;
-  }
-  .m-btn:hover { background: #1d4ed8; transform: translateY(-1px); }
-  .m-btn.gold { background: #eab308; color: #111827; }
-  .m-btn.green { background: #10b981; color: #052e16; }
+    .hero {
+      position: relative;
+      min-height: 62vh;
+      display: flex;
+      align-items: flex-end;
+      padding: 40px 4% 52px;
+      background-size: cover;
+      background-position: center;
+    }
 
-  /* ═══════════════════════════════════════════════════════
-     3D WORLD VIEWPORT & IN-GAME HUD
-     ═══════════════════════════════════════════════════════ */
-  #world-view { position: fixed; inset: 0; display: none; z-index: 10; }
-  #world-view.active { display: block; }
-  #world-canvas { width: 100%; height: 100%; display: block; touch-action: none; }
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to top, var(--bg) 6%, rgba(20,20,20,0.35) 55%, rgba(20,20,20,0.65) 100%),
+        linear-gradient(to left, rgba(20,20,20,0.85) 0%, rgba(20,20,20,0.15) 65%);
+    }
 
-  .in-game-bar {
-    position: fixed; top: 14px; left: 14px; right: 14px;
-    display: flex; justify-content: space-between; align-items: center;
-    gap: 10px; z-index: 20; pointer-events: none; flex-wrap: wrap;
-  }
-  .ig-pill {
-    background: rgba(15, 23, 42, 0.86); backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.14); border-radius: 999px;
-    padding: 8px 15px; font-size: 0.78rem; font-weight: 700;
-    display: flex; align-items: center; gap: 11px; pointer-events: auto; flex-wrap: wrap;
-  }
-  .hp-mini {
-    width: 70px; height: 8px; background: rgba(255,255,255,0.16); border-radius: 6px; overflow: hidden;
-    display: inline-block; vertical-align: middle;
-  }
-  .hp-mini > i { display: block; height: 100%; width: 100%; background: linear-gradient(90deg,#ef4444,#f87171); transition: width 0.2s; }
+    .hero-content { position: relative; z-index: 2; max-width: 600px; }
 
-  .ig-btn {
-    border: none; border-radius: 10px; padding: 9px 13px;
-    font-weight: 700; font-size: 0.8rem; cursor: pointer; color: #fff;
-    background: rgba(30, 41, 59, 0.9); border: 1px solid rgba(255,255,255,0.16);
-    pointer-events: auto; transition: transform 0.15s, background 0.15s;
-  }
-  .ig-btn:hover { transform: translateY(-2px); background: rgba(51, 65, 85, 0.95); }
-  .ig-btn.atk-btn { background: linear-gradient(135deg, #dc2626, #b91c1c); }
-  .ig-btn.home-btn { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
+    .hero-badge {
+      display: inline-block;
+      background: var(--red);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
 
-  .ig-help {
-    position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
-    background: rgba(15, 23, 42, 0.82); border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 12px; padding: 7px 15px; font-size: 0.74rem; color: #e2e8f0;
-    pointer-events: none; z-index: 18; white-space: nowrap; max-width: 94vw; overflow: hidden; text-overflow: ellipsis;
-  }
+    .hero h1 { font-size: clamp(1.8rem, 4vw, 3rem); line-height: 1.15; margin-bottom: 12px; }
+    .hero p { color: #e5e5e5; font-size: 0.96rem; line-height: 1.6; margin-bottom: 18px; }
 
-  #toast {
-    position: fixed; top: 68px; left: 50%; transform: translateX(-50%);
-    background: #10b981; color: #fff; padding: 8px 18px; border-radius: 10px;
-    font-size: 0.84rem; font-weight: 700; opacity: 0; pointer-events: none;
-    transition: opacity 0.25s; z-index: 60;
-  }
-  #toast.show { opacity: 1; }
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
 
-  #joy-zone {
-    display: none; position: fixed; bottom: 26px; left: 26px;
-    width: 116px; height: 116px; border-radius: 50%;
-    background: rgba(255,255,255,0.08); border: 2px solid rgba(255,255,255,0.25); z-index: 25;
-  }
-  #joy-knob {
-    position: absolute; top: 50%; left: 50%; width: 46px; height: 46px;
-    border-radius: 50%; background: #38bdf8; transform: translate(-50%, -50%); pointer-events: none;
-  }
-  .mob-actions {
-    display: none; position: fixed; bottom: 32px; right: 26px;
-    gap: 10px; flex-direction: column; z-index: 25;
-  }
-  .m-act-btn {
-    width: 64px; height: 64px; border-radius: 50%; border: none;
-    color: #fff; font-weight: 800; font-size: 0.78rem; cursor: pointer;
-    box-shadow: 0 8px 18px rgba(0,0,0,0.4);
-  }
-  #mob-jump { background: linear-gradient(135deg, #2563eb, #0284c7); }
-  #mob-atk { background: linear-gradient(135deg, #ef4444, #b91c1c); }
-  @media (pointer: coarse) {
-    #joy-zone, .mob-actions { display: flex; }
-    .ig-help { display: none; }
-  }
-</style>
+    .btn {
+      border: none;
+      border-radius: var(--radius);
+      padding: 9px 18px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-play { background: #fff; color: #000; }
+    .btn-secondary { background: rgba(109, 109, 110, 0.72); color: #fff; }
+    .btn-accent { background: var(--accent); color: #07131d; }
+    .btn-green { background: var(--green); color: #052e16; }
+    .btn-red { background: var(--red); color: #fff; }
+
+    main { padding: 14px 4% 64px; }
+    .section { margin-bottom: 32px; }
+    .section-title { font-size: 1.18rem; font-weight: 800; margin-bottom: 14px; }
+
+    .row-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--bg-elev);
+      border-radius: var(--radius);
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .card:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 12px 26px rgba(0,0,0,0.65); }
+    .card img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; display: block; }
+    .card-body { padding: 10px 12px 12px; }
+    .card-title { font-size: 0.95rem; font-weight: 700; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .card-meta { font-size: 0.75rem; color: var(--muted); display: flex; justify-content: space-between; align-items: center; }
+
+    .type-pill {
+      background: rgba(56, 189, 248, 0.16);
+      color: var(--accent);
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 0.7rem;
+    }
+
+    .empty-msg { color: var(--muted); font-size: 0.92rem; padding: 10px 0; }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.86);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 100;
+    }
+
+    .modal-backdrop.open { display: flex; }
+
+    .modal {
+      width: 100%;
+      max-width: 900px;
+      max-height: 92vh;
+      overflow-y: auto;
+      background: #181818;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.14);
+    }
+
+    .modal-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 18px;
+      background: #111;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .close-btn { background: transparent; color: #fff; border: none; font-size: 1.4rem; cursor: pointer; }
+    video { width: 100%; max-height: 55vh; background: #000; display: block; }
+
+    /* Auto-Next Episode Bar */
+    .next-ep-banner {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding: 12px 18px;
+      background: #232323;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .next-ep-banner.show { display: flex; }
+    .next-ep-text { font-size: 0.9rem; line-height: 1.4; }
+    .next-ep-text strong { color: #fff; }
+    .next-ep-text span { color: var(--accent); font-weight: 800; }
+
+    .modal-info { padding: 16px 18px 22px; }
+    .modal-info h3 { margin-bottom: 6px; font-size: 1.2rem; }
+    .modal-info p { color: var(--muted); font-size: 0.9rem; line-height: 1.55; margin-bottom: 14px; }
+
+    .episodes-box { margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.1); }
+    .episodes-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+    .episodes-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+
+    .ep-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius);
+      padding: 10px 12px;
+      cursor: pointer;
+    }
+
+    .ep-card.active { border-color: var(--red); background: rgba(229, 9, 20, 0.14); }
+    .ep-card strong { display: block; font-size: 0.88rem; margin-bottom: 3px; }
+    .ep-card span { font-size: 0.76rem; color: var(--muted); }
+
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+    .form-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
+    .form-field label { font-size: 0.82rem; color: var(--muted); }
+  </style>
 </head>
 <body>
+  <header id="navbar">
+    <a href="#" class="brand">STREAMFLIX</a>
 
-<!-- ═══════════════════════════════════════════════════════
-     HOME SCREEN + ANIMATED GEOMETRIC BG
-     ═══════════════════════════════════════════════════════ -->
-<div id="home-screen">
-  <div id="bg-shapes-layer">
-    <canvas id="bg-3d-canvas"></canvas>
-    <canvas id="bg-2d-canvas"></canvas>
-  </div>
+    <nav class="nav-tabs" aria-label="الأقسام">
+      <button class="tab-btn active" data-type="all">الكل</button>
+      <button class="tab-btn" data-type="movie">أفلام</button>
+      <button class="tab-btn" data-type="series">مسلسلات</button>
+      <button class="tab-btn" data-type="anime">أنمي</button>
+      <button class="tab-btn" data-type="mylist">قائمتي</button>
+    </nav>
 
-  <header class="top-nav">
-    <div class="nav-left">
-      <div class="brand-logo" id="top-logo-btn" title="BloxHub">B</div>
-      <div class="nav-title" id="top-home-btn">Home</div>
-    </div>
-    <div class="search-wrap">
-      <span class="search-icon">🔍</span>
-      <input type="text" id="search-input" placeholder="Search games & scenarios...">
-    </div>
-    <div class="nav-right">
-      <div class="hud-chip" id="top-coins-chip" title="متجر العملات والترقيات">
-        <span class="coin-dot">C</span>
-        <span id="home-coins">120</span>
-      </div>
-      <div class="hud-chip" id="top-bell-chip" title="الإشعارات">🔔</div>
-      <div class="hud-chip" id="top-profile-chip" title="الملف الشخصي">👤 <span id="top-profile-label">Blaze</span></div>
+    <div class="controls">
+      <input type="search" id="searchInput" placeholder="ابحث..." />
+      <select id="genreSelect" aria-label="التصنيف">
+        <option value="all">كل التصنيفات</option>
+        <option value="خيال علمي">خيال علمي</option>
+        <option value="مغامرة">مغامرة</option>
+        <option value="أنمي">أنمي</option>
+        <option value="أكشن">أكشن</option>
+      </select>
+      <button class="btn btn-accent" id="openAddModalBtn">+ إضافة لقاعدة البيانات</button>
     </div>
   </header>
 
-  <div class="home-body">
-    <aside class="side-rail">
-      <button class="rail-btn active" id="rail-home" title="الرئيسية">🏠</button>
-      <button class="rail-btn" id="rail-play" title="دخول سريع">▶</button>
-      <div class="rail-avatar" id="rail-user-badge" title="فتح الملف الشخصي">BL</div>
-      <button class="rail-btn" id="rail-shop" title="الترقيات والعملات">⚡</button>
-      <button class="rail-btn" id="rail-color" title="تغيير لون الشخصية">🎨</button>
-      <button class="rail-btn" id="rail-info" title="تعليمات التحكم">☰</button>
-    </aside>
+  <div class="status-bar">
+    <span id="dbStatus">حالة Firebase: جاري الاتصال بمشروع metaverse-metabox...</span>
+    <button class="btn btn-secondary" id="seedDataBtn" style="padding:5px 12px;font-size:0.78rem;">
+      تعبئة بيانات تجريبية في Firestore
+    </button>
+  </div>
 
-    <main class="feed-scroll">
-      <div class="user-greeting" id="greeting-profile-btn" title="اضغط لفتح الملف الشخصي">
-        <div class="mini-p" id="greeting-avatar">BL</div>
-        <div>
-          <h2 id="greeting-name">Blaze</h2>
-          <small>كل لعبة لها سيناريو من 3 فصول (~10 دقائق للاعب الذكي)</small>
+  <section class="hero" id="hero">
+    <div class="hero-content">
+      <span class="hero-badge" id="heroBadge">مميز اليوم</span>
+      <h1 id="heroTitle"></h1>
+      <p id="heroDesc"></p>
+      <div class="btn-row">
+        <button class="btn btn-play" id="heroPlayBtn">▶ تشغيل الآن</button>
+        <button class="btn btn-secondary" id="heroListBtn">+ قائمتي</button>
+      </div>
+    </div>
+  </section>
+
+  <main>
+    <section class="section" id="myListSection">
+      <h2 class="section-title">قائمتي</h2>
+      <div class="row-grid" id="myListGrid"></div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title" id="mainSectionTitle">المحتوى المتاح</h2>
+      <div class="row-grid" id="catalogGrid"></div>
+    </section>
+  </main>
+
+  <!-- Player Modal -->
+  <div class="modal-backdrop" id="playerModal" role="dialog" aria-modal="true">
+    <div class="modal">
+      <div class="modal-top">
+        <strong id="modalTitle">المشغّل</strong>
+        <button class="close-btn" id="closePlayerBtn" aria-label="إغلاق">✕</button>
+      </div>
+      <video id="videoPlayer" controls playsinline></video>
+
+      <!-- Auto Next Episode Countdown Banner -->
+      <div class="next-ep-banner" id="nextEpBanner">
+        <div class="next-ep-text">
+          الحلقة التالية: <strong id="nextEpName"></strong> — سيتم التشغيل خلال <span id="nextEpCountdown">5</span> ثوانٍ
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-red" id="playNextNowBtn">▶ تشغيل الآن</button>
+          <button class="btn btn-secondary" id="cancelAutoNextBtn">إلغاء</button>
         </div>
       </div>
 
-      <section class="section-block">
-        <h3>Friends (<span id="friends-count">9</span>) <span class="arrow">→</span></h3>
-        <div class="friends-row" id="friends-row"></div>
-      </section>
+      <div class="modal-info">
+        <h3 id="infoTitle"></h3>
+        <p id="infoDesc"></p>
+        <button class="btn btn-secondary" id="modalToggleListBtn"></button>
 
-      <section class="section-block">
-        <h3>Friv Classics in Roblox Style <span class="arrow">→</span></h3>
-        <div class="games-grid" id="friv-grid"></div>
-      </section>
-
-      <section class="section-block">
-        <h3>Y8 Hits in Roblox Style <span class="arrow">→</span></h3>
-        <div class="games-grid" id="y8-grid"></div>
-      </section>
-
-      <section class="section-block">
-        <h3>FrivMax.com & Arcade Blox <span class="arrow">→</span></h3>
-        <div class="games-grid" id="frivmax-grid"></div>
-      </section>
-    </main>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════
-     MODAL DIALOG
-     ═══════════════════════════════════════════════════════ -->
-<div id="modal-backdrop">
-  <div class="modal-card" id="modal-card">
-    <div class="modal-head">
-      <h3 id="modal-title">نافذة</h3>
-      <button class="modal-close" id="modal-close-btn">✕</button>
-    </div>
-    <div id="modal-body"></div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════
-     3D GAME VIEWPORT
-     ═══════════════════════════════════════════════════════ -->
-<div id="world-view">
-  <canvas id="world-canvas"></canvas>
-  <div class="in-game-bar">
-    <div class="ig-pill">
-      <span id="ig-game-name">اللعبة</span>
-      <span style="color:#34d399;" id="ig-chapter">فصل 1/3</span>
-      <span style="color:#fbbf24;">الوقت: <strong id="ig-timer">00:00</strong></span>
-      <span>الصحة: <span class="hp-mini"><i id="ig-hp-fill"></i></span></span>
-      <span style="color:#facc15;">عملات: <strong id="ig-coins">120</strong></span>
-      <span style="color:#38bdf8;">نقاط: <strong id="ig-score">0</strong></span>
-    </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;">
-      <button class="ig-btn atk-btn" id="ig-atk-btn">هجوم (F)</button>
-      <button class="ig-btn" id="ig-build-btn">مكعب (B)</button>
-      <button class="ig-btn" id="ig-respawn-btn">تمركز (R)</button>
-      <button class="ig-btn home-btn" id="ig-back-home">العودة لـ Home</button>
+        <div class="episodes-box" id="episodesBox" style="display:none;">
+          <div class="episodes-head">
+            <strong>المواسم والحلقات</strong>
+            <select id="seasonSelect" aria-label="اختر الموسم"></select>
+          </div>
+          <div class="episodes-list" id="episodesList"></div>
+        </div>
+      </div>
     </div>
   </div>
-  <div class="ig-help" id="ig-mission-banner">السيناريو: اجمع العملات واهزم الحراس لإنهاء الفصول الثلاثة (~10 دقائق).</div>
-  <div id="joy-zone"><div id="joy-knob"></div></div>
-  <div class="mob-actions">
-    <button class="m-act-btn" id="mob-atk">هجوم</button>
-    <button class="m-act-btn" id="mob-jump">قفز</button>
-  </div>
-</div>
 
-<div id="toast"></div>
+  <!-- Add Item to Firestore Modal -->
+  <div class="modal-backdrop" id="addModal" role="dialog" aria-modal="true">
+    <div class="modal">
+      <div class="modal-top">
+        <strong>إضافة فيلم / مسلسل / أنمي إلى Firestore</strong>
+        <button class="close-btn" id="closeAddBtn" aria-label="إغلاق">✕</button>
+      </div>
+      <form class="modal-info" id="addItemForm">
+        <div class="form-grid">
+          <div class="form-field">
+            <label>النوع</label>
+            <select id="newType">
+              <option value="movie">فيلم (movie)</option>
+              <option value="series">مسلسل (series)</option>
+              <option value="anime">أنمي (anime)</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label>التصنيف</label>
+            <select id="newGenre">
+              <option value="خيال علمي">خيال علمي</option>
+              <option value="مغامرة">مغامرة</option>
+              <option value="أنمي">أنمي</option>
+              <option value="أكشن">أكشن</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label>سنة الإنتاج</label>
+            <input type="text" id="newYear" value="2026" required />
+          </div>
+        </div>
 
-<script type="importmap">
-{
-  "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
+        <div class="form-field">
+          <label>العنوان</label>
+          <input type="text" id="newTitle" placeholder="مثال: مغامرة الفضاء" required />
+        </div>
+
+        <div class="form-field">
+          <label>رابط صورة الغلاف (Poster URL)</label>
+          <input type="url" id="newPoster" value="https://peach.blender.org/wp-content/uploads/sintel_poster.jpg" required />
+        </div>
+
+        <div class="form-field" id="movieVideoField">
+          <label>رابط الفيديو المباشر (للأفلام - MP4)</label>
+          <input type="url" id="newVideo" value="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4" />
+        </div>
+
+        <div class="form-field" id="seasonsJsonField" style="display:none;">
+          <label>المواسم والحلقات (JSON للمسلسلات والأنمي)</label>
+          <textarea id="newSeasonsJson" rows="6">[
+  {
+    "seasonNumber": 1,
+    "title": "الموسم الأول",
+    "episodes": [
+      { "ep": 1, "name": "الحلقة 1", "duration": "10 د", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" }
+    ]
   }
-}
-</script>
+]</textarea>
+        </div>
 
-<script type="module">
-import * as THREE from 'three';
+        <div class="form-field">
+          <label>الوصف</label>
+          <textarea id="newDesc" rows="2" placeholder="نبذة مختصرة عن العمل..." required></textarea>
+        </div>
 
-const $ = id => document.getElementById(id);
-const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+        <button type="submit" class="btn btn-green">حفظ في Firebase Firestore</button>
+      </form>
+    </div>
+  </div>
 
-function toast(msg, bg = '#10b981') {
-  const el = $('toast');
-  el.textContent = msg;
-  el.style.background = bg;
-  el.classList.add('show');
-  clearTimeout(el._t);
-  el._t = setTimeout(() => el.classList.remove('show'), 2200);
-}
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      getDocs,
+      addDoc
+    } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js";
 
-// ═══════════════════════════════════════════════════════
-// PERSISTENT PROFILE & UPGRADES STATE
-// ═══════════════════════════════════════════════════════
-const AVATAR_PALETTE = [
-  { hex: 0x2563eb, css: '#2563eb', name: 'أزرق ملكي' },
-  { hex: 0xef4444, css: '#ef4444', name: 'أحمر ناري' },
-  { hex: 0x10b981, css: '#10b981', name: 'أخضر زمردي' },
-  { hex: 0xf59e0b, css: '#f59e0b', name: 'ذهبي' },
-  { hex: 0x8b5cf6, css: '#8b5cf6', name: 'بنفسجي' },
-  { hex: 0xec4899, css: '#ec4899', name: 'وردي' },
-];
+    const firebaseConfig = {
+      apiKey: "AIzaSyAQposIwGN_F9EbUqpxarN7guZ_IaZjvOQ",
+      authDomain: "metaverse-metabox.firebaseapp.com",
+      projectId: "metaverse-metabox",
+      storageBucket: "metaverse-metabox.firebasestorage.app",
+      messagingSenderId: "509642391976",
+      appId: "1:509642391976:web:93746bbba00ad47bcb5d9d"
+    };
 
-const state = {
-  username: 'Blaze',
-  colorIdx: 0,
-  coins: 120,
-  score: 0,
-  hp: 100,
-  enemiesDefeated: 0,
-  gamesCompleted: 0,
-  speedLv: 1,
-  powerLv: 1,
-  regenLv: 1,
-};
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-function loadSave() {
-  try {
-    const raw = localStorage.getItem('bloxhub_pro_save_v2');
-    if (!raw) return;
-    const d = JSON.parse(raw);
-    if (typeof d.username === 'string' && d.username.trim()) state.username = d.username.trim().slice(0, 18);
-    if (typeof d.colorIdx === 'number' && AVATAR_PALETTE[d.colorIdx]) state.colorIdx = d.colorIdx;
-    if (typeof d.coins === 'number') state.coins = Math.max(0, d.coins);
-    if (typeof d.score === 'number') state.score = Math.max(0, d.score);
-    if (typeof d.enemiesDefeated === 'number') state.enemiesDefeated = Math.max(0, d.enemiesDefeated);
-    if (typeof d.gamesCompleted === 'number') state.gamesCompleted = Math.max(0, d.gamesCompleted);
-    if (typeof d.speedLv === 'number') state.speedLv = clamp(d.speedLv, 1, 5);
-    if (typeof d.powerLv === 'number') state.powerLv = clamp(d.powerLv, 1, 5);
-    if (typeof d.regenLv === 'number') state.regenLv = clamp(d.regenLv, 1, 5);
-  } catch (_) {}
-}
+    const SAMPLE_V1 = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4";
+    const SAMPLE_V2 = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
+    const SAMPLE_V3 = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4";
+    const SAMPLE_V4 = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4";
 
-function saveState() {
-  try {
-    localStorage.setItem('bloxhub_pro_save_v2', JSON.stringify({
-      username: state.username,
-      colorIdx: state.colorIdx,
-      coins: state.coins,
-      score: state.score,
-      enemiesDefeated: state.enemiesDefeated,
-      gamesCompleted: state.gamesCompleted,
-      speedLv: state.speedLv,
-      powerLv: state.powerLv,
-      regenLv: state.regenLv,
-    }));
-  } catch (_) {}
-}
+    const DEFAULT_ITEMS = [
+      {
+        type: "movie",
+        title: "Sintel",
+        genre: "خيال علمي",
+        year: "2010",
+        metaText: "فيلم • 15 د",
+        poster: "https://peach.blender.org/wp-content/uploads/sintel_poster.jpg",
+        video: SAMPLE_V1,
+        desc: "رحلة فتاة شجاعة تبحث عن تنين صغير في عالم مليء بالمخاطر والذكريات."
+      },
+      {
+        type: "series",
+        title: "وقائع السماء (مسلسل)",
+        genre: "مغامرة",
+        year: "2024",
+        metaText: "مسلسل • موسمين",
+        poster: "https://mango.blender.org/wp-content/uploads/2013/05/01_thom_celia_bridge.jpg",
+        desc: "سلسلة مغامرات وتشويق تدور حول فريق يستكشف عوالم وأسراراً قديمة.",
+        seasons: [
+          {
+            seasonNumber: 1,
+            title: "الموسم الأول",
+            episodes: [
+              { ep: 1, name: "الحلقة 1: البداية", duration: "10 د", video: SAMPLE_V4 },
+              { ep: 2, name: "الحلقة 2: الإشارة المفقودة", duration: "12 د", video: SAMPLE_V1 }
+            ]
+          },
+          {
+            seasonNumber: 2,
+            title: "الموسم الثاني",
+            episodes: [
+              { ep: 1, name: "الحلقة 1: العودة", duration: "10 د", video: SAMPLE_V2 }
+            ]
+          }
+        ]
+      },
+      {
+        type: "anime",
+        title: "وادي الأرنب (أنمي)",
+        genre: "أنمي",
+        year: "2023",
+        metaText: "أنمي • موسم 1",
+        poster: "https://peach.blender.org/wp-content/uploads/bbb-splash.png",
+        desc: "عمل أنمي كوميدي ومغامرات في غابة نابضة بالحياة.",
+        seasons: [
+          {
+            seasonNumber: 1,
+            title: "الموسم الأول",
+            episodes: [
+              { ep: 1, name: "الحلقة 1: صباح هادئ", duration: "10 د", video: SAMPLE_V2 },
+              { ep: 2, name: "الحلقة 2: فخ الغابة", duration: "11 د", video: SAMPLE_V3 }
+            ]
+          }
+        ]
+      }
+    ];
 
-function getInitials(name) {
-  const clean = (name || 'BL').trim();
-  return clean.slice(0, 2).toUpperCase();
-}
+    const LIST_KEY = "streamflix_fb_list_v1";
+    const PROGRESS_KEY = "streamflix_fb_progress_v1";
 
-function syncHUD() {
-  const init = getInitials(state.username);
-  const pal = AVATAR_PALETTE[state.colorIdx] || AVATAR_PALETTE[0];
-  $('home-coins').textContent = state.coins;
-  $('ig-coins').textContent = state.coins;
-  $('ig-score').textContent = state.score;
-  $('ig-hp-fill').style.width = clamp(state.hp, 0, 100) + '%';
-  $('greeting-name').textContent = state.username;
-  $('top-profile-label').textContent = state.username;
-  $('greeting-avatar').textContent = init;
-  $('rail-user-badge').textContent = init;
-  $('greeting-avatar').style.background = `linear-gradient(135deg, ${pal.css}, #1e293b)`;
-  $('rail-user-badge').style.background = `linear-gradient(135deg, ${pal.css}, #1e293b)`;
-  saveState();
-}
+    let catalog = [];
+    let myList = JSON.parse(localStorage.getItem(LIST_KEY) || "[]");
+    let progressMap = JSON.parse(localStorage.getItem(PROGRESS_KEY) || "{}");
+    let activeTab = "all";
+    let heroItem = null;
+    let currentItem = null;
+    let currentSeasonIdx = 0;
+    let currentEpIdx = 0;
 
-// ═══════════════════════════════════════════════════════
-// ANIMATED GEOMETRIC SHAPES (2D CANVAS + 3D MESHES)
-// ═══════════════════════════════════════════════════════
-let ptrX = 0, ptrY = 0;
-window.addEventListener('pointermove', e => {
-  ptrX = (e.clientX / Math.max(1, window.innerWidth)) * 2 - 1;
-  ptrY = (e.clientY / Math.max(1, window.innerHeight)) * 2 - 1;
-});
+    let autoNextTimer = null;
+    let pendingNextTarget = null;
 
-const c2d = $('bg-2d-canvas');
-const ctx2d = c2d.getContext('2d');
-const shapes2D = [];
+    const dbStatus = document.getElementById("dbStatus");
+    const seedDataBtn = document.getElementById("seedDataBtn");
+    const tabBtns = document.querySelectorAll(".tab-btn");
+    const searchInput = document.getElementById("searchInput");
+    const genreSelect = document.getElementById("genreSelect");
+    const hero = document.getElementById("hero");
+    const heroBadge = document.getElementById("heroBadge");
+    const heroTitle = document.getElementById("heroTitle");
+    const heroDesc = document.getElementById("heroDesc");
+    const heroPlayBtn = document.getElementById("heroPlayBtn");
+    const heroListBtn = document.getElementById("heroListBtn");
+    const myListSection = document.getElementById("myListSection");
+    const myListGrid = document.getElementById("myListGrid");
+    const catalogGrid = document.getElementById("catalogGrid");
+    const mainSectionTitle = document.getElementById("mainSectionTitle");
 
-function resize2DBG() {
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  c2d.width = Math.floor(window.innerWidth * dpr);
-  c2d.height = Math.floor(window.innerHeight * dpr);
-  ctx2d.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
-resize2DBG();
-window.addEventListener('resize', resize2DBG);
+    const playerModal = document.getElementById("playerModal");
+    const closePlayerBtn = document.getElementById("closePlayerBtn");
+    const videoPlayer = document.getElementById("videoPlayer");
+    const modalTitle = document.getElementById("modalTitle");
+    const infoTitle = document.getElementById("infoTitle");
+    const infoDesc = document.getElementById("infoDesc");
+    const modalToggleListBtn = document.getElementById("modalToggleListBtn");
+    const episodesBox = document.getElementById("episodesBox");
+    const seasonSelect = document.getElementById("seasonSelect");
+    const episodesList = document.getElementById("episodesList");
 
-const shapePalette = ['#38bdf8', '#818cf8', '#34d399', '#f472b6', '#facc15'];
-const shapeKinds = ['triangle', 'diamond', 'ring', 'hex'];
+    const nextEpBanner = document.getElementById("nextEpBanner");
+    const nextEpName = document.getElementById("nextEpName");
+    const nextEpCountdown = document.getElementById("nextEpCountdown");
+    const playNextNowBtn = document.getElementById("playNextNowBtn");
+    const cancelAutoNextBtn = document.getElementById("cancelAutoNextBtn");
 
-for (let i = 0; i < 24; i++) {
-  shapes2D.push({
-    x: Math.random() * 1400,
-    y: Math.random() * 900,
-    vx: (Math.random() - 0.5) * 0.45,
-    vy: (Math.random() - 0.5) * 0.45,
-    size: 14 + Math.random() * 28,
-    rot: Math.random() * Math.PI * 2,
-    vRot: (Math.random() - 0.5) * 0.012,
-    color: shapePalette[i % shapePalette.length],
-    kind: shapeKinds[i % shapeKinds.length],
-    alpha: 0.14 + Math.random() * 0.18
-  });
-}
+    const addModal = document.getElementById("addModal");
+    const openAddModalBtn = document.getElementById("openAddModalBtn");
+    const closeAddBtn = document.getElementById("closeAddBtn");
+    const addItemForm = document.getElementById("addItemForm");
+    const newType = document.getElementById("newType");
+    const movieVideoField = document.getElementById("movieVideoField");
+    const seasonsJsonField = document.getElementById("seasonsJsonField");
 
-function draw2DShape(s) {
-  ctx2d.save();
-  ctx2d.translate(s.x + ptrX * 14, s.y + ptrY * 14);
-  ctx2d.rotate(s.rot);
-  ctx2d.globalAlpha = s.alpha;
-  ctx2d.strokeStyle = s.color;
-  ctx2d.lineWidth = 2;
-
-  if (s.kind === 'triangle') {
-    ctx2d.beginPath();
-    for (let k = 0; k < 3; k++) {
-      const a = (k * Math.PI * 2) / 3 - Math.PI / 2;
-      const px = Math.cos(a) * s.size;
-      const py = Math.sin(a) * s.size;
-      if (k === 0) ctx2d.moveTo(px, py); else ctx2d.lineTo(px, py);
+    function clearAutoNext() {
+      if (autoNextTimer) {
+        clearInterval(autoNextTimer);
+        autoNextTimer = null;
+      }
+      pendingNextTarget = null;
+      nextEpBanner.classList.remove("show");
     }
-    ctx2d.closePath();
-    ctx2d.stroke();
-  } else if (s.kind === 'diamond') {
-    ctx2d.beginPath();
-    ctx2d.moveTo(0, -s.size);
-    ctx2d.lineTo(s.size * 0.8, 0);
-    ctx2d.lineTo(0, s.size);
-    ctx2d.lineTo(-s.size * 0.8, 0);
-    ctx2d.closePath();
-    ctx2d.stroke();
-  } else if (s.kind === 'ring') {
-    ctx2d.beginPath();
-    ctx2d.arc(0, 0, s.size * 0.72, 0, Math.PI * 2);
-    ctx2d.stroke();
-  } else {
-    ctx2d.beginPath();
-    for (let k = 0; k < 6; k++) {
-      const a = (k * Math.PI * 2) / 6;
-      const px = Math.cos(a) * s.size * 0.85;
-      const py = Math.sin(a) * s.size * 0.85;
-      if (k === 0) ctx2d.moveTo(px, py); else ctx2d.lineTo(px, py);
+
+    function getNextEpisodeTarget() {
+      if (!currentItem || !Array.isArray(currentItem.seasons)) return null;
+      const season = currentItem.seasons[currentSeasonIdx];
+      if (!season || !Array.isArray(season.episodes)) return null;
+
+      if (currentEpIdx + 1 < season.episodes.length) {
+        return {
+          sIdx: currentSeasonIdx,
+          eIdx: currentEpIdx + 1,
+          label: `${season.title || "الموسم " + (currentSeasonIdx + 1)} — ${season.episodes[currentEpIdx + 1].name}`
+        };
+      }
+
+      if (currentSeasonIdx + 1 < currentItem.seasons.length) {
+        const nextSeason = currentItem.seasons[currentSeasonIdx + 1];
+        if (Array.isArray(nextSeason.episodes) && nextSeason.episodes.length > 0) {
+          return {
+            sIdx: currentSeasonIdx + 1,
+            eIdx: 0,
+            label: `${nextSeason.title || "الموسم " + (currentSeasonIdx + 2)} — ${nextSeason.episodes[0].name}`
+          };
+        }
+      }
+
+      return null;
     }
-    ctx2d.closePath();
-    ctx2d.stroke();
-  }
-  ctx2d.restore();
-}
 
-const bg3dCanvas = $('bg-3d-canvas');
-const bgScene = new THREE.Scene();
-const bgCamera = new THREE.PerspectiveCamera(50, Math.max(1, window.innerWidth) / Math.max(1, window.innerHeight), 0.1, 100);
-bgCamera.position.z = 18;
+    function goToNextEpisodeNow() {
+      if (!pendingNextTarget) return;
+      const target = pendingNextTarget;
+      clearAutoNext();
+      currentSeasonIdx = target.sIdx;
+      currentEpIdx = target.eIdx;
+      renderSeasonsAndEpisodes();
+    }
 
-const bgRenderer = new THREE.WebGLRenderer({ canvas: bg3dCanvas, alpha: true, antialias: true });
-bgRenderer.setSize(window.innerWidth, window.innerHeight);
-bgRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    function startAutoNextCountdown() {
+      clearAutoNext();
+      const nextTarget = getNextEpisodeTarget();
+      if (!nextTarget) return;
 
-bgScene.add(new THREE.AmbientLight(0xffffff, 0.7));
-const bgKeyLight = new THREE.DirectionalLight(0x7dd3fc, 1.4);
-bgKeyLight.position.set(8, 12, 10);
-bgScene.add(bgKeyLight);
+      pendingNextTarget = nextTarget;
+      let secondsLeft = 5;
+      nextEpName.textContent = nextTarget.label;
+      nextEpCountdown.textContent = String(secondsLeft);
+      nextEpBanner.classList.add("show");
 
-const bgRimLight = new THREE.DirectionalLight(0xc084fc, 1.1);
-bgRimLight.position.set(-10, -6, 8);
-bgScene.add(bgRimLight);
+      autoNextTimer = setInterval(() => {
+        secondsLeft -= 1;
+        if (secondsLeft <= 0) {
+          goToNextEpisodeNow();
+        } else {
+          nextEpCountdown.textContent = String(secondsLeft);
+        }
+      }, 1000);
+    }
 
-const floating3DMeshes = [];
-const meshConfigs = [
-  { geo: new THREE.IcosahedronGeometry(1.35, 0), pos: [-8.5, 4.2, -2], wire: true, col: 0x38bdf8, spd: [0.008, 0.012] },
-  { geo: new THREE.OctahedronGeometry(1.2, 0), pos: [8.8, 3.6, -3], wire: false, col: 0x818cf8, spd: [-0.01, 0.009] },
-  { geo: new THREE.TorusGeometry(1.25, 0.26, 12, 28), pos: [-7.5, -4.0, -2], wire: false, col: 0x34d399, spd: [0.007, -0.011] },
-  { geo: new THREE.BoxGeometry(1.7, 1.7, 1.7), pos: [7.8, -3.5, -1], wire: true, col: 0xf472b6, spd: [0.009, 0.007] },
-  { geo: new THREE.TetrahedronGeometry(1.3, 0), pos: [-2.2, 5.4, -5], wire: false, col: 0xfacc15, spd: [-0.007, 0.01] },
-  { geo: new THREE.DodecahedronGeometry(1.15, 0), pos: [3.2, -5.0, -4], wire: true, col: 0x38bdf8, spd: [0.011, -0.008] },
-];
+    function typeLabel(type) {
+      if (type === "movie") return "فيلم";
+      if (type === "series") return "مسلسل";
+      if (type === "anime") return "أنمي";
+      return type;
+    }
 
-meshConfigs.forEach((cfg, idx) => {
-  const mat = cfg.wire
-    ? new THREE.MeshBasicMaterial({ color: cfg.col, wireframe: true, transparent: true, opacity: 0.34 })
-    : new THREE.MeshStandardMaterial({ color: cfg.col, roughness: 0.35, metalness: 0.35, transparent: true, opacity: 0.38 });
-  const m = new THREE.Mesh(cfg.geo, mat);
-  m.position.set(cfg.pos[0], cfg.pos[1], cfg.pos[2]);
-  m.userData = {
-    baseX: cfg.pos[0],
-    baseY: cfg.pos[1],
-    rotX: cfg.spd[0],
-    rotY: cfg.spd[1],
-    phase: idx * 1.15
-  };
-  bgScene.add(m);
-  floating3DMeshes.push(m);
-});
+    function saveList() { localStorage.setItem(LIST_KEY, JSON.stringify(myList)); }
+    function saveProgress(id, sIdx, eIdx) {
+      progressMap[id] = { sIdx, eIdx };
+      localStorage.setItem(PROGRESS_KEY, JSON.stringify(progressMap));
+    }
+    function isInList(id) { return myList.includes(id); }
 
-window.addEventListener('resize', () => {
-  bgCamera.aspect = Math.max(1, window.innerWidth) / Math.max(1, window.innerHeight);
-  bgCamera.updateProjectionMatrix();
-  bgRenderer.setSize(window.innerWidth, window.innerHeight);
-});
+    function toggleList(id) {
+      if (!id) return;
+      myList = isInList(id) ? myList.filter((x) => x !== id) : [...myList, id];
+      saveList();
+      renderAll();
+      updateHeroListBtn();
+      updateModalListBtn();
+    }
 
-// ═══════════════════════════════════════════════════════
-// DATA: FRIENDS & GAMES WITH 3-CHAPTER (~10 MIN) SCENARIOS
-// ═══════════════════════════════════════════════════════
-const FRIENDS = [
-  { add: true, name: 'Add Friends' },
-  { name: 'pastaworm', sub: 'Zeppelin...', status: 'online', color: '#eab308' },
-  { name: 'Kekai_Slush', sub: '[V.009]...', status: 'online', color: '#334155' },
-  { name: 'Crispy', sub: 'Crewmates!...', status: 'online', color: '#111827' },
-  { name: 'Vortex', sub: '', status: 'online', color: '#1e293b' },
-  { name: 'Elimeli500', sub: '', status: '', color: '#0f172a' },
-  { name: 'Timbukbu...', sub: '', status: 'studio', color: '#475569' },
-  { name: 'Tail1704', sub: '', status: '', color: '#ea580c' },
-  { name: 'Mommy', sub: '', status: '', color: '#9a3412' },
-];
+    function updateHeroListBtn() {
+      if (!heroItem) return;
+      heroListBtn.textContent = isInList(heroItem.id) ? "✓ في قائمتي" : "+ قائمتي";
+    }
 
-const FRIV_GAMES = [
-  {
-    id: 'fireboy_watergirl_blox', title: 'Fireboy & Watergirl Blox', sub: 'Friv • سيناريو 3 فصول (~10 د)', like: '96%', players: '32.4K', badge: 'FRIV', badgeType: 'friv',
-    bg: 'linear-gradient(135deg,#ea580c,#2563eb)', sky: 0x1e293b, floor: 0x334155, accent: 0xf97316, speed: 10.6, mode: 'obby',
-    scenario: [
-      'فصل 1/3: اجمع عملات البداية وتجاوز الفخ الأول بذكاء.',
-      'فصل 2/3: اصعد المنصات المتدرجة واهزم حراس المسار.',
-      'فصل 3/3: اسقط زعيم المنصة الذهبية لإتمام السيناريو!'
-    ]
-  },
-  {
-    id: 'moto_x3m_blox', title: 'Moto X3M Obby Blox', sub: 'Friv • سباق ومراحل (~10 د)', like: '94%', players: '21.8K', badge: 'HOT', badgeType: 'hot',
-    bg: 'linear-gradient(135deg,#eab308,#dc2626)', sky: 0x7dd3fc, floor: 0x475569, accent: 0xfacc15, speed: 13.2, mode: 'obby',
-    scenario: [
-      'فصل 1/3: انطلق بسرعة واقفز فوق العقبات الأولى.',
-      'فصل 2/3: التقط العملات وأسقط حراس المضمار.',
-      'فصل 3/3: أكمل الموجة الأخيرة لختم سباق X3M!'
-    ]
-  },
-  {
-    id: 'snail_bob_blox', title: 'Snail Bob Quest Blox', sub: 'Friv • مهمة ذكاء (~10 د)', like: '91%', players: '14.5K', badge: 'NEW', badgeType: 'new',
-    bg: 'linear-gradient(135deg,#16a34a,#0284c7)', sky: 0xbae6fd, floor: 0x22c55e, accent: 0x38bdf8, speed: 9.2, mode: 'tycoon',
-    scenario: [
-      'فصل 1/3: اجمع عملات القرية وابنِ مكعبات مساعدة (B).',
-      'فصل 2/3: افتح الطريق بتجاوز الفخ وصدّ المهاجمين.',
-      'فصل 3/3: انتصر على حراس القمة لإنهاء الرحلة!'
-    ]
-  },
-  {
-    id: 'fire_ice_arena', title: 'Fire & Ice Blox Arena', sub: 'Friv • ساحة التحدي (~10 د)', like: '90%', players: '12.1K', badge: '', badgeType: '',
-    bg: 'linear-gradient(135deg,#ef4444,#06b6d4)', sky: 0x0f172a, floor: 0x3f6212, accent: 0x38bdf8, speed: 10.4, mode: 'battle',
-    scenario: [
-      'فصل 1/3: استخدم السواتر واجمع عملات النار والجليد.',
-      'فصل 2/3: راوغ الفخ الأوسط واهزم الموجة الثانية.',
-      'فصل 3/3: احسم مواجهة الساحة في الفصل الأخير!'
-    ]
-  },
-];
+    function updateModalListBtn() {
+      if (!currentItem) return;
+      modalToggleListBtn.textContent = isInList(currentItem.id) ? "إزالة من قائمتي" : "إضافة إلى قائمتي";
+    }
 
-const Y8_GAMES = [
-  {
-    id: 'king_of_fight_blox', title: 'King of Fight Blox', sub: 'Y8 • حلبة الملوك (~10 د)', like: '97%', players: '46.8K', badge: 'KING', badgeType: 'hot',
-    bg: 'linear-gradient(135deg,#dc2626,#7c2d12,#eab308)', sky: 0x18181b, floor: 0x27272a, accent: 0xfacc15, speed: 11.4, mode: 'king_fight',
-    scenario: [
-      'فصل 1/3: ادخل الحلبة، اجمع العملات، واهزم المتحدين الأوائل.',
-      'فصل 2/3: تحرك بذكاء حول الفخ المركزي وأسقط الحراس.',
-      'فصل 3/3: اهزم موجة الملك الأخيرة لتصبح بطل الحلبة!'
-    ]
-  },
-  {
-    id: 'slope_3d_blox', title: 'Slope 3D Blocky', sub: 'Y8 • سرعة وتركيز (~10 د)', like: '95%', players: '41.2K', badge: 'Y8', badgeType: 'y8',
-    bg: 'linear-gradient(135deg,#22c55e,#15803d)', sky: 0x090d16, floor: 0x16a34a, accent: 0xfacc15, speed: 13.6, mode: 'sky',
-    scenario: [
-      'فصل 1/3: حافظ على توازنك واجمع العملات في المسار.',
-      'فصل 2/3: تجاوز المنصات العالية واهزم الحراس.',
-      'فصل 3/3: أتمّ الموجة النهائية لتكمل تحدي المنحدر!'
-    ]
-  },
-  {
-    id: 'tank_fury_y8_blox', title: 'Tank Fury Y8 Blox', sub: 'Y8 • تكتيك وهجوم (~10 د)', like: '93%', players: '19.7K', badge: 'HOT', badgeType: 'hot',
-    bg: 'linear-gradient(135deg,#475569,#b91c1c)', sky: 0x334155, floor: 0x475569, accent: 0xef4444, speed: 10.8, mode: 'battle',
-    scenario: [
-      'فصل 1/3: تمركز خلف السواتر واهجم على الوحدات الأولى.',
-      'فصل 2/3: ابنِ سواتر مكعبة (B) وادفع الموجة الثانية.',
-      'فصل 3/3: دمر الحرس الأخير لحسم المعركة!'
-    ]
-  },
-  {
-    id: 'zombie_y8_blox', title: 'Zombie Survival Y8 Blox', sub: 'Y8 • بقاء وموجات (~10 د)', like: '92%', players: '26.3K', badge: 'Y8', badgeType: 'y8',
-    bg: 'linear-gradient(135deg,#14532d,#7f1d1d)', sky: 0x1e293b, floor: 0x3f6212, accent: 0xef4444, speed: 10.5, mode: 'arena',
-    scenario: [
-      'فصل 1/3: اجمع العملات وتفادَ الفخ أثناء صدّ الهجوم الأول.',
-      'فصل 2/3: استعمل القفز المزدوج للمناورة وهزيمة الموجة الثانية.',
-      'فصل 3/3: صمد حتى إنهاء الموجة الثالثة للنجاة الكاملة!'
-    ]
-  },
-];
+    function setupHero(item) {
+      if (!item) return;
+      heroItem = item;
+      hero.style.backgroundImage = `url('${item.poster}')`;
+      heroBadge.textContent = `${typeLabel(item.type)} • ${item.genre}`;
+      heroTitle.textContent = item.title;
+      heroDesc.textContent = item.desc;
+      updateHeroListBtn();
+    }
 
-const FRIVMAX_GAMES = [
-  {
-    id: 'minecraft_realistic_blox', title: 'Minecraft Realistic Blox', sub: 'كهوف وممرات • 3 فصول (~10 د)', like: '98%', players: '54.1K', badge: 'CAVES', badgeType: 'new',
-    bg: 'linear-gradient(135deg,#4ade80,#15803d,#0284c7)', sky: 0x7ec8f8, floor: 0x5da130, accent: 0x78553a, speed: 10.2, mode: 'mc_realistic',
-    scenario: [
-      'فصل 1/3: استكشف التلال والأشجار واجمع عملات السطح.',
-      'فصل 2/3: ادخل الممر الحجري تحت التل واجمع كنز الكهف.',
-      'فصل 3/3: اصعد للقمة واهزم حراس الجبل لإنهاء الماب!'
-    ]
-  },
-  {
-    id: 'frivmax_gold_blox', title: 'FrivMax Gold Miner Blox', sub: 'FrivMax • كنوز ومراحل (~10 د)', like: '94%', players: '28.9K', badge: 'FRIVMAX', badgeType: 'friv',
-    bg: 'linear-gradient(135deg,#f59e0b,#78350f)', sky: 0x7dd3fc, floor: 0x22c55e, accent: 0xfacc15, speed: 10.0, mode: 'tycoon',
-    scenario: [
-      'فصل 1/3: اجمع العملات الذهبية من المنصات الجانبية.',
-      'فصل 2/3: اهزم حراس الكنز واحمِ رصيدك من الفخ.',
-      'فصل 3/3: أكمل الموجة الثالثة لتختم رحلة التنقيب!'
-    ]
-  },
-  {
-    id: 'frivmax_parkour', title: 'FrivMax Mega Parkour', sub: 'FrivMax • باركور 3 فصول (~10 د)', like: '92%', players: '17.4K', badge: 'NEW', badgeType: 'new',
-    bg: 'linear-gradient(135deg,#06b6d4,#7e22ce)', sky: 0xc084fc, floor: 0x0284c7, accent: 0xfacc15, speed: 11.8, mode: 'obby',
-    scenario: [
-      'فصل 1/3: ابدأ قفزاتك المزدوجة واجمع عملات البداية.',
-      'فصل 2/3: عبر المنصات المرتفعة بدقة دون سقوط.',
-      'فصل 3/3: اسقط حراس النهاية لإتمام الباركور!'
-    ]
-  },
-  {
-    id: 'frivmax_siege', title: 'FrivMax Siege Battle', sub: 'FrivMax • حصار ومراحل (~10 د)', like: '90%', players: '13.8K', badge: 'HOT', badgeType: 'hot',
-    bg: 'linear-gradient(135deg,#dc2626,#1e293b)', sky: 0x1e293b, floor: 0x475569, accent: 0xf97316, speed: 10.6, mode: 'battle',
-    scenario: [
-      'فصل 1/3: اخترق الدفاعات الأولى واجمع العملات.',
-      'فصل 2/3: راوغ الفخ واهزم الموجة الثانية من الحراس.',
-      'فصل 3/3: افتح الحصار بإنهاء الموجة الثالثة!'
-    ]
-  },
-];
+    function playVideoSource(src, titleLabel) {
+      clearAutoNext();
+      modalTitle.textContent = titleLabel;
+      videoPlayer.src = src;
+      videoPlayer.play().catch(() => {});
+    }
 
-// ═══════════════════════════════════════════════════════
-// MODAL SYSTEM FOR PROFILE, SHOP, FRIENDS, NOTIFICATIONS
-// ═══════════════════════════════════════════════════════
-function openModal(title, renderFn) {
-  $('modal-title').textContent = title;
-  const body = $('modal-body');
-  body.innerHTML = '';
-  renderFn(body);
-  $('modal-backdrop').classList.add('open');
-}
+    function renderSeasonsAndEpisodes() {
+      clearAutoNext();
+      const hasEpisodes = Array.isArray(currentItem.seasons) && currentItem.seasons.length > 0;
+      if (!hasEpisodes) {
+        episodesBox.style.display = "none";
+        playVideoSource(currentItem.video, `${currentItem.title} (${currentItem.year})`);
+        return;
+      }
 
-function closeModal() {
-  $('modal-backdrop').classList.remove('open');
-}
+      episodesBox.style.display = "block";
+      seasonSelect.innerHTML = "";
+      currentItem.seasons.forEach((s, idx) => {
+        const opt = document.createElement("option");
+        opt.value = idx;
+        opt.textContent = s.title || `الموسم ${s.seasonNumber}`;
+        seasonSelect.appendChild(opt);
+      });
+      seasonSelect.value = String(currentSeasonIdx);
 
-$('modal-close-btn').onclick = closeModal;
-$('modal-backdrop').addEventListener('click', e => {
-  if (e.target === $('modal-backdrop')) closeModal();
-});
+      const season = currentItem.seasons[currentSeasonIdx] || currentItem.seasons[0];
+      const ep = season.episodes[currentEpIdx] || season.episodes[0];
+      saveProgress(currentItem.id, currentSeasonIdx, currentEpIdx);
+      playVideoSource(ep.video, `${currentItem.title} — ${season.title} / ${ep.name}`);
 
-function openProfileModal() {
-  openModal('الملف الشخصي والترقيات', body => {
-    body.innerHTML = `
-      <div class="stat-row">
-        <div class="stat-box"><strong>${state.coins}</strong><span>العملات</span></div>
-        <div class="stat-box"><strong>${state.score}</strong><span>النقاط</span></div>
-        <div class="stat-box"><strong>${state.gamesCompleted}</strong><span>ألعاب مكتملة</span></div>
-      </div>
+      episodesList.innerHTML = "";
+      season.episodes.forEach((episode, eIdx) => {
+        const card = document.createElement("div");
+        card.className = "ep-card" + (eIdx === currentEpIdx ? " active" : "");
+        card.innerHTML = `<strong>${episode.name}</strong><span>المدة: ${episode.duration || "—"}</span>`;
+        card.addEventListener("click", () => {
+          currentEpIdx = eIdx;
+          renderSeasonsAndEpisodes();
+        });
+        episodesList.appendChild(card);
+      });
+    }
 
-      <div>
-        <label style="display:block;font-size:0.8rem;color:#cbd5e1;margin-bottom:6px;">اسم اللاعب</label>
-        <input type="text" class="modal-input" id="prof-name-input" maxlength="18" value="${state.username}">
-      </div>
+    function openItemModal(item) {
+      currentItem = item;
+      const saved = progressMap[item.id];
+      currentSeasonIdx = saved ? Math.min(saved.sIdx, (item.seasons?.length || 1) - 1) : 0;
+      currentEpIdx = saved ? Math.min(saved.eIdx, (item.seasons?.[currentSeasonIdx]?.episodes?.length || 1) - 1) : 0;
 
-      <div>
-        <label style="display:block;font-size:0.8rem;color:#cbd5e1;margin-bottom:6px;">لون الشخصية</label>
-        <div class="color-swatches" id="prof-swatches"></div>
-      </div>
+      infoTitle.textContent = `${item.title} (${item.year})`;
+      infoDesc.textContent = item.desc;
+      updateModalListBtn();
+      renderSeasonsAndEpisodes();
+      playerModal.classList.add("open");
+    }
 
-      <div style="display:flex;flex-direction:column;gap:8px;">
-        <div class="upgrade-item">
-          <div>
-            <div style="font-size:0.84rem;font-weight:700;">سرعة الحركة (مستوى ${state.speedLv}/5)</div>
-            <div style="font-size:0.72rem;color:#9ca3af;">يزيد سرعة الركض والمناورة</div>
+    function closePlayer() {
+      clearAutoNext();
+      videoPlayer.pause();
+      videoPlayer.removeAttribute("src");
+      videoPlayer.load();
+      playerModal.classList.remove("open");
+    }
+
+    function createCard(item) {
+      const card = document.createElement("article");
+      card.className = "card";
+      card.innerHTML = `
+        <img src="${item.poster}" alt="${item.title}" loading="lazy" />
+        <div class="card-body">
+          <div class="card-title">${item.title}</div>
+          <div class="card-meta">
+            <span class="type-pill">${typeLabel(item.type)}</span>
+            <span>${item.metaText || item.genre}</span>
           </div>
-          <button class="m-btn gold" id="up-speed-btn">${state.speedLv >= 5 ? 'مكتمل' : `ترقية (${state.speedLv * 30})`}</button>
         </div>
-        <div class="upgrade-item">
-          <div>
-            <div style="font-size:0.84rem;font-weight:700;">قوة الهجوم (مستوى ${state.powerLv}/5)</div>
-            <div style="font-size:0.72rem;color:#9ca3af;">يزيد ضرر ضرباتك على الأعداء</div>
-          </div>
-          <button class="m-btn gold" id="up-power-btn">${state.powerLv >= 5 ? 'مكتمل' : `ترقية (${state.powerLv * 30})`}</button>
-        </div>
-        <div class="upgrade-item">
-          <div>
-            <div style="font-size:0.84rem;font-weight:700;">تجدد الصحة (مستوى ${state.regenLv}/5)</div>
-            <div style="font-size:0.72rem;color:#9ca3af;">يعيد الصحة تلقائياً أثناء اللعب</div>
-          </div>
-          <button class="m-btn gold" id="up-regen-btn">${state.regenLv >= 5 ? 'مكتمل' : `ترقية (${state.regenLv * 25})`}</button>
-        </div>
-      </div>
+      `;
+      card.addEventListener("click", () => openItemModal(item));
+      return card;
+    }
 
-      <button class="m-btn green" id="save-profile-btn">حفظ الملف الشخصي</button>
-    `;
+    function renderCatalog() {
+      const q = searchInput.value.trim().toLowerCase();
+      const g = genreSelect.value;
 
-    const swWrap = $('prof-swatches');
-    let tempColorIdx = state.colorIdx;
-    AVATAR_PALETTE.forEach((p, idx) => {
-      const b = document.createElement('button');
-      b.className = 'swatch-btn' + (idx === tempColorIdx ? ' selected' : '');
-      b.style.background = p.css;
-      b.title = p.name;
-      b.onclick = () => {
-        tempColorIdx = idx;
-        swWrap.querySelectorAll('.swatch-btn').forEach(el => el.classList.remove('selected'));
-        b.classList.add('selected');
+      const filtered = catalog.filter((item) => {
+        const matchesTab =
+          activeTab === "all" ||
+          (activeTab === "mylist" && isInList(item.id)) ||
+          item.type === activeTab;
+        const matchesGenre = g === "all" || item.genre === g;
+        const matchesQuery =
+          !q ||
+          item.title.toLowerCase().includes(q) ||
+          item.desc.toLowerCase().includes(q) ||
+          item.genre.toLowerCase().includes(q);
+        return matchesTab && matchesGenre && matchesQuery;
+      });
+
+      const titlesMap = {
+        all: "كل الأفلام والمسلسلات والأنمي",
+        movie: "الأفلام",
+        series: "المسلسلات (المواسم والحلقات)",
+        anime: "الأنمي",
+        mylist: "نتائج قائمتي"
       };
-      swWrap.appendChild(b);
+      mainSectionTitle.textContent = titlesMap[activeTab] || "المحتوى المتاح";
+
+      catalogGrid.innerHTML = "";
+      if (!filtered.length) {
+        catalogGrid.innerHTML = `<p class="empty-msg">لا توجد عناصر مطابقة حالياً.</p>`;
+        return;
+      }
+      filtered.forEach((item) => catalogGrid.appendChild(createCard(item)));
+    }
+
+    function renderMyList() {
+      myListSection.style.display = activeTab === "mylist" ? "none" : "block";
+      const saved = catalog.filter((item) => isInList(item.id));
+      myListGrid.innerHTML = "";
+      if (!saved.length) {
+        myListGrid.innerHTML = `<p class="empty-msg">قائمتك فارغة حالياً.</p>`;
+        return;
+      }
+      saved.forEach((item) => myListGrid.appendChild(createCard(item)));
+    }
+
+    function renderAll() {
+      renderMyList();
+      renderCatalog();
+    }
+
+    async function loadCatalogFromFirebase() {
+      try {
+        const snap = await getDocs(collection(db, "catalog"));
+        if (snap.empty) {
+          dbStatus.textContent = "متصل بـ Firestore (metaverse-metabox) — المجموعة catalog فارغة حالياً";
+          catalog = [];
+        } else {
+          catalog = snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+          dbStatus.textContent = `متصل بـ Firestore (metaverse-metabox) — ${catalog.length} عنصر`;
+        }
+        setupHero(catalog[1] || catalog[0]);
+        renderAll();
+      } catch (err) {
+        console.error(err);
+        dbStatus.textContent = "تعذر الاتصال بـ Firestore — تحقق من قواعد الأمان (Rules) في Firebase";
+        catalog = DEFAULT_ITEMS.map((item, i) => ({ id: "fallback_" + i, ...item }));
+        setupHero(catalog[1] || catalog[0]);
+        renderAll();
+      }
+    }
+
+    seedDataBtn.addEventListener("click", async () => {
+      seedDataBtn.disabled = true;
+      seedDataBtn.textContent = "جاري الإضافة...";
+      try {
+        for (const item of DEFAULT_ITEMS) {
+          await addDoc(collection(db, "catalog"), item);
+        }
+        await loadCatalogFromFirebase();
+      } catch (err) {
+        alert("حدث خطأ أثناء الإضافة: " + err.message);
+      } finally {
+        seedDataBtn.disabled = false;
+        seedDataBtn.textContent = "تعبئة بيانات تجريبية في Firestore";
+      }
     });
 
-    $('save-profile-btn').onclick = () => {
-      const val = ($('prof-name-input').value || '').trim();
-      if (val) state.username = val.slice(0, 18);
-      state.colorIdx = tempColorIdx;
-      syncHUD();
-      if (player) buildPlayerMesh();
-      closeModal();
-      toast('تم حفظ الملف الشخصي بنجاح!');
-    };
+    newType.addEventListener("change", () => {
+      const isMovie = newType.value === "movie";
+      movieVideoField.style.display = isMovie ? "flex" : "none";
+      seasonsJsonField.style.display = isMovie ? "none" : "flex";
+    });
 
-    $('up-speed-btn').onclick = () => {
-      if (state.speedLv >= 5) return;
-      const cost = state.speedLv * 30;
-      if (state.coins < cost) { toast('عملاتك غير كافية للترقية', '#ef4444'); return; }
-      state.coins -= cost; state.speedLv++;
-      syncHUD(); openProfileModal();
-      toast('تمت ترقية سرعة الحركة!');
-    };
+    openAddModalBtn.addEventListener("click", () => addModal.classList.add("open"));
+    closeAddBtn.addEventListener("click", () => addModal.classList.remove("open"));
+    addModal.addEventListener("click", (e) => {
+      if (e.target === addModal) addModal.classList.remove("open");
+    });
 
-    $('up-power-btn').onclick = () => {
-      if (state.powerLv >= 5) return;
-      const cost = state.powerLv * 30;
-      if (state.coins < cost) { toast('عملاتك غير كافية للترقية', '#ef4444'); return; }
-      state.coins -= cost; state.powerLv++;
-      syncHUD(); openProfileModal();
-      toast('تمت ترقية قوة الهجوم!');
-    };
+    addItemForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const type = newType.value;
+      const title = document.getElementById("newTitle").value.trim();
+      const genre = document.getElementById("newGenre").value;
+      const year = document.getElementById("newYear").value.trim();
+      const poster = document.getElementById("newPoster").value.trim();
+      const desc = document.getElementById("newDesc").value.trim();
 
-    $('up-regen-btn').onclick = () => {
-      if (state.regenLv >= 5) return;
-      const cost = state.regenLv * 25;
-      if (state.coins < cost) { toast('عملاتك غير كافية للترقية', '#ef4444'); return; }
-      state.coins -= cost; state.regenLv++;
-      syncHUD(); openProfileModal();
-      toast('تمت ترقية تجدد الصحة!');
-    };
-  });
-}
+      const payload = {
+        type,
+        title,
+        genre,
+        year,
+        poster,
+        desc,
+        metaText: typeLabel(type)
+      };
 
-function openCoinsModal() {
-  openModal('العملات والمكافآت', body => {
-    body.innerHTML = `
-      <p style="font-size:0.84rem;color:#cbd5e1;line-height:1.5;">
-        رصيدك الحالي: <strong style="color:#facc15;">${state.coins} عملة</strong>. إتمام سيناريو أي لعبة يمنحك <strong style="color:#34d399;">+100 عملة</strong> و<strong style="color:#38bdf8;">+250 نقطة</strong>.
-      </p>
-      <button class="m-btn gold" id="claim-pack-btn">احصل على +50 عملة مجانية</button>
-      <button class="m-btn" id="open-upgrades-from-coins">فتح ترقيات الملف الشخصي</button>
-    `;
-    $('claim-pack-btn').onclick = () => {
-      state.coins += 50; syncHUD(); closeModal();
-      toast('تمت إضافة +50 عملة إلى رصيدك!', '#eab308');
-    };
-    $('open-upgrades-from-coins').onclick = () => { closeModal(); openProfileModal(); };
-  });
-}
-
-function openNotificationsModal() {
-  openModal('الإشعارات', body => {
-    body.innerHTML = `
-      <div class="upgrade-item"><div><strong>سيناريوهات من 3 فصول (~10 دقائق)</strong><div style="font-size:0.74rem;color:#9ca3af;">كل لعبة مصممة ليتمكن اللاعب الذكي من إنهائها خلال ~10 دقائق.</div></div></div>
-      <div class="upgrade-item"><div><strong>كهوف وممرات ماينكرافت</strong><div style="font-size:0.74rem;color:#9ca3af;">استكشف الممرات الحجرية والتلال والأشجار في Minecraft Realistic Blox.</div></div></div>
-      <div class="upgrade-item"><div><strong>الملف الشخصي والترقيات</strong><div style="font-size:0.74rem;color:#9ca3af;">طور السرعة والهجوم وتجدد الصحة لتسريع الإنجاز.</div></div></div>
-    `;
-  });
-}
-
-function openAddFriendModal() {
-  openModal('إضافة صديق جديد', body => {
-    body.innerHTML = `
-      <input type="text" class="modal-input" id="new-friend-name" maxlength="16" placeholder="اكتب اسم الصديق...">
-      <button class="m-btn green" id="confirm-add-friend">إضافة إلى القائمة</button>
-    `;
-    $('confirm-add-friend').onclick = () => {
-      const n = ($('new-friend-name').value || '').trim();
-      if (!n) { toast('اكتب اسماً أولاً', '#ef4444'); return; }
-      FRIENDS.push({ name: n, sub: 'Online', status: 'online', color: '#2563eb' });
-      renderFriends();
-      closeModal();
-      toast(`تمت إضافة ${n} إلى الأصدقاء!`);
-    };
-  });
-}
-
-function openScenarioCompleteModal(game, elapsedSec) {
-  const mins = String(Math.floor(elapsedSec / 60)).padStart(2, '0');
-  const secs = String(Math.floor(elapsedSec % 60)).padStart(2, '0');
-  openModal('أتممت السيناريو بنجاح!', body => {
-    body.innerHTML = `
-      <p style="font-size:0.86rem;color:#e2e8f0;line-height:1.6;">
-        أحسنت يا <strong style="color:#38bdf8;">${state.username}</strong>! أنهيت جميع الفصول الثلاثة في لعبة <strong>${game.title}</strong> بزمن <strong>${mins}:${secs}</strong>.
-      </p>
-      <div class="stat-row">
-        <div class="stat-box"><strong style="color:#facc15;">+100</strong><span>مكافأة عملات</span></div>
-        <div class="stat-box"><strong style="color:#34d399;">+250</strong><span>مكافأة نقاط</span></div>
-        <div class="stat-box"><strong style="color:#c084fc;">${state.gamesCompleted}</strong><span>ألعاب مكتملة</span></div>
-      </div>
-      <button class="m-btn green" id="replay-scenario-btn">إعادة السيناريو من الفصل 1</button>
-      <button class="m-btn" id="back-home-from-win">العودة إلى Home</button>
-    `;
-    $('replay-scenario-btn').onclick = () => { closeModal(); launchGame(game); };
-    $('back-home-from-win').onclick = () => {
-      closeModal();
-      activeGame = null;
-      $('world-view').classList.remove('active');
-      $('home-screen').classList.remove('hidden');
-      syncHUD();
-    };
-  });
-}
-
-// ═══════════════════════════════════════════════════════
-// RENDER HOME FEED & WIRE ALL ICONS
-// ═══════════════════════════════════════════════════════
-function renderFriends() {
-  const row = $('friends-row');
-  row.innerHTML = '';
-  $('friends-count').textContent = FRIENDS.length;
-  FRIENDS.forEach(f => {
-    const card = document.createElement('div');
-    card.className = 'friend-card';
-    if (f.add) {
-      card.innerHTML = `<div class="friend-pic-wrap"><div class="friend-add">+</div></div><div class="friend-name">${f.name}</div>`;
-      card.onclick = openAddFriendModal;
-    } else {
-      const dot = f.status === 'online' ? '<span class="status-dot status-online"></span>'
-                : f.status === 'studio' ? '<span class="status-dot status-studio"></span>' : '';
-      card.innerHTML = `
-        <div class="friend-pic-wrap">
-          <div class="friend-pic" style="background:${f.color}">${f.name.slice(0, 2).toUpperCase()}</div>
-          ${dot}
-        </div>
-        <div class="friend-name">${f.name}</div>
-        ${f.sub ? `<div class="friend-sub">${f.sub}</div>` : ''}
-      `;
-      card.onclick = () => toast(`${f.name} متصل الآن في الألعاب`, '#0284c7');
-    }
-    row.appendChild(card);
-  });
-}
-
-function makeGameTile(game) {
-  const tile = document.createElement('div');
-  tile.className = 'game-tile';
-  const badgeHtml = game.badge
-    ? `<span class="thumb-badge ${game.badgeType}">${game.badge}</span>`
-    : '';
-  tile.innerHTML = `
-    <div class="thumb-box" style="background:${game.bg}">
-      ${badgeHtml}
-      <div class="thumb-art">${game.title}</div>
-      <div class="thumb-sub">${game.sub}</div>
-    </div>
-    <div class="game-title" title="${game.title}">${game.title}</div>
-    <div class="game-meta">
-      <span class="like">👍 ${game.like}</span>
-      <span>👤 ${game.players}</span>
-    </div>
-  `;
-  tile.onclick = () => launchGame(game);
-  return tile;
-}
-
-function renderGames(filter = '') {
-  const q = filter.trim().toLowerCase();
-  const match = g => !q || g.title.toLowerCase().includes(q) || g.sub.toLowerCase().includes(q);
-  const fGrid = $('friv-grid');
-  const yGrid = $('y8-grid');
-  const mGrid = $('frivmax-grid');
-  fGrid.innerHTML = ''; yGrid.innerHTML = ''; mGrid.innerHTML = '';
-
-  FRIV_GAMES.filter(match).forEach(g => fGrid.appendChild(makeGameTile(g)));
-  Y8_GAMES.filter(match).forEach(g => yGrid.appendChild(makeGameTile(g)));
-  FRIVMAX_GAMES.filter(match).forEach(g => mGrid.appendChild(makeGameTile(g)));
-}
-
-$('search-input').addEventListener('input', e => renderGames(e.target.value));
-$('top-logo-btn').onclick = () => { $('home-screen').classList.remove('hidden'); toast('أهلاً بك في BloxHub!'); };
-$('top-home-btn').onclick = () => { $('home-screen').classList.remove('hidden'); };
-$('top-coins-chip').onclick = openCoinsModal;
-$('top-bell-chip').onclick = openNotificationsModal;
-$('top-profile-chip').onclick = openProfileModal;
-$('greeting-profile-btn').onclick = openProfileModal;
-$('rail-user-badge').onclick = openProfileModal;
-$('rail-home').onclick = () => { $('home-screen').classList.remove('hidden'); };
-$('rail-play').onclick = () => launchGame(Y8_GAMES[0]);
-$('rail-shop').onclick = openProfileModal;
-$('rail-info').onclick = () => toast('WASD: حركة • Space مرتين: قفز مزدوج • F: هجوم • B: بناء مكعب');
-$('rail-color').onclick = () => {
-  state.colorIdx = (state.colorIdx + 1) % AVATAR_PALETTE.length;
-  syncHUD();
-  if (player) buildPlayerMesh();
-  toast(`تم تغيير اللون إلى: ${AVATAR_PALETTE[state.colorIdx].name}`, '#8b5cf6');
-};
-
-// ═══════════════════════════════════════════════════════
-// 3D ENGINE: 3-CHAPTER SCENARIO (~10 MIN TARGET)
-// ═══════════════════════════════════════════════════════
-let scene, camera, renderer, player, limbs = {};
-let platforms = [];
-let coinMeshes = [];
-let traps = [];
-let enemies = [];
-let activeGame = null;
-let currentChapter = 1; // 1..3
-let sessionSeconds = 0;
-let velY = 0, grounded = false, jumpsUsed = 0, walkPhase = 0;
-let yaw = 0, pitch = 0.35, camDist = 9;
-let orbiting = false, lastX = 0, lastY = 0;
-const keys = {};
-let joyX = 0, joyY = 0;
-
-function initThreeOnce() {
-  if (renderer) return;
-  const wCanvas = $('world-canvas');
-  scene = new THREE.Scene();
-  camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 400);
-  renderer = new THREE.WebGLRenderer({ canvas: wCanvas, antialias: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-  renderer.shadowMap.enabled = true;
-
-  scene.add(new THREE.HemisphereLight(0xffffff, 0x3f6212, 1.0));
-  const sun = new THREE.DirectionalLight(0xfffbeb, 1.85);
-  sun.position.set(32, 52, 28);
-  sun.castShadow = true;
-  scene.add(sun);
-
-  window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-  });
-}
-
-function addBox(x, y, z, w, h, d, color) {
-  const mesh = new THREE.Mesh(
-    new THREE.BoxGeometry(w, h, d),
-    new THREE.MeshStandardMaterial({ color, roughness: 0.72 })
-  );
-  mesh.position.set(x, y, z);
-  mesh.castShadow = true;
-  mesh.receiveShadow = true;
-  scene.add(mesh);
-  platforms.push({ mesh, hx: w / 2, hy: h / 2, hz: d / 2 });
-  return mesh;
-}
-
-function addMinecraftTree(x, groundTopY, z) {
-  addBox(x, groundTopY + 1.5, z, 1.1, 3.0, 1.1, 0x6b4423);
-  addBox(x, groundTopY + 3.6, z, 3.6, 1.4, 3.6, 0x2f7d32);
-  addBox(x, groundTopY + 4.7, z, 2.4, 1.2, 2.4, 0x388e3c);
-}
-
-function addCaveCorridor(cx, y, cz, width, height, length, wallColor = 0x4b5563, roofColor = 0x52525b) {
-  const halfW = width / 2;
-  addBox(cx - halfW, y + height / 2, cz, 1.6, height, length, wallColor);
-  addBox(cx + halfW, y + height / 2, cz, 1.6, height, length, wallColor);
-  addBox(cx, y + height + 0.5, cz, width + 1.8, 1.0, length, roofColor);
-}
-
-function addTrap(x, y, z, w = 3.0, d = 3.0) {
-  const mesh = new THREE.Mesh(
-    new THREE.BoxGeometry(w, 0.28, d),
-    new THREE.MeshStandardMaterial({ color: 0xef4444, emissive: 0xdc2626, emissiveIntensity: 0.65, roughness: 0.3 })
-  );
-  mesh.position.set(x, y + 0.14, z);
-  scene.add(mesh);
-  traps.push({ mesh, hx: w / 2, hz: d / 2, y: y + 0.14 });
-}
-
-function spawnEnemy(x, y, z, spd = 3.4, maxHp = 60) {
-  const g = new THREE.Group();
-  const bodyMat = new THREE.MeshStandardMaterial({ color: 0xef4444, roughness: 0.45 });
-  const eyeMat = new THREE.MeshBasicMaterial({ color: 0xfef08a });
-
-  const body = new THREE.Mesh(new THREE.BoxGeometry(1.15, 1.35, 0.8), bodyMat);
-  body.position.y = 0.8;
-  body.castShadow = true;
-  const eyeL = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.18, 0.08), eyeMat);
-  eyeL.position.set(-0.24, 1.02, 0.42);
-  const eyeR = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.18, 0.08), eyeMat);
-  eyeR.position.set(0.24, 1.02, 0.42);
-
-  g.add(body, eyeL, eyeR);
-  g.position.set(x, y, z);
-  scene.add(g);
-  enemies.push({ mesh: g, bodyMat, baseY: y, speed: spd, hp: maxHp, alive: true, cooldown: 0 });
-}
-
-function updateScenarioHUD(game) {
-  const idx = clamp(currentChapter - 1, 0, 2);
-  $('ig-chapter').textContent = `فصل ${currentChapter}/3`;
-  $('ig-mission-banner').textContent = (game.scenario && game.scenario[idx]) || 'أكمل فصول السيناريو الثلاثة.';
-}
-
-function spawnCoinsForChapter(game, chapterNum) {
-  coinMeshes.forEach(c => scene.remove(c.mesh));
-  coinMeshes = [];
-  const coords = game.mode === 'mc_realistic'
-    ? [
-        [-8, 1.4, -8], [8, 1.4, -8],
-        [0, 1.4, -18], [0, 1.4, -24], [0, 1.4, -30],
-        [13, 3.2, -12], [0, 5.5, -24]
-      ]
-    : [
-        [-8, 1.4, -8], [8, 1.4, -8], [0, 2.2, -13],
-        [3.2, 3.4, -23], [-2.8, 4.5, -30], [0, 5.6, -36]
-      ];
-  coords.forEach(([x, y, z]) => {
-    const m = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.42, 0.42, 0.15, 16),
-      new THREE.MeshStandardMaterial({ color: 0xfacc15, emissive: 0xca8a04, emissiveIntensity: 0.4 })
-    );
-    m.rotation.x = Math.PI / 2;
-    m.position.set(x, y, z);
-    scene.add(m);
-    coinMeshes.push({ mesh: m, baseY: y, taken: false, value: 15 + (chapterNum - 1) * 5 });
-  });
-}
-
-function spawnEnemiesForChapter(game, chapterNum) {
-  enemies.forEach(e => scene.remove(e.mesh));
-  enemies = [];
-  // Calibrated so a smart, fast player clears 3 chapters in ~10 minutes
-  const count = 2 + chapterNum;
-  const baseHp = 50 + chapterNum * 25;
-  const baseSpd = 3.1 + chapterNum * 0.4;
-  const spawnY = game.mode === 'king_fight' ? 0.6 : 0;
-
-  for (let i = 0; i < count; i++) {
-    const angle = (i / count) * Math.PI * 2;
-    const radius = 8 + (i % 2) * 3;
-    spawnEnemy(
-      Math.cos(angle) * radius,
-      spawnY,
-      Math.sin(angle) * radius - 3,
-      baseSpd + i * 0.15,
-      baseHp + (chapterNum === 3 && i === count - 1 ? 35 : 0)
-    );
-  }
-}
-
-function buildPlayerMesh() {
-  if (player) scene.remove(player);
-  player = new THREE.Group();
-  const pal = AVATAR_PALETTE[state.colorIdx] || AVATAR_PALETTE[0];
-  const skin = new THREE.MeshStandardMaterial({ color: 0xfcd34d, roughness: 0.5 });
-  const shirt = new THREE.MeshStandardMaterial({ color: pal.hex, roughness: 0.55 });
-  const pants = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.7 });
-
-  const torso = new THREE.Mesh(new THREE.BoxGeometry(0.92, 1.0, 0.52), shirt);
-  torso.position.y = 1.3; torso.castShadow = true;
-  const head = new THREE.Mesh(new THREE.BoxGeometry(0.74, 0.74, 0.74), skin);
-  head.position.y = 2.2; head.castShadow = true;
-  const armL = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.9, 0.36), shirt);
-  armL.position.set(-0.68, 1.32, 0); armL.castShadow = true;
-  const armR = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.9, 0.36), shirt);
-  armR.position.set(0.68, 1.32, 0); armR.castShadow = true;
-  const legL = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.82, 0.42), pants);
-  legL.position.set(-0.22, 0.41, 0); legL.castShadow = true;
-  const legR = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.82, 0.42), pants);
-  legR.position.set(0.22, 0.41, 0); legR.castShadow = true;
-
-  player.add(torso, head, armL, armR, legL, legR);
-  limbs = { armL, armR, legL, legR };
-  player.position.set(0, 0.5, 0);
-  scene.add(player);
-}
-
-function clearWorldObjects() {
-  platforms.forEach(p => scene.remove(p.mesh));
-  coinMeshes.forEach(c => scene.remove(c.mesh));
-  traps.forEach(t => scene.remove(t.mesh));
-  enemies.forEach(e => scene.remove(e.mesh));
-  platforms = []; coinMeshes = []; traps = []; enemies = [];
-}
-
-function buildModeLayout(game) {
-  if (game.mode === 'mc_realistic') {
-    addBox(0, -3.0, 0, 74, 4.0, 74, 0x6b7280);
-    addBox(0, -0.5, 0, 72, 1.0, 72, 0x5da130);
-    addCaveCorridor(0, 0, -24, 6.2, 4.2, 18, 0x374151, 0x4b5563);
-    addBox(-11, 2.2, -24, 16, 4.4, 18, 0x4b5563);
-    addBox(11, 2.2, -24, 16, 4.4, 18, 0x4b5563);
-    addBox(0, 2.2, -35, 38, 4.4, 6, 0x374151);
-    addBox(0, 4.1, -24, 24, 1.0, 22, 0x5da130);
-    addBox(13, 0.5, -12, 12, 2.0, 12, 0x4d8c25);
-    addBox(13, 1.8, -12, 7, 1.0, 7, 0x5da130);
-    addBox(-15, 0.8, -12, 12, 2.6, 12, 0x4d8c25);
-    addMinecraftTree(-9, 0, -6);
-    addMinecraftTree(8, 0, -6);
-    addMinecraftTree(-18, 0, 6);
-    addMinecraftTree(17, 0, 6);
-    addMinecraftTree(13, 2.3, -12);
-    addTrap(0, 0, -10, 2.6, 2.6);
-    addTrap(0, 0, -27, 2.4, 2.4);
-  } else if (game.mode === 'king_fight') {
-    addBox(0, -0.5, 0, 36, 1, 36, game.floor);
-    addBox(0, 0.3, 0, 15, 0.6, 15, 0x3f3f46);
-    addBox(-12, 2.5, -12, 2.2, 5.0, 2.2, 0xfacc15);
-    addBox(12, 2.5, -12, 2.2, 5.0, 2.2, 0xfacc15);
-    addBox(-12, 2.5, 12, 2.2, 5.0, 2.2, 0xfacc15);
-    addBox(12, 2.5, 12, 2.2, 5.0, 2.2, 0xfacc15);
-    addTrap(0, 0.6, 0, 2.4, 2.4);
-  } else if (game.mode === 'battle' || game.mode === 'arena') {
-    addBox(0, -0.5, 0, 36, 1, 36, game.floor);
-    addBox(-7, 1.0, -6, 3.5, 2.0, 1.2, game.accent);
-    addBox(7, 1.0, -6, 3.5, 2.0, 1.2, game.accent);
-    addBox(0, 1.0, -11, 4.5, 2.0, 1.2, 0x38bdf8);
-    addBox(-9, 2.2, 5, 4.0, 4.4, 4.0, 0x334155);
-    addBox(9, 2.2, 5, 4.0, 4.4, 4.0, 0x334155);
-    addTrap(0, 0, -5, 2.8, 2.8);
-  } else if (game.mode === 'obby') {
-    addBox(0, -0.5, 0, 36, 1, 36, game.floor);
-    addBox(0, 0.7, -16, 4.6, 0.8, 4.6, game.accent);
-    addBox(3.2, 1.8, -23, 4.2, 0.8, 4.2, game.accent);
-    addBox(-2.8, 2.9, -30, 4.2, 0.8, 4.2, game.accent);
-    addBox(0, 4.0, -38, 9, 1.0, 9, 0xfacc15);
-    addTrap(0, 0, -10, 2.6, 2.6);
-  } else if (game.mode === 'tycoon') {
-    addBox(0, -0.5, 0, 36, 1, 36, game.floor);
-    addBox(-6, 0.5, -8, 6, 1.0, 6, game.accent);
-    addBox(6, 0.5, -8, 6, 1.0, 6, game.accent);
-    addBox(0, 1.6, -18, 8, 1.0, 8, 0xfacc15);
-    addTrap(0, 0, -6, 2.8, 2.8);
-  } else {
-    addBox(0, -0.5, 0, 36, 1, 36, game.floor);
-    addBox(0, 1.2, -14, 4.2, 0.8, 4.2, game.accent);
-    addBox(4.5, 2.5, -21, 3.8, 0.8, 3.8, 0x38bdf8);
-    addBox(-4.5, 3.8, -28, 3.8, 0.8, 3.8, game.accent);
-    addBox(0, 5.0, -36, 8.5, 1.0, 8.5, 0xfacc15);
-    addTrap(0, 0, -8, 3.0, 3.0);
-    addTrap(4.5, 2.9, -21, 2.0, 2.0);
-  }
-
-  spawnCoinsForChapter(game, 1);
-  spawnEnemiesForChapter(game, 1);
-  updateScenarioHUD(game);
-}
-
-function launchGame(game) {
-  initThreeOnce();
-  clearWorldObjects();
-  activeGame = game;
-  currentChapter = 1;
-  sessionSeconds = 0;
-  state.hp = 100;
-  jumpsUsed = 0;
-  $('ig-timer').textContent = '00:00';
-  syncHUD();
-
-  scene.background = new THREE.Color(game.sky);
-  scene.fog = new THREE.FogExp2(game.sky, game.mode === 'mc_realistic' ? 0.008 : 0.0045);
-
-  buildModeLayout(game);
-  buildPlayerMesh();
-  velY = 0; grounded = false; yaw = 0;
-
-  $('ig-game-name').textContent = game.title;
-  $('home-screen').classList.add('hidden');
-  $('world-view').classList.add('active');
-  toast(`بدأت ${game.title} — فصل 1/3`);
-}
-
-function doJump() {
-  if (!activeGame) return;
-  if (grounded || jumpsUsed < 2) {
-    velY = 12.2;
-    grounded = false;
-    jumpsUsed++;
-  }
-}
-
-function doAttack() {
-  if (!player || !activeGame) return;
-  limbs.armR.rotation.x = -1.35;
-  setTimeout(() => { if (limbs.armR) limbs.armR.rotation.x = 0; }, 160);
-
-  const dmg = 25 + (state.powerLv - 1) * 10;
-  let hitAny = false;
-  for (const e of enemies) {
-    if (!e.alive) continue;
-    const dist = Math.hypot(player.position.x - e.mesh.position.x, player.position.z - e.mesh.position.z);
-    if (dist <= 4.0) {
-      e.hp -= dmg;
-      hitAny = true;
-      e.bodyMat.emissive.setHex(0xffffff);
-      setTimeout(() => { if (e.bodyMat) e.bodyMat.emissive.setHex(0x000000); }, 110);
-      if (e.hp <= 0) {
-        e.alive = false;
-        e.mesh.visible = false;
-        state.enemiesDefeated++;
-        state.coins += 20;
-        state.score += 50;
-        syncHUD();
-        toast('هزمت خصماً! +20 عملة', '#10b981');
+      if (type === "movie") {
+        payload.video = document.getElementById("newVideo").value.trim();
+      } else {
+        try {
+          payload.seasons = JSON.parse(document.getElementById("newSeasonsJson").value);
+        } catch (_) {
+          alert("صيغة JSON للمواسم والحلقات غير صحيحة.");
+          return;
+        }
       }
-    }
-  }
 
-  if (enemies.length > 0 && enemies.every(e => !e.alive)) {
-    if (currentChapter < 3) {
-      currentChapter++;
-      state.coins += 30;
-      state.score += 80;
-      state.hp = Math.min(100, state.hp + 35);
-      syncHUD();
-      updateScenarioHUD(activeGame);
-      spawnEnemiesForChapter(activeGame, currentChapter);
-      spawnCoinsForChapter(activeGame, currentChapter);
-      toast(`انتقلت إلى فصل ${currentChapter}/3! +30 عملة`, '#8b5cf6');
-    } else {
-      state.gamesCompleted++;
-      state.coins += 100;
-      state.score += 250;
-      syncHUD();
-      const finishedGame = activeGame;
-      const finishedTime = sessionSeconds;
-      activeGame = null;
-      openScenarioCompleteModal(finishedGame, finishedTime);
-    }
-    return;
-  }
-
-  if (!hitAny) toast('اقترب من الخصم واضغط هجوم (F)', '#38bdf8');
-}
-
-$('ig-back-home').onclick = () => {
-  activeGame = null;
-  $('world-view').classList.remove('active');
-  $('home-screen').classList.remove('hidden');
-  syncHUD();
-};
-
-$('ig-respawn-btn').onclick = () => {
-  if (!player) return;
-  player.position.set(0, 0.5, 0);
-  velY = 0; state.hp = 100;
-  syncHUD();
-  toast('تمت إعادة التمركز واستعادة الصحة', '#38bdf8');
-};
-
-$('ig-atk-btn').onclick = doAttack;
-
-$('ig-build-btn').onclick = () => {
-  if (!player || state.coins < 2) { toast('تحتاج عملتين لوضع مكعب', '#ef4444'); return; }
-  state.coins -= 2;
-  state.score += 5;
-  syncHUD();
-  const bx = Math.round(player.position.x + Math.sin(player.rotation.y) * 2.5);
-  const by = Math.max(0.5, Math.round(player.position.y));
-  const bz = Math.round(player.position.z + Math.cos(player.rotation.y) * 2.5);
-  const blockCol = activeGame?.mode === 'mc_realistic' ? 0x8d6e63 : (activeGame?.accent || 0x38bdf8);
-  addBox(bx, by, bz, 2, 2, 2, blockCol);
-  toast('تم وضع مكعب بناء!');
-};
-
-window.addEventListener('keydown', e => {
-  keys[e.code] = true;
-  if (e.code === 'Space' && activeGame) { doJump(); e.preventDefault(); }
-  if (e.code === 'KeyF' && activeGame) doAttack();
-  if (e.code === 'KeyB' && activeGame) $('ig-build-btn').click();
-  if (e.code === 'KeyR' && activeGame) $('ig-respawn-btn').click();
-});
-window.addEventListener('keyup', e => { keys[e.code] = false; });
-
-const wCanvas = $('world-canvas');
-wCanvas.addEventListener('mousedown', e => { orbiting = true; lastX = e.clientX; lastY = e.clientY; });
-window.addEventListener('mouseup', () => { orbiting = false; });
-window.addEventListener('mousemove', e => {
-  if (!orbiting) return;
-  yaw -= (e.clientX - lastX) * 0.005;
-  pitch = clamp(pitch + (e.clientY - lastY) * 0.004, -0.2, 1.1);
-  lastX = e.clientX; lastY = e.clientY;
-});
-
-(() => {
-  const zone = $('joy-zone'), knob = $('joy-knob');
-  let drag = false, cx = 0, cy = 0;
-  zone.addEventListener('touchstart', e => {
-    e.preventDefault(); drag = true;
-    const r = zone.getBoundingClientRect();
-    cx = r.left + r.width / 2; cy = r.top + r.height / 2;
-  }, { passive: false });
-  zone.addEventListener('touchmove', e => {
-    if (!drag) return; e.preventDefault();
-    const t = e.touches[0];
-    let dx = t.clientX - cx, dy = t.clientY - cy;
-    const dist = Math.hypot(dx, dy), maxR = 42;
-    if (dist > maxR) { dx = (dx / dist) * maxR; dy = (dy / dist) * maxR; }
-    knob.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
-    joyX = dx / maxR; joyY = dy / maxR;
-  }, { passive: false });
-  const reset = () => { drag = false; joyX = joyY = 0; knob.style.transform = 'translate(-50%, -50%)'; };
-  zone.addEventListener('touchend', reset);
-  zone.addEventListener('touchcancel', reset);
-  $('mob-jump').onclick = doJump;
-  $('mob-atk').onclick = doAttack;
-})();
-
-const clock = new THREE.Clock();
-let regenAccum = 0;
-
-function tick() {
-  requestAnimationFrame(tick);
-  const dt = Math.min(clock.getDelta(), 0.05);
-  const elapsed = clock.elapsedTime;
-
-  if (!activeGame) {
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    ctx2d.clearRect(0, 0, w, h);
-
-    for (const s of shapes2D) {
-      s.x += s.vx * 60 * dt;
-      s.y += s.vy * 60 * dt;
-      s.rot += s.vRot * 60 * dt;
-      if (s.x < -60) s.x = w + 60;
-      if (s.x > w + 60) s.x = -60;
-      if (s.y < -60) s.y = h + 60;
-      if (s.y > h + 60) s.y = -60;
-      draw2DShape(s);
-    }
-
-    for (const m of floating3DMeshes) {
-      const u = m.userData;
-      m.rotation.x += u.rotX * 60 * dt;
-      m.rotation.y += u.rotY * 60 * dt;
-      m.position.x = u.baseX + Math.cos(elapsed * 0.8 + u.phase) * 0.45 + ptrX * 0.8;
-      m.position.y = u.baseY + Math.sin(elapsed * 1.1 + u.phase) * 0.55 - ptrY * 0.7;
-    }
-
-    bgCamera.position.x += (ptrX * 1.1 - bgCamera.position.x) * 0.05;
-    bgCamera.position.y += (-ptrY * 0.9 - bgCamera.position.y) * 0.05;
-    bgCamera.lookAt(0, 0, 0);
-    bgRenderer.render(bgScene, bgCamera);
-    return;
-  }
-
-  if (!player || !renderer) return;
-
-  sessionSeconds += dt;
-  const mm = String(Math.floor(sessionSeconds / 60)).padStart(2, '0');
-  const ss = String(Math.floor(sessionSeconds % 60)).padStart(2, '0');
-  $('ig-timer').textContent = `${mm}:${ss}`;
-
-  regenAccum += dt;
-  if (regenAccum >= 2.0 && state.hp < 100) {
-    regenAccum = 0;
-    state.hp = Math.min(100, state.hp + state.regenLv * 2);
-    $('ig-hp-fill').style.width = state.hp + '%';
-  }
-
-  let mx = 0, mz = 0;
-  if (keys.KeyW || keys.ArrowUp) mz -= 1;
-  if (keys.KeyS || keys.ArrowDown) mz += 1;
-  if (keys.KeyA || keys.ArrowLeft) mx -= 1;
-  if (keys.KeyD || keys.ArrowRight) mx += 1;
-  mx += joyX; mz += joyY;
-
-  const mag = Math.hypot(mx, mz);
-  const moving = mag > 0.1;
-  if (moving) {
-    mx /= mag; mz /= mag;
-    const fx = -Math.sin(yaw), fz = -Math.cos(yaw);
-    const rx = Math.cos(yaw), rz = -Math.sin(yaw);
-    const wdx = -mz * fx + mx * rx;
-    const wdz = -mz * fz + mx * rz;
-    const spd = (activeGame.speed || 9.5) + (state.speedLv - 1) * 1.1;
-    player.position.x += wdx * spd * dt;
-    player.position.z += wdz * spd * dt;
-    player.rotation.y = Math.atan2(wdx, wdz);
-    walkPhase += dt * 13;
-    const s = Math.sin(walkPhase) * 0.7;
-    limbs.legL.rotation.x = s; limbs.legR.rotation.x = -s;
-    limbs.armL.rotation.x = -s * 0.8; limbs.armR.rotation.x = s * 0.8;
-  } else {
-    ['legL', 'legR', 'armL', 'armR'].forEach(k => { limbs[k].rotation.x *= 0.8; });
-  }
-
-  const prevY = player.position.y;
-  velY -= 26 * dt;
-  player.position.y += velY * dt;
-
-  let support = -Infinity;
-  for (const p of platforms) {
-    const m = p.mesh.position;
-    if (Math.abs(player.position.x - m.x) <= p.hx + 0.35 && Math.abs(player.position.z - m.z) <= p.hz + 0.35) {
-      const top = m.y + p.hy;
-      if (prevY >= top - 0.35 && player.position.y <= top + 0.08 && velY <= 0) {
-        support = Math.max(support, top);
+      try {
+        await addDoc(collection(db, "catalog"), payload);
+        addModal.classList.remove("open");
+        addItemForm.reset();
+        await loadCatalogFromFirebase();
+      } catch (err) {
+        alert("فشل الحفظ في Firestore: " + err.message);
       }
-    }
-  }
-  if (support !== -Infinity) {
-    player.position.y = support; velY = 0; grounded = true; jumpsUsed = 0;
-  } else {
-    grounded = false;
-  }
+    });
 
-  for (const t of traps) {
-    if (Math.abs(player.position.x - t.mesh.position.x) <= t.hx + 0.3 &&
-        Math.abs(player.position.z - t.mesh.position.z) <= t.hz + 0.3 &&
-        Math.abs(player.position.y - t.y) < 1.1) {
-      state.hp = Math.max(0, state.hp - 25);
-      syncHUD();
-      toast('لمست فخاً أحمر! -25 صحة', '#ef4444');
-      player.position.set(0, 0.6, 0);
-      velY = 0;
-      if (state.hp <= 0) { state.hp = 100; syncHUD(); }
-      break;
-    }
-  }
+    tabBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        tabBtns.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        activeTab = btn.dataset.type;
+        renderAll();
+      });
+    });
 
-  for (const e of enemies) {
-    if (!e.alive) continue;
-    e.cooldown = Math.max(0, e.cooldown - dt);
-    const dx = player.position.x - e.mesh.position.x;
-    const dz = player.position.z - e.mesh.position.z;
-    const dist = Math.hypot(dx, dz);
-    if (dist < 24 && dist > 1.4) {
-      e.mesh.position.x += (dx / dist) * e.speed * dt;
-      e.mesh.position.z += (dz / dist) * e.speed * dt;
-      e.mesh.rotation.y = Math.atan2(dx, dz);
-    } else if (dist <= 1.7 && e.cooldown <= 0) {
-      e.cooldown = 1.1;
-      state.hp = Math.max(0, state.hp - 15);
-      syncHUD();
-      toast('الخصم أصابك! -15 صحة', '#ef4444');
-      if (state.hp <= 0) {
-        state.hp = 100;
-        player.position.set(0, 0.6, 0);
-        velY = 0;
-        syncHUD();
-      }
-    }
-  }
+    seasonSelect.addEventListener("change", () => {
+      currentSeasonIdx = Number(seasonSelect.value) || 0;
+      currentEpIdx = 0;
+      renderSeasonsAndEpisodes();
+    });
 
-  if (player.position.y < -15) {
-    player.position.set(0, 0.5, 0); velY = 0;
-  }
+    videoPlayer.addEventListener("ended", startAutoNextCountdown);
+    playNextNowBtn.addEventListener("click", goToNextEpisodeNow);
+    cancelAutoNextBtn.addEventListener("click", clearAutoNext);
 
-  coinMeshes.forEach((c, idx) => {
-    if (c.taken) return;
-    c.mesh.rotation.z += dt * 3;
-    c.mesh.position.y = c.baseY + Math.sin(elapsed * 3 + idx) * 0.2;
-    if (player.position.distanceTo(c.mesh.position) < 1.8) {
-      c.taken = true; c.mesh.visible = false;
-      state.coins += c.value;
-      state.score += 25;
-      syncHUD();
-      toast(`+${c.value} عملات!`, '#eab308');
-    }
-  });
+    window.addEventListener("scroll", () => {
+      document.getElementById("navbar").classList.toggle("scrolled", window.scrollY > 40);
+    });
 
-  const focus = new THREE.Vector3(player.position.x, player.position.y + 1.8, player.position.z);
-  camera.position.lerp(new THREE.Vector3(
-    focus.x + Math.sin(yaw) * Math.cos(pitch) * camDist,
-    focus.y + Math.sin(pitch) * camDist,
-    focus.z + Math.cos(yaw) * Math.cos(pitch) * camDist
-  ), Math.min(1, dt * 12));
-  camera.lookAt(focus);
+    searchInput.addEventListener("input", renderCatalog);
+    genreSelect.addEventListener("change", renderCatalog);
+    heroPlayBtn.addEventListener("click", () => openItemModal(heroItem));
+    heroListBtn.addEventListener("click", () => toggleList(heroItem?.id));
+    modalToggleListBtn.addEventListener("click", () => toggleList(currentItem?.id));
+    closePlayerBtn.addEventListener("click", closePlayer);
+    playerModal.addEventListener("click", (e) => {
+      if (e.target === playerModal) closePlayer();
+    });
 
-  renderer.render(scene, camera);
-}
-
-loadSave();
-renderFriends();
-renderGames();
-syncHUD();
-tick();
-</script>
+    loadCatalogFromFirebase();
+  </script>
 </body>
 </html>
-
-هل تفضل أن نضيف تحدي سرعة إضافي (مكافأة زمنية إذا أنهيت السيناريو في أقل من 10 دقائق)؟
-
