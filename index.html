@@ -5,10 +5,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title id="seoTitle">StreamFlix AI — منصة أفلام، مسلسلات، وأنمي</title>
-  <meta id="seoDesc" name="description" content="منصة عرض سينمائية للأفلام والمسلسلات والأنمي مع واجهة دخول عبر جوجل وإنشاء حساب ودخول تجريبي وخلفية سينمائية وربط مباشر بقاعدة بيانات Firebase." />
-  <meta id="seoKeywords" name="keywords" content="أفلام, مسلسلات, أنمي, تسجيل دخول, جوجل, إنشاء حساب, دخول تجريبي, Firebase" />
+  <meta id="seoDesc" name="description" content="منصة عرض سينمائية للأفلام والمسلسلات والأنمي مع تسجيل دخول عبر جوجل وإنشاء حساب وحفظ بيانات المستخدمين وقوائمهم في Firebase Firestore وحقوق النشر وسياسة DMCA." />
+  <meta id="seoKeywords" name="keywords" content="أفلام, مسلسلات, أنمي, تسجيل دخول, جوجل, إنشاء حساب, دخول تجريبي, Firebase, Firestore, حقوق النشر, DMCA" />
   <meta id="ogTitle" property="og:title" content="StreamFlix AI — أفلام، مسلسلات، وأنمي" />
-  <meta id="ogDesc" property="og:description" content="تصفح أحدث الأفلام والمسلسلات والأنمي في صفوف أفقية مع عرض الوصف والنوع والسنة عند تمرير الماوس." />
+  <meta id="ogDesc" property="og:description" content="تصفح أحدث الأفلام والمسلسلات والأنمي في صفوف أفقية مع مزامنة قائمة المشاهدة لكل حساب وسياسة حقوق النشر وDMCA." />
   <meta id="ogType" property="og:type" content="website" />
   <script id="jsonLdSchema" type="application/ld+json">{}</script>
 
@@ -287,6 +287,11 @@
       border-radius: 999px;
     }
 
+    .stat-chip.sync-ok {
+      border-color: rgba(16, 185, 129, 0.4);
+      color: #a7f3d0;
+    }
+
     .utility-actions { display: flex; gap: 7px; flex-wrap: wrap; }
 
     .labels-bar {
@@ -420,7 +425,7 @@
     .btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
 
     /* Horizontal Shelf Rows */
-    main { padding: 18px 4% 68px; }
+    main { padding: 18px 4% 40px; }
 
     .shelf-section { margin-bottom: 30px; }
 
@@ -681,6 +686,64 @@
 
     .empty-msg { color: var(--muted); font-size: 0.9rem; padding: 8px 0; }
 
+    /* Footer with Copyright & DMCA */
+    .site-footer {
+      background: #0b0d12;
+      border-top: 1px solid var(--border);
+      padding: 26px 4% 34px;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      margin-bottom: 18px;
+    }
+
+    .footer-col h3 {
+      color: #ffffff;
+      font-size: 0.94rem;
+      margin-bottom: 8px;
+    }
+
+    .footer-col p {
+      line-height: 1.65;
+      margin-bottom: 8px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .footer-bottom {
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-size: 0.78rem;
+    }
+
+    .legal-box {
+      background: #0e121a;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      font-size: 0.84rem;
+      color: #d1d5db;
+      line-height: 1.7;
+    }
+
+    .legal-box strong { color: #ffffff; }
+
     /* Shared Auth Tabs & Feedback */
     .auth-switch-tabs {
       display: grid;
@@ -866,7 +929,7 @@
       </div>
 
       <p class="auth-subtitle" id="gateSubtitle">
-        أهلاً بك في عالم الأفلام والمسلسلات والأنمي. سجّل الدخول للمتابعة أو ابدأ بالدخول التجريبي الفوري.
+        أهلاً بك في عالم الأفلام والمسلسلات والأنمي. سجّل الدخول لحفظ قائمتك ومزامنتها أو ابدأ بالدخول التجريبي.
       </p>
 
       <div class="auth-switch-tabs" role="tablist">
@@ -913,7 +976,7 @@
 
   <!-- Main Platform -->
   <header id="navbar">
-    <a href="#" class="brand">STREAMFLIX <span>AI + AUTH</span></a>
+    <a href="#" class="brand">STREAMFLIX <span>AI + SYNC</span></a>
 
     <nav class="nav-tabs" aria-label="الأقسام الرئيسية">
       <button class="tab-btn active" data-type="all">الكل</button>
@@ -981,6 +1044,90 @@
 
   <!-- Horizontal Shelf Rows Container -->
   <main id="shelvesContainer"></main>
+
+  <!-- Footer: Copyright & DMCA -->
+  <footer class="site-footer" id="siteFooter">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h3>© حقوق النشر والملكية الفكرية (Copyright)</h3>
+        <p>
+          جميع الحقوق محفوظة © 2026 لمنصة <strong>StreamFlix AI</strong> (مشروع Firebase: <code>metaverse-metabox</code>). تصميم الواجهة وبرمجة المنصة محفوظة لصاحب المشروع، بينما تعود حقوق العلامات التجارية والبوسترات والمواد المرئية المعروضة إلى أصحابها الأصليين أو الجهات المرخّصة لها.
+        </p>
+      </div>
+
+      <div class="footer-col">
+        <h3>سياسة DMCA وإشعار الإزالة</h3>
+        <p>
+          تحترم منصة <strong>StreamFlix AI</strong> حقوق الملكية الفكرية وتلتزم بأحكام قانون الألفية للملكية الرقمية (<strong>DMCA</strong>). إذا كنت مالك حقوق نشر أو مفوضاً عنه وتعتقد أن أي محتوى أو رابط أو بيانات مدرجة في المنصة يشكّل انتهاكاً لحقوقك، يمكنك تقديم إشعار إزالة فوري.
+        </p>
+        <div class="footer-links">
+          <button type="button" class="btn btn-secondary" id="openCopyrightModalBtn" style="padding:5px 11px;font-size:0.78rem;">📄 بيان حقوق النشر</button>
+          <button type="button" class="btn btn-red" id="openDmcaModalBtn" style="padding:5px 11px;font-size:0.78rem;">⚖ تقديم إشعار DMCA</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>بريد بلاغات DMCA وحقوق النشر: <strong>dmca@streamflix-metabox.app</strong> • وكيل DMCA: إدارة الامتثال الرقمي — StreamFlix AI</span>
+      <span>© 2026 StreamFlix AI. جميع الحقوق محفوظة.</span>
+    </div>
+  </footer>
+
+  <!-- Legal & DMCA Modal -->
+  <div class="modal-backdrop" id="legalModal" role="dialog" aria-modal="true" aria-labelledby="legalModalTitle">
+    <div class="modal" style="max-width:680px;">
+      <div class="modal-top">
+        <strong id="legalModalTitle">حقوق النشر وسياسة DMCA</strong>
+        <button class="close-btn" id="closeLegalBtn" aria-label="إغلاق">✕</button>
+      </div>
+      <div class="modal-info">
+        <div class="legal-box" id="copyrightDetailsBox">
+          <strong>إشعار حقوق النشر (Copyright Notice):</strong><br/>
+          © 2026 <strong>StreamFlix AI</strong> — جميع الحقوق محفوظة. يُحظر نسخ أو إعادة توزيع الكود البرمجي أو الهوية البصرية للمنصة دون إذن خطي مسبق. العناصر والوسائط المدرجة في قاعدة بيانات <code>catalog</code> تخضع لحقوق مالكيها الأصليين، ويتم مراجعة أي محتوى مخالف فور الإبلاغ عنه.
+        </div>
+
+        <div class="legal-box" id="dmcaDetailsBox">
+          <strong>متطلبات إشعار إزالة DMCA (17 U.S.C. § 512(c)(3)):</strong><br/>
+          1. تحديد العمل المحمي بحقوق الطبع والنشر المدّعى انتهاكه.<br/>
+          2. تحديد اسم العمل أو الرابط/المعرّف الموجود على المنصة المطلوب إزالته.<br/>
+          3. معلومات التواصل الخاصة بمقدم البلاغ (الاسم، البريد الإلكتروني، والصفة القانونية).<br/>
+          4. إقرار بأن مقدم البلاغ يعتقد بحسن نية أن الاستخدام غير مصرّح به من مالك الحقوق أو وكيله أو القانون.
+        </div>
+
+        <form id="dmcaForm">
+          <h3 style="font-size:1rem;margin-bottom:10px;">نموذج إرسال إشعار DMCA</h3>
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="dmcaReporterName">اسم مقدم الإشعار / المالك</label>
+              <input type="text" id="dmcaReporterName" value="إدارة حقوق الملكية" required />
+            </div>
+            <div class="form-field">
+              <label for="dmcaReporterEmail">البريد الإلكتروني للتواصل</label>
+              <input type="email" id="dmcaReporterEmail" value="rights-owner@example.com" required />
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="dmcaWorkTitle">اسم العمل المحمي بحقوق النشر أو عنوانه في المنصة</label>
+            <input type="text" id="dmcaWorkTitle" placeholder="مثال: اسم الفيلم أو المسلسل أو الأنمي" required />
+          </div>
+
+          <div class="form-field">
+            <label for="dmcaTargetUrl">رابط أو معرّف المحتوى المطلوب مراجعته / إزالته</label>
+            <input type="text" id="dmcaTargetUrl" placeholder="مثال: https://example.com/?item=..." required />
+          </div>
+
+          <div class="form-field">
+            <label for="dmcaStatement">إقرار حسن النية وتفاصيل الإشعار</label>
+            <textarea id="dmcaStatement" rows="3" required>أقرّ بصفتي مالك حقوق النشر أو المفوض الرسمي بالتصرف نيابة عنه بأنني أعتقد بحسن نية أن استخدام المادة المشار إليها غير مصرّح به بموجب القانون أو من قِبل مالك الحقوق.</textarea>
+          </div>
+
+          <button type="submit" class="btn btn-red">إرسال إشعار DMCA</button>
+          <div class="auth-feedback" id="dmcaFeedback"></div>
+        </form>
+      </div>
+    </div>
+  </div>
 
   <!-- Player Modal -->
   <div class="modal-backdrop" id="playerModal" role="dialog" aria-modal="true">
@@ -1107,10 +1254,13 @@
       getFirestore,
       collection,
       getDocs,
+      getDoc,
+      setDoc,
       addDoc,
       doc,
       updateDoc,
-      deleteDoc
+      deleteDoc,
+      serverTimestamp
     } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js";
     import {
       getAuth,
@@ -1359,6 +1509,7 @@
     let aiSortedEnabled = localStorage.getItem(AI_SORT_KEY) === "1";
     let demoUser = JSON.parse(localStorage.getItem(DEMO_SESSION_KEY) || "null");
     let currentFirebaseUser = null;
+    let userSyncStateText = "";
 
     let uiLang = "ar";
     let activeTab = "all";
@@ -1402,6 +1553,14 @@
     const switchAccountBtn = document.getElementById("switchAccountBtn");
     const logoutBtn = document.getElementById("logoutBtn");
     const toggleLangBtn = document.getElementById("toggleLangBtn");
+
+    // Legal & DMCA DOM
+    const openCopyrightModalBtn = document.getElementById("openCopyrightModalBtn");
+    const openDmcaModalBtn = document.getElementById("openDmcaModalBtn");
+    const legalModal = document.getElementById("legalModal");
+    const closeLegalBtn = document.getElementById("closeLegalBtn");
+    const dmcaForm = document.getElementById("dmcaForm");
+    const dmcaFeedback = document.getElementById("dmcaFeedback");
 
     // Catalog & Player DOM
     const dbStatus = document.getElementById("dbStatus");
@@ -1456,6 +1615,116 @@
     const seasonsJsonField = document.getElementById("seasonsJsonField");
     const newLabelsPicker = document.getElementById("newLabelsPicker");
 
+    // Save & Load User Profile + MyList + Progress in Firestore (`users/{uid}`)
+    async function syncUserProfileAndLists(user, extraMeta = {}) {
+      if (!user || !user.uid) return;
+      const userRef = doc(db, "users", user.uid);
+      const providerId =
+        extraMeta.provider ||
+        (user.providerData && user.providerData[0]?.providerId) ||
+        "password";
+
+      try {
+        const existingSnap = await getDoc(userRef);
+        const existingData = existingSnap.exists() ? existingSnap.data() : {};
+
+        const remoteList = Array.isArray(existingData.myList) ? existingData.myList : [];
+        const mergedList = Array.from(new Set([...remoteList, ...myList]));
+
+        const remoteProgress = existingData.progress && typeof existingData.progress === "object"
+          ? existingData.progress
+          : {};
+        const mergedProgress = { ...remoteProgress, ...progressMap };
+
+        myList = mergedList;
+        progressMap = mergedProgress;
+        localStorage.setItem(LIST_KEY, JSON.stringify(myList));
+        localStorage.setItem(PROGRESS_KEY, JSON.stringify(progressMap));
+
+        const profilePayload = {
+          uid: user.uid,
+          displayName: extraMeta.displayName || user.displayName || existingData.displayName || "مستخدم",
+          email: user.email || existingData.email || "",
+          photoURL: user.photoURL || existingData.photoURL || "",
+          provider: providerId,
+          myList: myList,
+          progress: progressMap,
+          lastLoginAt: serverTimestamp()
+        };
+
+        if (!existingSnap.exists() || extraMeta.isNewAccount) {
+          profilePayload.createdAt = serverTimestamp();
+        }
+
+        await setDoc(userRef, profilePayload, { merge: true });
+        userSyncStateText = "تم حفظ الحساب وقائمتي في Firestore";
+        renderAll();
+        updateHeroListBtn();
+        updateModalListBtn();
+      } catch (err) {
+        console.error("Firestore user sync error:", err);
+        userSyncStateText = "تعذر حفظ بيانات الحساب في Firestore (تحقق من Rules)";
+        renderStatsBadges();
+      }
+    }
+
+    async function persistUserListsToFirestore() {
+      if (!currentFirebaseUser || !currentFirebaseUser.uid) return;
+      try {
+        const userRef = doc(db, "users", currentFirebaseUser.uid);
+        await setDoc(
+          userRef,
+          {
+            myList: myList,
+            progress: progressMap,
+            updatedAt: serverTimestamp()
+          },
+          { merge: true }
+        );
+        userSyncStateText = "تمت مزامنة قائمتي في Firestore";
+        renderStatsBadges();
+      } catch (err) {
+        console.error("Failed to sync myList:", err);
+      }
+    }
+
+    function openLegalModal(focusTarget = "") {
+      dmcaFeedback.textContent = "";
+      dmcaFeedback.className = "auth-feedback";
+      if (focusTarget && !document.getElementById("dmcaTargetUrl").value) {
+        document.getElementById("dmcaTargetUrl").value = focusTarget;
+      }
+      legalModal.classList.add("open");
+    }
+
+    openCopyrightModalBtn.addEventListener("click", () => openLegalModal());
+    openDmcaModalBtn.addEventListener("click", () => openLegalModal(window.location.href));
+    closeLegalBtn.addEventListener("click", () => legalModal.classList.remove("open"));
+    legalModal.addEventListener("click", (e) => {
+      if (e.target === legalModal) legalModal.classList.remove("open");
+    });
+
+    dmcaForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const noticePayload = {
+        reporterName: document.getElementById("dmcaReporterName").value.trim(),
+        reporterEmail: document.getElementById("dmcaReporterEmail").value.trim(),
+        workTitle: document.getElementById("dmcaWorkTitle").value.trim(),
+        targetUrl: document.getElementById("dmcaTargetUrl").value.trim(),
+        statement: document.getElementById("dmcaStatement").value.trim(),
+        submittedAt: new Date().toISOString()
+      };
+
+      try {
+        await addDoc(collection(db, "dmca_notices"), noticePayload);
+        dmcaFeedback.textContent = "تم تسجيل إشعار DMCA وحفظه بنجاح لمراجعته.";
+        dmcaFeedback.className = "auth-feedback success";
+      } catch (_) {
+        dmcaFeedback.textContent = `تم تجهيز إشعار DMCA بخصوص "${noticePayload.workTitle}". يمكنك إرساله إلى dmca@streamflix-metabox.app.`;
+        dmcaFeedback.className = "auth-feedback success";
+      }
+    });
+
     function renderCinemaBackground() {
       const sourcePosters = catalog.length
         ? [...catalog.map((i) => i.poster), ...CINEMA_BG_POSTERS]
@@ -1490,8 +1759,8 @@
       logoutBtn.textContent = isEn ? "Sign Out" : "خروج";
 
       gateSubtitle.textContent = isEn
-        ? "Welcome to StreamFlix Movies, Series & Anime. Sign in to continue or enter with instant demo access."
-        : "أهلاً بك في عالم الأفلام والمسلسلات والأنمي. سجّل الدخول للمتابعة أو ابدأ بالدخول التجريبي الفوري.";
+        ? "Sign in to save and sync your account and My List in Firestore, or start with instant demo access."
+        : "أهلاً بك في عالم الأفلام والمسلسلات والأنمي. سجّل الدخول لحفظ قائمتك ومزامنتها أو ابدأ بالدخول التجريبي.";
       gateLoginTab.textContent = isEn ? "Sign In" : "تسجيل الدخول";
       gateSignupTab.textContent = isEn ? "Create Account" : "إنشاء حساب";
       gateGoogleText.textContent = isEn ? "Continue with Google" : "تسجيل الدخول عبر Google";
@@ -1542,6 +1811,7 @@
         userBadge.style.display = "none";
         logoutBtn.style.display = "none";
       }
+      renderStatsBadges();
     }
 
     gateLangBtn.addEventListener("click", () => {
@@ -1566,9 +1836,10 @@
     gateGoogleBtn.addEventListener("click", async () => {
       clearGateFeedback();
       try {
-        await signInWithPopup(auth, googleProvider);
+        const cred = await signInWithPopup(auth, googleProvider);
         demoUser = null;
         localStorage.removeItem(DEMO_SESSION_KEY);
+        await syncUserProfileAndLists(cred.user, { provider: "google.com" });
         updateGateAndAuthUI();
       } catch (err) {
         showGateFeedback(err.message, "error");
@@ -1590,12 +1861,18 @@
           }
           demoUser = null;
           localStorage.removeItem(DEMO_SESSION_KEY);
-          showGateFeedback("تم إنشاء الحساب بنجاح!", "success");
+          await syncUserProfileAndLists(cred.user, {
+            provider: "password",
+            displayName: nameVal || emailVal.split("@")[0],
+            isNewAccount: true
+          });
+          showGateFeedback("تم إنشاء الحساب وحفظ بياناتك بنجاح!", "success");
         } else {
-          await signInWithEmailAndPassword(auth, emailVal, passVal);
+          const cred = await signInWithEmailAndPassword(auth, emailVal, passVal);
           demoUser = null;
           localStorage.removeItem(DEMO_SESSION_KEY);
-          showGateFeedback("تم تسجيل الدخول بنجاح!", "success");
+          await syncUserProfileAndLists(cred.user, { provider: "password" });
+          showGateFeedback("تم تسجيل الدخول ومزامنة قائمتك بنجاح!", "success");
         }
         updateGateAndAuthUI();
       } catch (err) {
@@ -1611,12 +1888,14 @@
         email: "demo@streamflix.app",
         isDemo: true
       };
+      userSyncStateText = "وضع تجريبي (حفظ محلي)";
       localStorage.setItem(DEMO_SESSION_KEY, JSON.stringify(demoUser));
       updateGateAndAuthUI();
     });
 
     logoutBtn.addEventListener("click", async () => {
       demoUser = null;
+      userSyncStateText = "";
       localStorage.removeItem(DEMO_SESSION_KEY);
       if (currentFirebaseUser) {
         try {
@@ -1626,11 +1905,12 @@
       updateGateAndAuthUI();
     });
 
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => {
       currentFirebaseUser = user;
       if (user) {
         demoUser = null;
         localStorage.removeItem(DEMO_SESSION_KEY);
+        await syncUserProfileAndLists(user);
       }
       updateGateAndAuthUI();
     });
@@ -1812,7 +2092,7 @@ Sitemap: ${baseUrl}sitemap.xml
       if (String(item.id).startsWith("fallback_")) {
         catalog = catalog.filter((x) => x.id !== item.id);
         myList = myList.filter((id) => id !== item.id);
-        saveList();
+        await saveList();
         if (currentItem?.id === item.id) closePlayer();
         renderAll();
         return;
@@ -1821,7 +2101,7 @@ Sitemap: ${baseUrl}sitemap.xml
       try {
         await deleteDoc(doc(db, "catalog", item.id));
         myList = myList.filter((id) => id !== item.id);
-        saveList();
+        await saveList();
         if (currentItem?.id === item.id) {
           closePlayer();
         }
@@ -1874,11 +2154,15 @@ Sitemap: ${baseUrl}sitemap.xml
       const moviesCount = catalog.filter((i) => i.type === "movie").length;
       const seriesCount = catalog.filter((i) => i.type === "series").length;
       const animeCount = catalog.filter((i) => i.type === "anime").length;
+      const syncChip = userSyncStateText
+        ? `<span class="stat-chip sync-ok">✓ ${userSyncStateText}</span>`
+        : "";
       statsBadges.innerHTML = `
         <span class="stat-chip">أفلام: ${moviesCount}</span>
         <span class="stat-chip">مسلسلات: ${seriesCount}</span>
         <span class="stat-chip">أنمي: ${animeCount}</span>
         <span class="stat-chip">قائمتي: ${myList.length}</span>
+        ${syncChip}
       `;
     }
 
@@ -1952,7 +2236,7 @@ Sitemap: ${baseUrl}sitemap.xml
       };
       const labelText = activeLabel === "all" ? "All Labels" : activeLabel;
       const pageTitle = `${tabNames[activeTab] || "Catalog"} — ${labelText} | StreamFlix AI`;
-      const pageDesc = `مشاهدة ${tabNames[activeTab] || "المحتوى"} ضمن تسمية ${labelText} مع صفوف أفقية وعرض الوصف والنوع والسنة عند تمرير الماوس.`;
+      const pageDesc = `مشاهدة ${tabNames[activeTab] || "المحتوى"} ضمن تسمية ${labelText} مع صفوف أفقية ومزامنة قائمة المستخدم.`;
 
       titleEl.textContent = pageTitle;
       descEl.setAttribute("content", pageDesc);
@@ -2226,18 +2510,24 @@ Sitemap: ${baseUrl}sitemap.xml
       }
     }
 
-    function saveList() { localStorage.setItem(LIST_KEY, JSON.stringify(myList)); }
-    function saveProgress(id, sIdx, eIdx) {
+    async function saveList() {
+      localStorage.setItem(LIST_KEY, JSON.stringify(myList));
+      await persistUserListsToFirestore();
+    }
+
+    async function saveProgress(id, sIdx, eIdx) {
       progressMap[id] = { sIdx, eIdx };
       localStorage.setItem(PROGRESS_KEY, JSON.stringify(progressMap));
       updateContinueWatchingBtn();
+      await persistUserListsToFirestore();
     }
+
     function isInList(id) { return myList.includes(id); }
 
-    function toggleList(id) {
+    async function toggleList(id) {
       if (!id) return;
       myList = isInList(id) ? myList.filter((x) => x !== id) : [...myList, id];
-      saveList();
+      await saveList();
       renderAll();
       updateHeroListBtn();
       updateModalListBtn();
@@ -2513,3 +2803,4 @@ Sitemap: ${baseUrl}sitemap.xml
 </body>
 </html>
 
+إذا كنت ترغب في تعديل اسم الجهة أو البريد الإلكتروني الخاص بـ DMCA أو إضافة صفحة شروط استخدام مستقلة، أخبرني وسأحدّثها لك فوراً.
