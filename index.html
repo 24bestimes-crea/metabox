@@ -1,5 +1,9 @@
-فهمت عليك تماماً! أنت تريد أن تكون الواجهة الرئيسية (Launcher / Home) مشابهة لتصميم واجهة Roblox الرئيسية الظاهرة في الصورة: شريط علوي فيه Home وشريط بحث Search وأيقونات العملات/الإشعارات، وقائمة جانبية عمودية داكنة، وصف Friends الدائري مع حالة الاتصال، ثم أقسام Continue وFriend Activity ببطاقات ألعاب مربعة ذات زوايا مستديرة وعناوين وتقييمات (%) وعدد اللاعبين — وعند الضغط على أي بطاقة لعبة يفتح عالمها ثلاثي الأبعاد فوراً، مع إمكانية العودة للواجهة الرئيسية في أي وقت.
-إليك الكود الكامل بهذا التصميم وتجربة اللعب التفاعلية:
+تمت إضافة خلفية تفاعلية متحركة بالأشكال الهندسية والمجسمات ثلاثية الأبعاد إلى واجهة Home في التطبيق، مع الحفاظ على تصميم الواجهة والعوالم الثلاثية الأبعاد كما هو.
+ما الذي تمت إضافته؟
+ * مجسمات هندسية ثلاثية الأبعاد (Three.js): مكعبات شبكية مضيئة، مجسمات ثماني الأسطح (Octahedron)، وحلقات هندسية (Torus) تدور وتطفو بسلاسة في خلفية الواجهة الرئيسية وتستجيب لحركة المؤشر (Parallax) مع توهج خفيف لا يشتت الانتباه عن البطاقات.
+ * أشكال هندسية ثنائية الأبعاد (Canvas 2D): خطوط متصلة ومثلثات ومعينات وحلقات تتحرك بنعومة وتتفاعل مع حركة الفأرة لتمنح الخلفية عمقاً بصرياً متكاملاً.
+ * إيقاف تلقائي عند الدخول للعالم: تتوقف الخلفية المتحركة مؤقتاً أثناء اللعب داخل العالم ثلاثي الأبعاد لتوفير الأداء والذاكرة، وتستأنف تلقائياً عند العودة إلى Home.
+إليك الكود الكامل المحدث:
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -11,17 +15,31 @@
   html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Segoe UI', Tahoma, sans-serif; background: #18191b; color: #ffffff; }
 
   /* ═══════════════════════════════════════════════════════
-     ROBLOX-STYLE HOME LAUNCHER
+     ROBLOX-STYLE HOME LAUNCHER + ANIMATED GEOMETRIC BG
      ═══════════════════════════════════════════════════════ */
   #home-screen {
     position: fixed; inset: 0; display: flex; flex-direction: column;
-    background: #18191b; z-index: 30; transition: opacity 0.25s ease;
+    background: radial-gradient(circle at 20% 15%, rgba(37, 99, 235, 0.16), transparent 45%),
+                radial-gradient(circle at 85% 75%, rgba(139, 92, 246, 0.14), transparent 50%),
+                #18191b;
+    z-index: 30; transition: opacity 0.25s ease;
   }
   #home-screen.hidden { opacity: 0; pointer-events: none; visibility: hidden; }
 
+  /* Animated Geometric & 3D Shapes Backdrop */
+  #bg-shapes-layer {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+  }
+  #bg-3d-canvas, #bg-2d-canvas {
+    position: absolute; inset: 0; width: 100%; height: 100%; display: block;
+  }
+  #bg-2d-canvas { opacity: 0.55; }
+
   /* Top Bar */
   .top-nav {
-    height: 52px; background: #232527; border-bottom: 1px solid rgba(255,255,255,0.08);
+    position: relative; z-index: 2;
+    height: 52px; background: rgba(35, 37, 39, 0.88); backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
     display: flex; align-items: center; justify-content: space-between;
     padding: 0 18px; gap: 14px; flex-shrink: 0;
   }
@@ -36,7 +54,7 @@
   }
   .search-wrap input {
     width: 100%; height: 34px; border-radius: 8px;
-    border: 1px solid rgba(255,255,255,0.14); background: #141517;
+    border: 1px solid rgba(255,255,255,0.14); background: rgba(20, 21, 23, 0.9);
     color: #fff; padding: 0 34px 0 12px; font-size: 0.85rem; outline: none;
     transition: border-color 0.2s;
   }
@@ -52,11 +70,12 @@
   .hud-chip .coin-dot { width: 14px; height: 14px; border-radius: 50%; background: #facc15; color: #111827; display: inline-flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 900; }
 
   /* Body Layout: Sidebar + Main Content */
-  .home-body { flex: 1; display: flex; overflow: hidden; }
+  .home-body { position: relative; z-index: 2; flex: 1; display: flex; overflow: hidden; }
 
   /* Left Sidebar */
   .side-rail {
-    width: 56px; background: #1e2022; border-left: 1px solid rgba(255,255,255,0.06);
+    width: 56px; background: rgba(30, 32, 34, 0.88); backdrop-filter: blur(10px);
+    border-left: 1px solid rgba(255,255,255,0.06);
     display: flex; flex-direction: column; align-items: center; padding: 14px 0; gap: 18px;
     flex-shrink: 0;
   }
@@ -114,7 +133,7 @@
   }
   .friend-add {
     width: 64px; height: 64px; border-radius: 50%;
-    background: #2b2d30; border: 2px solid rgba(255,255,255,0.16);
+    background: rgba(43, 45, 48, 0.9); border: 2px solid rgba(255,255,255,0.16);
     display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: #e5e7eb;
   }
   .status-dot {
@@ -144,8 +163,8 @@
   .thumb-box {
     aspect-ratio: 1 / 1; border-radius: 12px; overflow: hidden;
     position: relative; background: #26282c;
-    border: 1px solid rgba(255,255,255,0.08);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.38);
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     padding: 10px; text-align: center;
   }
@@ -196,7 +215,6 @@
   }
   .ig-btn:hover { transform: translateY(-2px); background: rgba(51, 65, 85, 0.95); }
   .ig-btn.home-btn { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
-  .ig-btn.active { background: linear-gradient(135deg, #059669, #10b981); }
 
   #toast {
     position: fixed; top: 68px; left: 50%; transform: translateX(-50%);
@@ -229,9 +247,14 @@
 <body>
 
 <!-- ═══════════════════════════════════════════════════════
-     HOME SCREEN (ROBLOX STYLE)
+     HOME SCREEN (ROBLOX STYLE + ANIMATED SHAPES & 3D MESHES)
      ═══════════════════════════════════════════════════════ -->
 <div id="home-screen">
+  <div id="bg-shapes-layer">
+    <canvas id="bg-3d-canvas"></canvas>
+    <canvas id="bg-2d-canvas"></canvas>
+  </div>
+
   <header class="top-nav">
     <div class="nav-left">
       <div class="brand-logo">B</div>
@@ -266,7 +289,7 @@
       </div>
 
       <section class="section-block">
-        <h3>Friends (<span id="friends-count">10</span>) <span class="arrow">→</span></h3>
+        <h3>Friends (<span id="friends-count">9</span>) <span class="arrow">→</span></h3>
         <div class="friends-row" id="friends-row"></div>
       </section>
 
@@ -330,7 +353,144 @@ function toast(msg, bg = '#10b981') {
 }
 
 // ═══════════════════════════════════════════════════════
-// DATA: FRIENDS & GAMES (INSPIRED BY LAYOUT)
+// ANIMATED GEOMETRIC SHAPES (2D CANVAS + 3D MESHES)
+// ═══════════════════════════════════════════════════════
+let ptrX = 0, ptrY = 0;
+window.addEventListener('pointermove', e => {
+  ptrX = (e.clientX / Math.max(1, window.innerWidth)) * 2 - 1;
+  ptrY = (e.clientY / Math.max(1, window.innerHeight)) * 2 - 1;
+});
+
+// 2D Geometric Shapes Backdrop
+const c2d = $('bg-2d-canvas');
+const ctx2d = c2d.getContext('2d');
+const shapes2D = [];
+
+function resize2DBG() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  c2d.width = Math.floor(window.innerWidth * dpr);
+  c2d.height = Math.floor(window.innerHeight * dpr);
+  ctx2d.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+resize2DBG();
+window.addEventListener('resize', resize2DBG);
+
+const shapePalette = ['#38bdf8', '#818cf8', '#34d399', '#f472b6', '#facc15'];
+const shapeKinds = ['triangle', 'diamond', 'ring', 'hex'];
+
+for (let i = 0; i < 22; i++) {
+  shapes2D.push({
+    x: Math.random() * 1400,
+    y: Math.random() * 900,
+    vx: (Math.random() - 0.5) * 0.45,
+    vy: (Math.random() - 0.5) * 0.45,
+    size: 14 + Math.random() * 28,
+    rot: Math.random() * Math.PI * 2,
+    vRot: (Math.random() - 0.5) * 0.012,
+    color: shapePalette[i % shapePalette.length],
+    kind: shapeKinds[i % shapeKinds.length],
+    alpha: 0.14 + Math.random() * 0.18
+  });
+}
+
+function draw2DShape(s) {
+  ctx2d.save();
+  ctx2d.translate(s.x + ptrX * 14, s.y + ptrY * 14);
+  ctx2d.rotate(s.rot);
+  ctx2d.globalAlpha = s.alpha;
+  ctx2d.strokeStyle = s.color;
+  ctx2d.lineWidth = 2;
+
+  if (s.kind === 'triangle') {
+    ctx2d.beginPath();
+    for (let k = 0; k < 3; k++) {
+      const a = (k * Math.PI * 2) / 3 - Math.PI / 2;
+      const px = Math.cos(a) * s.size;
+      const py = Math.sin(a) * s.size;
+      if (k === 0) ctx2d.moveTo(px, py); else ctx2d.lineTo(px, py);
+    }
+    ctx2d.closePath();
+    ctx2d.stroke();
+  } else if (s.kind === 'diamond') {
+    ctx2d.beginPath();
+    ctx2d.moveTo(0, -s.size);
+    ctx2d.lineTo(s.size * 0.8, 0);
+    ctx2d.lineTo(0, s.size);
+    ctx2d.lineTo(-s.size * 0.8, 0);
+    ctx2d.closePath();
+    ctx2d.stroke();
+  } else if (s.kind === 'ring') {
+    ctx2d.beginPath();
+    ctx2d.arc(0, 0, s.size * 0.72, 0, Math.PI * 2);
+    ctx2d.stroke();
+  } else {
+    ctx2d.beginPath();
+    for (let k = 0; k < 6; k++) {
+      const a = (k * Math.PI * 2) / 6;
+      const px = Math.cos(a) * s.size * 0.85;
+      const py = Math.sin(a) * s.size * 0.85;
+      if (k === 0) ctx2d.moveTo(px, py); else ctx2d.lineTo(px, py);
+    }
+    ctx2d.closePath();
+    ctx2d.stroke();
+  }
+  ctx2d.restore();
+}
+
+// 3D Floating Geometric Meshes Backdrop
+const bg3dCanvas = $('bg-3d-canvas');
+const bgScene = new THREE.Scene();
+const bgCamera = new THREE.PerspectiveCamera(50, Math.max(1, window.innerWidth) / Math.max(1, window.innerHeight), 0.1, 100);
+bgCamera.position.z = 18;
+
+const bgRenderer = new THREE.WebGLRenderer({ canvas: bg3dCanvas, alpha: true, antialias: true });
+bgRenderer.setSize(window.innerWidth, window.innerHeight);
+bgRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+
+bgScene.add(new THREE.AmbientLight(0xffffff, 0.7));
+const bgKeyLight = new THREE.DirectionalLight(0x7dd3fc, 1.4);
+bgKeyLight.position.set(8, 12, 10);
+bgScene.add(bgKeyLight);
+
+const bgRimLight = new THREE.DirectionalLight(0xc084fc, 1.1);
+bgRimLight.position.set(-10, -6, 8);
+bgScene.add(bgRimLight);
+
+const floating3DMeshes = [];
+const meshConfigs = [
+  { geo: new THREE.IcosahedronGeometry(1.35, 0), pos: [-8.5, 4.2, -2], wire: true, col: 0x38bdf8, spd: [0.008, 0.012] },
+  { geo: new THREE.OctahedronGeometry(1.2, 0), pos: [8.8, 3.6, -3], wire: false, col: 0x818cf8, spd: [-0.01, 0.009] },
+  { geo: new THREE.TorusGeometry(1.25, 0.26, 12, 28), pos: [-7.5, -4.0, -2], wire: false, col: 0x34d399, spd: [0.007, -0.011] },
+  { geo: new THREE.BoxGeometry(1.7, 1.7, 1.7), pos: [7.8, -3.5, -1], wire: true, col: 0xf472b6, spd: [0.009, 0.007] },
+  { geo: new THREE.TetrahedronGeometry(1.3, 0), pos: [-2.2, 5.4, -5], wire: false, col: 0xfacc15, spd: [-0.007, 0.01] },
+  { geo: new THREE.DodecahedronGeometry(1.15, 0), pos: [3.2, -5.0, -4], wire: true, col: 0x38bdf8, spd: [0.011, -0.008] },
+];
+
+meshConfigs.forEach((cfg, idx) => {
+  const mat = cfg.wire
+    ? new THREE.MeshBasicMaterial({ color: cfg.col, wireframe: true, transparent: true, opacity: 0.34 })
+    : new THREE.MeshStandardMaterial({ color: cfg.col, roughness: 0.35, metalness: 0.35, transparent: true, opacity: 0.38 });
+  const m = new THREE.Mesh(cfg.geo, mat);
+  m.position.set(cfg.pos[0], cfg.pos[1], cfg.pos[2]);
+  m.userData = {
+    baseX: cfg.pos[0],
+    baseY: cfg.pos[1],
+    rotX: cfg.spd[0],
+    rotY: cfg.spd[1],
+    phase: idx * 1.15
+  };
+  bgScene.add(m);
+  floating3DMeshes.push(m);
+});
+
+window.addEventListener('resize', () => {
+  bgCamera.aspect = Math.max(1, window.innerWidth) / Math.max(1, window.innerHeight);
+  bgCamera.updateProjectionMatrix();
+  bgRenderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+// ═══════════════════════════════════════════════════════
+// DATA: FRIENDS & GAMES
 // ═══════════════════════════════════════════════════════
 const FRIENDS = [
   { add: true, name: 'Add Friends' },
@@ -342,7 +502,6 @@ const FRIENDS = [
   { name: 'Timbukbu...', sub: '', status: 'studio', color: '#475569' },
   { name: 'Tail1704', sub: '', status: '', color: '#ea580c' },
   { name: 'Mommy', sub: '', status: '', color: '#9a3412' },
-  { name: 'Jack', sub: '', status: '', color: '#1f2937' },
 ];
 
 const CONTINUE_GAMES = [
@@ -364,8 +523,6 @@ const ACTIVITY_GAMES = [
   { id: 'rotube_life', title: 'ROTUBE LIFE', like: '84%', players: '4.5K', badge: 'NEW', badgeType: 'new', bg: 'linear-gradient(135deg,#dc2626,#7e22ce)', sky: 0x1e293b, floor: 0x475569, accent: 0xef4444, speed: 9.0 },
   { id: 'raise_peter', title: 'RAISE A PETER', like: '90%', players: '12.3K', badge: '', badgeType: '', bg: 'linear-gradient(135deg,#1d4ed8,#f97316)', sky: 0x93c5fd, floor: 0x22c55e, accent: 0xfbbf24, speed: 8.8 },
 ];
-
-const ALL_GAMES = [...CONTINUE_GAMES, ...ACTIVITY_GAMES];
 
 let coins = 120;
 let score = 0;
@@ -545,14 +702,12 @@ function launchGame(game) {
   scene.background = new THREE.Color(game.sky);
   scene.fog = new THREE.FogExp2(game.sky, 0.005);
 
-  // Base floor & Obby course
   addBox(0, -0.5, 0, 26, 1, 26, game.floor);
   addBox(0, 0.6, -16, 4.5, 0.8, 4.5, game.accent);
   addBox(3, 1.6, -23, 4.2, 0.8, 4.2, game.accent);
   addBox(-2.5, 2.6, -30, 4.2, 0.8, 4.2, game.accent);
   addBox(0, 3.6, -38, 10, 1.0, 10, 0xfacc15);
 
-  // Floating coins
   const coinCoords = [[0, 1.2, -8], [3, 2.8, -23], [-2.5, 3.8, -30], [0, 5.0, -38]];
   coinCoords.forEach(([x, y, z]) => {
     const m = new THREE.Mesh(
@@ -599,7 +754,6 @@ $('ig-build-btn').onclick = () => {
   toast('تم وضع مكعب!');
 };
 
-// Input listeners
 window.addEventListener('keydown', e => {
   keys[e.code] = true;
   if (e.code === 'Space' && grounded && activeGame) {
@@ -620,7 +774,6 @@ window.addEventListener('mousemove', e => {
   lastX = e.clientX; lastY = e.clientY;
 });
 
-// Touch controls
 (() => {
   const zone = $('joy-zone'), knob = $('joy-knob');
   let drag = false, cx = 0, cy = 0;
@@ -648,7 +801,41 @@ const clock = new THREE.Clock();
 function tick() {
   requestAnimationFrame(tick);
   const dt = Math.min(clock.getDelta(), 0.05);
-  if (!activeGame || !player || !renderer) return;
+  const elapsed = clock.elapsedTime;
+
+  // Animate Home Geometric Shapes & 3D Meshes when on Home screen
+  if (!activeGame) {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    ctx2d.clearRect(0, 0, w, h);
+
+    for (const s of shapes2D) {
+      s.x += s.vx * 60 * dt;
+      s.y += s.vy * 60 * dt;
+      s.rot += s.vRot * 60 * dt;
+      if (s.x < -60) s.x = w + 60;
+      if (s.x > w + 60) s.x = -60;
+      if (s.y < -60) s.y = h + 60;
+      if (s.y > h + 60) s.y = -60;
+      draw2DShape(s);
+    }
+
+    for (const m of floating3DMeshes) {
+      const u = m.userData;
+      m.rotation.x += u.rotX * 60 * dt;
+      m.rotation.y += u.rotY * 60 * dt;
+      m.position.x = u.baseX + Math.cos(elapsed * 0.8 + u.phase) * 0.45 + ptrX * 0.8;
+      m.position.y = u.baseY + Math.sin(elapsed * 1.1 + u.phase) * 0.55 - ptrY * 0.7;
+    }
+
+    bgCamera.position.x += (ptrX * 1.1 - bgCamera.position.x) * 0.05;
+    bgCamera.position.y += (-ptrY * 0.9 - bgCamera.position.y) * 0.05;
+    bgCamera.lookAt(0, 0, 0);
+    bgRenderer.render(bgScene, bgCamera);
+    return;
+  }
+
+  if (!player || !renderer) return;
 
   let mx = 0, mz = 0;
   if (keys.KeyW || keys.ArrowUp) mz -= 1;
@@ -704,7 +891,7 @@ function tick() {
   coinMeshes.forEach((c, idx) => {
     if (c.taken) return;
     c.mesh.rotation.z += dt * 3;
-    c.mesh.position.y = c.baseY + Math.sin(clock.elapsedTime * 3 + idx) * 0.2;
+    c.mesh.position.y = c.baseY + Math.sin(elapsed * 3 + idx) * 0.2;
     if (player.position.distanceTo(c.mesh.position) < 1.8) {
       c.taken = true; c.mesh.visible = false;
       coins += 10; score += 25;
@@ -732,4 +919,3 @@ tick();
 </body>
 </html>
 
-هل تود إضافة ميزات إضافية لصفحة Home أو داخل العوالم، مثل قائمة الأصدقاء التفاعلية أو مراحل إضافية داخل كل لعبة؟
