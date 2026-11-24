@@ -5,8 +5,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title id="seoTitle">StreamFlix AI — منصة أفلام، مسلسلات، وأنمي</title>
-  <meta id="seoDesc" name="description" content="منصة عرض سينمائية للأفلام والمسلسلات والأنمي مع صفوف أفقية وتنظيم ذكي بالذكاء الاصطناعي وربط مباشر بقاعدة بيانات Firebase." />
-  <meta id="seoKeywords" name="keywords" content="أفلام, مسلسلات, أنمي, مواسم, حلقات, مشاهدة, ذكاء اصطناعي, Firebase" />
+  <meta id="seoDesc" name="description" content="منصة عرض سينمائية للأفلام والمسلسلات والأنمي مع واجهة دخول عبر جوجل وإنشاء حساب ودخول تجريبي وخلفية سينمائية وربط مباشر بقاعدة بيانات Firebase." />
+  <meta id="seoKeywords" name="keywords" content="أفلام, مسلسلات, أنمي, تسجيل دخول, جوجل, إنشاء حساب, دخول تجريبي, Firebase" />
   <meta id="ogTitle" property="og:title" content="StreamFlix AI — أفلام، مسلسلات، وأنمي" />
   <meta id="ogDesc" property="og:description" content="تصفح أحدث الأفلام والمسلسلات والأنمي في صفوف أفقية مع عرض الوصف والنوع والسنة عند تمرير الماوس." />
   <meta id="ogType" property="og:type" content="website" />
@@ -38,6 +38,98 @@
       line-height: 1.45;
     }
 
+    body.gate-active {
+      overflow: hidden;
+    }
+
+    /* Full-Screen First-Visit Auth Gate with Cinema Movies & Series Background */
+    .auth-gate {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow: hidden;
+      background: #07080c;
+    }
+
+    .auth-gate.open {
+      display: flex;
+    }
+
+    .cinema-bg-layer {
+      position: absolute;
+      inset: -12%;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 12px;
+      transform: rotate(-4deg) scale(1.06);
+      opacity: 0.34;
+      filter: saturate(1.15) contrast(1.08);
+      animation: cinemaDrift 28s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+
+    @keyframes cinemaDrift {
+      0% { transform: rotate(-4deg) scale(1.05) translate3d(0, 0, 0); }
+      100% { transform: rotate(-2.5deg) scale(1.1) translate3d(-18px, -14px, 0); }
+    }
+
+    .cinema-tile {
+      position: relative;
+      aspect-ratio: 2 / 3;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: #12151e;
+    }
+
+    .cinema-tile img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .cinema-vignette {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 50% 42%, rgba(10, 12, 18, 0.52) 0%, rgba(7, 8, 12, 0.92) 72%, #06070a 100%),
+        linear-gradient(to bottom, rgba(7, 8, 12, 0.72), rgba(7, 8, 12, 0.88));
+      pointer-events: none;
+    }
+
+    .auth-card {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 450px;
+      max-height: 94vh;
+      overflow-y: auto;
+      background: rgba(17, 21, 30, 0.92);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 14px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8);
+      padding: 22px 20px 24px;
+    }
+
+    .auth-brand-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .auth-subtitle {
+      font-size: 0.84rem;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
     /* Header */
     header {
       position: fixed;
@@ -61,7 +153,7 @@
     }
 
     .brand {
-      font-size: 1.5rem;
+      font-size: 1.45rem;
       font-weight: 900;
       color: var(--red);
       text-decoration: none;
@@ -71,7 +163,7 @@
     }
 
     .brand span {
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       background: rgba(255,255,255,0.1);
       color: #e5e7eb;
       padding: 2px 7px;
@@ -107,15 +199,25 @@
     .controls select,
     .modal select,
     .modal input,
-    .modal textarea {
-      background: #12151c;
+    .modal textarea,
+    .auth-card input {
+      background: #10131a;
       color: var(--text);
       border: 1px solid var(--border);
       border-radius: 7px;
-      padding: 6px 10px;
+      padding: 7px 11px;
       font-size: 0.84rem;
       outline: none;
       font-family: inherit;
+    }
+
+    .controls input:focus,
+    .controls select:focus,
+    .modal input:focus,
+    .modal textarea:focus,
+    .modal select:focus,
+    .auth-card input:focus {
+      border-color: var(--accent);
     }
 
     .btn {
@@ -127,17 +229,35 @@
       cursor: pointer;
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 6px;
+      transition: transform 0.14s ease, filter 0.18s ease;
     }
 
+    .btn:hover { filter: brightness(1.07); }
+    .btn:active { transform: scale(0.97); }
     .btn-play { background: #ffffff; color: #090a0d; }
     .btn-secondary { background: rgba(255, 255, 255, 0.12); color: #fff; border: 1px solid var(--border); }
     .btn-accent { background: var(--accent); color: #05111a; }
     .btn-ai { background: linear-gradient(135deg, #6366f1, #38bdf8); color: #fff; }
     .btn-green { background: var(--green); color: #052e16; }
     .btn-red { background: var(--red); color: #fff; }
+    .btn-google { background: #ffffff; color: #111827; border: 1px solid #d1d5db; }
 
-    /* Utility & Labels Bar */
+    .user-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.14);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #a7f3d0;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    /* Utility & Stats Bar */
     .top-utility {
       margin-top: 62px;
       padding: 8px 4%;
@@ -150,6 +270,21 @@
       flex-wrap: wrap;
       font-size: 0.8rem;
       color: var(--muted);
+    }
+
+    .stats-badges {
+      display: inline-flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      font-size: 0.75rem;
+      color: #e5e7eb;
+    }
+
+    .stat-chip {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      padding: 2px 8px;
+      border-radius: 999px;
     }
 
     .utility-actions { display: flex; gap: 7px; flex-wrap: wrap; }
@@ -269,7 +404,7 @@
         linear-gradient(to left, rgba(10,11,14,0.9) 0%, rgba(10,11,14,0.22) 65%);
     }
 
-    .hero-content { position: relative; z-index: 2; max-width: 580px; }
+    .hero-content { position: relative; z-index: 2; max-width: 620px; }
     .hero-badge {
       display: inline-block;
       background: var(--red);
@@ -282,6 +417,7 @@
     }
     .hero h1 { font-size: clamp(1.6rem, 3.4vw, 2.5rem); margin-bottom: 8px; }
     .hero p { color: #e5e7eb; font-size: 0.9rem; margin-bottom: 14px; }
+    .btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
 
     /* Horizontal Shelf Rows */
     main { padding: 18px 4% 68px; }
@@ -405,9 +541,7 @@
       text-align: right;
     }
 
-    .poster-card:hover .hover-info-overlay {
-      opacity: 1;
-    }
+    .poster-card:hover .hover-info-overlay { opacity: 1; }
 
     .hover-meta-row {
       display: flex;
@@ -491,9 +625,7 @@
       transition: opacity 0.18s ease;
     }
 
-    .poster-card:hover .status-ribbon-wrap {
-      opacity: 0;
-    }
+    .poster-card:hover .status-ribbon-wrap { opacity: 0; }
 
     .ribbon-tag {
       background: var(--red);
@@ -548,6 +680,73 @@
     .mini-act.del:hover { border-color: var(--red); color: #fca5a5; }
 
     .empty-msg { color: var(--muted); font-size: 0.9rem; padding: 8px 0; }
+
+    /* Shared Auth Tabs & Feedback */
+    .auth-switch-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      background: #0c0f16;
+      padding: 5px;
+      border-radius: 9px;
+      border: 1px solid var(--border);
+      margin-bottom: 14px;
+    }
+
+    .auth-mode-btn {
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-size: 0.84rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .auth-mode-btn.active {
+      background: var(--red);
+      color: #fff;
+    }
+
+    .auth-divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      margin: 13px 0;
+    }
+
+    .auth-divider::before,
+    .auth-divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .auth-feedback {
+      margin-top: 10px;
+      font-size: 0.82rem;
+      border-radius: 7px;
+      padding: 8px 10px;
+      display: none;
+    }
+
+    .auth-feedback.error {
+      display: block;
+      background: rgba(229, 9, 20, 0.16);
+      border: 1px solid rgba(229, 9, 20, 0.4);
+      color: #fca5a5;
+    }
+
+    .auth-feedback.success {
+      display: block;
+      background: rgba(16, 185, 129, 0.16);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #a7f3d0;
+    }
 
     /* Modals */
     .modal-backdrop {
@@ -654,9 +853,67 @@
     }
   </style>
 </head>
-<body>
+<body class="gate-active">
+  <!-- First-Screen Entry Gate with Cinema Movies & Series Background -->
+  <section class="auth-gate open" id="authGate" aria-label="بوابة الدخول">
+    <div class="cinema-bg-layer" id="cinemaBgLayer" aria-hidden="true"></div>
+    <div class="cinema-vignette" aria-hidden="true"></div>
+
+    <div class="auth-card">
+      <div class="auth-brand-row">
+        <a href="#" class="brand">STREAMFLIX <span>CINEMA</span></a>
+        <button type="button" class="btn btn-secondary" id="gateLangBtn" style="padding:4px 10px;font-size:0.75rem;">EN</button>
+      </div>
+
+      <p class="auth-subtitle" id="gateSubtitle">
+        أهلاً بك في عالم الأفلام والمسلسلات والأنمي. سجّل الدخول للمتابعة أو ابدأ بالدخول التجريبي الفوري.
+      </p>
+
+      <div class="auth-switch-tabs" role="tablist">
+        <button type="button" class="auth-mode-btn active" id="gateLoginTab" role="tab">تسجيل الدخول</button>
+        <button type="button" class="auth-mode-btn" id="gateSignupTab" role="tab">إنشاء حساب</button>
+      </div>
+
+      <button type="button" class="btn btn-google" id="gateGoogleBtn" style="width:100%;padding:10px 14px;">
+        <span>G</span> <span id="gateGoogleText">تسجيل الدخول عبر Google</span>
+      </button>
+
+      <div class="auth-divider" id="gateOrText">أو بالبريد الإلكتروني</div>
+
+      <form id="gateEmailForm">
+        <div class="form-field" id="gateNameField" style="display:none;">
+          <label for="gateNameInput" id="gateNameLabel">الاسم الكامل</label>
+          <input type="text" id="gateNameInput" placeholder="مثال: سارة محمد" />
+        </div>
+
+        <div class="form-field">
+          <label for="gateEmailInput" id="gateEmailLabel">البريد الإلكتروني</label>
+          <input type="email" id="gateEmailInput" placeholder="name@example.com" required />
+        </div>
+
+        <div class="form-field">
+          <label for="gatePasswordInput" id="gatePassLabel">كلمة المرور</label>
+          <input type="password" id="gatePasswordInput" placeholder="••••••••" minlength="6" required />
+        </div>
+
+        <button type="submit" class="btn btn-red" id="gateSubmitBtn" style="width:100%;padding:10px 14px;margin-top:4px;">
+          تسجيل الدخول
+        </button>
+      </form>
+
+      <div class="auth-divider" id="gateDemoDiv">تجربة فورية</div>
+
+      <button type="button" class="btn btn-accent" id="gateDemoBtn" style="width:100%;padding:10px 14px;">
+        ⚡ دخول تجريبي فوري
+      </button>
+
+      <div class="auth-feedback" id="gateFeedback"></div>
+    </div>
+  </section>
+
+  <!-- Main Platform -->
   <header id="navbar">
-    <a href="#" class="brand">STREAMFLIX <span>AI + ROWS</span></a>
+    <a href="#" class="brand">STREAMFLIX <span>AI + AUTH</span></a>
 
     <nav class="nav-tabs" aria-label="الأقسام الرئيسية">
       <button class="tab-btn active" data-type="all">الكل</button>
@@ -677,12 +934,16 @@
       </select>
       <button class="btn btn-ai" id="aiOrganizeBtn">✦ تنظيم ذكي بالـ AI</button>
       <button class="btn btn-accent" id="openAddModalBtn">+ إضافة</button>
+      <button class="btn btn-secondary" id="toggleLangBtn">EN</button>
+      <span class="user-pill" id="userBadge" style="display:none;"></span>
+      <button class="btn btn-red" id="switchAccountBtn">الحساب</button>
+      <button class="btn btn-secondary" id="logoutBtn" style="display:none;">خروج</button>
     </div>
   </header>
 
   <div class="top-utility">
     <span id="dbStatus">حالة Firebase: جاري الاتصال بمشروع metaverse-metabox...</span>
-    <span id="aiSummary">الذكاء الاصطناعي: جاهز لتنظيم الصفوف وتحديث السيو تلقائياً.</span>
+    <div class="stats-badges" id="statsBadges"></div>
     <div class="utility-actions">
       <button class="btn btn-secondary" id="downloadSitemapBtn" style="padding:4px 10px;font-size:0.76rem;">⬇ sitemap.xml</button>
       <button class="btn btn-secondary" id="downloadRobotsBtn" style="padding:4px 10px;font-size:0.76rem;">⬇ robots.txt</button>
@@ -712,6 +973,7 @@
       <p id="heroDesc"></p>
       <div class="btn-row">
         <button class="btn btn-play" id="heroPlayBtn">▶ تشغيل الآن</button>
+        <button class="btn btn-accent" id="continueWatchingBtn" style="display:none;">↻ استئناف المشاهدة</button>
         <button class="btn btn-secondary" id="heroListBtn">+ قائمتي</button>
       </div>
     </div>
@@ -850,6 +1112,16 @@
       updateDoc,
       deleteDoc
     } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js";
+    import {
+      getAuth,
+      GoogleAuthProvider,
+      signInWithPopup,
+      signInWithEmailAndPassword,
+      createUserWithEmailAndPassword,
+      updateProfile,
+      signOut,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAQposIwGN_F9EbUqpxarN7guZ_IaZjvOQ",
@@ -862,6 +1134,8 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const auth = getAuth(app);
+    const googleProvider = new GoogleAuthProvider();
 
     const SEVEN_LABELS = [
       "حصري",
@@ -871,6 +1145,21 @@
       "مترجم",
       "كلاسيكي",
       "رائج الآن"
+    ];
+
+    const CINEMA_BG_POSTERS = [
+      "https://peach.blender.org/wp-content/uploads/sintel_poster.jpg",
+      "https://mango.blender.org/wp-content/uploads/2013/05/01_thom_celia_bridge.jpg",
+      "https://download.blender.org/ED/ed_hd.jpg",
+      "https://peach.blender.org/wp-content/uploads/bbb-splash.png",
+      "https://mango.blender.org/wp-content/uploads/2013/05/01_thom_celia_bridge.jpg",
+      "https://peach.blender.org/wp-content/uploads/sintel_poster.jpg",
+      "https://peach.blender.org/wp-content/uploads/bbb-splash.png",
+      "https://download.blender.org/ED/ed_hd.jpg",
+      "https://peach.blender.org/wp-content/uploads/sintel_poster.jpg",
+      "https://mango.blender.org/wp-content/uploads/2013/05/01_thom_celia_bridge.jpg",
+      "https://download.blender.org/ED/ed_hd.jpg",
+      "https://peach.blender.org/wp-content/uploads/bbb-splash.png"
     ];
 
     const SAMPLE_V1 = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4";
@@ -1062,14 +1351,19 @@
     const LIST_KEY = "streamflix_fb_list_v1";
     const PROGRESS_KEY = "streamflix_fb_progress_v1";
     const AI_SORT_KEY = "streamflix_ai_sorted_v1";
+    const DEMO_SESSION_KEY = "streamflix_demo_user_v1";
 
     let catalog = [];
     let myList = JSON.parse(localStorage.getItem(LIST_KEY) || "[]");
     let progressMap = JSON.parse(localStorage.getItem(PROGRESS_KEY) || "{}");
     let aiSortedEnabled = localStorage.getItem(AI_SORT_KEY) === "1";
+    let demoUser = JSON.parse(localStorage.getItem(DEMO_SESSION_KEY) || "null");
+    let currentFirebaseUser = null;
 
+    let uiLang = "ar";
     let activeTab = "all";
     let activeLabel = "all";
+    let authMode = "login";
     let heroItem = null;
     let currentItem = null;
     let editingItemId = null;
@@ -1081,8 +1375,37 @@
     let pendingNextTarget = null;
     let dismissedForCurrentEp = false;
 
+    // Gate & Auth DOM
+    const authGate = document.getElementById("authGate");
+    const cinemaBgLayer = document.getElementById("cinemaBgLayer");
+    const gateLangBtn = document.getElementById("gateLangBtn");
+    const gateSubtitle = document.getElementById("gateSubtitle");
+    const gateLoginTab = document.getElementById("gateLoginTab");
+    const gateSignupTab = document.getElementById("gateSignupTab");
+    const gateGoogleBtn = document.getElementById("gateGoogleBtn");
+    const gateGoogleText = document.getElementById("gateGoogleText");
+    const gateOrText = document.getElementById("gateOrText");
+    const gateEmailForm = document.getElementById("gateEmailForm");
+    const gateNameField = document.getElementById("gateNameField");
+    const gateNameLabel = document.getElementById("gateNameLabel");
+    const gateNameInput = document.getElementById("gateNameInput");
+    const gateEmailLabel = document.getElementById("gateEmailLabel");
+    const gateEmailInput = document.getElementById("gateEmailInput");
+    const gatePassLabel = document.getElementById("gatePassLabel");
+    const gatePasswordInput = document.getElementById("gatePasswordInput");
+    const gateSubmitBtn = document.getElementById("gateSubmitBtn");
+    const gateDemoDiv = document.getElementById("gateDemoDiv");
+    const gateDemoBtn = document.getElementById("gateDemoBtn");
+    const gateFeedback = document.getElementById("gateFeedback");
+
+    const userBadge = document.getElementById("userBadge");
+    const switchAccountBtn = document.getElementById("switchAccountBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const toggleLangBtn = document.getElementById("toggleLangBtn");
+
+    // Catalog & Player DOM
     const dbStatus = document.getElementById("dbStatus");
-    const aiSummary = document.getElementById("aiSummary");
+    const statsBadges = document.getElementById("statsBadges");
     const aiOrganizeBtn = document.getElementById("aiOrganizeBtn");
     const downloadSitemapBtn = document.getElementById("downloadSitemapBtn");
     const downloadRobotsBtn = document.getElementById("downloadRobotsBtn");
@@ -1100,6 +1423,7 @@
     const heroTitle = document.getElementById("heroTitle");
     const heroDesc = document.getElementById("heroDesc");
     const heroPlayBtn = document.getElementById("heroPlayBtn");
+    const continueWatchingBtn = document.getElementById("continueWatchingBtn");
     const heroListBtn = document.getElementById("heroListBtn");
 
     const playerModal = document.getElementById("playerModal");
@@ -1131,6 +1455,185 @@
     const movieVideoField = document.getElementById("movieVideoField");
     const seasonsJsonField = document.getElementById("seasonsJsonField");
     const newLabelsPicker = document.getElementById("newLabelsPicker");
+
+    function renderCinemaBackground() {
+      const sourcePosters = catalog.length
+        ? [...catalog.map((i) => i.poster), ...CINEMA_BG_POSTERS]
+        : CINEMA_BG_POSTERS;
+      cinemaBgLayer.innerHTML = "";
+      sourcePosters.slice(0, 18).forEach((src) => {
+        const tile = document.createElement("div");
+        tile.className = "cinema-tile";
+        tile.innerHTML = `<img src="${src}" alt="" loading="lazy" />`;
+        cinemaBgLayer.appendChild(tile);
+      });
+    }
+
+    function applyLanguageUI() {
+      const isEn = uiLang === "en";
+      document.documentElement.lang = isEn ? "en" : "ar";
+      document.documentElement.dir = isEn ? "ltr" : "rtl";
+      toggleLangBtn.textContent = isEn ? "AR" : "EN";
+      gateLangBtn.textContent = isEn ? "AR" : "EN";
+
+      const tabLabels = isEn
+        ? ["All", "Movies", "TV Shows", "Anime", "My List"]
+        : ["الكل", "أفلام", "مسلسلات", "أنمي", "قائمتي"];
+      tabBtns.forEach((btn, idx) => {
+        if (tabLabels[idx]) btn.textContent = tabLabels[idx];
+      });
+
+      searchInput.placeholder = isEn ? "Search..." : "ابحث...";
+      aiOrganizeBtn.textContent = isEn ? "✦ AI Organize" : "✦ تنظيم ذكي بالـ AI";
+      openAddModalBtn.textContent = isEn ? "+ Add" : "+ إضافة";
+      switchAccountBtn.textContent = isEn ? "Account" : "الحساب";
+      logoutBtn.textContent = isEn ? "Sign Out" : "خروج";
+
+      gateSubtitle.textContent = isEn
+        ? "Welcome to StreamFlix Movies, Series & Anime. Sign in to continue or enter with instant demo access."
+        : "أهلاً بك في عالم الأفلام والمسلسلات والأنمي. سجّل الدخول للمتابعة أو ابدأ بالدخول التجريبي الفوري.";
+      gateLoginTab.textContent = isEn ? "Sign In" : "تسجيل الدخول";
+      gateSignupTab.textContent = isEn ? "Create Account" : "إنشاء حساب";
+      gateGoogleText.textContent = isEn ? "Continue with Google" : "تسجيل الدخول عبر Google";
+      gateOrText.textContent = isEn ? "OR WITH EMAIL" : "أو بالبريد الإلكتروني";
+      gateNameLabel.textContent = isEn ? "Full Name" : "الاسم الكامل";
+      gateEmailLabel.textContent = isEn ? "Email" : "البريد الإلكتروني";
+      gatePassLabel.textContent = isEn ? "Password" : "كلمة المرور";
+      gateSubmitBtn.textContent = authMode === "signup"
+        ? (isEn ? "Create Account" : "إنشاء الحساب")
+        : (isEn ? "Sign In" : "تسجيل الدخول");
+      gateDemoDiv.textContent = isEn ? "INSTANT TRY" : "تجربة فورية";
+      gateDemoBtn.textContent = isEn ? "⚡ Instant Demo Access" : "⚡ دخول تجريبي فوري";
+    }
+
+    function showGateFeedback(msg, type = "error") {
+      gateFeedback.textContent = msg;
+      gateFeedback.className = `auth-feedback ${type}`;
+    }
+
+    function clearGateFeedback() {
+      gateFeedback.textContent = "";
+      gateFeedback.className = "auth-feedback";
+    }
+
+    function setGateMode(mode) {
+      authMode = mode;
+      clearGateFeedback();
+      const isSignup = mode === "signup";
+      gateLoginTab.classList.toggle("active", !isSignup);
+      gateSignupTab.classList.toggle("active", isSignup);
+      gateNameField.style.display = isSignup ? "flex" : "none";
+      applyLanguageUI();
+    }
+
+    function updateGateAndAuthUI() {
+      const activeUser = currentFirebaseUser || demoUser;
+      if (activeUser) {
+        authGate.classList.remove("open");
+        document.body.classList.remove("gate-active");
+        const name = activeUser.displayName || activeUser.email || "User";
+        const demoTag = activeUser.isDemo ? (uiLang === "en" ? " (Demo)" : " (تجريبي)") : "";
+        userBadge.textContent = `● ${name}${demoTag}`;
+        userBadge.style.display = "inline-flex";
+        logoutBtn.style.display = "inline-flex";
+      } else {
+        authGate.classList.add("open");
+        document.body.classList.add("gate-active");
+        userBadge.style.display = "none";
+        logoutBtn.style.display = "none";
+      }
+    }
+
+    gateLangBtn.addEventListener("click", () => {
+      uiLang = uiLang === "ar" ? "en" : "ar";
+      applyLanguageUI();
+    });
+
+    toggleLangBtn.addEventListener("click", () => {
+      uiLang = uiLang === "ar" ? "en" : "ar";
+      applyLanguageUI();
+    });
+
+    gateLoginTab.addEventListener("click", () => setGateMode("login"));
+    gateSignupTab.addEventListener("click", () => setGateMode("signup"));
+
+    switchAccountBtn.addEventListener("click", () => {
+      clearGateFeedback();
+      authGate.classList.add("open");
+      document.body.classList.add("gate-active");
+    });
+
+    gateGoogleBtn.addEventListener("click", async () => {
+      clearGateFeedback();
+      try {
+        await signInWithPopup(auth, googleProvider);
+        demoUser = null;
+        localStorage.removeItem(DEMO_SESSION_KEY);
+        updateGateAndAuthUI();
+      } catch (err) {
+        showGateFeedback(err.message, "error");
+      }
+    });
+
+    gateEmailForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      clearGateFeedback();
+      const nameVal = gateNameInput.value.trim();
+      const emailVal = gateEmailInput.value.trim();
+      const passVal = gatePasswordInput.value;
+
+      try {
+        if (authMode === "signup") {
+          const cred = await createUserWithEmailAndPassword(auth, emailVal, passVal);
+          if (nameVal && cred.user) {
+            await updateProfile(cred.user, { displayName: nameVal });
+          }
+          demoUser = null;
+          localStorage.removeItem(DEMO_SESSION_KEY);
+          showGateFeedback("تم إنشاء الحساب بنجاح!", "success");
+        } else {
+          await signInWithEmailAndPassword(auth, emailVal, passVal);
+          demoUser = null;
+          localStorage.removeItem(DEMO_SESSION_KEY);
+          showGateFeedback("تم تسجيل الدخول بنجاح!", "success");
+        }
+        updateGateAndAuthUI();
+      } catch (err) {
+        showGateFeedback(err.message, "error");
+      }
+    });
+
+    gateDemoBtn.addEventListener("click", () => {
+      clearGateFeedback();
+      demoUser = {
+        uid: "demo_guest_01",
+        displayName: "حساب تجريبي",
+        email: "demo@streamflix.app",
+        isDemo: true
+      };
+      localStorage.setItem(DEMO_SESSION_KEY, JSON.stringify(demoUser));
+      updateGateAndAuthUI();
+    });
+
+    logoutBtn.addEventListener("click", async () => {
+      demoUser = null;
+      localStorage.removeItem(DEMO_SESSION_KEY);
+      if (currentFirebaseUser) {
+        try {
+          await signOut(auth);
+        } catch (_) {}
+      }
+      updateGateAndAuthUI();
+    });
+
+    onAuthStateChanged(auth, (user) => {
+      currentFirebaseUser = user;
+      if (user) {
+        demoUser = null;
+        localStorage.removeItem(DEMO_SESSION_KEY);
+      }
+      updateGateAndAuthUI();
+    });
 
     function typeLabel(type) {
       if (type === "movie") return "فيلم";
@@ -1367,20 +1870,42 @@ Sitemap: ${baseUrl}sitemap.xml
       };
     }
 
+    function renderStatsBadges() {
+      const moviesCount = catalog.filter((i) => i.type === "movie").length;
+      const seriesCount = catalog.filter((i) => i.type === "series").length;
+      const animeCount = catalog.filter((i) => i.type === "anime").length;
+      statsBadges.innerHTML = `
+        <span class="stat-chip">أفلام: ${moviesCount}</span>
+        <span class="stat-chip">مسلسلات: ${seriesCount}</span>
+        <span class="stat-chip">أنمي: ${animeCount}</span>
+        <span class="stat-chip">قائمتي: ${myList.length}</span>
+      `;
+    }
+
+    function updateContinueWatchingBtn() {
+      const keys = Object.keys(progressMap);
+      if (!keys.length) {
+        continueWatchingBtn.style.display = "none";
+        return;
+      }
+      const lastId = keys[keys.length - 1];
+      const found = catalog.find((i) => i.id === lastId);
+      if (found) {
+        continueWatchingBtn.style.display = "inline-flex";
+        continueWatchingBtn.textContent = `↻ استئناف: ${found.title}`;
+        continueWatchingBtn.onclick = () => openItemModal(found);
+      } else {
+        continueWatchingBtn.style.display = "none";
+      }
+    }
+
     function organizeWithAI(showToast = false) {
       catalog = catalog.map(aiNormalizeItem);
       if (aiSortedEnabled) {
         catalog.sort((a, b) => b.aiScore - a.aiScore);
       }
-
-      const counts = {
-        movie: catalog.filter((i) => i.type === "movie").length,
-        series: catalog.filter((i) => i.type === "series").length,
-        anime: catalog.filter((i) => i.type === "anime").length
-      };
-      aiSummary.textContent =
-        `AI منظم: ${counts.movie} أفلام • ${counts.series} مسلسلات • ${counts.anime} أنمي` +
-        (aiSortedEnabled ? " (مرتب حسب الأولوية الذكية)" : "");
+      renderStatsBadges();
+      renderCinemaBackground();
 
       if (showToast) {
         aiSortedEnabled = true;
@@ -1705,6 +2230,7 @@ Sitemap: ${baseUrl}sitemap.xml
     function saveProgress(id, sIdx, eIdx) {
       progressMap[id] = { sIdx, eIdx };
       localStorage.setItem(PROGRESS_KEY, JSON.stringify(progressMap));
+      updateContinueWatchingBtn();
     }
     function isInList(id) { return myList.includes(id); }
 
@@ -1736,6 +2262,7 @@ Sitemap: ${baseUrl}sitemap.xml
       heroTitle.textContent = item.title;
       heroDesc.textContent = item.desc;
       updateHeroListBtn();
+      updateContinueWatchingBtn();
     }
 
     function playVideoSource(src, titleLabel) {
@@ -1752,6 +2279,7 @@ Sitemap: ${baseUrl}sitemap.xml
       const hasEpisodes = Array.isArray(currentItem.seasons) && currentItem.seasons.length > 0;
       if (!hasEpisodes) {
         episodesBox.style.display = "none";
+        saveProgress(currentItem.id, 0, 0);
         playVideoSource(currentItem.video, `${currentItem.title} (${currentItem.year})`);
         return;
       }
@@ -1810,6 +2338,8 @@ Sitemap: ${baseUrl}sitemap.xml
     function renderAll() {
       renderShelves();
       renderMarqueeSlider();
+      renderStatsBadges();
+      updateContinueWatchingBtn();
       applyAutoSEO(null);
     }
 
@@ -1974,6 +2504,9 @@ Sitemap: ${baseUrl}sitemap.xml
       if (e.target === playerModal) closePlayer();
     });
 
+    renderCinemaBackground();
+    applyLanguageUI();
+    updateGateAndAuthUI();
     renderLabelsUI();
     loadCatalogFromFirebase();
   </script>
