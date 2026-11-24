@@ -4,157 +4,268 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Metaverse World - Alpha V3</title>
+<title>Metaverse World V4 - Pro</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
-  body { overflow: hidden; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+  * { margin:0; padding:0; box-sizing:border-box; user-select:none; -webkit-tap-highlight-color:transparent; }
+  html, body { overflow:hidden; font-family:'Segoe UI', Tahoma, sans-serif; background:#0f0c29; }
 
-  /* ===== الخلفية المتحركة (شاشة الدخول) ===== */
-  #login-bg-canvas { position: absolute; inset: 0; z-index: 1; background: #0f0c29; }
+  /* ===== Login ===== */
+  #login-bg-canvas { position:absolute; inset:0; z-index:1; }
+  #login-screen { position:fixed; inset:0; z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#fff; transition:opacity .6s; }
+  #login-screen h1 { font-size:3rem; margin-bottom:.4rem; z-index:2; background:linear-gradient(90deg,#00d2ff,#3a7bd5); -webkit-background-clip:text; -webkit-text-fill-color:transparent; text-shadow:0 0 30px rgba(0,210,255,.4); }
+  #login-screen p { color:#ccc; margin-bottom:1.5rem; z-index:2; }
+  .glass-panel { background:rgba(255,255,255,.05); backdrop-filter:blur(15px); border:1px solid rgba(255,255,255,.1); border-radius:20px; padding:25px; z-index:2; display:flex; flex-direction:column; width:340px; max-width:90vw; box-shadow:0 15px 35px rgba(0,0,0,.5); }
+  .glass-panel input { width:100%; padding:12px 15px; margin-bottom:12px; background:rgba(0,0,0,.4); border:1px solid rgba(255,255,255,.2); border-radius:10px; color:#fff; font-size:1rem; outline:none; transition:.3s; }
+  .glass-panel input:focus { border-color:#00d2ff; box-shadow:0 0 10px rgba(0,210,255,.3); }
+  .btn { width:100%; padding:12px; margin-bottom:10px; border:none; border-radius:10px; font-size:1rem; font-weight:600; cursor:pointer; transition:transform .2s; display:flex; justify-content:center; align-items:center; gap:10px; }
+  .btn:hover { transform:scale(1.02); }
+  .btn:active { transform:scale(.98); }
+  .btn-primary { background:linear-gradient(90deg,#00d2ff,#3a7bd5); color:#fff; }
+  .btn-google { background:#fff; color:#333; }
+  .btn-guest { background:transparent; color:#ccc; border:1px solid rgba(255,255,255,.3); }
+  .btn-danger { background:#ff4757; color:#fff; }
+  .btn-link { background:none; border:none; color:#00d2ff; cursor:pointer; font-size:.9rem; margin-top:8px; }
+  .divider { display:flex; align-items:center; margin:12px 0; color:#666; font-size:.85rem; }
+  .divider::before,.divider::after { content:''; flex:1; border-bottom:1px solid rgba(255,255,255,.1); }
+  .divider::before { margin-left:10px; } .divider::after { margin-right:10px; }
 
-  /* ===== شاشة الدخول ===== */
-  #login-screen {
-    position: fixed; inset: 0; z-index: 9999;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    color: white; transition: opacity 0.6s ease;
-  }
-  #login-screen h1 {
-    font-size: 3rem; margin-bottom: 0.5rem; z-index: 2; text-shadow: 0 0 20px rgba(0,210,255,0.5);
-    background: linear-gradient(90deg, #00d2ff, #3a7bd5);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  }
-  #login-screen p { color: #ccc; margin-bottom: 2rem; font-size: 1.1rem; z-index: 2; }
+  /* ===== World ===== */
+  #world-screen { display:none; position:fixed; inset:0; }
+  #canvas-container { width:100%; height:100%; }
+  #canvas-container canvas { display:block; }
 
-  .glass-panel {
-    background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 30px; z-index: 2;
-    display: flex; flex-direction: column; width: 350px; box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-  }
-  .glass-panel input {
-    width: 100%; padding: 12px 15px; margin-bottom: 15px; background: rgba(0,0,0,0.4);
-    border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; color: white; font-size: 1rem; outline: none; transition: 0.3s;
-  }
-  .glass-panel input:focus { border-color: #00d2ff; box-shadow: 0 0 10px rgba(0,210,255,0.3); }
-  .btn {
-    width: 100%; padding: 12px; margin-bottom: 10px; border: none; border-radius: 10px;
-    font-size: 1rem; font-weight: 600; cursor: pointer; transition: transform 0.2s; display: flex; justify-content: center; align-items: center; gap: 10px;
-  }
-  .btn:hover { transform: scale(1.02); }
-  .btn-primary { background: linear-gradient(90deg, #00d2ff, #3a7bd5); color: white; }
-  .btn-google { background: white; color: #333; }
-  .btn-guest { background: transparent; color: #ccc; border: 1px solid rgba(255,255,255,0.3); }
-  .btn-link { background: none; border: none; color: #00d2ff; cursor: pointer; font-size: 0.9rem; margin-top: 10px; }
-  .divider { display: flex; align-items: center; text-align: center; margin: 15px 0; color: #666; font-size: 0.9rem; }
-  .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid rgba(255,255,255,0.1); }
-  .divider::before { margin-left: 10px; } .divider::after { margin-right: 10px; }
+  #loading { position:absolute; inset:0; background:#0f0c29; color:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:100; transition:opacity .5s; }
+  .spinner { border:4px solid rgba(255,255,255,.1); border-top-color:#00d2ff; border-radius:50%; width:40px; height:40px; animation:spin 1s linear infinite; margin-bottom:15px; }
+  @keyframes spin { to { transform:rotate(360deg); } }
 
-  /* ===== شاشة العالم ===== */
-  #world-screen { display: none; position: fixed; inset: 0; background: #000; }
-  #canvas-container { width: 100%; height: 100%; display: block; }
+  /* HUD */
+  #hud { position:absolute; top:15px; left:15px; right:15px; display:flex; justify-content:space-between; pointer-events:none; z-index:10; gap:10px; flex-wrap:wrap; }
+  .hud-panel { background:rgba(0,0,0,.6); padding:8px 15px; border-radius:10px; color:#fff; backdrop-filter:blur(5px); border:1px solid rgba(255,255,255,.1); display:flex; align-items:center; gap:10px; font-size:.85rem; }
+  .stat-bar { width:90px; height:8px; background:rgba(255,255,255,.2); border-radius:5px; overflow:hidden; }
+  .stat-fill { height:100%; width:100%; transition:width .3s; }
+  .health-fill { background:#ff4757; } .energy-fill { background:#00d2ff; }
 
-  #loading {
-    position: absolute; inset: 0; background: #0f0c29; color: white; display: flex; flex-direction: column;
-    align-items: center; justify-content: center; z-index: 100; transition: opacity 0.5s;
-  }
-  .spinner { border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid #00d2ff; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 20px; }
-  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  /* Top Buttons */
+  .top-btn { position:absolute; top:15px; padding:8px 14px; border:none; border-radius:8px; color:#fff; cursor:pointer; font-size:.85rem; z-index:11; backdrop-filter:blur(4px); }
+  #btn-profile { right:15px; background:rgba(0,210,255,.85); }
+  #btn-logout { right:120px; background:rgba(255,71,87,.85); }
+  #btn-chat { right:210px; background:rgba(46,204,113,.85); }
+  #btn-shop { right:290px; background:rgba(241,196,15,.85); color:#333; }
 
-  #hud { position: absolute; top: 20px; left: 20px; right: 20px; display: flex; justify-content: space-between; pointer-events: none; z-index: 10; }
-  .hud-panel { background: rgba(0,0,0,0.6); padding: 10px 20px; border-radius: 10px; color: white; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 15px; }
-  .stat-bar { width: 100px; height: 10px; background: rgba(255,255,255,0.2); border-radius: 5px; overflow: hidden; }
-  .stat-fill { height: 100%; width: 100%; transition: width 0.3s; }
-  .health-fill { background: #ff4757; } .energy-fill { background: #00d2ff; }
+  /* Panels */
+  .panel-overlay { position:absolute; inset:0; background:rgba(15,12,41,.95); z-index:50; display:none; align-items:center; justify-content:center; color:#fff; backdrop-filter:blur(10px); padding:20px; overflow-y:auto; }
+  .panel-overlay.active { display:flex; }
+  .panel-card { background:rgba(255,255,255,.05); padding:25px; border-radius:15px; border:1px solid rgba(255,255,255,.15); max-width:700px; width:100%; max-height:90vh; overflow-y:auto; }
+  .panel-card h2 { color:#00d2ff; margin-bottom:15px; text-align:center; }
+  .panel-card input, .panel-card select { width:100%; padding:10px; border-radius:8px; border:1px solid #444; background:#222; color:#fff; font-size:1rem; outline:none; margin-bottom:10px; }
+  .panel-card label { color:#8899aa; font-size:.85rem; display:block; margin-bottom:4px; }
 
-  #btn-logout, #btn-profile { position: absolute; top: 80px; padding: 8px 20px; border: none; border-radius: 8px; color: white; cursor: pointer; font-size: 0.85rem; z-index: 10; backdrop-filter: blur(4px); }
-  #btn-logout { right: 20px; background: rgba(255,60,60,0.8); }
-  #btn-profile { right: 120px; background: rgba(0,210,255,0.8); }
+  /* Chat */
+  #chat-box { position:absolute; bottom:180px; left:15px; width:280px; max-height:250px; overflow-y:auto; z-index:12; display:flex; flex-direction:column; gap:4px; pointer-events:none; }
+  #chat-box .msg { background:rgba(0,0,0,.6); color:#fff; padding:6px 10px; border-radius:8px; font-size:.8rem; backdrop-filter:blur(4px); animation:fadeIn .3s; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
+  #chat-input-wrap { position:absolute; bottom:120px; left:15px; width:280px; display:none; z-index:13; }
+  #chat-input-wrap input { width:100%; padding:10px; border-radius:20px; border:none; background:rgba(0,0,0,.8); color:#fff; outline:none; }
 
-  #profile-menu { position: absolute; inset: 0; background: rgba(15,12,41,0.95); z-index: 50; display: none; flex-direction: column; align-items: center; justify-content: center; color: white; backdrop-filter: blur(10px); }
-  .profile-card { background: rgba(255,255,255,0.05); padding: 30px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); display: flex; gap: 40px; align-items: center; }
-  .avatar-display { width: 150px; height: 150px; background: #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem; border: 3px solid #00d2ff; }
-  .profile-info { display: flex; flex-direction: column; gap: 10px; }
-  .profile-info input { padding: 10px; border-radius: 8px; border: 1px solid #444; background: #222; color: white; font-size: 1rem; outline: none; width: 250px; }
+  /* Shop Grid */
+  .shop-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(130px,1fr)); gap:10px; margin:10px 0; }
+  .shop-item { background:rgba(255,255,255,.08); padding:10px; border-radius:10px; text-align:center; cursor:pointer; transition:.2s; border:2px solid transparent; }
+  .shop-item:hover { background:rgba(0,210,255,.2); border-color:#00d2ff; }
+  .shop-item .emoji { font-size:1.8rem; }
+  .shop-item .name { font-size:.8rem; margin:5px 0; }
+  .shop-item .price { font-size:.75rem; color:#f1c40f; }
 
-  #animal-card { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 15px 30px; border-radius: 15px; border: 2px solid #f1c40f; display: none; text-align: center; z-index: 10; }
+  /* Profile */
+  .profile-card { display:flex; gap:20px; flex-wrap:wrap; justify-content:center; margin-bottom:15px; }
+  .avatar-display { width:120px; height:120px; background:linear-gradient(135deg,#3a7bd5,#00d2ff); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:3rem; border:3px solid #00d2ff; }
+  .profile-fields { flex:1; min-width:220px; }
+  .profile-stats { display:flex; gap:10px; margin:10px 0; flex-wrap:wrap; }
+  .stat-box { flex:1; min-width:80px; background:rgba(0,210,255,.15); padding:8px; border-radius:8px; text-align:center; }
+  .stat-box .val { font-size:1.2rem; font-weight:bold; color:#00d2ff; }
+  .stat-box .lbl { font-size:.75rem; color:#8899aa; }
 
-  #joystick-zone { display: none; position: absolute; bottom: 30px; left: 30px; width: 120px; height: 120px; border-radius: 50%; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.3); z-index: 10; }
-  #joystick-knob { position: absolute; top: 50%; left: 50%; width: 50px; height: 50px; border-radius: 50%; background: rgba(0,210,255,0.6); transform: translate(-50%, -50%); }
-  @media (pointer: coarse) { #joystick-zone { display: block; } }
+  /* Joystick */
+  #joystick-zone { display:none; position:absolute; bottom:20px; left:20px; width:120px; height:120px; border-radius:50%; background:rgba(255,255,255,.08); border:2px solid rgba(255,255,255,.25); z-index:15; touch-action:none; }
+  #joystick-knob { position:absolute; top:50%; left:50%; width:50px; height:50px; border-radius:50%; background:rgba(0,210,255,.7); transform:translate(-50%,-50%); pointer-events:none; }
+  #jump-btn { display:none; position:absolute; bottom:30px; right:30px; width:80px; height:80px; border-radius:50%; background:rgba(0,210,255,.7); color:#fff; font-size:.85rem; border:none; z-index:15; font-weight:bold; }
+  #build-btn { display:none; position:absolute; bottom:130px; right:30px; width:70px; height:70px; border-radius:50%; background:rgba(241,196,15,.8); color:#333; font-size:.75rem; border:none; z-index:15; font-weight:bold; }
+  @media (pointer: coarse) { #joystick-zone, #jump-btn, #build-btn { display:block; } }
+
+  /* Block palette */
+  #block-palette { position:absolute; bottom:20px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,.85); padding:10px; border-radius:12px; z-index:20; display:none; max-width:90vw; }
+  #block-palette.active { display:block; }
+  #block-palette .row { display:flex; gap:6px; flex-wrap:wrap; justify-content:center; }
+  .block-btn { width:52px; height:52px; border:2px solid #555; border-radius:8px; cursor:pointer; font-size:.65rem; font-weight:bold; color:#fff; text-shadow:0 0 4px #000; }
+  .block-btn.active { border-color:#00ff88; box-shadow:0 0 10px #00ff88; }
+
+  /* Animal card */
+  #animal-card { position:absolute; bottom:100px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,.85); color:#fff; padding:12px 25px; border-radius:15px; border:2px solid #f1c40f; display:none; text-align:center; z-index:10; min-width:220px; }
+  #animal-card button { margin-top:8px; padding:6px 16px; border:none; border-radius:8px; background:#2ecc71; color:#fff; cursor:pointer; font-weight:bold; }
+
+  /* Weather badge */
+  #weather-badge { position:absolute; top:15px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,.7); color:#fff; padding:6px 15px; border-radius:20px; z-index:11; font-size:.85rem; }
+
+  /* Crosshair */
+  #crosshair { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:20px; height:20px; pointer-events:none; z-index:9; opacity:.7; display:none; }
+  #crosshair::before, #crosshair::after { content:''; position:absolute; background:#fff; }
+  #crosshair::before { top:50%; left:0; right:0; height:2px; transform:translateY(-50%); }
+  #crosshair::after { left:50%; top:0; bottom:0; width:2px; transform:translateX(-50%); }
+  #crosshair.active { display:block; }
+
+  /* Toast */
+  #toast { position:absolute; top:80px; left:50%; transform:translateX(-50%); background:#2ecc71; color:#fff; padding:10px 20px; border-radius:8px; z-index:999; opacity:0; transition:opacity .3s; }
+  #toast.show { opacity:1; }
+
+  .hidden { display:none !important; }
 </style>
 </head>
 <body>
 
+<!-- ===== LOGIN ===== -->
 <div id="login-screen">
   <canvas id="login-bg-canvas"></canvas>
-  <h1>Metaverse World</h1>
-  <p>عالم افتراضي متكامل</p>
-  <div class="glass-panel" id="auth-panel">
+  <h1>🌌 Metaverse World</h1>
+  <p>عالم افتراضي متكامل — روبلكس × ماينكرافت × ARK</p>
+  <div class="glass-panel">
     <div id="login-form">
       <input type="email" id="login-email" placeholder="البريد الإلكتروني">
       <input type="password" id="login-password" placeholder="كلمة المرور">
       <button class="btn btn-primary" id="btn-login-submit">تسجيل الدخول</button>
-      <button class="btn-link" id="link-to-signup">ليس لديك حساب؟ أنشئ حساباً جديداً</button>
+      <button class="btn-link" id="link-to-signup">ليس لديك حساب؟ سجّل الآن</button>
     </div>
-    <div id="signup-form" style="display: none;">
+    <div id="signup-form" style="display:none;">
       <input type="text" id="signup-name" placeholder="اسم اللاعب">
       <input type="email" id="signup-email" placeholder="البريد الإلكتروني">
-      <input type="password" id="signup-password" placeholder="كلمة المرور (6 أحرف على الأقل)">
+      <input type="password" id="signup-password" placeholder="كلمة المرور (6+ أحرف)">
       <button class="btn btn-primary" id="btn-signup-submit">إنشاء الحساب</button>
-      <button class="btn-link" id="link-to-login">لديك حساب بالفعل؟ سجل الدخول</button>
+      <button class="btn-link" id="link-to-login">لديك حساب؟ سجّل الدخول</button>
     </div>
     <div class="divider">أو</div>
     <button class="btn btn-google" id="btn-google">
-      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20"> تسجيل الدخول بـ Google
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20"> دخول بـ Google
     </button>
-    <button class="btn btn-guest" id="btn-guest">دخول سريع (تجريبي)</button>
+    <button class="btn btn-guest" id="btn-guest">🚀 دخول تجريبي</button>
   </div>
 </div>
 
+<!-- ===== WORLD ===== -->
 <div id="world-screen">
-  <div id="loading"><div class="spinner"></div>جاري تحميل العالم والشخصية...</div>
+  <div id="loading"><div class="spinner"></div>جاري تحميل العالم...</div>
   <div id="canvas-container"></div>
-  
+  <div id="crosshair"></div>
+
+  <!-- HUD -->
   <div id="hud">
     <div class="hud-panel">
-      <div style="display:flex; flex-direction:column; gap:5px;">
-        <span style="font-size:0.8rem;">الصحة</span>
-        <div class="stat-bar"><div class="stat-fill health-fill"></div></div>
+      <div>
+        <div style="font-size:.7rem;color:#ff4757;">❤️ صحة</div>
+        <div class="stat-bar"><div class="stat-fill health-fill" id="hp-bar" style="width:100%"></div></div>
       </div>
-      <div style="display:flex; flex-direction:column; gap:5px;">
-        <span style="font-size:0.8rem;">الطاقة</span>
-        <div class="stat-bar"><div class="stat-fill energy-fill"></div></div>
+      <div>
+        <div style="font-size:.7rem;color:#00d2ff;">⚡ طاقة</div>
+        <div class="stat-bar"><div class="stat-fill energy-fill" id="energy-bar" style="width:100%"></div></div>
       </div>
     </div>
-    <div class="hud-panel" style="pointer-events:auto;">
-      <span>مرحباً، <span id="player-name" style="color:#00d2ff; font-weight:bold;">لاعب</span></span>
-      <span style="color:#8899aa; font-size:0.8rem;">(مسافة للقفز)</span>
+    <div class="hud-panel">
+      <span>💰 <span id="coins-display">100</span></span>
+      <span>⭐ مستوى <span id="level-display">1</span></span>
+      <span id="player-name" style="color:#00d2ff;font-weight:bold;">لاعب</span>
     </div>
   </div>
 
-  <button id="btn-profile">👤 الملف الشخصي</button>
-  <button id="btn-logout">خروج</button>
-  
-  <div id="profile-menu">
-    <h2 style="color:#00d2ff; margin-bottom:20px;">الملف الشخصي</h2>
-    <div class="profile-card">
-      <div class="avatar-display">🚀</div>
-      <div class="profile-info">
-        <label style="color:#8899aa; font-size:0.9rem;">اسم اللاعب:</label>
-        <input type="text" id="input-name" placeholder="اكتب اسمك...">
-        <label style="color:#8899aa; font-size:0.9rem;">المستوى:</label>
-        <input type="text" value="المستوى 1 (مبتدئ)" disabled style="color:#888;">
-      </div>
-    </div>
-    <button class="btn btn-primary" id="btn-close-profile" style="width:200px; margin-top:20px; background:#ff4757;">إغلاق القائمة</button>
-  </div>
+  <div id="weather-badge">☀️ صافٍ</div>
+
+  <button class="top-btn" id="btn-profile">👤</button>
+  <button class="top-btn" id="btn-chat">💬</button>
+  <button class="top-btn" id="btn-shop">🛒</button>
+  <button class="top-btn" id="btn-logout">🚪</button>
+
+  <div id="chat-box"></div>
+  <div id="chat-input-wrap"><input id="chat-input" placeholder="اكتب رسالة... (Enter للإرسال)"></div>
 
   <div id="animal-card">
-    <h3 id="ac-name" style="color:#f1c40f;">اسم الحيوان</h3>
-    <p id="ac-level">المستوى: 1</p>
-    <p id="ac-req" style="font-size:0.8rem; color:#ff4757; margin-top:5px;">تحتاج مستوى 2 للترويض</p>
+    <h3 id="ac-name" style="color:#f1c40f;">—</h3>
+    <p id="ac-level" style="font-size:.85rem;">—</p>
+    <p id="ac-req" style="font-size:.8rem;">—</p>
+    <button id="ac-tame-btn">🐾 محاولة ترويض</button>
   </div>
 
   <div id="joystick-zone"><div id="joystick-knob"></div></div>
+  <button id="jump-btn">قفز</button>
+  <button id="build-btn">🏰 بناء</button>
+
+  <div id="block-palette">
+    <div class="row" id="block-list"></div>
+  </div>
+
+  <div id="toast"></div>
+
+  <!-- ===== PROFILE PANEL ===== -->
+  <div class="panel-overlay" id="profile-panel">
+    <div class="panel-card">
+      <h2>👤 الملف الشخصي</h2>
+      <div class="profile-card">
+        <div class="avatar-display" id="avatar-emoji">🚀</div>
+        <div class="profile-fields">
+          <label>الاسم:</label>
+          <input type="text" id="input-name" placeholder="اسمك...">
+          <label>الجنس:</label>
+          <select id="input-gender">
+            <option value="male">👦 ذكر</option>
+            <option value="female">👧 أنثى</option>
+            <option value="neutral">🤖 محايد</option>
+          </select>
+          <label>الملابس:</label>
+          <select id="input-outfit">
+            <option value="casual">👕 عادية</option>
+            <option value="warrior">⚔️ محارب</option>
+            <option value="wizard">🧙 ساحر</option>
+            <option value="ninja">🥷 نينجا</option>
+            <option value="royal">👑 ملكي</option>
+          </select>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="stat-box"><div class="val" id="p-level">1</div><div class="lbl">المستوى</div></div>
+        <div class="stat-box"><div class="val" id="p-coins">100</div><div class="lbl">العملات</div></div>
+        <div class="stat-box"><div class="val" id="p-pets">0</div><div class="lbl">الحيوانات</div></div>
+        <div class="stat-box"><div class="val" id="p-items">0</div><div class="lbl">المشتريات</div></div>
+      </div>
+      <h3 style="margin:15px 0 10px;color:#f1c40f;">🎒 ممتلكاتي</h3>
+      <div id="inventory-list" class="shop-grid" style="min-height:60px;"></div>
+      <h3 style="margin:15px 0 10px;color:#2ecc71;">🐾 حيواناتي المروّضة</h3>
+      <div id="pets-list" class="shop-grid" style="min-height:60px;"></div>
+      <button class="btn btn-primary" id="btn-save-profile" style="margin-top:15px;">💾 حفظ التغييرات</button>
+      <button class="btn btn-danger" id="btn-close-profile" style="margin-top:8px;">إغلاق</button>
+    </div>
+  </div>
+
+  <!-- ===== SHOP PANEL ===== -->
+  <div class="panel-overlay" id="shop-panel">
+    <div class="panel-card">
+      <h2>🛒 المتجر</h2>
+      <p style="text-align:center;color:#f1c40f;margin-bottom:15px;">💰 رصيدك: <span id="shop-coins">100</span></p>
+      <div style="display:flex;gap:8px;margin-bottom:15px;flex-wrap:wrap;">
+        <button class="btn btn-primary" data-shop="homes" style="flex:1;min-width:100px;">🏠 مساكن</button>
+        <button class="btn btn-primary" data-shop="weapons" style="flex:1;min-width:100px;">⚔️ أسلحة</button>
+        <button class="btn btn-primary" data-shop="skills" style="flex:1;min-width:100px;">✨ مهارات</button>
+      </div>
+      <div id="shop-items" class="shop-grid"></div>
+      <button class="btn btn-danger" id="btn-close-shop" style="margin-top:15px;">إغلاق</button>
+    </div>
+  </div>
+
+  <!-- ===== CHAT HINT ===== -->
+  <div class="panel-overlay" id="chat-panel">
+    <div class="panel-card" style="max-width:500px;">
+      <h2>💬 الدردشة</h2>
+      <p style="text-align:center;color:#aaa;font-size:.85rem;margin-bottom:15px;">
+        اضغط T في الحاسوب أو زر 💬 لفتح الدردشة
+      </p>
+      <div id="chat-list-full" style="background:rgba(0,0,0,.4);padding:10px;border-radius:8px;height:250px;overflow-y:auto;"></div>
+      <button class="btn btn-danger" id="btn-close-chat" style="margin-top:15px;">إغلاق</button>
+    </div>
+  </div>
 </div>
 
 <script type="importmap">
@@ -170,11 +281,9 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-import { 
-  getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut,
-  createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile
-} from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
+// ⚠️ في الإنتاج: انقل هذه المفاتيح إلى متغيرات بيئة (env)
 const firebaseConfig = {
   apiKey: "AIzaSyAQposIwGN_F9EbUqpxarN7guZ_IaZjvOQ",
   authDomain: "metaverse-metabox.firebaseapp.com",
@@ -183,313 +292,1238 @@ const firebaseConfig = {
   messagingSenderId: "509642391976",
   appId: "1:509642391976:web:93746bbba00ad47bcb5d9d"
 };
-
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-const loginScreen = document.getElementById('login-screen');
-const worldScreen = document.getElementById('world-screen');
-const playerNameEl = document.getElementById('player-name');
-const btnLogout = document.getElementById('btn-logout');
-const loadingEl = document.getElementById('loading');
-const profileMenu = document.getElementById('profile-menu');
-const btnProfile = document.getElementById('btn-profile');
-const btnCloseProfile = document.getElementById('btn-close-profile');
-const inputName = document.getElementById('input-name');
-const animalCard = document.getElementById('animal-card');
-const acName = document.getElementById('ac-name');
-const acLevel = document.getElementById('ac-level');
-const acReq = document.getElementById('ac-req');
+// ===== مراجع DOM =====
+const $ = id => document.getElementById(id);
+const loginScreen = $('login-screen'), worldScreen = $('world-screen'), loadingEl = $('loading');
+const playerNameEl = $('player-name'), coinsDisplay = $('coins-display'), levelDisplay = $('level-display');
+const toastEl = $('toast');
 
-// ===== الخلفية المتحركة =====
-const bgCanvas = document.getElementById('login-bg-canvas');
-const ctx = bgCanvas.getContext('2d');
-let bgShapes = [];
-function initBgCanvas() {
-  bgCanvas.width = window.innerWidth; bgCanvas.height = window.innerHeight; bgShapes = [];
-  for(let i=0; i<50; i++) {
-    bgShapes.push({ x: Math.random() * bgCanvas.width, y: Math.random() * bgCanvas.height, size: Math.random() * 30 + 10, speedX: (Math.random() - 0.5) * 1, speedY: (Math.random() - 0.5) * 1, type: Math.random() > 0.5 ? 'square' : 'circle', rotation: Math.random() * Math.PI, rotSpeed: (Math.random() - 0.5) * 0.05, opacity: Math.random() * 0.5 + 0.1 });
+// ===== حالة اللعبة =====
+const Game = {
+  user: null,
+  profile: null,
+  scene: null, camera: null, renderer: null, clock: null,
+  player: null, mixer: null, actions: {},
+  keys: {}, yaw: 0, pitch: 0, isLocked: false,
+  velocityY: 0, isGrounded: true,
+  animals: [], collidables: [], buildings: new Map(),
+  weather: { current: 'clear', timer: 0, rainMesh: null, snowMesh: null },
+  buildMode: false, selectedBlock: 'wood',
+  ghosts: { block: null },
+  raycaster: new THREE.Raycaster(), mouse: new THREE.Vector2(),
+  enemies: [], projectiles: [],
+  isMobile: /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || 'ontouchstart' in window,
+  currentWorld: 'main',
+  maxAnimatedEnemies: 10,
+};
+
+// ===== قائمة الثوابت =====
+const BLOCKS = {
+  grass:  { color: 0x4caf50, price: 1,  name: 'عشب', emoji: '🟩' },
+  dirt:   { color: 0x8b4513, price: 1,  name: 'تراب', emoji: '🟫' },
+  stone:  { color: 0x808080, price: 2,  name: 'حجر', emoji: '⬛' },
+  wood:   { color: 0xa0522d, price: 3,  name: 'خشب', emoji: '🪵' },
+  glass:  { color: 0x88ccff, price: 5,  name: 'زجاج', emoji: '🔷', transparent: true },
+  gold:   { color: 0xffd700, price: 20, name: 'ذهب', emoji: '🟨' },
+};
+
+const SHOP = {
+  homes: [
+    { id:'hut', name:'كوخ', price:200, emoji:'🏠' },
+    { id:'house', name:'منزل', price:800, emoji:'🏡' },
+    { id:'castle', name:'قلعة', price:3000, emoji:'🏰' },
+  ],
+  weapons: [
+    { id:'wood_sword', name:'سيف خشبي', price:50, emoji:'🗡️', damage:12 },
+    { id:'iron_sword', name:'سيف حديدي', price:300, emoji:'⚔️', damage:25 },
+    { id:'magic_staff', name:'عصا سحرية', price:700, emoji:'🪄', damage:40, ranged:true },
+    { id:'dragon_bow', name:'قوس التنين', price:1200, emoji:'🏹', damage:55, ranged:true },
+  ],
+  skills: [
+    { id:'sprint', name:'جري سريع', price:150, emoji:'💨' },
+    { id:'teleport', name:'انتقال', price:500, emoji:'✨' },
+    { id:'tame_master', name:'ترويض متقدم', price:400, emoji:'🐾' },
+  ]
+};
+
+const CREATURE_TYPES = {
+  rabbit:  { name:'أرنب',  level:1,  color:0xdddddd, emoji:'🐰', scale:0.4, speed:3 },
+  deer:    { name:'غزال',  level:2,  color:0xb8860b, emoji:'🦌', scale:0.8, speed:4 },
+  wolf:    { name:'ذئب',   level:5,  color:0x555555, emoji:'🐺', scale:1.0, speed:5 },
+  bear:    { name:'دب',    level:8,  color:0x4b3621, emoji:'🐻', scale:1.4, speed:3 },
+  tiger:   { name:'نمر',   level:12, color:0xff8800, emoji:'🐯', scale:1.3, speed:6 },
+  dragon:  { name:'تنين',  level:20, color:0xff0044, emoji:'🐉', scale:2.0, speed:8 },
+};
+
+const WORLDS = {
+  main:    { name:'العالم الرئيسي', emoji:'🌳', fog:0x87CEEB, ground:0x3a7d44 },
+  horror:  { name:'المرعب', emoji:'👻', fog:0x220000, ground:0x1a0a0a },
+  fun:     { name:'المرح', emoji:'🎢', fog:0xffccff, ground:0xff99cc },
+  action:  { name:'الأكشن', emoji:'⚔️', fog:0x222222, ground:0x444444 },
+  sports:  { name:'الرياضي', emoji:'⚽', fog:0x00aaff, ground:0x2ecc71 },
+};
+
+// ===== أدوات =====
+function toast(msg, color = '#2ecc71') {
+  toastEl.textContent = msg;
+  toastEl.style.background = color;
+  toastEl.classList.add('show');
+  setTimeout(() => toastEl.classList.remove('show'), 2000);
+}
+const rand = (a, b) => a + Math.random() * (b - a);
+
+// ===== خلفية تسجيل الدخول =====
+(function initBg() {
+  const canvas = $('login-bg-canvas'), ctx = canvas.getContext('2d');
+  let shapes = [];
+  function resize() {
+    canvas.width = innerWidth; canvas.height = innerHeight;
+    shapes = Array.from({ length: 40 }, () => ({
+      x: Math.random() * canvas.width, y: Math.random() * canvas.height,
+      size: rand(10, 40), sx: rand(-0.5, 0.5), sy: rand(-0.5, 0.5),
+      type: Math.random() > 0.5 ? 'square' : 'circle',
+      rot: Math.random() * Math.PI, rSpeed: rand(-0.02, 0.02),
+      op: rand(0.1, 0.5)
+    }));
   }
-}
-function drawBg() {
-  if(loginScreen.style.display === 'none') return;
-  ctx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
-  ctx.fillStyle = '#0f0c29'; ctx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
-  const grad = ctx.createRadialGradient(bgCanvas.width/2, bgCanvas.height/2, 0, bgCanvas.width/2, bgCanvas.height/2, bgCanvas.width);
-  grad.addColorStop(0, 'rgba(48, 43, 99, 0.5)'); grad.addColorStop(1, 'rgba(15, 12, 41, 0)');
-  ctx.fillStyle = grad; ctx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
-  bgShapes.forEach(s => {
-    s.x += s.speedX; s.y += s.speedY; s.rotation += s.rotSpeed;
-    if(s.x < 0) s.x = bgCanvas.width; if(s.x > bgCanvas.width) s.x = 0;
-    if(s.y < 0) s.y = bgCanvas.height; if(s.y > bgCanvas.height) s.y = 0;
-    ctx.save(); ctx.translate(s.x, s.y); ctx.rotate(s.rotation);
-    ctx.fillStyle = `rgba(0, 210, 255, ${s.opacity})`; ctx.strokeStyle = `rgba(0, 210, 255, ${s.opacity + 0.2})`; ctx.lineWidth = 2;
-    if(s.type === 'square') { ctx.fillRect(-s.size/2, -s.size/2, s.size, s.size); ctx.strokeRect(-s.size/2, -s.size/2, s.size, s.size); }
-    else { ctx.beginPath(); ctx.arc(0, 0, s.size/2, 0, Math.PI*2); ctx.fill(); ctx.stroke(); }
-    ctx.restore();
+  function draw() {
+    if (loginScreen.style.display === 'none') return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const grad = ctx.createRadialGradient(canvas.width/2, canvas.height/2, 0, canvas.width/2, canvas.height/2, canvas.width);
+    grad.addColorStop(0, 'rgba(48,43,99,0.7)'); grad.addColorStop(1, 'rgba(15,12,41,0)');
+    ctx.fillStyle = '#0f0c29'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = grad; ctx.fillRect(0, 0, canvas.width, canvas.height);
+    shapes.forEach(s => {
+      s.x += s.sx; s.y += s.sy; s.rot += s.rSpeed;
+      if (s.x < 0) s.x = canvas.width; if (s.x > canvas.width) s.x = 0;
+      if (s.y < 0) s.y = canvas.height; if (s.y > canvas.height) s.y = 0;
+      ctx.save(); ctx.translate(s.x, s.y); ctx.rotate(s.rot);
+      ctx.fillStyle = `rgba(0,210,255,${s.op})`; ctx.strokeStyle = `rgba(0,210,255,${s.op+0.2})`; ctx.lineWidth = 2;
+      if (s.type === 'square') { ctx.fillRect(-s.size/2, -s.size/2, s.size, s.size); ctx.strokeRect(-s.size/2, -s.size/2, s.size, s.size); }
+      else { ctx.beginPath(); ctx.arc(0, 0, s.size/2, 0, Math.PI*2); ctx.fill(); ctx.stroke(); }
+      ctx.restore();
+    });
+    requestAnimationFrame(draw);
+  }
+  resize(); draw();
+  addEventListener('resize', resize);
+})();
+
+// ===== الملف الشخصي =====
+function loadProfile(uid, defaultName = 'لاعب') {
+  const key = `mv_profile_${uid}`;
+  let data = null;
+  try { data = JSON.parse(localStorage.getItem(key) || 'null'); } catch {}
+  if (!data) data = {
+    name: defaultName, gender: 'neutral', outfit: 'casual',
+    level: 1, xp: 0, coins: 100,
+    inventory: [], pets: [], equippedWeapon: 'fists',
+    createdAt: Date.now()
+  };
+  // تحديث الحيوانات (نمو)
+  data.pets.forEach(p => {
+    const days = (Date.now() - p.birthDate) / 86400000;
+    p.growth = Math.min(100, days * 2);
+    p.level = Math.min(50, p.baseLevel + Math.floor(p.growth / 10));
   });
-  requestAnimationFrame(drawBg);
+  return { ...data, save() { localStorage.setItem(key, JSON.stringify(this)); } };
 }
-initBgCanvas(); drawBg(); window.addEventListener('resize', initBgCanvas);
 
-// ===== Firebase Login/Signup =====
-const loginForm = document.getElementById('login-form');
-const signupForm = document.getElementById('signup-form');
-document.getElementById('link-to-signup').onclick = () => { loginForm.style.display='none'; signupForm.style.display='block'; };
-document.getElementById('link-to-login').onclick = () => { signupForm.style.display='none'; loginForm.style.display='block'; };
+// ===== المصادقة =====
+$('link-to-signup').onclick = () => { $('login-form').style.display='none'; $('signup-form').style.display='block'; };
+$('link-to-login').onclick = () => { $('signup-form').style.display='none'; $('login-form').style.display='block'; };
+$('btn-google').onclick = async () => { try { await signInWithPopup(auth, new GoogleAuthProvider()); } catch(e) { alert('فشل: ' + e.message); } };
+$('btn-login-submit').onclick = async () => {
+  try { await signInWithEmailAndPassword(auth, $('login-email').value, $('login-password').value); }
+  catch(e) { alert('خطأ: ' + e.message); }
+};
+$('btn-signup-submit').onclick = async () => {
+  const name = $('signup-name').value;
+  try {
+    const c = await createUserWithEmailAndPassword(auth, $('signup-email').value, $('signup-password').value);
+    if (name) await updateProfile(c.user, { displayName: name });
+    alert('تم إنشاء الحساب!');
+  } catch(e) { alert('خطأ: ' + e.message); }
+};
+$('btn-guest').onclick = () => enterWorld({ uid: 'guest_' + Date.now(), displayName: 'زائر', isGuest: true });
+onAuthStateChanged(auth, u => { if (u) enterWorld(u); });
 
-document.getElementById('btn-google').addEventListener('click', async () => {
-  const provider = new GoogleAuthProvider();
-  try { await signInWithPopup(auth, provider); } catch (e) { alert('فشل: ' + e.message); }
-});
-document.getElementById('btn-login-submit').addEventListener('click', async () => {
-  const email = document.getElementById('login-email').value; const pass = document.getElementById('login-password').value;
-  try { await signInWithEmailAndPassword(auth, email, pass); } catch (e) { alert('خطأ في الدخول: ' + e.message); }
-});
-document.getElementById('btn-signup-submit').addEventListener('click', async () => {
-  const name = document.getElementById('signup-name').value; const email = document.getElementById('signup-email').value; const pass = document.getElementById('signup-password').value;
-  try { const userCredential = await createUserWithEmailAndPassword(auth, email, pass); await updateProfile(userCredential.user, { displayName: name }); alert('تم إنشاء الحساب!'); } catch (e) { alert('خطأ: ' + e.message); }
-});
-document.getElementById('btn-guest').addEventListener('click', () => { enterWorld({ displayName: 'لاعب زائر', isGuest: true, uid: 'guest_' + Date.now() }); });
-onAuthStateChanged(auth, (user) => { if (user) enterWorld(user); });
-
-// ===== المتغيرات العامة =====
-let currentUser = null;
-let scene, camera, renderer, player, clock;
-let keys = {};
-let yaw = 0, pitch = 0;
-let isLocked = false;
-let joystickActive = false, joystickX = 0, joystickY = 0;
-let mixer = null;
-let actions = {}; // لحفظ الأنيميشن
-let sunLight, ambientLight, skyColor = new THREE.Color(0x87CEEB);
-let collidableObjects = [];
-let animals = [];
-let rainParticles = null;
-let playerLevel = 1;
-
-// متغيرات القفز والجاذبية
-let velocityY = 0;
-let isGrounded = true;
-const gravity = -25;
-const jumpForce = 12;
-
+// ===== دخول/خروج العالم =====
 function enterWorld(user) {
-  currentUser = user;
-  const name = user.displayName || (user.email ? user.email.split('@')[0] : 'لاعب');
-  playerNameEl.textContent = name; inputName.value = name;
+  Game.user = user;
+  Game.profile = loadProfile(user.uid, user.displayName || 'لاعب');
+  playerNameEl.textContent = Game.profile.name;
+  coinsDisplay.textContent = Game.profile.coins;
+  levelDisplay.textContent = Game.profile.level;
   loginScreen.style.opacity = '0';
-  setTimeout(() => { loginScreen.style.display = 'none'; worldScreen.style.display = 'block'; initWorld(); }, 600);
+  setTimeout(() => {
+    loginScreen.style.display = 'none';
+    worldScreen.style.display = 'block';
+    initWorld();
+  }, 500);
 }
-function exitWorld() {
-  if (renderer) { renderer.dispose(); renderer = null; }
-  scene = null; camera = null; player = null; keys = {}; animals = [];
-  worldScreen.style.display = 'none'; loginScreen.style.display = 'flex'; loginScreen.style.opacity = '1'; currentUser = null;
-}
-btnLogout.addEventListener('click', () => { if (currentUser && !currentUser.isGuest) signOut(auth); exitWorld(); });
-btnProfile.addEventListener('click', () => { profileMenu.style.display = 'flex'; if (document.pointerLockElement) document.exitPointerLock(); });
-btnCloseProfile.addEventListener('click', () => { profileMenu.style.display = 'none'; if (currentUser) { currentUser.displayName = inputName.value || 'لاعب'; playerNameEl.textContent = currentUser.displayName; } });
+$('btn-logout').onclick = () => {
+  if (Game.user && !Game.user.isGuest) signOut(auth).catch(()=>{});
+  if (Game.renderer) { Game.renderer.dispose(); Game.renderer = null; }
+  Game.scene = null; Game.camera = null; Game.player = null;
+  Game.animals = []; Game.enemies = []; Game.buildings.clear();
+  worldScreen.style.display = 'none';
+  loginScreen.style.display = 'flex';
+  loginScreen.style.opacity = '1';
+};
 
 // ===== بناء العالم =====
 function initWorld() {
-  scene = new THREE.Scene();
-  scene.background = skyColor.clone();
-  scene.fog = new THREE.Fog(0x87CEEB, 30, 100);
+  const s = new THREE.Scene();
+  s.background = new THREE.Color(WORLDS.main.fog);
+  s.fog = new THREE.Fog(WORLDS.main.fog, 30, 100);
+  Game.scene = s;
 
-  camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 500);
-  camera.position.set(0, 5, 10);
+  Game.camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.1, 500);
 
-  renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.shadowMap.enabled = true;
-  document.getElementById('canvas-container').appendChild(renderer.domElement);
+  Game.renderer = new THREE.WebGLRenderer({ antialias: !Game.isMobile, powerPreference: 'high-performance' });
+  Game.renderer.setSize(innerWidth, innerHeight);
+  Game.renderer.setPixelRatio(Game.isMobile ? 1 : Math.min(devicePixelRatio, 2));
+  Game.renderer.shadowMap.enabled = !Game.isMobile;
+  Game.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  $('canvas-container').appendChild(Game.renderer.domElement);
 
-  sunLight = new THREE.DirectionalLight(0xffffff, 2);
-  sunLight.position.set(20, 40, 20);
-  sunLight.castShadow = true;
-  sunLight.shadow.camera.left = -50; sunLight.shadow.camera.right = 50;
-  sunLight.shadow.camera.top = 50; sunLight.shadow.camera.bottom = -50;
-  scene.add(sunLight);
-  ambientLight = new THREE.AmbientLight(0x404060, 1);
-  scene.add(ambientLight);
+  // إضاءة
+  const sun = new THREE.DirectionalLight(0xffffff, 2);
+  sun.position.set(30, 50, 30);
+  sun.castShadow = !Game.isMobile;
+  if (!Game.isMobile) {
+    sun.shadow.mapSize.set(1024, 1024);
+    sun.shadow.camera.left = -60; sun.shadow.camera.right = 60;
+    sun.shadow.camera.top = 60; sun.shadow.camera.bottom = -60;
+  }
+  s.add(sun); s.add(new THREE.AmbientLight(0x505070, 1));
+  Game.sunLight = sun;
 
-  const ground = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), new THREE.MeshStandardMaterial({ color: 0x3a7d44 }));
-  ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
+  // الأرض
+  const ground = new THREE.Mesh(
+    new THREE.PlaneGeometry(200, 200),
+    new THREE.MeshStandardMaterial({ color: 0x3a7d44 })
+  );
+  ground.rotation.x = -Math.PI/2;
+  ground.receiveShadow = !Game.isMobile;
+  s.add(ground);
+  Game.ground = ground;
 
-  // صناديق
-  for (let i = 0; i < 30; i++) {
-    const size = 1 + Math.random() * 2;
-    const box = new THREE.Mesh(new THREE.BoxGeometry(size, size, size), new THREE.MeshStandardMaterial({ color: Math.random() * 0xffffff }));
-    box.position.set((Math.random() - 0.5) * 80, size / 2, (Math.random() - 0.5) * 80);
-    box.castShadow = true; box.receiveShadow = true;
-    box.userData.radius = size / 2 + 0.5;
-    scene.add(box); collidableObjects.push(box);
+  // صناديق عشوائية
+  for (let i = 0; i < 20; i++) {
+    const size = rand(1, 2.5);
+    const box = new THREE.Mesh(
+      new THREE.BoxGeometry(size, size, size),
+      new THREE.MeshStandardMaterial({ color: Math.floor(rand(0, 0xffffff)) })
+    );
+    box.position.set(rand(-70, 70), size/2, rand(-70, 70));
+    box.castShadow = !Game.isMobile;
+    box.receiveShadow = !Game.isMobile;
+    box.userData.radius = size * 0.6;
+    s.add(box);
+    Game.collidables.push(box);
   }
 
   // حيوانات
-  const types = [ { name: 'ديناصور (Rex)', color: 0x2ecc71, level: 5, scale: 1.5 }, { name: 'ذئب', color: 0x95a5a6, level: 3, scale: 0.8 }, { name: 'خنزير', color: 0xffb8b8, level: 1, scale: 0.6 } ];
-  types.forEach((t, i) => {
-    const a = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshStandardMaterial({ color: t.color }));
-    a.scale.set(t.scale, t.scale, t.scale);
-    a.position.set((i - 1) * 10, t.scale / 2, -15);
-    a.castShadow = true;
-    a.userData = { type: t.name, level: t.level, direction: Math.random() * Math.PI * 2, speed: 0.5 + Math.random() * 1, changeDirTimer: 0 };
-    scene.add(a); animals.push(a);
-  });
+  spawnInitialCreatures();
 
-  // ===== تحميل شخصية "روبو" الجديدة والجميلة =====
+  // بوابة الأكشن
+  spawnPortal('action', new THREE.Vector3(15, 0, -15));
+
+  // بناء الخريطة (محملة من localStorage)
+  loadBuildings();
+
+  // الشخصية
+  loadPlayer();
+
+  // ضوابط الإدخال
+  setupInput();
+  setupMobileControls();
+  setupShopUI();
+  setupProfileUI();
+  setupChatUI();
+  setupBuildUI();
+
+  // الطقس
+  setWeather('clear');
+
+  loadingEl.style.opacity = '0';
+  setTimeout(() => loadingEl.style.display = 'none', 400);
+
+  Game.clock = new THREE.Clock();
+  animate();
+}
+
+// ===== شخصية اللاعب =====
+function loadPlayer() {
   const loader = new GLTFLoader();
-  // نموذج Robo من Google
-  const modelUrl = 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/models/gltf/RobotExpressive/RobotExpressive.glb';
-  
-  loader.load('https://threejs.org/examples/models/gltf/RobotExpressive/RobotExpressive.glb', (gltf) => {
-    player = gltf.scene;
-    player.scale.set(0.6, 0.6, 0.6);
-    player.position.set(0, 1, 0); // نرفعه قليلاً عن الأرض
-    player.traverse((node) => { if (node.isMesh) node.castShadow = true; });
-    scene.add(player);
+  loader.load('https://threejs.org/examples/models/gltf/RobotExpressive/RobotExpressive.glb', gltf => {
+    const p = gltf.scene;
+    p.scale.set(0.6, 0.6, 0.6);
+    p.position.set(0, 0, 0);
+    p.traverse(n => { if (n.isMesh) { n.castShadow = !Game.isMobile; n.receiveShadow = !Game.isMobile; } });
+    Game.scene.add(p);
+    Game.player = p;
 
-    // إعداد الأنيميشن (وقوف ومشي فقط لتفادي مشاكل الانبطاح)
-    mixer = new THREE.AnimationMixer(player);
-    
-    // البحث عن أنيميشن الوقوف والمشي
-    gltf.animations.forEach((clip) => {
-      if (clip.name === 'Idle') actions.idle = mixer.clipAction(clip);
-      if (clip.name === 'Walking') actions.walk = mixer.clipAction(clip);
+    Game.mixer = new THREE.AnimationMixer(p);
+    gltf.animations.forEach(clip => {
+      const key = clip.name.toLowerCase();
+      if (key.includes('idle')) Game.actions.idle = Game.mixer.clipAction(clip);
+      if (key.includes('walk')) Game.actions.walk = Game.mixer.clipAction(clip);
     });
+    if (!Game.actions.idle) Game.actions.idle = Game.mixer.clipAction(gltf.animations[0]);
+    if (!Game.actions.walk) Game.actions.walk = Game.mixer.clipAction(gltf.animations[1]);
+    Game.actions.idle.play();
 
-    // إذا لم نجدهم، نأخذ الأول والثاني
-    if(!actions.idle) actions.idle = mixer.clipAction(gltf.animations[0]);
-    if(!actions.walk) actions.walk = mixer.clipAction(gltf.animations[1]);
+    // تطبيق الملابس
+    applyOutfit();
 
-    actions.idle.play();
-
-    loadingEl.style.opacity = '0';
-    setTimeout(() => loadingEl.style.display = 'none', 500);
-    clock = new THREE.Clock();
-    setupInput();
-    animate();
-  }, undefined, (err) => {
-    alert('فشل تحميل الشخصية، تأكد من الإنترنت.');
+    // كاميرا أولية
+    Game.camera.position.set(0, 5, 10);
+    Game.camera.lookAt(0, 1, 0);
+  }, undefined, err => {
+    toast('فشل تحميل الشخصية', '#ff4757');
+    // شخصية بديلة
+    const fallback = new THREE.Mesh(
+      new THREE.CapsuleGeometry(0.5, 1, 4, 8),
+      new THREE.MeshStandardMaterial({ color: 0x00d2ff })
+    );
+    fallback.position.y = 1;
+    Game.scene.add(fallback);
+    Game.player = fallback;
   });
 }
 
+function applyOutfit() {
+  if (!Game.player) return;
+  const colors = { casual: 0x2196f3, warrior: 0x8b0000, wizard: 0x8a2be2, ninja: 0x111111, royal: 0xffd700 };
+  const c = colors[Game.profile.outfit] || 0x2196f3;
+  Game.player.traverse(n => {
+    if (n.isMesh && n.material && n.material.color && !n.material.map) {
+      // لا نغير كل شيء، فقط المواد الأساسية
+    }
+  });
+}
+
+// ===== الحيوانات =====
+function spawnInitialCreatures() {
+  const typeIds = Object.keys(CREATURE_TYPES);
+  for (let i = 0; i < 8; i++) {
+    const typeId = typeIds[Math.floor(Math.random() * typeIds.length)];
+    spawnCreature(typeId, rand(-40, 40), rand(-40, 40));
+  }
+}
+
+function spawnCreature(typeId, x, z) {
+  const t = CREATURE_TYPES[typeId];
+  const group = new THREE.Group();
+  const body = new THREE.Mesh(
+    new THREE.BoxGeometry(1, 1.4, 1),
+    new THREE.MeshStandardMaterial({ color: t.color })
+  );
+  body.position.y = 0.7;
+  body.castShadow = !Game.isMobile;
+  group.add(body);
+  // رأس
+  const head = new THREE.Mesh(
+    new THREE.SphereGeometry(0.45, 10, 10),
+    new THREE.MeshStandardMaterial({ color: t.color })
+  );
+  head.position.set(0, 1.4, 0.5);
+  group.add(head);
+  // عينان
+  const eyeMat = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+  [-0.15, 0.15].forEach(ex => {
+    const eye = new THREE.Mesh(new THREE.SphereGeometry(0.08, 6, 6), eyeMat);
+    eye.position.set(ex, 1.5, 0.85);
+    group.add(eye);
+  });
+
+  group.scale.setScalar(t.scale);
+  group.position.set(x, 0, z);
+  group.userData = {
+    typeId, level: t.level + Math.floor(rand(0, 2)),
+    direction: Math.random() * Math.PI * 2,
+    speed: t.speed * 0.3,
+    changeDirTimer: rand(1, 3),
+    isTamed: false, tameProgress: 0
+  };
+  Game.scene.add(group);
+  Game.animals.push(group);
+}
+
+// ===== البوابة =====
+function spawnPortal(worldId, pos) {
+  const g = new THREE.Group();
+  const ring = new THREE.Mesh(
+    new THREE.TorusGeometry(1.5, 0.3, 12, 24),
+    new THREE.MeshStandardMaterial({ color: 0x8a2be2, emissive: 0x8a2be2, emissiveIntensity: 0.6 })
+  );
+  ring.rotation.y = Math.PI / 2;
+  g.add(ring);
+  const inner = new THREE.Mesh(
+    new THREE.CircleGeometry(1.4, 24),
+    new THREE.MeshBasicMaterial({ color: 0x00d2ff, transparent: true, opacity: 0.5, side: THREE.DoubleSide })
+  );
+  inner.rotation.y = Math.PI / 2;
+  g.add(inner);
+  g.position.copy(pos);
+  g.position.y = 1.5;
+  g.userData = { worldId, isPortal: true };
+  Game.scene.add(g);
+  Game.portal = g;
+}
+
+// ===== الإدخال =====
 function setupInput() {
-  document.addEventListener('keydown', (e) => {
-    keys[e.code] = true;
-    // زر القفز
-    if (e.code === 'Space' && isGrounded && player) {
-      velocityY = jumpForce;
-      isGrounded = false;
-    }
+  addEventListener('keydown', e => {
+    Game.keys[e.code] = true;
+    if (e.code === 'Space' && Game.isGrounded && Game.player) { Game.velocityY = 12; Game.isGrounded = false; }
+    if (e.code === 'KeyB') toggleBuild();
+    if (e.code === 'KeyT' && !$('chat-input-wrap').style.display.includes('block')) openChat();
+    if (e.code === 'Escape') { closeAllPanels(); if (Game.buildMode) toggleBuild(false); }
+    // اختيار كتلة
+    const digits = ['Digit1','Digit2','Digit3','Digit4','Digit5','Digit6'];
+    const blockKeys = Object.keys(BLOCKS);
+    digits.forEach((code, i) => { if (e.code === code && blockKeys[i]) selectBlock(blockKeys[i]); });
   });
-  document.addEventListener('keyup', (e) => keys[e.code] = false);
-  window.addEventListener('blur', () => keys = {});
+  addEventListener('keyup', e => Game.keys[e.code] = false);
+  addEventListener('blur', () => Game.keys = {});
 
-  renderer.domElement.addEventListener('click', () => { if (!isLocked) renderer.domElement.requestPointerLock(); });
-  document.addEventListener('pointerlockchange', () => { isLocked = document.pointerLockElement === renderer.domElement; });
-  document.addEventListener('mousemove', (e) => {
-    if (!isLocked) return;
-    yaw -= e.movementX * 0.002; pitch -= e.movementY * 0.002;
-    pitch = Math.max(-1, Math.min(0.5, pitch));
-  });
-  window.addEventListener('resize', () => {
-    if (!camera || !renderer) return;
-    camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-  });
-}
-
-function animate() {
-  if (!renderer) return;
-  requestAnimationFrame(animate);
-  const dt = Math.min(clock.getDelta(), 0.05);
-
-  if (mixer) mixer.update(dt);
-
-  // حيوانات
-  animals.forEach(a => {
-    a.userData.changeDirTimer -= dt;
-    if (a.userData.changeDirTimer <= 0) { a.userData.direction = Math.random() * Math.PI * 2; a.userData.changeDirTimer = 2 + Math.random() * 3; }
-    a.position.x += Math.cos(a.userData.direction) * a.userData.speed * dt;
-    a.position.z += Math.sin(a.userData.direction) * a.userData.speed * dt;
-    if (Math.abs(a.position.x) > 40) a.userData.direction += Math.PI;
-    if (Math.abs(a.position.z) > 40) a.userData.direction += Math.PI;
-  });
-
-  // اللاعب
-  if (player) {
-    const speed = 8; let moveX = 0, moveZ = 0;
-    if (keys['KeyW'] || keys['ArrowUp']) moveZ -= 1;
-    if (keys['KeyS'] || keys['ArrowDown']) moveZ += 1;
-    if (keys['KeyA'] || keys['ArrowLeft']) moveX -= 1;
-    if (keys['KeyD'] || keys['ArrowRight']) moveX += 1;
-
-    const len = Math.hypot(moveX, moveZ);
-    const moving = len > 0.1;
-
-    // الحركة الأفقية
-    if (moving) {
-      moveX /= len; moveZ /= len;
-      const s = Math.sin(yaw); const c = Math.cos(yaw);
-      const wX = moveX * c - moveZ * s; const wZ = moveX * s + moveZ * c;
-
-      // تصادم بسيط
-      let canMove = true;
-      let nextX = player.position.x + wX * speed * dt;
-      let nextZ = player.position.z + wZ * speed * dt;
-      for (let obj of collidableObjects) {
-        if (Math.hypot(nextX - obj.position.x, nextZ - obj.position.z) < obj.userData.radius) { canMove = false; break; }
-      }
-      if (canMove) { player.position.x = nextX; player.position.z = nextZ; }
-
-      player.rotation.y = THREE.MathUtils.lerp(player.rotation.y, Math.atan2(wX, wZ), 0.2);
-    }
-
-    // ===== الجاذبية والقفز =====
-    velocityY += gravity * dt;
-    player.position.y += velocityY * dt;
-
-    // منع السقوط تحت الأرض
-    if (player.position.y <= 1) {
-      player.position.y = 1; // ارتفاع الشخصية فوق الأرض
-      velocityY = 0;
-      isGrounded = true;
-    }
-
-    // تشغيل الأنيميشن (فقط وقوف ومشي)
-    if (actions.idle && actions.walk) {
-      if (moving && actions.walk && !actions.walk.isRunning()) {
-        actions.idle.fadeOut(0.2); actions.walk.reset().fadeIn(0.2).play();
-      } else if (!moving && actions.idle && !actions.idle.isRunning()) {
-        actions.walk.fadeOut(0.2); actions.idle.reset().fadeIn(0.2).play();
-      }
-    }
-
-    // كاميرا
-    const camX = player.position.x + Math.sin(yaw) * 8;
-    const camZ = player.position.z + Math.cos(yaw) * 8;
-    const camY = player.position.y + 4 + Math.sin(pitch) * 4;
-    camera.position.lerp(new THREE.Vector3(camX, camY, camZ), 0.1);
-    camera.lookAt(player.position.x, player.position.y + 1.5, player.position.z);
-
-    // فحص الحيوانات
-    let closest = null; let minD = 5;
-    animals.forEach(a => {
-      const d = Math.hypot(player.position.x - a.position.x, player.position.z - a.position.z);
-      if (d < minD) { minD = d; closest = a; }
+  if (!Game.isMobile) {
+    Game.renderer.domElement.addEventListener('click', () => {
+      if (!Game.isLocked && !Game.buildMode) Game.renderer.domElement.requestPointerLock();
     });
-    if (closest) {
-      animalCard.style.display = 'block';
-      acName.textContent = closest.userData.type;
-      acLevel.textContent = `المستوى: ${closest.userData.level}`;
-      if (playerLevel >= closest.userData.level * 2) { acReq.textContent = "✅ يمكنك ترويضه!"; acReq.style.color = "#2ecc71"; }
-      else { acReq.textContent = `❌ تحتاج مستوى ${closest.userData.level * 2} للترويض`; acReq.style.color = "#ff4757"; }
-    } else { animalCard.style.display = 'none'; }
+    document.addEventListener('pointerlockchange', () => {
+      Game.isLocked = document.pointerLockElement === Game.renderer.domElement;
+      $('crosshair').classList.toggle('active', Game.isLocked);
+    });
+    document.addEventListener('mousemove', e => {
+      if (!Game.isLocked) return;
+      Game.yaw -= e.movementX * 0.002;
+      Game.pitch = Math.max(-0.9, Math.min(0.5, Game.pitch - e.movementY * 0.002));
+    });
+    // هجوم بالماوس
+    document.addEventListener('mousedown', e => {
+      if (e.button === 0 && Game.isLocked) attack();
+      if (e.button === 2) e.preventDefault();
+    });
+    document.addEventListener('contextmenu', e => e.preventDefault());
   }
 
-  renderer.render(scene, camera);
+  // حجم
+  addEventListener('resize', () => {
+    if (!Game.camera || !Game.renderer) return;
+    Game.camera.aspect = innerWidth/innerHeight;
+    Game.camera.updateProjectionMatrix();
+    Game.renderer.setSize(innerWidth, innerHeight);
+  });
+
+  // بناء - تتبع الماوس
+  addEventListener('mousemove', e => {
+    if (!Game.buildMode) return;
+    Game.mouse.x = (e.clientX / innerWidth) * 2 - 1;
+    Game.mouse.y = -(e.clientY / innerHeight) * 2 + 1;
+  });
+  addEventListener('click', e => {
+    if (!Game.buildMode || !Game.isLocked) return;
+    if (e.button === 0) placeBlock();
+    else if (e.button === 2) removeBlock();
+  });
+}
+
+// ===== عناصر تحكم الجوال =====
+function setupMobileControls() {
+  if (!Game.isMobile) return;
+  const zone = $('joystick-zone'), knob = $('joystick-knob');
+  let active = false, sx = 0, sy = 0;
+
+  zone.addEventListener('touchstart', e => {
+    e.preventDefault();
+    active = true;
+    const rect = zone.getBoundingClientRect();
+    sx = rect.left + rect.width/2;
+    sy = rect.top + rect.height/2;
+  }, { passive: false });
+
+  zone.addEventListener('touchmove', e => {
+    if (!active) return;
+    e.preventDefault();
+    const t = e.touches[0];
+    let dx = t.clientX - sx, dy = t.clientY - sy;
+    const len = Math.min(Math.hypot(dx, dy), 50);
+    const angle = Math.atan2(dy, dx);
+    dx = Math.cos(angle) * len; dy = Math.sin(angle) * len;
+    knob.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+    Game.joystickX = dx / 50;
+    Game.joystickY = dy / 50;
+  }, { passive: false });
+
+  zone.addEventListener('touchend', () => {
+    active = false;
+    knob.style.transform = 'translate(-50%, -50%)';
+    Game.joystickX = Game.joystickY = 0;
+  });
+
+  // حركة الكاميرا باللمس على الشاشة (يمين)
+  let camTouch = null;
+  Game.renderer.domElement.addEventListener('touchstart', e => {
+    for (const t of e.touches) {
+      const rect = Game.renderer.domElement.getBoundingClientRect();
+      if (t.clientX > rect.width / 2) camTouch = { id: t.identifier, x: t.clientX, y: t.clientY };
+    }
+  });
+  Game.renderer.domElement.addEventListener('touchmove', e => {
+    if (!camTouch) return;
+    for (const t of e.touches) {
+      if (t.identifier === camTouch.id) {
+        Game.yaw -= (t.clientX - camTouch.x) * 0.005;
+        Game.pitch = Math.max(-0.9, Math.min(0.5, Game.pitch - (t.clientY - camTouch.y) * 0.005));
+        camTouch.x = t.clientX; camTouch.y = t.clientY;
+      }
+    }
+  });
+  Game.renderer.domElement.addEventListener('touchend', () => camTouch = null);
+
+  $('jump-btn').addEventListener('touchstart', e => {
+    e.preventDefault();
+    if (Game.isGrounded) { Game.velocityY = 12; Game.isGrounded = false; }
+  });
+  $('build-btn').addEventListener('touchstart', e => { e.preventDefault(); toggleBuild(); });
+}
+
+// ===== حلقة اللعبة =====
+function animate() {
+  if (!Game.renderer) return;
+  requestAnimationFrame(animate);
+  const dt = Math.min(Game.clock.getDelta(), 0.05);
+  if (Game.mixer) Game.mixer.update(dt);
+
+  updateAnimals(dt);
+  updateEnemies(dt);
+  updateProjectiles(dt);
+  updatePlayer(dt);
+  updateWeather(dt);
+  updatePortals(dt);
+  if (Game.buildMode) updateGhost();
+
+  Game.renderer.render(Game.scene, Game.camera);
+}
+
+function updatePlayer(dt) {
+  const p = Game.player;
+  if (!p) return;
+
+  let moveX = 0, moveZ = 0;
+  if (Game.keys.KeyW || Game.keys.ArrowUp) moveZ -= 1;
+  if (Game.keys.KeyS || Game.keys.ArrowDown) moveZ += 1;
+  if (Game.keys.KeyA || Game.keys.ArrowLeft) moveX -= 1;
+  if (Game.keys.KeyD || Game.keys.ArrowRight) moveX += 1;
+  if (Game.isMobile && (Game.joystickX || Game.joystickY)) {
+    moveX = Game.joystickX; moveZ = Game.joystickY;
+  }
+
+  const len = Math.hypot(moveX, moveZ);
+  const moving = len > 0.1;
+  const speed = 8;
+
+  if (moving) {
+    moveX /= len; moveZ /= len;
+    const sinY = Math.sin(Game.yaw), cosY = Math.cos(Game.yaw);
+    const worldX = moveX * cosY - moveZ * sinY;
+    const worldZ = moveX * sinY + moveZ * cosY;
+
+    const nextX = p.position.x + worldX * speed * dt;
+    const nextZ = p.position.z + worldZ * speed * dt;
+    let canMove = true;
+    for (const o of Game.collidables) {
+      if (Math.hypot(nextX - o.position.x, nextZ - o.position.z) < (o.userData.radius || 1)) { canMove = false; break; }
+    }
+    if (canMove) { p.position.x = nextX; p.position.z = nextZ; }
+    p.rotation.y = THREE.MathUtils.lerp(p.rotation.y, Math.atan2(worldX, worldZ), 0.2);
+  }
+
+  // جاذبية
+  Game.velocityY -= 25 * dt;
+  p.position.y += Game.velocityY * dt;
+  if (p.position.y <= 0) { p.position.y = 0; Game.velocityY = 0; Game.isGrounded = true; }
+
+  // أنيميشن
+  if (Game.actions.idle && Game.actions.walk) {
+    if (moving && !Game.actions.walk.isRunning()) {
+      Game.actions.idle.fadeOut(0.2); Game.actions.walk.reset().fadeIn(0.2).play();
+    } else if (!moving && !Game.actions.idle.isRunning()) {
+      Game.actions.walk.fadeOut(0.2); Game.actions.idle.reset().fadeIn(0.2).play();
+    }
+  }
+
+  // كاميرا
+  const camDist = 8, camHeight = 3;
+  const cx = p.position.x + Math.sin(Game.yaw) * camDist;
+  const cz = p.position.z + Math.cos(Game.yaw) * camDist;
+  const cy = p.position.y + camHeight + Math.sin(Game.pitch) * 4;
+  Game.camera.position.lerp(new THREE.Vector3(cx, cy, cz), 0.15);
+  Game.camera.lookAt(p.position.x, p.position.y + 1.5, p.position.z);
+
+  // كشف أقرب حيوان
+  updateNearbyAnimal();
+}
+
+function updateAnimals(dt) {
+  const p = Game.player;
+  Game.animals.forEach(a => {
+    a.userData.changeDirTimer -= dt;
+    if (a.userData.changeDirTimer <= 0) {
+      a.userData.direction = Math.random() * Math.PI * 2;
+      a.userData.changeDirTimer = rand(2, 5);
+    }
+    // هروب إذا اقترب اللاعب
+    let flee = false;
+    if (p) {
+      const d = Math.hypot(p.position.x - a.position.x, p.position.z - a.position.z);
+      if (d < 3) flee = true;
+    }
+    const speed = flee ? a.userData.speed * 3 : a.userData.speed;
+    const dir = flee ? Math.atan2(a.position.z - p.position.z, a.position.x - p.position.x) : a.userData.direction;
+    a.position.x += Math.cos(dir) * speed * dt;
+    a.position.z += Math.sin(dir) * speed * dt;
+    // حدود
+    if (Math.abs(a.position.x) > 60) a.userData.direction += Math.PI;
+    if (Math.abs(a.position.z) > 60) a.userData.direction += Math.PI;
+  });
+}
+
+function updateEnemies(dt) {
+  const p = Game.player;
+  if (!p) return;
+  Game.enemies.forEach(e => {
+    if (!e.alive) return;
+    const dx = p.position.x - e.group.position.x;
+    const dz = p.position.z - e.group.position.z;
+    const d = Math.hypot(dx, dz);
+    if (d > 2 && d < 30) {
+      e.group.position.x += (dx / d) * e.speed * dt;
+      e.group.position.z += (dz / d) * e.speed * dt;
+    }
+    // هجوم
+    if (d < 2 && Date.now() - e.lastAttack > 1000) {
+      e.lastAttack = Date.now();
+      Game.profile.hp = Math.max(0, (Game.profile.hp ?? 100) - e.damage);
+      $('hp-bar').style.width = (Game.profile.hp ?? 100) + '%';
+      if (Game.profile.hp <= 0) {
+        toast('لقد هُزمت! جاري الإحياء...', '#ff4757');
+        Game.profile.hp = 100;
+        $('hp-bar').style.width = '100%';
+      }
+    }
+  });
+}
+
+function updateProjectiles(dt) {
+  for (let i = Game.projectiles.length - 1; i >= 0; i--) {
+    const pr = Game.projectiles[i];
+    pr.mesh.position.addScaledVector(pr.dir, pr.speed * dt);
+    pr.life -= dt;
+    // تصادم
+    for (const e of Game.enemies) {
+      if (!e.alive) continue;
+      if (pr.mesh.position.distanceTo(e.group.position) < 1.5) {
+        e.hp -= pr.damage;
+        pr.life = 0;
+        if (e.hp <= 0) killEnemy(e);
+        break;
+      }
+    }
+    if (pr.life <= 0) {
+      Game.scene.remove(pr.mesh);
+      Game.projectiles.splice(i, 1);
+    }
+  }
+}
+
+// ===== القتال =====
+const WEAPONS = {
+  fists: { damage: 5, range: 2, cooldown: 400 },
+  wood_sword: { damage: 12, range: 2.5, cooldown: 500 },
+  iron_sword: { damage: 25, range: 3, cooldown: 500 },
+  magic_staff: { damage: 40, range: 15, cooldown: 1000, ranged: true },
+  dragon_bow: { damage: 55, range: 25, cooldown: 1200, ranged: true },
+};
+
+function attack() {
+  if (!Game.player) return;
+  const now = Date.now();
+  const w = WEAPONS[Game.profile.equippedWeapon] || WEAPONS.fists;
+  if (now - (Game.lastAttack || 0) < w.cooldown) return;
+  Game.lastAttack = now;
+
+  if (w.ranged) {
+    const dir = new THREE.Vector3(0, 0, -1).applyQuaternion(Game.player.quaternion);
+    const proj = new THREE.Mesh(
+      new THREE.SphereGeometry(0.2, 8, 8),
+      new THREE.MeshBasicMaterial({ color: 0x00ffff })
+    );
+    proj.position.copy(Game.player.position).add(new THREE.Vector3(0, 1.5, 0));
+    Game.scene.add(proj);
+    Game.projectiles.push({ mesh: proj, dir, speed: 25, damage: w.damage, life: 3 });
+    return;
+  }
+
+  // هجوم قريب
+  const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(Game.player.quaternion);
+  let target = null, minD = w.range;
+  Game.enemies.forEach(e => {
+    if (!e.alive) return;
+    const toE = e.group.position.clone().sub(Game.player.position);
+    const d = toE.length();
+    if (d < minD && toE.normalize().dot(forward) > 0.5) { minD = d; target = e; }
+  });
+  if (target) {
+    target.hp -= w.damage;
+    if (target.hp <= 0) killEnemy(target);
+  }
+}
+
+function killEnemy(e) {
+  e.alive = false;
+  Game.scene.remove(e.group);
+  Game.profile.xp += e.xp;
+  Game.profile.coins += e.coins;
+  coinsDisplay.textContent = Game.profile.coins;
+  // ترقية
+  const newLevel = 1 + Math.floor(Game.profile.xp / 100);
+  if (newLevel > Game.profile.level) {
+    Game.profile.level = newLevel;
+    levelDisplay.textContent = newLevel;
+    toast(`⬆️ ترقية إلى مستوى ${newLevel}!`);
+  }
+  Game.profile.save();
+  toast(`+${e.xp} XP +${e.coins}💰`);
+  Game.enemies = Game.enemies.filter(x => x !== e);
+}
+
+// ===== البناء =====
+function setupBuildUI() {
+  const list = $('block-list');
+  Object.entries(BLOCKS).forEach(([id, info], idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'block-btn';
+    btn.style.background = '#' + info.color.toString(16).padStart(6, '0');
+    btn.innerHTML = `${info.emoji}<br><small>${idx + 1}</small>`;
+    btn.onclick = () => selectBlock(id);
+    btn.dataset.block = id;
+    list.appendChild(btn);
+  });
+  selectBlock('wood');
+
+  // ghost block
+  Game.ghosts.block = new THREE.Mesh(
+    new THREE.BoxGeometry(1, 1, 1),
+    new THREE.MeshBasicMaterial({ color: 0x00ff88, transparent: true, opacity: 0.4, wireframe: true })
+  );
+  Game.ghosts.block.visible = false;
+  Game.scene.add(Game.ghosts.block);
+}
+
+function selectBlock(id) {
+  Game.selectedBlock = id;
+  document.querySelectorAll('.block-btn').forEach(b => b.classList.toggle('active', b.dataset.block === id));
+  if (Game.ghosts.block) {
+    const c = BLOCKS[id].color;
+    Game.ghosts.block.material.color.setHex(c);
+  }
+}
+
+function toggleBuild(force) {
+  Game.buildMode = force !== undefined ? force : !Game.buildMode;
+  $('block-palette').classList.toggle('active', Game.buildMode);
+  if (Game.ghosts.block) Game.ghosts.block.visible = Game.buildMode;
+  if (Game.isMobile) return;
+  if (Game.buildMode) { if (document.pointerLockElement) document.exitPointerLock(); }
+}
+
+function updateGhost() {
+  if (!Game.isLocked || !Game.buildMode) {
+    // على الجوال بدون pointer lock نستخدم مركز الشاشة
+  }
+  Game.raycaster.setFromCamera(Game.mouse, Game.camera);
+  const targets = Array.from(Game.buildings.values());
+  const hits = Game.raycaster.intersectObjects(targets);
+  let pos;
+  if (hits.length) {
+    pos = hits[0].point.clone().add(hits[0].face.normal);
+  } else {
+    const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+    pos = new THREE.Vector3();
+    Game.raycaster.ray.intersectPlane(plane, pos);
+  }
+  if (!pos) return;
+  pos.x = Math.round(pos.x);
+  pos.y = Math.max(0.5, Math.round(pos.y));
+  pos.z = Math.round(pos.z);
+  Game.ghosts.block.position.copy(pos);
+}
+
+function placeBlock() {
+  if (!Game.ghosts.block) return;
+  const pos = Game.ghosts.block.position.clone();
+  const key = `${pos.x},${pos.y},${pos.z}`;
+  if (Game.buildings.has(key)) return;
+  const info = BLOCKS[Game.selectedBlock];
+  if (Game.profile.coins < info.price) { toast('رصيد غير كافٍ', '#ff4757'); return; }
+  Game.profile.coins -= info.price;
+  coinsDisplay.textContent = Game.profile.coins;
+  Game.profile.save();
+
+  const mesh = new THREE.Mesh(
+    new THREE.BoxGeometry(1, 1, 1),
+    new THREE.MeshStandardMaterial({
+      color: info.color,
+      transparent: !!info.transparent,
+      opacity: info.transparent ? 0.6 : 1
+    })
+  );
+  mesh.position.copy(pos);
+  mesh.castShadow = !Game.isMobile;
+  mesh.receiveShadow = !Game.isMobile;
+  mesh.userData = { key, blockType: Game.selectedBlock };
+  Game.scene.add(mesh);
+  Game.buildings.set(key, mesh);
+  saveBuildings();
+}
+
+function removeBlock() {
+  Game.raycaster.setFromCamera(Game.mouse, Game.camera);
+  const hits = Game.raycaster.intersectObjects(Array.from(Game.buildings.values()));
+  if (!hits.length) return;
+  const mesh = hits[0].object;
+  const key = mesh.userData.key;
+  if (!key) return;
+  const info = BLOCKS[mesh.userData.blockType];
+  if (info) Game.profile.coins += Math.floor(info.price * 0.5);
+  coinsDisplay.textContent = Game.profile.coins;
+  Game.scene.remove(mesh);
+  Game.buildings.delete(key);
+  Game.profile.save();
+  saveBuildings();
+}
+
+function saveBuildings() {
+  const data = [];
+  Game.buildings.forEach((mesh, key) => {
+    data.push({ key, type: mesh.userData.blockType, pos: mesh.position.toArray() });
+  });
+  try { localStorage.setItem(`mv_build_${Game.user.uid}`, JSON.stringify(data)); } catch {}
+}
+
+function loadBuildings() {
+  try {
+    const data = JSON.parse(localStorage.getItem(`mv_build_${Game.user.uid}`) || '[]');
+    data.forEach(b => {
+      const info = BLOCKS[b.type];
+      if (!info) return;
+      const mesh = new THREE.Mesh(
+        new THREE.BoxGeometry(1, 1, 1),
+        new THREE.MeshStandardMaterial({
+          color: info.color,
+          transparent: !!info.transparent,
+          opacity: info.transparent ? 0.6 : 1
+        })
+      );
+      mesh.position.fromArray(b.pos);
+      mesh.castShadow = !Game.isMobile;
+      mesh.receiveShadow = !Game.isMobile;
+      mesh.userData = { key: b.key, blockType: b.type };
+      Game.scene.add(mesh);
+      Game.buildings.set(b.key, mesh);
+    });
+  } catch {}
+}
+
+// ===== الطقس =====
+const WEATHER_STATES = ['clear', 'cloudy', 'rain', 'snow', 'fog', 'storm'];
+function setWeather(state) {
+  Game.weather.current = state;
+  const s = Game.scene;
+  if (Game.weather.rainMesh) { s.remove(Game.weather.rainMesh); Game.weather.rainMesh = null; }
+  if (Game.weather.snowMesh) { s.remove(Game.weather.snowMesh); Game.weather.snowMesh = null; }
+  s.fog = null;
+
+  const badge = $('weather-badge');
+  switch (state) {
+    case 'clear':
+      s.background = new THREE.Color(0x87CEEB);
+      s.fog = new THREE.Fog(0x87CEEB, 40, 120);
+      badge.textContent = '☀️ صافٍ';
+      break;
+    case 'cloudy':
+      s.background = new THREE.Color(0x888899);
+      s.fog = new THREE.Fog(0x888899, 30, 100);
+      badge.textContent = '☁️ غائم';
+      break;
+    case 'rain':
+      s.background = new THREE.Color(0x556688);
+      s.fog = new THREE.Fog(0x556688, 20, 80);
+      Game.weather.rainMesh = createParticles(0x66aaff, 0.15, 300);
+      badge.textContent = '🌧️ مطر';
+      break;
+    case 'snow':
+      s.background = new THREE.Color(0x99aacc);
+      s.fog = new THREE.Fog(0x99aacc, 20, 80);
+      Game.weather.snowMesh = createParticles(0xffffff, 0.1, 500);
+      badge.textContent = '❄️ ثلج';
+      break;
+    case 'fog':
+      s.background = new THREE.Color(0xaaaaaa);
+      s.fog = new THREE.Fog(0xaaaaaa, 5, 40);
+      badge.textContent = '🌫️ ضباب';
+      break;
+    case 'storm':
+      s.background = new THREE.Color(0x111122);
+      s.fog = new THREE.Fog(0x111122, 15, 60);
+      Game.weather.rainMesh = createParticles(0x4444ff, 0.3, 500);
+      badge.textContent = '⛈️ عاصفة';
+      break;
+  }
+}
+
+function createParticles(color, speed, count) {
+  const geo = new THREE.BufferGeometry();
+  const pos = new Float32Array(count * 3);
+  for (let i = 0; i < count * 3; i += 3) {
+    pos[i] = rand(-30, 30);
+    pos[i+1] = rand(0, 40);
+    pos[i+2] = rand(-30, 30);
+  }
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  const mat = new THREE.PointsMaterial({ color, size: 0.1, transparent: true, opacity: 0.7 });
+  const pts = new THREE.Points(geo, mat);
+  pts.userData.speed = speed;
+  Game.scene.add(pts);
+  return pts;
+}
+
+function updateWeather(dt) {
+  Game.weather.timer += dt;
+  if (Game.weather.timer > 60) {
+    Game.weather.timer = 0;
+    const next = WEATHER_STATES[Math.floor(Math.random() * WEATHER_STATES.length)];
+    if (next !== Game.weather.current) setWeather(next);
+  }
+  [Game.weather.rainMesh, Game.weather.snowMesh].forEach(mesh => {
+    if (!mesh) return;
+    const pos = mesh.geometry.attributes.position;
+    for (let i = 0; i < pos.count; i++) {
+      pos.array[i*3+1] -= mesh.userData.speed * 60 * dt;
+      if (pos.array[i*3+1] < 0) pos.array[i*3+1] = 40;
+    }
+    pos.needsUpdate = true;
+  });
+}
+
+// ===== البوابات =====
+function updatePortals(dt) {
+  if (!Game.portal || !Game.player) return;
+  Game.portal.rotation.z += dt * 0.5;
+  const d = Game.player.position.distanceTo(Game.portal.position);
+  if (d < 2 && !Game.teleporting) {
+    Game.teleporting = true;
+    toast('⚔️ الانتقال إلى عالم الأكشن...');
+    setTimeout(() => {
+      switchWorld('action');
+      Game.teleporting = false;
+    }, 1000);
+  }
+}
+
+function switchWorld(id) {
+  const w = WORLDS[id];
+  if (!w) return;
+  Game.currentWorld = id;
+  Game.scene.background = new THREE.Color(w.fog);
+  Game.scene.fog = new THREE.Fog(w.fog, 30, 100);
+  Game.ground.material.color.setHex(w.ground);
+  // مسح الأعداء
+  Game.enemies.forEach(e => Game.scene.remove(e.group));
+  Game.enemies = [];
+  // أكشن: توليد أعداء
+  if (id === 'action') {
+    for (let i = 0; i < 5; i++) spawnEnemy();
+  }
+  toast(`${w.emoji} وصلت إلى ${w.name}`);
+}
+
+function spawnEnemy() {
+  const types = [
+    { name:'سلايم', color: 0x44ff44, hp: 30, damage: 5, speed: 1.5, xp: 10, coins: 5 },
+    { name:'هيكل', color: 0xffffff, hp: 60, damage: 10, speed: 2.5, xp: 25, coins: 15 },
+    { name:'زومبي', color: 0x668844, hp: 80, damage: 15, speed: 1.8, xp: 35, coins: 20 },
+  ];
+  const t = types[Math.floor(Math.random() * types.length)];
+  const g = new THREE.Group();
+  const body = new THREE.Mesh(
+    new THREE.BoxGeometry(1, 1.5, 1),
+    new THREE.MeshStandardMaterial({ color: t.color, emissive: 0x110000 })
+  );
+  body.position.y = 0.75;
+  g.add(body);
+  const eyeMat = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+  [-0.2, 0.2].forEach(x => {
+    const eye = new THREE.Mesh(new THREE.SphereGeometry(0.1, 6, 6), eyeMat);
+    eye.position.set(x, 1, 0.55);
+    g.add(eye);
+  });
+  const a = Math.random() * Math.PI * 2, r = rand(10, 25);
+  g.position.set(Math.cos(a) * r, 0, Math.sin(a) * r);
+  g.userData = { name: t.name };
+  Game.scene.add(g);
+  Game.enemies.push({
+    group: g, hp: t.hp, maxHp: t.hp, damage: t.damage, speed: t.speed,
+    xp: t.xp, coins: t.coins, alive: true, lastAttack: 0
+  });
+}
+
+// ===== الترويض =====
+function updateNearbyAnimal() {
+  if (!Game.player) return;
+  let closest = null, minD = 5;
+  Game.animals.forEach(a => {
+    const d = Math.hypot(
+      Game.player.position.x - a.position.x,
+      Game.player.position.z - a.position.z
+    );
+    if (d < minD) { minD = d; closest = a; }
+  });
+  const card = $('animal-card');
+  if (closest) {
+    card.style.display = 'block';
+    const t = CREATURE_TYPES[closest.userData.typeId];
+    $('ac-name').textContent = `${t.emoji} ${t.name}`;
+    $('ac-level').textContent = `المستوى: ${closest.userData.level} • التقدم: ${Math.round(closest.userData.tameProgress)}%`;
+    const req = closest.userData.level * 2;
+    if (Game.profile.level >= req) {
+      $('ac-req').textContent = '✅ يمكنك الترويض';
+      $('ac-req').style.color = '#2ecc71';
+      $('ac-tame-btn').disabled = false;
+    } else {
+      $('ac-req').textContent = `❌ تحتاج مستوى ${req}`;
+      $('ac-req').style.color = '#ff4757';
+      $('ac-tame-btn').disabled = true;
+    }
+    Game.nearbyAnimal = closest;
+  } else {
+    card.style.display = 'none';
+    Game.nearbyAnimal = null;
+  }
+}
+
+$('ac-tame-btn').onclick = () => {
+  const a = Game.nearbyAnimal;
+  if (!a) return;
+  const req = a.userData.level * 2;
+  if (Game.profile.level < req) return;
+  a.userData.tameProgress = Math.min(100, a.userData.tameProgress + 34);
+  if (a.userData.tameProgress >= 100) {
+    // نجح الترويض
+    const t = CREATURE_TYPES[a.userData.typeId];
+    Game.profile.pets.push({
+      typeId: a.userData.typeId,
+      baseLevel: a.userData.level,
+      level: a.userData.level,
+      birthDate: Date.now(),
+      growth: 0,
+      name: t.name
+    });
+    Game.profile.save();
+    Game.scene.remove(a);
+    Game.animals = Game.animals.filter(x => x !== a);
+    toast(`🎉 تم ترويض ${t.emoji} ${t.name}!`);
+    $('animal-card').style.display = 'none';
+  } else {
+    toast(`تقدم الترويض: ${Math.round(a.userData.tameProgress)}%`);
+  }
+};
+
+// ===== المتجر =====
+function setupShopUI() {
+  $('btn-shop').onclick = () => {
+    $('shop-panel').classList.add('active');
+    $('shop-coins').textContent = Game.profile.coins;
+    renderShop('homes');
+  };
+  $('btn-close-shop').onclick = () => $('shop-panel').classList.remove('active');
+  document.querySelectorAll('[data-shop]').forEach(b => {
+    b.onclick = () => renderShop(b.dataset.shop);
+  });
+}
+
+function renderShop(cat) {
+  const list = $('shop-items');
+  list.innerHTML = '';
+  SHOP[cat].forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'shop-item';
+    div.innerHTML = `<div class="emoji">${item.emoji}</div><div class="name">${item.name}</div><div class="price">💰 ${item.price}</div>`;
+    div.onclick = () => buyItem(cat, item);
+    list.appendChild(div);
+  });
+}
+
+function buyItem(cat, item) {
+  if (Game.profile.coins < item.price) { toast('رصيد غير كافٍ', '#ff4757'); return; }
+  if (Game.profile.inventory.some(i => i.id === item.id)) { toast('تملك هذا بالفعل', '#f1c40f'); return; }
+  Game.profile.coins -= item.price;
+  Game.profile.inventory.push({ ...item, category: cat, boughtAt: Date.now() });
+  Game.profile.save();
+  coinsDisplay.textContent = Game.profile.coins;
+  $('shop-coins').textContent = Game.profile.coins;
+  if (cat === 'weapons') {
+    Game.profile.equippedWeapon = item.id;
+    Game.profile.save();
+  }
+  toast(`✅ اشتريت ${item.name}!`);
+  renderShop(cat);
+}
+
+// ===== الملف الشخصي =====
+function setupProfileUI() {
+  $('btn-profile').onclick = () => {
+    $('profile-panel').classList.add('active');
+    if (document.pointerLockElement) document.exitPointerLock();
+    renderProfile();
+  };
+  $('btn-close-profile').onclick = () => $('profile-panel').classList.remove('active');
+  $('btn-save-profile').onclick = () => {
+    Game.profile.name = $('input-name').value || 'لاعب';
+    Game.profile.gender = $('input-gender').value;
+    Game.profile.outfit = $('input-outfit').value;
+    Game.profile.save();
+    playerNameEl.textContent = Game.profile.name;
+    applyOutfit();
+    toast('✅ تم الحفظ');
+    $('profile-panel').classList.remove('active');
+  };
+}
+
+function renderProfile() {
+  $('input-name').value = Game.profile.name;
+  $('input-gender').value = Game.profile.gender;
+  $('input-outfit').value = Game.profile.outfit;
+  $('p-level').textContent = Game.profile.level;
+  $('p-coins').textContent = Game.profile.coins;
+  $('p-pets').textContent = Game.profile.pets.length;
+  $('p-items').textContent = Game.profile.inventory.length;
+  const avatarMap = { male: '👦', female: '👧', neutral: '🤖' };
+  $('avatar-emoji').textContent = avatarMap[Game.profile.gender] || '🚀';
+
+  const inv = $('inventory-list');
+  inv.innerHTML = Game.profile.inventory.length
+    ? Game.profile.inventory.map(i => `<div class="shop-item"><div class="emoji">${i.emoji}</div><div class="name">${i.name}</div></div>`).join('')
+    : '<p style="color:#666;text-align:center;grid-column:1/-1;font-size:.85rem;">لا يوجد مشتريات بعد</p>';
+
+  const pets = $('pets-list');
+  pets.innerHTML = Game.profile.pets.length
+    ? Game.profile.pets.map(p => {
+        const t = CREATURE_TYPES[p.typeId];
+        return `<div class="shop-item"><div class="emoji">${t.emoji}</div><div class="name">${p.name} Lv${p.level}</div><div class="price">نمو: ${Math.round(p.growth)}%</div></div>`;
+      }).join('')
+    : '<p style="color:#666;text-align:center;grid-column:1/-1;font-size:.85rem;">روّض حيواناً أولاً</p>';
+}
+
+// ===== الدردشة (محاكاة محلية بدون خادم) =====
+function setupChatUI() {
+  const box = $('chat-box');
+  const input = $('chat-input');
+  const inputWrap = $('chat-input-wrap');
+
+  $('btn-chat').onclick = () => {
+    inputWrap.style.display = 'block';
+    input.focus();
+  };
+  $('btn-close-chat').onclick = () => $('chat-panel').classList.remove('active');
+
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      const txt = input.value.trim();
+      if (txt) sendChat(txt);
+      input.value = '';
+      inputWrap.style.display = 'none';
+    }
+    if (e.key === 'Escape') inputWrap.style.display = 'none';
+  });
+
+  // محاكاة رسائل من لاعبين آخرين
+  setInterval(() => {
+    if (Math.random() < 0.3) {
+      const fake = ['أهلاً!', 'من يريد اللعب؟', 'عالم الأكشن رائع', 'روّضت تنيناً!', 'كيف أشتري سلاح؟'];
+      const name = ['أحمد', 'سارة', 'خالد', 'نور'][Math.floor(Math.random() * 4)];
+      addChatMessage(`${name}: ${fake[Math.floor(Math.random() * fake.length)]}`);
+    }
+  }, 8000);
+}
+
+function sendChat(txt) {
+  addChatMessage(`أنت: ${txt}`);
+  showFloatingMessage(Game.profile.name, txt);
+}
+
+function addChatMessage(msg) {
+  const box = $('chat-box');
+  const el = document.createElement('div');
+  el.className = 'msg';
+  el.textContent = msg;
+  box.appendChild(el);
+  box.scrollTop = box.scrollHeight;
+  while (box.children.length > 8) box.removeChild(box.firstChild);
+
+  const full = $('chat-list-full');
+  if (full) {
+    const e2 = document.createElement('div');
+    e2.textContent = msg;
+    e2.style.cssText = 'padding:4px 8px;font-size:.85rem;border-bottom:1px solid rgba(255,255,255,.1);';
+    full.appendChild(e2);
+    full.scrollTop = full.scrollHeight;
+  }
+}
+
+function showFloatingMessage(name, text) {
+  if (!Game.player) return;
+  const canvas = document.createElement('canvas');
+  canvas.width = 512; canvas.height = 128;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = 'rgba(0,0,0,0.8)';
+  ctx.beginPath();
+  ctx.roundRect(0, 0, 512, 128, 20);
+  ctx.fill();
+  ctx.fillStyle = '#00d2ff';
+  ctx.font = 'bold 28px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText(name, 256, 45);
+  ctx.fillStyle = '#fff';
+  ctx.font = '24px Arial';
+  ctx.fillText(text.slice(0, 30), 256, 90);
+
+  const tex = new THREE.CanvasTexture(canvas);
+  const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true }));
+  sprite.position.set(Game.player.position.x, Game.player.position.y + 3, Game.player.position.z);
+  sprite.scale.set(3, 0.75, 1);
+  Game.scene.add(sprite);
+  setTimeout(() => Game.scene.remove(sprite), 4000);
+}
+
+function openChat() {
+  $('chat-input-wrap').style.display = 'block';
+  $('chat-input').focus();
+  if (document.pointerLockElement) document.exitPointerLock();
+}
+
+function closeAllPanels() {
+  document.querySelectorAll('.panel-overlay').forEach(p => p.classList.remove('active'));
+  $('chat-input-wrap').style.display = 'none';
 }
 </script>
 </body>
