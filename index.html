@@ -1,44 +1,21 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Metaverse World - Alpha V3</title>
+<title>Metaverse World - Alpha V4</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
   body { overflow: hidden; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
 
-  /* ===== الخلفية المتحركة (شاشة الدخول) ===== */
   #login-bg-canvas { position: absolute; inset: 0; z-index: 1; background: #0f0c29; }
-
-  /* ===== شاشة الدخول ===== */
-  #login-screen {
-    position: fixed; inset: 0; z-index: 9999;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    color: white; transition: opacity 0.6s ease;
-  }
-  #login-screen h1 {
-    font-size: 3rem; margin-bottom: 0.5rem; z-index: 2; text-shadow: 0 0 20px rgba(0,210,255,0.5);
-    background: linear-gradient(90deg, #00d2ff, #3a7bd5);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  }
+  #login-screen { position: fixed; inset: 0; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; transition: opacity 0.6s ease; }
+  #login-screen h1 { font-size: 3rem; margin-bottom: 0.5rem; z-index: 2; text-shadow: 0 0 20px rgba(0,210,255,0.5); background: linear-gradient(90deg, #00d2ff, #3a7bd5); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
   #login-screen p { color: #ccc; margin-bottom: 2rem; font-size: 1.1rem; z-index: 2; }
-
-  .glass-panel {
-    background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 30px; z-index: 2;
-    display: flex; flex-direction: column; width: 350px; box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-  }
-  .glass-panel input {
-    width: 100%; padding: 12px 15px; margin-bottom: 15px; background: rgba(0,0,0,0.4);
-    border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; color: white; font-size: 1rem; outline: none; transition: 0.3s;
-  }
+  .glass-panel { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 30px; z-index: 2; display: flex; flex-direction: column; width: 350px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+  .glass-panel input { width: 100%; padding: 12px 15px; margin-bottom: 15px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; color: white; font-size: 1rem; outline: none; transition: 0.3s; }
   .glass-panel input:focus { border-color: #00d2ff; box-shadow: 0 0 10px rgba(0,210,255,0.3); }
-  .btn {
-    width: 100%; padding: 12px; margin-bottom: 10px; border: none; border-radius: 10px;
-    font-size: 1rem; font-weight: 600; cursor: pointer; transition: transform 0.2s; display: flex; justify-content: center; align-items: center; gap: 10px;
-  }
+  .btn { width: 100%; padding: 12px; margin-bottom: 10px; border: none; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: transform 0.2s; display: flex; justify-content: center; align-items: center; gap: 10px; }
   .btn:hover { transform: scale(1.02); }
   .btn-primary { background: linear-gradient(90deg, #00d2ff, #3a7bd5); color: white; }
   .btn-google { background: white; color: #333; }
@@ -48,14 +25,9 @@
   .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid rgba(255,255,255,0.1); }
   .divider::before { margin-left: 10px; } .divider::after { margin-right: 10px; }
 
-  /* ===== شاشة العالم ===== */
   #world-screen { display: none; position: fixed; inset: 0; background: #000; }
   #canvas-container { width: 100%; height: 100%; display: block; }
-
-  #loading {
-    position: absolute; inset: 0; background: #0f0c29; color: white; display: flex; flex-direction: column;
-    align-items: center; justify-content: center; z-index: 100; transition: opacity 0.5s;
-  }
+  #loading { position: absolute; inset: 0; background: #0f0c29; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; transition: opacity 0.5s; }
   .spinner { border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid #00d2ff; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 20px; }
   @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
@@ -127,7 +99,7 @@
     </div>
     <div class="hud-panel" style="pointer-events:auto;">
       <span>مرحباً، <span id="player-name" style="color:#00d2ff; font-weight:bold;">لاعب</span></span>
-      <span style="color:#8899aa; font-size:0.8rem;">(مسافة للقفز)</span>
+      <span style="color:#8899aa; font-size:0.8rem;">(مسافة = قفز | Shift = جري)</span>
     </div>
   </div>
 
@@ -261,17 +233,16 @@ let yaw = 0, pitch = 0;
 let isLocked = false;
 let joystickActive = false, joystickX = 0, joystickY = 0;
 let mixer = null;
-let actions = {}; // لحفظ الأنيميشن
+let actions = {}; 
 let sunLight, ambientLight, skyColor = new THREE.Color(0x87CEEB);
 let collidableObjects = [];
 let animals = [];
-let rainParticles = null;
 let playerLevel = 1;
 
 // متغيرات القفز والجاذبية
 let velocityY = 0;
 let isGrounded = true;
-const gravity = -25;
+const gravity = -30;
 const jumpForce = 12;
 
 function enterWorld(user) {
@@ -338,30 +309,22 @@ function initWorld() {
     scene.add(a); animals.push(a);
   });
 
-  // ===== تحميل شخصية "روبو" الجديدة والجميلة =====
+  // تحميل الشخصية
   const loader = new GLTFLoader();
-  // نموذج Robo من Google
-  const modelUrl = 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/models/gltf/RobotExpressive/RobotExpressive.glb';
-  
   loader.load('https://threejs.org/examples/models/gltf/RobotExpressive/RobotExpressive.glb', (gltf) => {
     player = gltf.scene;
-    player.scale.set(0.6, 0.6, 0.6);
-    player.position.set(0, 1, 0); // نرفعه قليلاً عن الأرض
+    player.scale.set(0.5, 0.5, 0.5);
+    player.position.set(0, 0, 0); 
     player.traverse((node) => { if (node.isMesh) node.castShadow = true; });
     scene.add(player);
 
-    // إعداد الأنيميشن (وقوف ومشي فقط لتفادي مشاكل الانبطاح)
+    // إعداد الأنيميشن بشكل صريح (0: Idle, 1: Walking, 2: Running)
     mixer = new THREE.AnimationMixer(player);
     
-    // البحث عن أنيميشن الوقوف والمشي
-    gltf.animations.forEach((clip) => {
-      if (clip.name === 'Idle') actions.idle = mixer.clipAction(clip);
-      if (clip.name === 'Walking') actions.walk = mixer.clipAction(clip);
-    });
-
-    // إذا لم نجدهم، نأخذ الأول والثاني
-    if(!actions.idle) actions.idle = mixer.clipAction(gltf.animations[0]);
-    if(!actions.walk) actions.walk = mixer.clipAction(gltf.animations[1]);
+    // تخزين الأنيميشن بناءً على الترتيب لضمان عمله
+    actions.idle = mixer.clipAction(gltf.animations[0]);
+    actions.walk = mixer.clipAction(gltf.animations[1]);
+    if(gltf.animations[2]) actions.run = mixer.clipAction(gltf.animations[2]);
 
     actions.idle.play();
 
@@ -370,15 +333,12 @@ function initWorld() {
     clock = new THREE.Clock();
     setupInput();
     animate();
-  }, undefined, (err) => {
-    alert('فشل تحميل الشخصية، تأكد من الإنترنت.');
   });
 }
 
 function setupInput() {
   document.addEventListener('keydown', (e) => {
     keys[e.code] = true;
-    // زر القفز
     if (e.code === 'Space' && isGrounded && player) {
       velocityY = jumpForce;
       isGrounded = false;
@@ -389,11 +349,15 @@ function setupInput() {
 
   renderer.domElement.addEventListener('click', () => { if (!isLocked) renderer.domElement.requestPointerLock(); });
   document.addEventListener('pointerlockchange', () => { isLocked = document.pointerLockElement === renderer.domElement; });
+  
+  // تصحيح اتجاه الكاميرا
   document.addEventListener('mousemove', (e) => {
     if (!isLocked) return;
-    yaw -= e.movementX * 0.002; pitch -= e.movementY * 0.002;
+    yaw -= e.movementX * 0.002; 
+    pitch -= e.movementY * 0.002;
     pitch = Math.max(-1, Math.min(0.5, pitch));
   });
+  
   window.addEventListener('resize', () => {
     if (!camera || !renderer) return;
     camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix();
@@ -420,7 +384,10 @@ function animate() {
 
   // اللاعب
   if (player) {
-    const speed = 8; let moveX = 0, moveZ = 0;
+    const isRunning = keys['ShiftLeft'] || keys['ShiftRight'];
+    const speed = isRunning ? 14 : 7; 
+    
+    let moveX = 0, moveZ = 0;
     if (keys['KeyW'] || keys['ArrowUp']) moveZ -= 1;
     if (keys['KeyS'] || keys['ArrowDown']) moveZ += 1;
     if (keys['KeyA'] || keys['ArrowLeft']) moveX -= 1;
@@ -429,13 +396,12 @@ function animate() {
     const len = Math.hypot(moveX, moveZ);
     const moving = len > 0.1;
 
-    // الحركة الأفقية
     if (moving) {
       moveX /= len; moveZ /= len;
       const s = Math.sin(yaw); const c = Math.cos(yaw);
       const wX = moveX * c - moveZ * s; const wZ = moveX * s + moveZ * c;
 
-      // تصادم بسيط
+      // تصادم
       let canMove = true;
       let nextX = player.position.x + wX * speed * dt;
       let nextZ = player.position.z + wZ * speed * dt;
@@ -447,23 +413,26 @@ function animate() {
       player.rotation.y = THREE.MathUtils.lerp(player.rotation.y, Math.atan2(wX, wZ), 0.2);
     }
 
-    // ===== الجاذبية والقفز =====
+    // الجاذبية
     velocityY += gravity * dt;
     player.position.y += velocityY * dt;
 
-    // منع السقوط تحت الأرض
-    if (player.position.y <= 1) {
-      player.position.y = 1; // ارتفاع الشخصية فوق الأرض
+    if (player.position.y <= 0) {
+      player.position.y = 0;
       velocityY = 0;
       isGrounded = true;
     }
 
-    // تشغيل الأنيميشن (فقط وقوف ومشي)
+    // الأنيميشن
     if (actions.idle && actions.walk) {
-      if (moving && actions.walk && !actions.walk.isRunning()) {
-        actions.idle.fadeOut(0.2); actions.walk.reset().fadeIn(0.2).play();
-      } else if (!moving && actions.idle && !actions.idle.isRunning()) {
-        actions.walk.fadeOut(0.2); actions.idle.reset().fadeIn(0.2).play();
+      if (moving) {
+        if (isRunning && actions.run) {
+          if (!actions.run.isRunning()) { actions.idle.fadeOut(0.2); actions.walk.fadeOut(0.2); actions.run.reset().fadeIn(0.2).play(); }
+        } else {
+          if (!actions.walk.isRunning()) { actions.idle.fadeOut(0.2); actions.run?.fadeOut(0.2); actions.walk.reset().fadeIn(0.2).play(); }
+        }
+      } else {
+        if (!actions.idle.isRunning()) { actions.walk.fadeOut(0.2); actions.run?.fadeOut(0.2); actions.idle.reset().fadeIn(0.2).play(); }
       }
     }
 
@@ -474,7 +443,7 @@ function animate() {
     camera.position.lerp(new THREE.Vector3(camX, camY, camZ), 0.1);
     camera.lookAt(player.position.x, player.position.y + 1.5, player.position.z);
 
-    // فحص الحيوانات
+    // حيوانات
     let closest = null; let minD = 5;
     animals.forEach(a => {
       const d = Math.hypot(player.position.x - a.position.x, player.position.z - a.position.z);
