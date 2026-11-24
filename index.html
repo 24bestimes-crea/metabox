@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Metaverse V10 - Nature & Walkable Houses</title>
+<title>Metaverse V11 - Terrain & Houses Aligned</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; user-select:none; -webkit-tap-highlight-color:transparent; }
   html, body { overflow:hidden; font-family:'Segoe UI', Tahoma, sans-serif; background:#090d16; color:#f8fafc; touch-action:none; }
@@ -255,8 +255,8 @@
 <!-- ═══════════ LOGIN ═══════════ -->
 <div id="login-screen">
   <canvas id="login-bg-canvas"></canvas>
-  <h1>Metaverse V10</h1>
-  <p>طبيعة حية • منازل مفتوحة للتجول بداخلها • شخصية مدمجة</p>
+  <h1>Metaverse V11</h1>
+  <p>تضاريس متناسقة وممهدة حول البيوت • طبيعة حية • منازل مفتوحة</p>
   <div class="glass-panel">
     <div id="login-form">
       <input type="email" id="login-email" placeholder="البريد الإلكتروني">
@@ -286,7 +286,7 @@
 
 <!-- ═══════════ WORLD SCREEN ═══════════ -->
 <div id="world-screen">
-  <div id="loading"><div class="spinner"></div>جاري بناء الطبيعة والمنازل...</div>
+  <div id="loading"><div class="spinner"></div>جاري مواءمة التضاريس مع البيوت...</div>
   <div id="canvas-container"></div>
   <div id="damage-flash"></div>
 
@@ -513,7 +513,6 @@ const auth = getAuth(app);
 
 const $ = id => document.getElementById(id);
 const rand = (a, b) => a + Math.random() * (b - a);
-const randInt = (a, b) => Math.floor(rand(a, b + 1));
 const pick = arr => arr[Math.floor(Math.random() * arr.length)];
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const dist2D = (a, b) => Math.hypot(a.x - b.x, a.z - b.z);
@@ -611,7 +610,7 @@ const Audio = {
 };
 
 // ═══════════════════════════════════════════════════════════
-// GAME STATE & WALKABLE HOUSES / TERRAIN
+// GAME STATE & TERRAIN-TO-HOUSE ALIGNMENT
 // ═══════════════════════════════════════════════════════════
 const Game = {
   user: null, profile: null,
@@ -621,6 +620,7 @@ const Game = {
   isRotating: false, lastMouseX: 0, lastMouseY: 0,
   velocityY: 0, isGrounded: true, isSprinting: false,
   animals: [], collidables: [], buildings: new Map(),
+  housePads: [], // { x, z, radius, padY } for smooth terrain flattening around houses
   walkableHouses: [], // { x, z, floorY, halfW, halfD, doorHalfW, name }
   natureProps: [],
   enemies: [], projectiles: [], lastAttack: 0,
@@ -637,7 +637,7 @@ const Game = {
   playerYawTarget: 0, weaponMesh: null, sunLight: null, ground: null,
 };
 
-function getTerrainHeight(x, z, worldId = Game.currentWorld) {
+function getRawWaveHeight(x, z, worldId = Game.currentWorld) {
   const centerDist = Math.hypot(x, z);
   const plazaBlend = clamp((centerDist - 9) / 18, 0, 1);
   const ampScale = worldId === 'volcano' ? 1.55 : (worldId === 'ice' ? 1.25 : 1.0);
@@ -648,7 +648,27 @@ function getTerrainHeight(x, z, worldId = Game.currentWorld) {
   return baseWave * plazaBlend * ampScale;
 }
 
-// Returns interior floor height if player is inside a walkable house, else terrain height
+// Smoothly levels terrain inside and immediately around every house pad so walls & doors align cleanly
+function getTerrainHeight(x, z, worldId = Game.currentWorld) {
+  let h = getRawWaveHeight(x, z, worldId);
+  for (const pad of Game.housePads) {
+    // Shift front yard slightly in +Z so the entrance path is flat too
+    const dx = x - pad.x;
+    const dz = (z - pad.z - 1.2) * 0.85;
+    const d = Math.hypot(dx, dz);
+    const flatR = pad.radius * 0.72;
+    const blendR = pad.radius * 1.35;
+    if (d <= flatR) {
+      h = pad.padY;
+    } else if (d < blendR) {
+      const t = (d - flatR) / (blendR - flatR);
+      const smooth = t * t * (3 - 2 * t);
+      h = pad.padY * (1 - smooth) + h * smooth;
+    }
+  }
+  return h;
+}
+
 function getFloorHeightAt(x, z, worldId = Game.currentWorld) {
   for (const h of Game.walkableHouses) {
     if (Math.abs(x - h.x) <= h.halfW && Math.abs(z - h.z) <= h.halfD) {
@@ -667,29 +687,29 @@ function getActiveHouseAt(x, z) {
   return null;
 }
 
-// Checks wall collisions while leaving the front doorway (+Z side) open for walking inside
+function isNearAnyHouseOrPath(x, z, extraMargin = 1.5) {
+  for (const pad of Game.housePads) {
+    if (Math.hypot(x - pad.x, z - (pad.z + 1.5)) < pad.radius + extraMargin) return true;
+  }
+  return false;
+}
+
 function isBlockedByHouseWall(nx, nz) {
   const r = 0.52;
   for (const h of Game.walkableHouses) {
     const dx = nx - h.x;
     const dz = nz - h.z;
-    // Outside house bounding box + radius
     if (Math.abs(dx) > h.halfW + r || Math.abs(dz) > h.halfD + r) continue;
 
-    // Inside or near house: check left wall (-X), right wall (+X), back wall (-Z), and front wall (+Z with doorway)
     const wallThick = 0.42;
     const onLeftWall = Math.abs(dx + h.halfW) < wallThick + r && Math.abs(dz) <= h.halfD + r;
     const onRightWall = Math.abs(dx - h.halfW) < wallThick + r && Math.abs(dz) <= h.halfD + r;
     const onBackWall = Math.abs(dz + h.halfD) < wallThick + r && Math.abs(dx) <= h.halfW + r;
-
-    // Front wall is at dz = +h.halfD; doorway is |dx| < h.doorHalfW
     const onFrontWall = Math.abs(dz - h.halfD) < wallThick + r &&
                         Math.abs(dx) >= h.doorHalfW - r * 0.35 &&
                         Math.abs(dx) <= h.halfW + r;
 
-    if (onLeftWall || onRightWall || onBackWall || onFrontWall) {
-      return true;
-    }
+    if (onLeftWall || onRightWall || onBackWall || onFrontWall) return true;
   }
   return false;
 }
@@ -751,7 +771,7 @@ const SHOP = {
     { id: 'crystal', name: 'بلورة طاقة', price: 75, tag: 'طعام', for: 'fox' },
   ],
   homes: [
-    { id: 'hut', name: 'كوخ مفتوح', price: 250, tag: 'منزل', width: 7, depth: 7, wallH: 3.4, doorW: 2.2, wallColor: 0xb45309, roofColor: 0x991b1b },
+    { id: 'hut', name: 'كوخ مفتوح', price: 250, tag: 'منزل', width: 7.6, depth: 7.6, wallH: 3.4, doorW: 2.2, wallColor: 0xb45309, roofColor: 0x991b1b },
     { id: 'villa', name: 'فيلا مفتوحة', price: 1200, tag: 'فيلا', width: 10, depth: 9, wallH: 3.8, doorW: 2.6, wallColor: 0xe2e8f0, roofColor: 0x1e3a8a },
     { id: 'castle', name: 'قاعة مفتوحة', price: 2500, tag: 'قاعة', width: 12, depth: 11, wallH: 4.5, doorW: 3.0, wallColor: 0x94a3b8, roofColor: 0x7c2d12 },
   ]
@@ -791,7 +811,7 @@ const ACHIEVEMENTS = [
 // PROFILE
 // ═══════════════════════════════════════════════════════════
 function loadProfile(uid, defaultName = 'لاعب') {
-  const key = `mv10_profile_${uid}`;
+  const key = `mv11_profile_${uid}`;
   let data = null;
   try { data = JSON.parse(localStorage.getItem(key) || 'null'); } catch {}
   if (!data) {
@@ -1081,8 +1101,37 @@ function refreshAvatarEverywhere() {
 }
 
 // ═══════════════════════════════════════════════════════════
-// NATURE & WALKABLE HOUSES BUILDER
+// WORLD, ALIGNED TERRAIN & WALKABLE HOUSES
 // ═══════════════════════════════════════════════════════════
+function collectHouseSpecs(worldId) {
+  const specs = worldId === 'main'
+    ? [
+        { name: 'منزل المستكشف', x: -12, z: 10, width: 7.8, depth: 7.8, wallH: 3.5, doorW: 2.2, wallColor: 0xd97706, roofColor: 0xb91c1c },
+        { name: 'استراحة الوادي', x: 14, z: 9, width: 8.4, depth: 7.8, wallH: 3.6, doorW: 2.4, wallColor: 0xe2e8f0, roofColor: 0x0284c7 },
+      ]
+    : [
+        { name: 'مأوى العالم', x: -11, z: 10, width: 7.6, depth: 7.6, wallH: 3.5, doorW: 2.2, wallColor: 0x64748b, roofColor: 0x0ea5e9 },
+      ];
+
+  (Game.profile?.ownedHomes || []).forEach((homeId, idx) => {
+    const home = SHOP.homes.find(h => h.id === homeId);
+    if (home) {
+      specs.push({
+        name: home.name,
+        x: -24 + idx * 16,
+        z: 16,
+        width: home.width || 7.6,
+        depth: home.depth || 7.6,
+        wallH: home.wallH || 3.5,
+        doorW: home.doorW || 2.2,
+        wallColor: home.wallColor || 0xd97706,
+        roofColor: home.roofColor || 0xb91c1c,
+      });
+    }
+  });
+  return specs;
+}
+
 function initWorld(worldId = 'main') {
   const w = WORLDS[worldId] || WORLDS.main;
   const s = new THREE.Scene();
@@ -1118,18 +1167,27 @@ function initWorld(worldId = 'main') {
 
   Game.collidables = [];
   Game.platforms = [];
+  Game.housePads = [];
   Game.walkableHouses = [];
   Game.natureProps = [];
 
+  // Register house pads first so getTerrainHeight flattens terrain around every house
+  const houseSpecs = collectHouseSpecs(worldId);
+  Game.housePads = houseSpecs.map(sp => ({
+    x: sp.x,
+    z: sp.z,
+    radius: Math.max(sp.width, sp.depth) * 0.72,
+    padY: getRawWaveHeight(sp.x, sp.z, worldId),
+  }));
+
   buildLayeredTerrain(worldId);
+  houseSpecs.forEach(sp => createWalkableHouse(sp));
   buildRichNature(worldId);
-  buildDefaultWalkableHouses(worldId);
   buildPortals(worldId);
   buildReturnPortal(worldId);
   buildChallengePlatforms(worldId);
   populateWorldEntities(worldId);
   loadBuildings();
-  loadPurchasedItems();
   buildPlayer();
   setupInput();
   setupMobileControls();
@@ -1139,7 +1197,7 @@ function initWorld(worldId = 'main') {
   const ld = $('loading');
   ld.style.opacity = '0';
   setTimeout(() => ld.style.display = 'none', 350);
-  $('world-badge').textContent = `${w.name} • ${w.tag}`;
+  $('world-badge').textContent = `${w.name} •${w.tag}`;
 
   Game.clock = new THREE.Clock();
   Game.portalCooldown = 0;
@@ -1148,7 +1206,7 @@ function initWorld(worldId = 'main') {
 
 function buildLayeredTerrain(worldId) {
   const w = WORLDS[worldId] || WORLDS.main;
-  const segs = Game.isMobile ? 48 : 96;
+  const segs = Game.isMobile ? 64 : 112;
   const geo = new THREE.PlaneGeometry(260, 260, segs, segs);
   const pos = geo.attributes.position;
   const colors = new Float32Array(pos.count * 3);
@@ -1187,11 +1245,11 @@ function buildLayeredTerrain(worldId) {
   Game.scene.add(ground);
   Game.ground = ground;
 
-  // Trees & rocks
-  const treeCount = worldId === 'space' ? 8 : 34;
+  // Trees & rocks outside house pads and paths
+  const treeCount = worldId === 'space' ? 8 : 32;
   for (let i = 0; i < treeCount; i++) {
     const x = rand(-90, 90), z = rand(-90, 90);
-    if (Math.hypot(x, z) < 12) continue;
+    if (Math.hypot(x, z) < 11 || isNearAnyHouseOrPath(x, z, 2.5)) continue;
     const y = getTerrainHeight(x, z, worldId);
     const trunkH = rand(2.2, 3.8);
     const trunk = new THREE.Mesh(
@@ -1214,11 +1272,11 @@ function buildLayeredTerrain(worldId) {
     Game.collidables.push({ position: new THREE.Vector3(x, y + 1, z), userData: { radius: 0.65 } });
   }
 
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 18; i++) {
     const x = rand(-85, 85), z = rand(-85, 85);
-    if (Math.hypot(x, z) < 10) continue;
+    if (Math.hypot(x, z) < 10 || isNearAnyHouseOrPath(x, z, 2.0)) continue;
     const y = getTerrainHeight(x, z, worldId);
-    const r = rand(0.55, 1.45);
+    const r = rand(0.55, 1.35);
     const rock = new THREE.Mesh(
       new THREE.DodecahedronGeometry(r),
       new THREE.MeshStandardMaterial({ color: worldId === 'volcano' ? 0x1c1917 : 0x64748b, flatShading: true })
@@ -1244,13 +1302,12 @@ function buildLayeredTerrain(worldId) {
 function buildRichNature(worldId) {
   const flowerColors = [0xf43f5e, 0xfbbf24, 0xa855f7, 0x38bdf8, 0xfb7185];
 
-  // Bushes & flowers across the landscape
-  for (let i = 0; i < 42; i++) {
+  for (let i = 0; i < 40; i++) {
     const x = rand(-75, 75), z = rand(-75, 75);
-    if (Math.hypot(x, z) < 5) continue;
+    if (Math.hypot(x, z) < 5 || isNearAnyHouseOrPath(x, z, 1.2)) continue;
     const y = getTerrainHeight(x, z, worldId);
     const bush = new THREE.Mesh(
-      new THREE.DodecahedronGeometry(rand(0.45, 0.85), 0),
+      new THREE.DodecahedronGeometry(rand(0.45, 0.8), 0),
       new THREE.MeshStandardMaterial({
         color: worldId === 'volcano' ? 0x7c2d12 : (worldId === 'ice' ? 0xbae6fd : 0x22c55e),
         flatShading: true
@@ -1261,8 +1318,9 @@ function buildRichNature(worldId) {
     Game.natureProps.push(bush);
   }
 
-  for (let i = 0; i < 65; i++) {
+  for (let i = 0; i < 60; i++) {
     const x = rand(-65, 65), z = rand(-65, 65);
+    if (isNearAnyHouseOrPath(x, z, 0.8)) continue;
     const y = getTerrainHeight(x, z, worldId);
     const fg = new THREE.Group();
     const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.35, 5), new THREE.MeshBasicMaterial({ color: 0x15803d }));
@@ -1281,10 +1339,11 @@ function buildRichNature(worldId) {
   }
 }
 
-// Builds a walkable house with a real floor, 4 walls (with front doorway opening), windows, and roof
 function createWalkableHouse({ name, x, z, width = 7.6, depth = 7.6, wallH = 3.5, doorW = 2.2, wallColor = 0xd97706, roofColor = 0xb91c1c }) {
+  // Exact leveled terrain height under this house
   const groundY = getTerrainHeight(x, z, Game.currentWorld);
-  const floorY = groundY + 0.16;
+  const floorThick = 0.24;
+  const floorY = groundY + floorThick;
   const halfW = width / 2;
   const halfD = depth / 2;
   const doorHalfW = doorW / 2;
@@ -1292,70 +1351,77 @@ function createWalkableHouse({ name, x, z, width = 7.6, depth = 7.6, wallH = 3.5
   const thick = 0.36;
 
   const houseGroup = new THREE.Group();
-  houseGroup.position.set(x, groundY, z);
+  // Seat group slightly embedded (-0.06) so even steep slopes never show a gap under the slab
+  houseGroup.position.set(x, groundY - 0.06, z);
 
   const floorMat = new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.7 });
+  const rampMat = new THREE.MeshStandardMaterial({ color: 0x92400e, roughness: 0.75 });
   const wallMat = new THREE.MeshStandardMaterial({ color: wallColor, roughness: 0.65 });
   const trimMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.5 });
   const roofMat = new THREE.MeshStandardMaterial({ color: roofColor, roughness: 0.6, flatShading: true });
   const glowMat = new THREE.MeshStandardMaterial({ color: 0xfef08a, emissive: 0xfacc15, emissiveIntensity: 0.45 });
 
-  // Floor slab
-  const floor = new THREE.Mesh(new THREE.BoxGeometry(width + 0.4, 0.32, depth + 0.4), floorMat);
-  floor.position.y = 0.16;
+  // Main floor slab
+  const floor = new THREE.Mesh(new THREE.BoxGeometry(width + 0.3, floorThick + 0.06, depth + 0.3), floorMat);
+  floor.position.y = (floorThick + 0.06) / 2;
   floor.receiveShadow = !Game.isMobile;
   houseGroup.add(floor);
 
+  // Front entrance step / apron aligned flush with terrain
+  const step = new THREE.Mesh(new THREE.BoxGeometry(doorW + 1.0, 0.14, 1.1), rampMat);
+  step.position.set(0, 0.09, halfD + 0.45);
+  houseGroup.add(step);
+
   // Back wall (-Z)
   const backWall = new THREE.Mesh(new THREE.BoxGeometry(width, wallH, thick), wallMat);
-  backWall.position.set(0, 0.32 + wallH / 2, -halfD + thick / 2);
+  backWall.position.set(0, floorThick + 0.06 + wallH / 2, -halfD + thick / 2);
   backWall.castShadow = !Game.isMobile;
   houseGroup.add(backWall);
 
   // Left wall (-X)
   const leftWall = new THREE.Mesh(new THREE.BoxGeometry(thick, wallH, depth), wallMat);
-  leftWall.position.set(-halfW + thick / 2, 0.32 + wallH / 2, 0);
+  leftWall.position.set(-halfW + thick / 2, floorThick + 0.06 + wallH / 2, 0);
   leftWall.castShadow = !Game.isMobile;
   houseGroup.add(leftWall);
 
   // Right wall (+X)
   const rightWall = new THREE.Mesh(new THREE.BoxGeometry(thick, wallH, depth), wallMat);
-  rightWall.position.set(halfW - thick / 2, 0.32 + wallH / 2, 0);
+  rightWall.position.set(halfW - thick / 2, floorThick + 0.06 + wallH / 2, 0);
   rightWall.castShadow = !Game.isMobile;
   houseGroup.add(rightWall);
 
   // Front wall (+Z) with open doorway in center
   const sideW = Math.max(0.5, halfW - doorHalfW);
   const frontLeft = new THREE.Mesh(new THREE.BoxGeometry(sideW, wallH, thick), wallMat);
-  frontLeft.position.set(-doorHalfW - sideW / 2, 0.32 + wallH / 2, halfD - thick / 2);
+  frontLeft.position.set(-doorHalfW - sideW / 2, floorThick + 0.06 + wallH / 2, halfD - thick / 2);
   frontLeft.castShadow = !Game.isMobile;
   houseGroup.add(frontLeft);
 
   const frontRight = new THREE.Mesh(new THREE.BoxGeometry(sideW, wallH, thick), wallMat);
-  frontRight.position.set(doorHalfW + sideW / 2, 0.32 + wallH / 2, halfD - thick / 2);
+  frontRight.position.set(doorHalfW + sideW / 2, floorThick + 0.06 + wallH / 2, halfD - thick / 2);
   frontRight.castShadow = !Game.isMobile;
   houseGroup.add(frontRight);
 
   const lintelH = Math.max(0.4, wallH - doorH);
   const frontTop = new THREE.Mesh(new THREE.BoxGeometry(doorW, lintelH, thick), wallMat);
-  frontTop.position.set(0, 0.32 + doorH + lintelH / 2, halfD - thick / 2);
+  frontTop.position.set(0, floorThick + 0.06 + doorH + lintelH / 2, halfD - thick / 2);
   houseGroup.add(frontTop);
 
-  // Warm interior lamp so walking inside feels cozy and clear
+  // Interior warm lamp
   const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.26, 12, 10), glowMat);
-  lamp.position.set(0, 0.32 + wallH - 0.35, 0);
+  lamp.position.set(0, floorThick + 0.06 + wallH - 0.35, 0);
   houseGroup.add(lamp);
 
   // Side windows
   [-1, 1].forEach(side => {
     const win = new THREE.Mesh(new THREE.BoxGeometry(0.12, 1.0, 1.3), trimMat);
-    win.position.set(side * (halfW - 0.04), 0.32 + 1.85, 0);
+    win.position.set(side * (halfW - 0.04), floorThick + 0.06 + 1.85, 0);
     houseGroup.add(win);
   });
 
   // Roof
   const roof = new THREE.Mesh(new THREE.ConeGeometry(Math.max(width, depth) * 0.78, 2.5, 4), roofMat);
-  roof.position.set(0, 0.32 + wallH + 1.25, 0);
+  roof.position.set(0, floorThick + 0.06 + wallH + 1.25, 0);
   roof.rotation.y = Math.PI / 4;
   roof.castShadow = !Game.isMobile;
   houseGroup.add(roof);
@@ -1365,20 +1431,11 @@ function createWalkableHouse({ name, x, z, width = 7.6, depth = 7.6, wallH = 3.5
     name,
     x,
     z,
-    floorY,
+    floorY: floorY - 0.06,
     halfW: halfW - thick * 0.6,
     halfD: halfD - thick * 0.6,
     doorHalfW: doorHalfW - 0.15,
   });
-}
-
-function buildDefaultWalkableHouses(worldId) {
-  if (worldId === 'main') {
-    createWalkableHouse({ name: 'منزل المستكشف', x: -12, z: 10, width: 7.8, depth: 7.8, wallColor: 0xd97706, roofColor: 0xb91c1c });
-    createWalkableHouse({ name: 'استراحة الوادي', x: 14, z: 9, width: 8.4, depth: 7.8, wallColor: 0xe2e8f0, roofColor: 0x0284c7 });
-  } else {
-    createWalkableHouse({ name: 'مأوى العالم', x: -11, z: 10, width: 7.6, depth: 7.6, wallColor: 0x64748b, roofColor: 0x0ea5e9 });
-  }
 }
 
 function buildPortals(worldId) {
@@ -1444,7 +1501,7 @@ function populateWorldEntities(worldId) {
   for (let i = 0; i < 8; i++) {
     const tId = types[i % types.length];
     const ang = (i / 8) * Math.PI * 2;
-    const rad = rand(14, 38);
+    const rad = rand(15, 38);
     spawnCreature(tId, Math.cos(ang) * rad, Math.sin(ang) * rad);
   }
 
@@ -1594,7 +1651,7 @@ function setupMobileControls() {
     const len = Math.min(Math.hypot(dx, dy), 48);
     const a = Math.atan2(dy, dx);
     dx = Math.cos(a) * len; dy = Math.sin(a) * len;
-    knob.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+    knob.style.transform = `translate(calc(-50% + ${dx}px), calc(-50\% +${dy}px))`;
     Game.joystickX = dx / 48; Game.joystickY = dy / 48;
   }, { passive: false });
   zone.addEventListener('touchend', () => { active = false; knob.style.transform = 'translate(-50%,-50%)'; Game.joystickX = Game.joystickY = 0; });
@@ -1699,126 +1756,10 @@ function updatePlayer(dt) {
   const insideHouse = getActiveHouseAt(p.position.x, p.position.z);
   const badge = $('interior-badge');
   if (insideHouse) {
-    badge.textContent = `داخل: ${insideHouse.name}`;
-    badge.classList.add('active');
-  } else {
-    badge.classList.remove('active');
-  }
-
-  if (moving && Game.avatar.parts.legL) {
-    const t = performance.now() * (sprinting ? 0.018 : 0.012);
-    Game.avatar.parts.legL.rotation.x = Math.sin(t) * 0.55;
-    Game.avatar.parts.legR.rotation.x = -Math.sin(t) * 0.55;
-    Game.avatar.parts.armL.rotation.x = -Math.sin(t) * 0.45;
-    Game.avatar.parts.armR.rotation.x = Math.sin(t) * 0.45;
-  } else if (Game.avatar.parts.legL) {
-    ['legL', 'legR', 'armL', 'armR'].forEach(k => { if (Game.avatar.parts[k]) Game.avatar.parts[k].rotation.x *= 0.82; });
-  }
-
-  updateNearbyAnimal();
-}
-
-function updateCamera() {
-  const p = Game.player;
-  if (!p) return;
-  const d = getActiveHouseAt(p.position.x, p.position.z) ? Math.min(Game.cameraDistance, 4.6) : Game.cameraDistance;
-  const cp = Math.cos(Game.pitch);
-  const target = new THREE.Vector3(p.position.x, p.position.y + 1.65, p.position.z);
-  const desired = new THREE.Vector3(
-    target.x + Math.sin(Game.yaw) * d * cp,
-    target.y + Math.sin(Game.pitch) * d,
-    target.z + Math.cos(Game.yaw) * d * cp
-  );
-  const minGround = getFloorHeightAt(desired.x, desired.z, Game.currentWorld) + 0.85;
-  if (desired.y < minGround) desired.y = minGround;
-  Game.camera.position.lerp(desired, 0.22);
-  Game.camera.lookAt(target);
-}
-
-function updateAnimals(dt) {
-  Game.animals.forEach(a => {
-    a.userData.changeDirTimer -= dt;
-    if (a.userData.changeDirTimer <= 0) {
-      a.userData.direction = rand(0, Math.PI * 2);
-      a.userData.changeDirTimer = rand(2, 4.5);
-    }
-    const dir = a.userData.direction;
-    const nx = clamp(a.position.x + Math.cos(dir) * a.userData.speed * dt, -95, 95);
-    const nz = clamp(a.position.z + Math.sin(dir) * a.userData.speed * dt, -95, 95);
-    if (!isBlockedByHouseWall(nx, nz)) {
-      a.position.x = nx;
-      a.position.z = nz;
-    } else {
-      a.userData.direction += Math.PI * 0.7;
-    }
-    a.userData.walkPhase += dt * 9;
-    a.position.y = getFloorHeightAt(a.position.x, a.position.z, Game.currentWorld) + Math.abs(Math.sin(a.userData.walkPhase)) * 0.12;
-    a.rotation.y = Math.atan2(Math.cos(a.userData.direction), Math.sin(a.userData.direction));
-  });
-}
-
-function attackEnemy() {
-  if (!Game.player || !Game.profile) return;
-  const now = performance.now();
-  const w = SHOP.weapons.find(x => x.id === Game.profile.equippedWeapon);
-  if (now - Game.lastAttack < (w?.cooldown || 450)) return;
-  Game.lastAttack = now;
-  Audio.sfx('attack');
-
-  const dmg = (w?.damage || 16) + Game.profile.level * 2;
-  const range = w?.range || 3.2;
-
-  if (w?.ranged) {
-    const dir = new THREE.Vector3(Math.sin(Game.player.rotation.y), 0, Math.cos(Game.player.rotation.y)).normalize();
-    const mesh = new THREE.Mesh(new THREE.SphereGeometry(0.25, 10, 10), new THREE.MeshBasicMaterial({ color: 0x38bdf8 }));
-    mesh.position.copy(Game.player.position).add(new THREE.Vector3(0, 1.3, 0));
-    Game.scene.add(mesh);
-    Game.projectiles.push({ mesh, dir, speed: 22, damage: dmg, life: 1.4 });
-    return;
-  }
-
-  Game.enemies.forEach(e => {
-    if (!e.alive) return;
-    if (dist2D(Game.player.position, e.group.position) <= range + e.scale) {
-      e.hp -= dmg;
-      Audio.sfx('hit');
-      if (e.hp <= 0) killEnemy(e);
-    }
-  });
-}
-
-function updateProjectiles(dt) {
-  for (let i = Game.projectiles.length - 1; i >= 0; i--) {
-    const pr = Game.projectiles[i];
-    pr.mesh.position.addScaledVector(pr.dir, pr.speed * dt);
-    pr.life -= dt;
-    let hit = false;
-    for (const e of Game.enemies) {
-      if (e.alive && pr.mesh.position.distanceTo(e.group.position) < 1.8) {
-        e.hp -= pr.damage; hit = true;
-        if (e.hp <= 0) killEnemy(e);
-        break;
-      }
-    }
-    if (pr.life <= 0 || hit) { Game.scene.remove(pr.mesh); Game.projectiles.splice(i, 1); }
-  }
-}
-
-function killEnemy(e) {
-  e.alive = false;
-  Game.scene.remove(e.group);
-  Game.profile.xp += e.xp;
-  Game.profile.coins += e.coins;
-  Game.profile.totalKills = (Game.profile.totalKills || 0) + 1;
-  addQuestProgress('kill', 1);
-  const nextLv = 1 + Math.floor(Game.profile.xp / 100);
-  if (nextLv > Game.profile.level) {
-    Game.profile.level = nextLv;
-    Audio.sfx('levelup');
-    toast(`ترقية إلى المستوى ${nextLv}`, '#38bdf8', 2800);
+    badge.textContent = `داخل: ${insideHouse.name}`; badge.classList.add('active'); } else { badge.classList.remove('active'); }  if (moving && Game.avatar.parts.legL) { const t = performance.now() * (sprinting ? 0.018 : 0.012); Game.avatar.parts.legL.rotation.x = Math.sin(t) * 0.55; Game.avatar.parts.legR.rotation.x = -Math.sin(t) * 0.55; Game.avatar.parts.armL.rotation.x = -Math.sin(t) * 0.45; Game.avatar.parts.armR.rotation.x = Math.sin(t) * 0.45; } else if (Game.avatar.parts.legL) { ['legL', 'legR', 'armL', 'armR'].forEach(k => { if (Game.avatar.parts[k]) Game.avatar.parts[k].rotation.x *= 0.82; }); }  updateNearbyAnimal(); }  function updateCamera() { const p = Game.player; if (!p) return; const d = getActiveHouseAt(p.position.x, p.position.z) ? Math.min(Game.cameraDistance, 4.6) : Game.cameraDistance; const cp = Math.cos(Game.pitch); const target = new THREE.Vector3(p.position.x, p.position.y + 1.65, p.position.z); const desired = new THREE.Vector3( target.x + Math.sin(Game.yaw) * d * cp, target.y + Math.sin(Game.pitch) * d, target.z + Math.cos(Game.yaw) * d * cp ); const minGround = getFloorHeightAt(desired.x, desired.z, Game.currentWorld) + 0.85; if (desired.y < minGround) desired.y = minGround; Game.camera.position.lerp(desired, 0.22); Game.camera.lookAt(target); }  function updateAnimals(dt) { Game.animals.forEach(a => { a.userData.changeDirTimer -= dt; if (a.userData.changeDirTimer <= 0) { a.userData.direction = rand(0, Math.PI * 2); a.userData.changeDirTimer = rand(2, 4.5); } const dir = a.userData.direction; const nx = clamp(a.position.x + Math.cos(dir) * a.userData.speed * dt, -95, 95); const nz = clamp(a.position.z + Math.sin(dir) * a.userData.speed * dt, -95, 95); if (!isBlockedByHouseWall(nx, nz)) { a.position.x = nx; a.position.z = nz; } else { a.userData.direction += Math.PI * 0.7; } a.userData.walkPhase += dt * 9; a.position.y = getFloorHeightAt(a.position.x, a.position.z, Game.currentWorld) + Math.abs(Math.sin(a.userData.walkPhase)) * 0.12; a.rotation.y = Math.atan2(Math.cos(a.userData.direction), Math.sin(a.userData.direction)); }); }  function attackEnemy() { if (!Game.player \vert{}\vert{} !Game.profile) return; const now = performance.now(); const w = SHOP.weapons.find(x => x.id === Game.profile.equippedWeapon); if (now - Game.lastAttack < (w?.cooldown \vert{}\vert{} 450)) return; Game.lastAttack = now; Audio.sfx('attack');  const dmg = (w?.damage \vert{}\vert{} 16) + Game.profile.level * 2; const range = w?.range \vert{}\vert{} 3.2;  if (w?.ranged) { const dir = new THREE.Vector3(Math.sin(Game.player.rotation.y), 0, Math.cos(Game.player.rotation.y)).normalize(); const mesh = new THREE.Mesh(new THREE.SphereGeometry(0.25, 10, 10), new THREE.MeshBasicMaterial({ color: 0x38bdf8 })); mesh.position.copy(Game.player.position).add(new THREE.Vector3(0, 1.3, 0)); Game.scene.add(mesh); Game.projectiles.push({ mesh, dir, speed: 22, damage: dmg, life: 1.4 }); return; }  Game.enemies.forEach(e => { if (!e.alive) return; if (dist2D(Game.player.position, e.group.position) <= range + e.scale) { e.hp -= dmg; Audio.sfx('hit'); if (e.hp <= 0) killEnemy(e); } }); }  function updateProjectiles(dt) { for (let i = Game.projectiles.length - 1; i >= 0; i--) { const pr = Game.projectiles[i]; pr.mesh.position.addScaledVector(pr.dir, pr.speed * dt); pr.life -= dt; let hit = false; for (const e of Game.enemies) { if (e.alive && pr.mesh.position.distanceTo(e.group.position) < 1.8) { e.hp -= pr.damage; hit = true; if (e.hp <= 0) killEnemy(e); break; } } if (pr.life <= 0 \vert{}\vert{} hit) { Game.scene.remove(pr.mesh); Game.projectiles.splice(i, 1); } } }  function killEnemy(e) { e.alive = false; Game.scene.remove(e.group); Game.profile.xp += e.xp; Game.profile.coins += e.coins; Game.profile.totalKills = (Game.profile.totalKills \vert{}\vert{} 0) + 1; addQuestProgress('kill', 1); const nextLv = 1 + Math.floor(Game.profile.xp / 100); if (nextLv > Game.profile.level) { Game.profile.level = nextLv; Audio.sfx('levelup'); toast(`ترقية إلى المستوى ${nextLv}`, '#38bdf8', 2800);
   }
   Game.profile.save(); updateHUD();
-  toast(`+${e.xp} خبرة | +${e.coins} عملة`);
+  toast(`+${e.xp} خبرة \vert{} +${e.coins} عملة`);
   Game.enemies = Game.enemies.filter(x => x !== e);
 }
 
@@ -1860,26 +1801,7 @@ function updateCoins(dt) {
       addQuestProgress('coinsCollected', 1);
       Game.profile.save(); updateHUD();
       Audio.sfx('coin');
-      toast(`+${c.value} عملة`);
-      Game.scene.remove(c.mesh); Game.coins.splice(i, 1);
-    }
-  }
-}
-
-function updatePortals(dt) {
-  if (!Game.player) return;
-  Game.portalCooldown = Math.max(0, Game.portalCooldown - dt);
-  Game.portals.forEach(portal => {
-    portal.rotation.z += dt * 0.5;
-    if (portal.userData.isReturnPortal) {
-      $('return-portal-hint').classList.toggle('active', Game.player.position.distanceTo(portal.position) < 4);
-      return;
-    }
-    if (Game.player.position.distanceTo(portal.position) < 2.5 && Game.portalCooldown <= 0) {
-      Game.portalCooldown = 2.5;
-      Audio.sfx('portal');
-      const target = portal.userData.worldId;
-      toast(`الانتقال إلى ${portal.userData.label}...`);
+      toast(`+${c.value} عملة`); Game.scene.remove(c.mesh); Game.coins.splice(i, 1); } } }  function updatePortals(dt) { if (!Game.player) return; Game.portalCooldown = Math.max(0, Game.portalCooldown - dt); Game.portals.forEach(portal => { portal.rotation.z += dt * 0.5; if (portal.userData.isReturnPortal) { $('return-portal-hint').classList.toggle('active', Game.player.position.distanceTo(portal.position) < 4); return; } if (Game.player.position.distanceTo(portal.position) < 2.5 && Game.portalCooldown <= 0) { Game.portalCooldown = 2.5; Audio.sfx('portal'); const target = portal.userData.worldId; toast(`الانتقال إلى ${portal.userData.label}...`);
       setTimeout(() => { clearWorld(); enterWorld(target); }, 400);
     }
   });
@@ -1924,7 +1846,7 @@ function clearWorld() {
   Game.coins.forEach(c => Game.scene.remove(c.mesh));
   Game.projectiles.forEach(pr => Game.scene.remove(pr.mesh));
   Game.enemies = []; Game.animals = []; Game.coins = []; Game.projectiles = [];
-  Game.portals = []; Game.platforms = []; Game.walkableHouses = []; Game.natureProps = []; Game.returnPortal = null;
+  Game.portals = []; Game.platforms = []; Game.housePads = []; Game.walkableHouses = []; Game.natureProps = []; Game.returnPortal = null;
   $('return-portal-hint').classList.remove('active');
   $('interior-badge').classList.remove('active');
 }
@@ -1973,107 +1895,13 @@ function updateGhost() {
 function placeBlock() {
   if (!Game.ghost) return;
   const pos = Game.ghost.position.clone();
-  const key = `${pos.x},${pos.y},${pos.z}`;
-  if (Game.buildings.has(key)) return;
-  const info = BLOCKS[Game.selectedBlock];
-  if (Game.profile.coins < info.price) { toast('العملات غير كافية', '#f87171'); return; }
-  Game.profile.coins -= info.price;
-  Game.profile.buildingsPlaced = (Game.profile.buildingsPlaced || 0) + 1;
-  addQuestProgress('build', 1);
-  updateHUD(); Game.profile.save();
-
-  const mesh = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 1, 1),
-    new THREE.MeshStandardMaterial({ color: info.color, transparent: !!info.transparent, opacity: info.transparent ? 0.65 : 1 })
-  );
-  mesh.position.copy(pos);
-  mesh.userData = { key, blockType: Game.selectedBlock };
-  Game.scene.add(mesh);
-  Game.buildings.set(key, mesh);
-  saveBuildings();
-  Audio.sfx('build');
-}
-
-function removeBlock() {
-  Game.raycaster.setFromCamera(Game.isMobile ? new THREE.Vector2(0, 0) : Game.mouse, Game.camera);
-  const hits = Game.raycaster.intersectObjects(Array.from(Game.buildings.values()));
-  if (!hits.length) return;
-  const mesh = hits[0].object;
-  if (!mesh.userData.key) return;
-  Game.scene.remove(mesh);
-  Game.buildings.delete(mesh.userData.key);
-  saveBuildings();
-}
-
-function saveBuildings() {
-  if (!Game.user) return;
-  const data = [];
-  Game.buildings.forEach((m, key) => data.push({ key, type: m.userData.blockType, pos: m.position.toArray() }));
-  try { localStorage.setItem(`mv10_build_${Game.user.uid}`, JSON.stringify(data)); } catch {}
+  const key = `${pos.x},${pos.y},${pos.z}`; if (Game.buildings.has(key)) return; const info = BLOCKS[Game.selectedBlock]; if (Game.profile.coins < info.price) { toast('العملات غير كافية', '#f87171'); return; } Game.profile.coins -= info.price; Game.profile.buildingsPlaced = (Game.profile.buildingsPlaced \vert{}\vert{} 0) + 1; addQuestProgress('build', 1); updateHUD(); Game.profile.save();  const mesh = new THREE.Mesh( new THREE.BoxGeometry(1, 1, 1), new THREE.MeshStandardMaterial({ color: info.color, transparent: !!info.transparent, opacity: info.transparent ? 0.65 : 1 }) ); mesh.position.copy(pos); mesh.userData = { key, blockType: Game.selectedBlock }; Game.scene.add(mesh); Game.buildings.set(key, mesh); saveBuildings(); Audio.sfx('build'); }  function removeBlock() { Game.raycaster.setFromCamera(Game.isMobile ? new THREE.Vector2(0, 0) : Game.mouse, Game.camera); const hits = Game.raycaster.intersectObjects(Array.from(Game.buildings.values())); if (!hits.length) return; const mesh = hits[0].object; if (!mesh.userData.key) return; Game.scene.remove(mesh); Game.buildings.delete(mesh.userData.key); saveBuildings(); }  function saveBuildings() { if (!Game.user) return; const data = []; Game.buildings.forEach((m, key) => data.push({ key, type: m.userData.blockType, pos: m.position.toArray() })); try { localStorage.setItem(`mv11_build_${Game.user.uid}`, JSON.stringify(data)); } catch {}
 }
 
 function loadBuildings() {
   if (!Game.user) return;
   try {
-    const data = JSON.parse(localStorage.getItem(`mv10_build_${Game.user.uid}`) || '[]');
-    data.forEach(b => {
-      const info = BLOCKS[b.type];
-      if (!info) return;
-      const mesh = new THREE.Mesh(
-        new THREE.BoxGeometry(1, 1, 1),
-        new THREE.MeshStandardMaterial({ color: info.color, transparent: !!info.transparent, opacity: info.transparent ? 0.65 : 1 })
-      );
-      mesh.position.fromArray(b.pos);
-      mesh.userData = { key: b.key, blockType: b.type };
-      Game.scene.add(mesh);
-      Game.buildings.set(b.key, mesh);
-    });
-  } catch {}
-}
-
-function loadPurchasedItems() {
-  if (!Game.profile) return;
-  (Game.profile.ownedHomes || []).forEach((homeId, idx) => {
-    const home = SHOP.homes.find(h => h.id === homeId);
-    if (home) placePurchasedWalkableHouse(home, -24 + idx * 16, 16);
-  });
-  updateWeaponModel();
-}
-
-function placePurchasedWalkableHouse(home, x, z) {
-  createWalkableHouse({
-    name: home.name,
-    x,
-    z,
-    width: home.width || 7.6,
-    depth: home.depth || 7.6,
-    wallH: home.wallH || 3.5,
-    doorW: home.doorW || 2.2,
-    wallColor: home.wallColor || 0xd97706,
-    roofColor: home.roofColor || 0xb91c1c,
-  });
-}
-
-function updateNearbyAnimal() {
-  if (!Game.player) return;
-  let closest = null, minD = 5.5;
-  Game.animals.forEach(a => {
-    const d = dist2D(Game.player.position, a.position);
-    if (d < minD) { minD = d; closest = a; }
-  });
-  const card = $('animal-card');
-  if (closest) {
-    card.style.display = 'block';
-    const t = CREATURE_TYPES[closest.userData.typeId];
-    $('ac-name').textContent = `${t.name} • ${t.rarity}`;
-    $('ac-level').textContent = `المستوى ${closest.userData.level} • الترويض ${Math.round(closest.userData.tameProgress)}%`;
-    const req = closest.userData.level * 2;
-    if (Game.profile.level >= req) {
-      $('ac-req').textContent = 'جاهز للترويض';
-      $('ac-req').style.color = '#34d399';
-      $('ac-tame-btn').disabled = false;
-    } else {
-      $('ac-req').textContent = `يتطلب مستوى ${req}`;
+    const data = JSON.parse(localStorage.getItem(`mv11_build_${Game.user.uid}`) \vert{}\vert{} '[]'); data.forEach(b => { const info = BLOCKS[b.type]; if (!info) return; const mesh = new THREE.Mesh( new THREE.BoxGeometry(1, 1, 1), new THREE.MeshStandardMaterial({ color: info.color, transparent: !!info.transparent, opacity: info.transparent ? 0.65 : 1 }) ); mesh.position.fromArray(b.pos); mesh.userData = { key: b.key, blockType: b.type }; Game.scene.add(mesh); Game.buildings.set(b.key, mesh); }); } catch {} }  function updateNearbyAnimal() { if (!Game.player) return; let closest = null, minD = 5.5; Game.animals.forEach(a => { const d = dist2D(Game.player.position, a.position); if (d < minD) { minD = d; closest = a; } }); const card = $('animal-card'); if (closest) { card.style.display = 'block'; const t = CREATURE_TYPES[closest.userData.typeId]; $('ac-name').textContent = `${t.name} • ${t.rarity}`; $('ac-level').textContent = `المستوى ${closest.userData.level} • الترويض ${Math.round(closest.userData.tameProgress)}\%`; const req = closest.userData.level * 2; if (Game.profile.level >= req) { $('ac-req').textContent = 'جاهز للترويض'; $('ac-req').style.color = '#34d399'; $('ac-tame-btn').disabled = false; } else { $('ac-req').textContent = `يتطلب مستوى ${req}`;
       $('ac-req').style.color = '#f87171';
       $('ac-tame-btn').disabled = true;
     }
@@ -2097,460 +1925,4 @@ $('ac-tame-btn').onclick = () => {
     Game.scene.remove(a);
     Game.animals = Game.animals.filter(x => x !== a);
     $('animal-card').style.display = 'none';
-    toast(`تم ترويض ${t.name}`, '#10b981', 2600);
-  } else {
-    toast(`تقدم الترويض: ${Math.round(a.userData.tameProgress)}%`);
-  }
-};
-
-$('ac-feed-btn').onclick = () => {
-  const a = Game.nearbyAnimal;
-  if (!a) return;
-  const t = CREATURE_TYPES[a.userData.typeId];
-  const invFood = Game.profile.inventory.find(i => i.id === t.food && (i.count || 0) > 0);
-  if (!invFood) { toast('اشترِ الطعام المناسب من المتجر أولاً', '#fbbf24'); return; }
-  invFood.count--;
-  a.userData.tameProgress = Math.min(100, a.userData.tameProgress + 25);
-  Game.profile.save();
-  Audio.sfx('coin');
-  toast(`تم إطعام ${t.name}`);
-};
-
-// ═══════════════════════════════════════════════════════════
-// MINIMAP, FULL MAP, WEATHER & CHAT
-// ═══════════════════════════════════════════════════════════
-function setWeather(state) {
-  Game.weather.current = state;
-  const labels = { clear: 'الطقس: صافٍ', cloudy: 'الطقس: غائم', rain: 'الطقس: ممطر', snow: 'الطقس: ثلجي' };
-  $('weather-badge').textContent = labels[state] || 'الطقس: صافٍ';
-}
-
-function updateMinimap() {
-  const c = $('minimap-canvas');
-  if (!c || !Game.player) return;
-  const ctx = c.getContext('2d');
-  ctx.clearRect(0, 0, c.width, c.height);
-  const px = Game.player.position.x, pz = Game.player.position.z;
-  const scale = 1.1;
-  const cx = c.width / 2 - px * scale, cy = c.height / 2 - pz * scale;
-
-  ctx.fillStyle = '#fbbf24';
-  Game.walkableHouses.forEach(h => {
-    ctx.fillRect(cx + (h.x - h.halfW) * scale, cy + (h.z - h.halfD) * scale, h.halfW * 2 * scale, h.halfD * 2 * scale);
-  });
-  Game.portals.forEach(p => {
-    ctx.fillStyle = p.userData.isReturnPortal ? '#34d399' : '#38bdf8';
-    ctx.beginPath(); ctx.arc(cx + p.position.x * scale, cy + p.position.z * scale, 4, 0, Math.PI * 2); ctx.fill();
-  });
-  ctx.fillStyle = '#f87171';
-  Game.enemies.forEach(e => { ctx.beginPath(); ctx.arc(cx + e.group.position.x * scale, cy + e.group.position.z * scale, 3, 0, Math.PI * 2); ctx.fill(); });
-  ctx.fillStyle = '#fff';
-  ctx.beginPath(); ctx.arc(c.width / 2, c.height / 2, 4.5, 0, Math.PI * 2); ctx.fill();
-}
-
-function toggleMap(force) {
-  const m = $('map-modal');
-  const active = force !== undefined ? force : !m.classList.contains('active');
-  m.classList.toggle('active', active);
-  if (active) drawFullMap();
-}
-
-function drawFullMap() {
-  const c = $('map-canvas');
-  if (!c) return;
-  const ctx = c.getContext('2d');
-  const w = WORLDS[Game.currentWorld] || WORLDS.main;
-  ctx.fillStyle = '#' + w.ground.toString(16).padStart(6, '0');
-  ctx.fillRect(0, 0, c.width, c.height);
-  const scale = c.width / 260;
-  const toC = (x, z) => ({ x: (x + 130) * scale, y: (z + 130) * scale });
-
-  Game.walkableHouses.forEach(h => {
-    const pt = toC(h.x, h.z);
-    ctx.fillStyle = '#fbbf24';
-    ctx.fillRect(pt.x - h.halfW * scale, pt.y - h.halfD * scale, h.halfW * 2 * scale, h.halfD * 2 * scale);
-    ctx.fillStyle = '#fff'; ctx.font = 'bold 10px Tahoma'; ctx.textAlign = 'center';
-    ctx.fillText(h.name, pt.x, pt.y - h.halfD * scale - 4);
-  });
-
-  Game.portals.forEach(p => {
-    const pt = toC(p.position.x, p.position.z);
-    ctx.fillStyle = p.userData.isReturnPortal ? '#34d399' : '#38bdf8';
-    ctx.beginPath(); ctx.arc(pt.x, pt.y, 7, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = '#fff'; ctx.font = 'bold 11px Tahoma'; ctx.textAlign = 'center';
-    ctx.fillText(p.userData.isReturnPortal ? 'عودة' : p.userData.label, pt.x, pt.y - 10);
-  });
-  ctx.fillStyle = '#f87171';
-  Game.enemies.forEach(e => { const pt = toC(e.group.position.x, e.group.position.z); ctx.beginPath(); ctx.arc(pt.x, pt.y, 5, 0, Math.PI * 2); ctx.fill(); });
-  if (Game.player) {
-    const pt = toC(Game.player.position.x, Game.player.position.z);
-    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(pt.x, pt.y, 7, 0, Math.PI * 2); ctx.fill();
-  }
-}
-
-$('btn-map').onclick = () => toggleMap();
-$('btn-close-map').onclick = () => toggleMap(false);
-$('minimap').onclick = () => toggleMap();
-
-let chatUnread = 0;
-function toggleChat(force) {
-  const p = $('chat-panel');
-  const active = force !== undefined ? force : !p.classList.contains('active');
-  p.classList.toggle('active', active);
-  if (active) { $('chat-input').focus(); chatUnread = 0; $('chat-badge').classList.add('hidden'); }
-}
-$('chat-toggle').onclick = () => toggleChat();
-$('chat-close').onclick = () => toggleChat(false);
-$('chat-send').onclick = sendChat;
-$('chat-input').addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') sendChat(); });
-function sendChat() {
-  const txt = $('chat-input').value.trim();
-  if (!txt) return;
-  addChat(Game.profile.name, txt, true);
-  $('chat-input').value = '';
-  Audio.sfx('chat');
-}
-function addChat(name, text, self = false) {
-  const d = document.createElement('div');
-  d.className = 'msg' + (self ? ' self' : '');
-  d.innerHTML = `<div class="name">${name}</div>${text}`;
-  $('chat-list').appendChild(d);
-  $('chat-list').scrollTop = $('chat-list').scrollHeight;
-  if (!self && !$('chat-panel').classList.contains('active')) {
-    chatUnread++; $('chat-badge').textContent = chatUnread; $('chat-badge').classList.remove('hidden');
-  }
-}
-
-// ═══════════════════════════════════════════════════════════
-// PROFILE, SHOP, QUESTS & ACHIEVEMENTS UI
-// ═══════════════════════════════════════════════════════════
-let previewRenderer = null, previewScene = null, previewCamera = null, previewModel = null, previewRotY = 0.25;
-
-function renderProfilePreview() {
-  const canvas = $('profile-preview-canvas');
-  if (!canvas || !Game.profile) return;
-  if (!previewRenderer) {
-    previewScene = new THREE.Scene();
-    previewCamera = new THREE.PerspectiveCamera(42, canvas.width / canvas.height, 0.1, 40);
-    previewCamera.position.set(0, 1.45, 3.8);
-    previewCamera.lookAt(0, 1.32, 0);
-    previewRenderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-    previewRenderer.setSize(canvas.width, canvas.height);
-    const dl = new THREE.DirectionalLight(0xffffff, 1.7);
-    dl.position.set(2, 4, 4);
-    previewScene.add(dl);
-    previewScene.add(new THREE.AmbientLight(0xffffff, 0.75));
-
-    let dragging = false, lx = 0;
-    canvas.addEventListener('mousedown', e => { dragging = true; lx = e.clientX; });
-    addEventListener('mouseup', () => dragging = false);
-    addEventListener('mousemove', e => {
-      if (!dragging || !previewModel) return;
-      previewRotY += (e.clientX - lx) * 0.012;
-      lx = e.clientX;
-      previewModel.rotation.y = previewRotY;
-      previewRenderer.render(previewScene, previewCamera);
-    });
-  }
-  if (previewModel) previewScene.remove(previewModel);
-  previewModel = createAvatarGroup(Game.profile).group;
-  previewModel.rotation.y = previewRotY;
-  previewScene.add(previewModel);
-  previewRenderer.render(previewScene, previewCamera);
-}
-
-function updateProfileSummary() {
-  if (!Game.profile) return;
-  $('profile-summary-name').textContent = Game.profile.name;
-  const oName = OUTFITS[Game.profile.outfit]?.name || 'هودي عادي';
-  const hName = HATS[Game.profile.hat]?.name || 'بدون قبعة';
-  $('profile-summary-style').textContent = `${oName} • ${hName}`;
-  $('p-level').textContent = Game.profile.level;
-  $('p-coins').textContent = Game.profile.coins;
-  $('p-pets').textContent = Game.profile.pets.length;
-}
-
-function setupProfileUI() {
-  $('btn-profile').onclick = () => { $('profile-panel').classList.add('active'); renderProfile(); };
-  $('btn-close-profile').onclick = () => $('profile-panel').classList.remove('active');
-
-  document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.onclick = () => {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      const tab = btn.dataset.ptab;
-      $('ptab-appearance').style.display = tab === 'appearance' ? 'block' : 'none';
-      $('ptab-collection').style.display = tab === 'collection' ? 'block' : 'none';
-    };
-  });
-
-  $('input-expression').onchange = () => { Game.profile.expression = $('input-expression').value; refreshAvatarEverywhere(); };
-  $('input-hat').onchange = () => { Game.profile.hat = $('input-hat').value; refreshAvatarEverywhere(); };
-
-  $('btn-save-profile').onclick = () => {
-    Game.profile.name = $('input-name').value.trim() || 'لاعب';
-    Game.profile.expression = $('input-expression').value;
-    Game.profile.hat = $('input-hat').value;
-    Game.profile.save();
-    updateHUD();
-    refreshAvatarEverywhere();
-    toast('تم حفظ التعديلات');
-    $('profile-panel').classList.remove('active');
-  };
-}
-
-function renderProfile() {
-  $('input-name').value = Game.profile.name;
-  $('input-expression').value = Game.profile.expression || 'smile';
-
-  const hatSel = $('input-hat');
-  hatSel.innerHTML = '';
-  Object.entries(HATS).forEach(([id, h]) => {
-    const owned = h.free || (Game.profile.ownedHats || []).includes(id);
-    if (!owned) return;
-    const opt = document.createElement('option');
-    opt.value = id; opt.textContent = h.name;
-    hatSel.appendChild(opt);
-  });
-  hatSel.value = Game.profile.hat || 'none';
-
-  const cg = $('color-grid'); cg.innerHTML = '';
-  SKIN_COLORS.forEach(c => {
-    const sw = document.createElement('div');
-    sw.className = 'color-swatch' + (c === Game.profile.skinColor ? ' active' : '');
-    sw.style.background = '#' + c.toString(16).padStart(6, '0');
-    sw.onclick = () => { Game.profile.skinColor = c; refreshAvatarEverywhere(); renderProfile(); };
-    cg.appendChild(sw);
-  });
-
-  const hg = $('hair-grid'); hg.innerHTML = '';
-  Object.entries(HAIRSTYLES).forEach(([id, h]) => {
-    const btn = document.createElement('button');
-    btn.className = 'chip-btn' + (id === Game.profile.hairstyle ? ' active' : '');
-    btn.textContent = h.name;
-    btn.onclick = () => { Game.profile.hairstyle = id; refreshAvatarEverywhere(); renderProfile(); };
-    hg.appendChild(btn);
-  });
-
-  const og = $('outfits-grid'); og.innerHTML = '';
-  Object.entries(OUTFITS).forEach(([id, o]) => {
-    const owned = o.free || (Game.profile.ownedOutfits || []).includes(id);
-    if (!owned) return;
-    const btn = document.createElement('button');
-    btn.className = 'chip-btn' + (id === Game.profile.outfit ? ' active' : '');
-    btn.textContent = o.name;
-    btn.onclick = () => { Game.profile.outfit = id; refreshAvatarEverywhere(); renderProfile(); };
-    og.appendChild(btn);
-  });
-
-  $('inventory-list').innerHTML = Game.profile.inventory.length
-    ? Game.profile.inventory.map(i => `<div class="shop-item"><div class="tag">${i.tag}</div><div class="name">${i.name}</div><div class="meta">الكمية: ${i.count || 1}</div></div>`).join('')
-    : '<p style="color:#64748b;grid-column:1/-1;text-align:center;font-size:.8rem;">لا توجد عناصر إضافية بعد</p>';
-
-  $('pets-list').innerHTML = Game.profile.pets.length
-    ? Game.profile.pets.map(p => `<div class="shop-item"><div class="tag">مخلوق</div><div class="name">${p.name}</div><div class="meta">المستوى ${p.level}</div></div>`).join('')
-    : '<p style="color:#64748b;grid-column:1/-1;text-align:center;font-size:.8rem;">لم تروّض مخلوقات بعد</p>';
-
-  updateProfileSummary();
-  renderProfilePreview();
-}
-
-function setupShopUI() {
-  $('btn-shop').onclick = () => {
-    $('shop-panel').classList.add('active');
-    $('shop-coins').textContent = Game.profile.coins;
-    $('shop-gems').textContent = Game.profile.gems || 0;
-    renderShop('clothes');
-  };
-  $('btn-close-shop').onclick = () => $('shop-panel').classList.remove('active');
-  document.querySelectorAll('[data-shop]').forEach(b => {
-    b.onclick = () => renderShop(b.dataset.shop);
-  });
-}
-
-function renderShop(cat) {
-  const list = $('shop-items'); list.innerHTML = '';
-  (SHOP[cat] || []).forEach(item => {
-    const isOutfit = item.subType === 'outfit';
-    const isHat = item.subType === 'hat';
-    const owned = (isOutfit && Game.profile.ownedOutfits.includes(item.id)) ||
-                  (isHat && Game.profile.ownedHats.includes(item.id)) ||
-                  (cat === 'homes' && Game.profile.ownedHomes.includes(item.id));
-    const equipped = (isOutfit && Game.profile.outfit === item.id) ||
-                     (isHat && Game.profile.hat === item.id) ||
-                     (cat === 'weapons' && Game.profile.equippedWeapon === item.id);
-
-    const div = document.createElement('div');
-    div.className = 'shop-item' + (equipped ? ' equipped' : (owned ? ' owned' : ''));
-    div.innerHTML = `
-      <div class="tag">${item.tag}</div>
-      <div class="name">${item.name}</div>
-      <div class="price">${owned ? (equipped ? 'مستخدم حالياً' : 'مملوك') : item.price + ' عملة'}</div>
-    `;
-    div.onclick = () => {
-      if (owned) {
-        if (isOutfit) { Game.profile.outfit = item.id; refreshAvatarEverywhere(); toast(`تم ارتداء ${item.name}`); }
-        if (isHat) { Game.profile.hat = item.id; refreshAvatarEverywhere(); toast(`تم ارتداء ${item.name}`); }
-        if (cat === 'weapons') { Game.profile.equippedWeapon = item.id; updateWeaponModel(); toast(`تم تجهيز ${item.name}`); }
-        Game.profile.save(); renderShop(cat); return;
-      }
-      if (Game.profile.coins < item.price) { toast('العملات غير كافية', '#f87171'); return; }
-      Game.profile.coins -= item.price;
-      if (isOutfit) { Game.profile.ownedOutfits.push(item.id); Game.profile.outfit = item.id; refreshAvatarEverywhere(); }
-      else if (isHat) { Game.profile.ownedHats.push(item.id); Game.profile.hat = item.id; refreshAvatarEverywhere(); }
-      else if (cat === 'weapons') { Game.profile.equippedWeapon = item.id; updateWeaponModel(); }
-      else if (cat === 'homes') {
-        Game.profile.ownedHomes.push(item.id);
-        placePurchasedWalkableHouse(item, -24 + (Game.profile.ownedHomes.length - 1) * 16, 16);
-      } else {
-        const ex = Game.profile.inventory.find(i => i.id === item.id);
-        if (ex) ex.count = (ex.count || 1) + 5;
-        else Game.profile.inventory.push({ ...item, count: 5 });
-      }
-      Game.profile.save(); updateHUD();
-      $('shop-coins').textContent = Game.profile.coins;
-      Audio.sfx('gem');
-      toast(`تم شراء ${item.name}`);
-      renderShop(cat);
-    };
-    list.appendChild(div);
-  });
-}
-
-function setupQuestsUI() {
-  $('btn-quests').onclick = () => { $('quests-panel').classList.add('active'); renderQuests(); };
-  $('btn-close-quests').onclick = () => $('quests-panel').classList.remove('active');
-  $('btn-claim-quests').onclick = () => {
-    let sum = 0;
-    Game.profile.quests.forEach(q => { if (!q.claimed && (q.progress || 0) >= q.need) { q.claimed = true; sum += q.reward; } });
-    if (!sum) { toast('لا توجد مكافآت جاهزة', '#fbbf24'); return; }
-    Game.profile.coins += sum; Game.profile.save(); updateHUD();
-    Audio.sfx('quest'); toast(`تم استلام +${sum} عملة`, '#fbbf24');
-    renderQuests();
-  };
-}
-
-function renderQuests() {
-  $('quests-list').innerHTML = Game.profile.quests.map(q => {
-    const pct = Math.min(100, ((q.progress || 0) / q.need) * 100);
-    return `<div class="quest-item"><div class="info"><div class="title">${q.title}</div><div class="desc">${q.desc} • ${q.progress || 0}/${q.need}</div><div class="bar"><div style="width:${pct}%"></div></div></div><div class="reward">+${q.reward} عملة</div></div>`;
-  }).join('');
-  const now = new Date(), mid = new Date(now); mid.setHours(24, 0, 0, 0);
-  const diff = mid - now;
-  $('quest-reset').textContent = `${Math.floor(diff / 3600000)} س ${Math.floor((diff % 3600000) / 60000)} د`;
-}
-
-function setupAchievementsUI() {
-  $('btn-achievements').onclick = () => { $('achievements-panel').classList.add('active'); renderAchievements(); };
-  $('btn-close-achievements').onclick = () => $('achievements-panel').classList.remove('active');
-}
-
-function renderAchievements() {
-  $('achievements-list').innerHTML = ACHIEVEMENTS.map(a => {
-    const open = Game.profile.achievements.includes(a.id);
-    return `<div class="achievement-item ${open ? '' : 'locked'}"><div class="info"><div class="title">${a.title}</div><div class="desc">${a.desc}</div></div><div class="reward">+${a.reward} عملة</div></div>`;
-  }).join('');
-}
-
-function setupUI() {
-  setupBuildUIInternal();
-  setupShopUI();
-  setupProfileUI();
-  setupQuestsUI();
-  setupAchievementsUI();
-  $('map-modal').onclick = e => { if (e.target === $('map-modal')) toggleMap(false); };
-}
-
-function updateHUD() {
-  if (!Game.profile) return;
-  $('coins-display').textContent = Game.profile.coins;
-  $('gems-display').textContent = Game.profile.gems || 0;
-  $('level-display').textContent = Game.profile.level;
-  $('hp-bar').style.width = clamp(Game.profile.hp, 0, 100) + '%';
-  $('energy-bar').style.width = clamp(Game.profile.energy, 0, 100) + '%';
-  $('xp-bar').style.width = clamp(Game.profile.xp % 100, 0, 100) + '%';
-}
-
-// ═══════════════════════════════════════════════════════════
-// LOGIN & WORLD SELECT
-// ═══════════════════════════════════════════════════════════
-$('link-to-signup').onclick = () => { $('login-form').style.display = 'none'; $('signup-form').style.display = 'block'; };
-$('link-to-login').onclick = () => { $('signup-form').style.display = 'none'; $('login-form').style.display = 'block'; };
-$('btn-google').onclick = async () => { Audio.init(); Audio.resume(); try { await signInWithPopup(auth, new GoogleAuthProvider()); } catch (e) { toast('فشل الدخول: ' + e.message, '#f87171'); } };
-$('btn-login-submit').onclick = async () => { Audio.init(); Audio.resume(); try { await signInWithEmailAndPassword(auth, $('login-email').value, $('login-password').value); } catch (e) { toast('خطأ: ' + e.message, '#f87171'); } };
-$('btn-signup-submit').onclick = async () => {
-  Audio.init(); Audio.resume();
-  try {
-    const c = await createUserWithEmailAndPassword(auth, $('signup-email').value, $('signup-password').value);
-    if ($('signup-name').value) await updateProfile(c.user, { displayName: $('signup-name').value });
-    toast('تم إنشاء الحساب');
-  } catch (e) { toast('خطأ: ' + e.message, '#f87171'); }
-};
-$('btn-guest').onclick = () => { Audio.init(); Audio.resume(); showWorldSelect({ uid: 'guest_' + Date.now(), displayName: 'زائر', isGuest: true }); };
-onAuthStateChanged(auth, u => { if (u && !Game.user) showWorldSelect(u); });
-
-function showWorldSelect(user) {
-  Game.user = user;
-  Game.profile = loadProfile(user.uid, user.displayName || 'زائر');
-  updateHUD();
-  $('login-screen').style.opacity = '0';
-  setTimeout(() => {
-    $('login-screen').style.display = 'none';
-    $('world-select').classList.add('active');
-    renderWorldCards();
-    Audio.playMusic('main');
-  }, 350);
-}
-
-function renderWorldCards() {
-  const grid = $('worlds-grid'); grid.innerHTML = '';
-  Object.entries(WORLDS).forEach(([id, w]) => {
-    const locked = Game.profile.level < w.minLevel;
-    const card = document.createElement('div');
-    card.className = 'world-card' + (locked ? ' locked' : '');
-    card.innerHTML = `
-      ${locked ? `<div class="lock-tag">مغلق • مستوى ${w.minLevel}</div>` : ''}
-      <div class="badge-chip">${w.tag}</div>
-      <h3>${w.name}</h3>
-      <p class="desc">${w.desc}</p>
-      <div class="stats"><span>مستوى ${w.minLevel}+</span><span>${w.challenges} تحديات</span></div>
-    `;
-    card.onclick = () => {
-      if (locked) { toast(`يتطلب مستوى ${w.minLevel}`, '#f87171'); return; }
-      enterWorld(id);
-    };
-    grid.appendChild(card);
-  });
-}
-
-function enterWorld(worldId) {
-  Game.currentWorld = worldId;
-  $('world-select').classList.remove('active');
-  $('world-screen').style.display = 'block';
-  Audio.playMusic(worldId);
-  initWorld(worldId);
-}
-
-$('btn-worlds').onclick = () => {
-  if (Game.profile) Game.profile.save();
-  clearWorld();
-  if (Game.renderer) { Game.renderer.dispose(); Game.renderer.domElement.remove(); Game.renderer = null; }
-  $('world-screen').style.display = 'none';
-  $('world-select').classList.add('active');
-  renderWorldCards();
-};
-
-$('btn-logout').onclick = () => {
-  if (Game.profile) Game.profile.save();
-  if (Game.user && !Game.user.isGuest) signOut(auth).catch(() => {});
-  clearWorld();
-  if (Game.renderer) { Game.renderer.dispose(); Game.renderer.domElement.remove(); Game.renderer = null; }
-  Audio.stopMusic(); Game.user = null;
-  $('world-screen').style.display = 'none';
-  $('world-select').classList.remove('active');
-  $('login-screen').style.display = 'flex';
-  $('login-screen').style.opacity = '1';
-};
-</script>
-</body>
-</html>
+    toast(`تم ترويض ${t.name}`, '#10b981', 2600); } else { toast(`تقدم الترويض: ${Math
