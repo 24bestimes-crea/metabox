@@ -1195,7 +1195,7 @@
         <option value="أنمي">أنمي</option>
         <option value="أكشن">أكشن</option>
       </select>
-      <button class="btn btn-gold" id="openAdsModalBtn">📣 الإعلانات</button>
+      <button class="btn btn-gold" id="openAdsModalBtn" style="display:none;">📣 الإعلانات</button>
       <button class="btn btn-ai" id="aiOrganizeBtn">✦ تنظيم ذكي بالـ AI</button>
       <button class="btn btn-accent" id="openAddModalBtn" style="display:none;">+ إضافة</button>
       <button class="btn btn-secondary" id="toggleLangBtn">EN</button>
@@ -1209,9 +1209,9 @@
     <span id="dbStatus">حالة Firebase: جاري الاتصال بمشروع metaverse-metabox...</span>
     <div class="stats-badges" id="statsBadges"></div>
     <div class="utility-actions">
-      <button class="btn btn-secondary" id="downloadSitemapBtn" style="padding:4px 10px;font-size:0.76rem;">⬇ sitemap.xml</button>
-      <button class="btn btn-secondary" id="downloadRobotsBtn" style="padding:4px 10px;font-size:0.76rem;">⬇ robots.txt</button>
-      <button class="btn btn-secondary" id="seedDataBtn" style="padding:4px 10px;font-size:0.76rem;">تعبئة بيانات تجريبية</button>
+      <button class="btn btn-secondary" id="downloadSitemapBtn" style="display:none;padding:4px 10px;font-size:0.76rem;">⬇ sitemap.xml</button>
+      <button class="btn btn-secondary" id="downloadRobotsBtn" style="display:none;padding:4px 10px;font-size:0.76rem;">⬇ robots.txt</button>
+      <button class="btn btn-secondary" id="seedDataBtn" style="display:none;padding:4px 10px;font-size:0.76rem;">تعبئة بيانات تجريبية</button>
     </div>
   </div>
 
@@ -1545,7 +1545,7 @@
       appId: "1:509642391976:web:93746bbba00ad47bcb5d9d"
     };
 
-    // Only this single authenticated Firebase account can see Add / Edit / Delete buttons
+    // Only this single authenticated Firebase account can see admin/management controls
     const ADMIN_EMAIL = "24bestimes@gmail.com";
 
     const app = initializeApp(firebaseConfig);
@@ -1917,7 +1917,7 @@
     const seasonsJsonField = document.getElementById("seasonsJsonField");
     const newLabelsPicker = document.getElementById("newLabelsPicker");
 
-    // Single-Account Permission Check: Only 24bestimes@gmail.com in Firebase Auth can add/edit/delete
+    // Single-Account Permission Check: Only 24bestimes@gmail.com in Firebase Auth has admin controls
     function canManageCatalog() {
       if (demoUser || !currentFirebaseUser) return false;
       const userEmail = (currentFirebaseUser.email || "").trim().toLowerCase();
@@ -1926,12 +1926,19 @@
 
     function applyAdminControlsVisibility() {
       const allowed = canManageCatalog();
-      openAddModalBtn.style.display = allowed ? "inline-flex" : "none";
-      modalEditItemBtn.style.display = allowed ? "inline-flex" : "none";
-      modalDeleteItemBtn.style.display = allowed ? "inline-flex" : "none";
+      const displayVal = allowed ? "inline-flex" : "none";
+
+      openAddModalBtn.style.display = displayVal;
+      modalEditItemBtn.style.display = displayVal;
+      modalDeleteItemBtn.style.display = displayVal;
+      openAdsModalBtn.style.display = displayVal;
+      downloadSitemapBtn.style.display = displayVal;
+      downloadRobotsBtn.style.display = displayVal;
+      seedDataBtn.style.display = displayVal;
 
       if (!allowed) {
         addModal.classList.remove("open");
+        adsModal.classList.remove("open");
         editingItemId = null;
       }
 
@@ -2058,6 +2065,7 @@
     }
 
     openAdsModalBtn.addEventListener("click", () => {
+      if (!canManageCatalog()) return;
       adsFeedback.textContent = "";
       adsFeedback.className = "auth-feedback";
       adCardPopUrl.value = adsConfig.cardPopUrl || "";
@@ -2082,6 +2090,7 @@
 
     adsSettingsForm.addEventListener("submit", async (e) => {
       e.preventDefault();
+      if (!canManageCatalog()) return;
       adsConfig = {
         cardPopUrl: adCardPopUrl.value.trim(),
         bottomBannerUrl: adBottomBannerUrl.value.trim(),
@@ -2103,6 +2112,7 @@
     });
 
     clearAllAdsBtn.addEventListener("click", () => {
+      if (!canManageCatalog()) return;
       adsConfig = {
         cardPopUrl: "",
         bottomBannerUrl: "",
@@ -3178,14 +3188,17 @@ Sitemap: ${baseUrl}sitemap.xml
     }
 
     downloadSitemapBtn.addEventListener("click", () => {
+      if (!canManageCatalog()) return;
       triggerFileDownload("sitemap.xml", generateSitemapXml(), "application/xml;charset=utf-8");
     });
 
     downloadRobotsBtn.addEventListener("click", () => {
+      if (!canManageCatalog()) return;
       triggerFileDownload("robots.txt", generateRobotsTxt(), "text/plain;charset=utf-8");
     });
 
     seedDataBtn.addEventListener("click", async () => {
+      if (!canManageCatalog()) return;
       seedDataBtn.disabled = true;
       seedDataBtn.textContent = "جاري الإضافة...";
       try {
