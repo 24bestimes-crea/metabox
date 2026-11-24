@@ -1,21 +1,23 @@
-تمت إضافة خلفية تفاعلية متحركة بالأشكال الهندسية والمجسمات ثلاثية الأبعاد إلى واجهة Home في التطبيق، مع الحفاظ على تصميم الواجهة والعوالم الثلاثية الأبعاد كما هو.
-ما الذي تمت إضافته؟
- * مجسمات هندسية ثلاثية الأبعاد (Three.js): مكعبات شبكية مضيئة، مجسمات ثماني الأسطح (Octahedron)، وحلقات هندسية (Torus) تدور وتطفو بسلاسة في خلفية الواجهة الرئيسية وتستجيب لحركة المؤشر (Parallax) مع توهج خفيف لا يشتت الانتباه عن البطاقات.
- * أشكال هندسية ثنائية الأبعاد (Canvas 2D): خطوط متصلة ومثلثات ومعينات وحلقات تتحرك بنعومة وتتفاعل مع حركة الفأرة لتمنح الخلفية عمقاً بصرياً متكاملاً.
- * إيقاف تلقائي عند الدخول للعالم: تتوقف الخلفية المتحركة مؤقتاً أثناء اللعب داخل العالم ثلاثي الأبعاد لتوفير الأداء والذاكرة، وتستأنف تلقائياً عند العودة إلى Home.
-إليك الكود الكامل المحدث:
+أهلاً بك! قمت بتطوير المنصة لتشمل ألعاباً شبيهة بأشهر الألعاب العالمية ولكن بأسلوب روبلوكس (Blocky / 3D)، مع الحفاظ على تصميم واجهة Home والأشكال الهندسية المتحركة في الخلفية.
+أبرز الألعاب الشهيرة المضافة بأسلوب روبلوكس:
+ * Blox Royale (شبيهة ألعاب الباتل رويال / فورتنايت): ساحة قتال مع سواتر ومناطق مرتفعة للقفز وجمع العملات والبناء السريع (B).
+ * Cyber Obby Rush (شبيهة ألعاب الركض والقفز السريع): مسار عقبات مرتفع متدرج الارتفاع بسرعة حركة عالية.
+ * Blocky Arena Shooter (شبيهة ألعاب التصويب والمواجهات): ساحة أعمدة وقواعد للتنقل والمناورة وكسب النقاط.
+ * Treasure Tycoon (شبيهة ألعاب التطوير وجمع الثروات): منصة تطوير وجمع عملات ذهبية مكثفة.
+ * Sky Drop Survival (شبيهة ألعاب النجاة على المنصات): منصات معلقة في السماء تتطلب دقة في القفز والتوازن.
+إليك الكود الكامل جاهز للتشغيل مباشرة:
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>BloxHub - Roblox Style Home & 3D Worlds</title>
+<title>BloxHub - Famous Games Roblox Style</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
   html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Segoe UI', Tahoma, sans-serif; background: #18191b; color: #ffffff; }
 
   /* ═══════════════════════════════════════════════════════
-     ROBLOX-STYLE HOME LAUNCHER + ANIMATED GEOMETRIC BG
+     HOME SCREEN + ANIMATED GEOMETRIC BG
      ═══════════════════════════════════════════════════════ */
   #home-screen {
     position: fixed; inset: 0; display: flex; flex-direction: column;
@@ -26,7 +28,6 @@
   }
   #home-screen.hidden { opacity: 0; pointer-events: none; visibility: hidden; }
 
-  /* Animated Geometric & 3D Shapes Backdrop */
   #bg-shapes-layer {
     position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
   }
@@ -35,7 +36,6 @@
   }
   #bg-2d-canvas { opacity: 0.55; }
 
-  /* Top Bar */
   .top-nav {
     position: relative; z-index: 2;
     height: 52px; background: rgba(35, 37, 39, 0.88); backdrop-filter: blur(10px);
@@ -69,10 +69,8 @@
   }
   .hud-chip .coin-dot { width: 14px; height: 14px; border-radius: 50%; background: #facc15; color: #111827; display: inline-flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 900; }
 
-  /* Body Layout: Sidebar + Main Content */
   .home-body { position: relative; z-index: 2; flex: 1; display: flex; overflow: hidden; }
 
-  /* Left Sidebar */
   .side-rail {
     width: 56px; background: rgba(30, 32, 34, 0.88); backdrop-filter: blur(10px);
     border-left: 1px solid rgba(255,255,255,0.06);
@@ -93,7 +91,6 @@
     font-size: 0.72rem; font-weight: 800; color: #fff;
   }
 
-  /* Main Feed */
   .feed-scroll {
     flex: 1; overflow-y: auto; padding: 20px 26px 48px;
     display: flex; flex-direction: column; gap: 26px;
@@ -114,7 +111,6 @@
   }
   .section-block h3 span.arrow { color: #9ca3af; font-size: 0.9rem; }
 
-  /* Friends Row */
   .friends-row {
     display: flex; gap: 16px; overflow-x: auto; padding-bottom: 6px;
     scrollbar-width: thin;
@@ -151,7 +147,6 @@
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 78px; margin-top: -4px;
   }
 
-  /* Games Grid */
   .games-grid {
     display: grid; grid-template-columns: repeat(auto-fill, minmax(156px, 1fr)); gap: 16px;
   }
@@ -176,10 +171,10 @@
   .thumb-badge.new { background: #22c55e; color: #052e16; }
   .thumb-badge.hot { background: #ef4444; color: #fff; }
   .thumb-art {
-    font-size: 1.05rem; font-weight: 900; line-height: 1.25;
+    font-size: 1.02rem; font-weight: 900; line-height: 1.25;
     text-shadow: 0 2px 8px rgba(0,0,0,0.65);
   }
-  .thumb-sub { font-size: 0.68rem; opacity: 0.9; margin-top: 4px; font-weight: 600; }
+  .thumb-sub { font-size: 0.66rem; opacity: 0.92; margin-top: 5px; font-weight: 700; }
   .game-title {
     font-size: 0.84rem; font-weight: 700; color: #f9fafb;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
@@ -199,7 +194,7 @@
   .in-game-bar {
     position: fixed; top: 14px; left: 14px; right: 14px;
     display: flex; justify-content: space-between; align-items: center;
-    gap: 10px; z-index: 20; pointer-events: none;
+    gap: 10px; z-index: 20; pointer-events: none; flex-wrap: wrap;
   }
   .ig-pill {
     background: rgba(15, 23, 42, 0.82); backdrop-filter: blur(10px);
@@ -247,7 +242,7 @@
 <body>
 
 <!-- ═══════════════════════════════════════════════════════
-     HOME SCREEN (ROBLOX STYLE + ANIMATED SHAPES & 3D MESHES)
+     HOME SCREEN + ANIMATED GEOMETRIC BG
      ═══════════════════════════════════════════════════════ -->
 <div id="home-screen">
   <div id="bg-shapes-layer">
@@ -361,7 +356,6 @@ window.addEventListener('pointermove', e => {
   ptrY = (e.clientY / Math.max(1, window.innerHeight)) * 2 - 1;
 });
 
-// 2D Geometric Shapes Backdrop
 const c2d = $('bg-2d-canvas');
 const ctx2d = c2d.getContext('2d');
 const shapes2D = [];
@@ -437,7 +431,6 @@ function draw2DShape(s) {
   ctx2d.restore();
 }
 
-// 3D Floating Geometric Meshes Backdrop
 const bg3dCanvas = $('bg-3d-canvas');
 const bgScene = new THREE.Scene();
 const bgCamera = new THREE.PerspectiveCamera(50, Math.max(1, window.innerWidth) / Math.max(1, window.innerHeight), 0.1, 100);
@@ -490,7 +483,7 @@ window.addEventListener('resize', () => {
 });
 
 // ═══════════════════════════════════════════════════════
-// DATA: FRIENDS & GAMES
+// DATA: FRIENDS & FAMOUS GAMES IN ROBLOX STYLE
 // ═══════════════════════════════════════════════════════
 const FRIENDS = [
   { add: true, name: 'Add Friends' },
@@ -505,23 +498,69 @@ const FRIENDS = [
 ];
 
 const CONTINUE_GAMES = [
-  { id: 'sonic_speed', title: '[FLY!] Sonic Speed...', like: '94%', players: '11.5K', badge: 'FLY', badgeType: 'hot', bg: 'linear-gradient(135deg,#0284c7,#1d4ed8)', sky: 0x0ea5e9, floor: 0x22c55e, accent: 0x3b82f6, speed: 13.5 },
-  { id: 'typical_colors', title: 'Typical Colors 2', like: '78%', players: '1.1K', badge: '', badgeType: '', bg: 'linear-gradient(135deg,#3f6212,#14532d)', sky: 0x64748b, floor: 0x4d7c0f, accent: 0x84cc16, speed: 9.2 },
-  { id: 'easy_obby', title: 'Easy Obby! [NEW STAGES]', like: '79%', players: '7.5K', badge: 'EVENT', badgeType: 'hot', bg: 'linear-gradient(135deg,#ec4899,#8b5cf6,#06b6d4)', sky: 0x7dd3fc, floor: 0xf472b6, accent: 0xfacc15, speed: 9.5 },
-  { id: 'prison_run', title: "BARRY'S PRISON RUN!", like: '56%', players: '19.7K', badge: '', badgeType: '', bg: 'linear-gradient(135deg,#1e3a8a,#f59e0b)', sky: 0x334155, floor: 0x475569, accent: 0xf59e0b, speed: 10.2 },
-  { id: 'nextbots', title: "nico's nextbots", like: '95%', players: '34.4K', badge: '', badgeType: '', bg: 'linear-gradient(135deg,#065f46,#047857)', sky: 0x1e293b, floor: 0x334155, accent: 0x10b981, speed: 11.5 },
-  { id: 'pet_sim', title: '[🟧] Pet Simulator X!', like: '92%', players: '119K', badge: '', badgeType: '', bg: 'linear-gradient(135deg,#78350f,#b45309)', sky: 0x93c5fd, floor: 0x86efac, accent: 0xf97316, speed: 9.0 },
-  { id: 'points_sale', title: '⚡ POINTS SALE | Funky', like: '91%', players: '9.4K', badge: '50% SALE', badgeType: 'hot', bg: 'linear-gradient(135deg,#be185d,#7e22ce)', sky: 0xc084fc, floor: 0xa855f7, accent: 0xfacc15, speed: 9.5 },
-  { id: 'type_race', title: 'Type Race!', like: '82%', players: '79', badge: 'NEW!', badgeType: 'new', bg: 'linear-gradient(135deg,#0369a1,#0f172a)', sky: 0xbae6fd, floor: 0x38bdf8, accent: 0xfbbf24, speed: 8.8 },
+  {
+    id: 'blox_royale', title: 'Blox Royale [BATTLE]', sub: 'ساحة قتال وسواتر',
+    like: '95%', players: '24.8K', badge: 'HOT', badgeType: 'hot',
+    bg: 'linear-gradient(135deg,#7c3aed,#2563eb)', sky: 0x3b82f6, floor: 0x16a34a, accent: 0xfacc15,
+    speed: 10.5, mode: 'battle'
+  },
+  {
+    id: 'cyber_obby', title: 'Cyber Obby Rush', sub: 'قفز سريع ومرتفعات',
+    like: '92%', players: '16.2K', badge: 'FLY', badgeType: 'hot',
+    bg: 'linear-gradient(135deg,#0284c7,#06b6d4)', sky: 0x0f172a, floor: 0x0ea5e9, accent: 0xf472b6,
+    speed: 13.0, mode: 'obby'
+  },
+  {
+    id: 'arena_shooter', title: 'Blocky Arena Shooter', sub: 'مناورة وأعمدة قتالية',
+    like: '88%', players: '11.4K', badge: '', badgeType: '',
+    bg: 'linear-gradient(135deg,#b91c1c,#f59e0b)', sky: 0x1e293b, floor: 0x475569, accent: 0xef4444,
+    speed: 10.8, mode: 'arena'
+  },
+  {
+    id: 'treasure_tycoon', title: 'Treasure Tycoon!', sub: 'جمع عملات وتطوير',
+    like: '94%', players: '31.0K', badge: 'NEW', badgeType: 'new',
+    bg: 'linear-gradient(135deg,#ca8a04,#ea580c)', sky: 0x7dd3fc, floor: 0x22c55e, accent: 0xfacc15,
+    speed: 9.4, mode: 'tycoon'
+  },
+  {
+    id: 'sky_drop', title: 'Sky Drop Survival', sub: 'نجاة على منصات معلقة',
+    like: '86%', players: '8.7K', badge: '', badgeType: '',
+    bg: 'linear-gradient(135deg,#0f766e,#2563eb)', sky: 0x38bdf8, floor: 0x14b8a6, accent: 0xfbbf24,
+    speed: 9.8, mode: 'sky'
+  },
+  {
+    id: 'turbo_kart', title: 'Turbo Kart Obby', sub: 'انطلاق ومسارات متدرجة',
+    like: '90%', players: '9.5K', badge: '', badgeType: '',
+    bg: 'linear-gradient(135deg,#db2777,#9333ea)', sky: 0xc084fc, floor: 0xa855f7, accent: 0x38bdf8,
+    speed: 12.2, mode: 'obby'
+  },
 ];
 
 const ACTIVITY_GAMES = [
-  { id: 'tower_climb', title: 'Mega Climb Tower', like: '93%', players: '6.2K', badge: 'NEW', badgeType: 'new', bg: 'linear-gradient(135deg,#0284c7,#38bdf8)', sky: 0x7dd3fc, floor: 0x38bdf8, accent: 0xfacc15, speed: 9.8 },
-  { id: 'anime_clash', title: 'Anime Clash XV', like: '89%', players: '14.1K', badge: '', badgeType: '', bg: 'linear-gradient(135deg,#312e81,#9d174d)', sky: 0x1e1b4b, floor: 0x4338ca, accent: 0xf472b6, speed: 10.5 },
-  { id: 'fruit_tycoon', title: 'Fruit Juice Tycoon Refreshed', like: '87%', players: '3.8K', badge: '', badgeType: '', bg: 'linear-gradient(135deg,#ea580c,#facc15)', sky: 0xfef08a, floor: 0x4ade80, accent: 0xf97316, speed: 8.5 },
-  { id: 'raise_floppa', title: 'Raise a FLOPPA 2', like: '96%', players: '8.9K', badge: '', badgeType: '', bg: 'linear-gradient(135deg,#9a3412,#fbbf24)', sky: 0xfde68a, floor: 0xd97706, accent: 0xfef08a, speed: 8.5 },
-  { id: 'rotube_life', title: 'ROTUBE LIFE', like: '84%', players: '4.5K', badge: 'NEW', badgeType: 'new', bg: 'linear-gradient(135deg,#dc2626,#7e22ce)', sky: 0x1e293b, floor: 0x475569, accent: 0xef4444, speed: 9.0 },
-  { id: 'raise_peter', title: 'RAISE A PETER', like: '90%', players: '12.3K', badge: '', badgeType: '', bg: 'linear-gradient(135deg,#1d4ed8,#f97316)', sky: 0x93c5fd, floor: 0x22c55e, accent: 0xfbbf24, speed: 8.8 },
+  {
+    id: 'dungeon_blocks', title: 'Dungeon Blocks Quest', sub: 'مغامرة وقلاع مكعبة',
+    like: '91%', players: '13.6K', badge: 'NEW', badgeType: 'new',
+    bg: 'linear-gradient(135deg,#334155,#0f172a)', sky: 0x1e293b, floor: 0x3f6212, accent: 0xf59e0b,
+    speed: 9.5, mode: 'arena'
+  },
+  {
+    id: 'candy_climb', title: 'Candy Tower Climb', sub: 'تسلق قمم ملونة',
+    like: '93%', players: '19.1K', badge: '', badgeType: '',
+    bg: 'linear-gradient(135deg,#ec4899,#f97316)', sky: 0xfbcfe8, floor: 0xf472b6, accent: 0xfacc15,
+    speed: 10.0, mode: 'obby'
+  },
+  {
+    id: 'gold_rush_3d', title: 'Gold Rush 3D', sub: 'سباق جمع الذهب',
+    like: '89%', players: '7.2K', badge: '', badgeType: '',
+    bg: 'linear-gradient(135deg,#d97706,#fef08a)', sky: 0x93c5fd, floor: 0x4ade80, accent: 0xfacc15,
+    speed: 11.2, mode: 'tycoon'
+  },
+  {
+    id: 'neon_parkour', title: 'Neon Parkour', sub: 'قفزات نيون دقيقة',
+    like: '96%', players: '22.4K', badge: 'HOT', badgeType: 'hot',
+    bg: 'linear-gradient(135deg,#2563eb,#10b981)', sky: 0x090d16, floor: 0x1e293b, accent: 0x38bdf8,
+    speed: 11.8, mode: 'sky'
+  },
 ];
 
 let coins = 120;
@@ -559,7 +598,7 @@ function renderFriends() {
         <div class="friend-name">${f.name}</div>
         ${f.sub ? `<div class="friend-sub">${f.sub}</div>` : ''}
       `;
-      card.onclick = () => toast(`${f.name} نشط الآن في العوالم`, '#0284c7');
+      card.onclick = () => toast(`${f.name} نشط الآن في الألعاب`, '#0284c7');
     }
     row.appendChild(card);
   });
@@ -575,7 +614,7 @@ function makeGameTile(game) {
     <div class="thumb-box" style="background:${game.bg}">
       ${badgeHtml}
       <div class="thumb-art">${game.title}</div>
-      <div class="thumb-sub">اضغط للدخول</div>
+      <div class="thumb-sub">${game.sub}</div>
     </div>
     <div class="game-title" title="${game.title}">${game.title}</div>
     <div class="game-meta">
@@ -594,15 +633,15 @@ function renderGames(filter = '') {
   cGrid.innerHTML = '';
   aGrid.innerHTML = '';
 
-  CONTINUE_GAMES.filter(g => !q || g.title.toLowerCase().includes(q)).forEach(g => cGrid.appendChild(makeGameTile(g)));
-  ACTIVITY_GAMES.filter(g => !q || g.title.toLowerCase().includes(q)).forEach(g => aGrid.appendChild(makeGameTile(g)));
+  CONTINUE_GAMES.filter(g => !q || g.title.toLowerCase().includes(q) || g.sub.toLowerCase().includes(q)).forEach(g => cGrid.appendChild(makeGameTile(g)));
+  ACTIVITY_GAMES.filter(g => !q || g.title.toLowerCase().includes(q) || g.sub.toLowerCase().includes(q)).forEach(g => aGrid.appendChild(makeGameTile(g)));
 }
 
 $('search-input').addEventListener('input', e => renderGames(e.target.value));
 $('top-coins-chip').onclick = () => { coins += 25; syncCoinDisplays(); toast('+25 عملة مجانية!', '#eab308'); };
-$('top-bell-chip').onclick = () => toast('مرحباً بك في BloxHub!');
+$('top-bell-chip').onclick = () => toast('اختر أي لعبة شبيهة بالألعاب الشهيرة للعب فوراً!');
 $('rail-home').onclick = () => { $('home-screen').classList.remove('hidden'); };
-$('rail-play').onclick = () => launchGame(CONTINUE_GAMES[2]);
+$('rail-play').onclick = () => launchGame(CONTINUE_GAMES[0]);
 $('rail-info').onclick = () => toast('WASD للحركة • Space للقفز • سحب بالماوس للكاميرا • B لوضع مكعب');
 $('rail-color').onclick = () => {
   colorIdx = (colorIdx + 1) % AVATAR_PALETTE.length;
@@ -611,7 +650,7 @@ $('rail-color').onclick = () => {
 };
 
 // ═══════════════════════════════════════════════════════
-// 3D ENGINE & WORLD LAUNCHER
+// 3D ENGINE & DISTINCT GAME MODES (ROBLOX BLOCKY STYLE)
 // ═══════════════════════════════════════════════════════
 let scene, camera, renderer, player, limbs = {};
 let platforms = [];
@@ -692,24 +731,41 @@ function clearWorldObjects() {
   coinMeshes = [];
 }
 
-function launchGame(game) {
-  initThreeOnce();
-  clearWorldObjects();
-  activeGame = game;
-  score = 0;
-  syncCoinDisplays();
+function buildModeLayout(game) {
+  addBox(0, -0.5, 0, 32, 1, 32, game.floor);
 
-  scene.background = new THREE.Color(game.sky);
-  scene.fog = new THREE.FogExp2(game.sky, 0.005);
+  if (game.mode === 'battle' || game.mode === 'arena') {
+    // Cover walls & towers for Battle Royale / Arena Shooter style
+    addBox(-7, 1.0, -6, 3.5, 2.0, 1.2, game.accent);
+    addBox(7, 1.0, -6, 3.5, 2.0, 1.2, game.accent);
+    addBox(0, 1.0, -11, 4.5, 2.0, 1.2, 0x38bdf8);
+    addBox(-9, 2.2, 5, 4.0, 4.4, 4.0, 0x334155);
+    addBox(9, 2.2, 5, 4.0, 4.4, 4.0, 0x334155);
+    addBox(0, 2.0, 0, 3.2, 1.0, 3.2, game.accent);
+  } else if (game.mode === 'obby') {
+    // Stepping & ascending Obby course
+    addBox(0, 0.7, -16, 4.6, 0.8, 4.6, game.accent);
+    addBox(3.2, 1.8, -23, 4.2, 0.8, 4.2, game.accent);
+    addBox(-2.8, 2.9, -30, 4.2, 0.8, 4.2, game.accent);
+    addBox(0, 4.0, -38, 9, 1.0, 9, 0xfacc15);
+  } else if (game.mode === 'tycoon') {
+    // Tycoon pads & elevated reward platform
+    addBox(-6, 0.5, -8, 6, 1.0, 6, game.accent);
+    addBox(6, 0.5, -8, 6, 1.0, 6, game.accent);
+    addBox(0, 1.6, -18, 8, 1.0, 8, 0xfacc15);
+  } else {
+    // Sky Drop / Parkour floating blocks
+    addBox(0, 1.2, -14, 4.2, 0.8, 4.2, game.accent);
+    addBox(4.5, 2.5, -21, 3.8, 0.8, 3.8, 0x38bdf8);
+    addBox(-4.5, 3.8, -28, 3.8, 0.8, 3.8, game.accent);
+    addBox(0, 5.0, -36, 8.5, 1.0, 8.5, 0xfacc15);
+  }
 
-  addBox(0, -0.5, 0, 26, 1, 26, game.floor);
-  addBox(0, 0.6, -16, 4.5, 0.8, 4.5, game.accent);
-  addBox(3, 1.6, -23, 4.2, 0.8, 4.2, game.accent);
-  addBox(-2.5, 2.6, -30, 4.2, 0.8, 4.2, game.accent);
-  addBox(0, 3.6, -38, 10, 1.0, 10, 0xfacc15);
-
-  const coinCoords = [[0, 1.2, -8], [3, 2.8, -23], [-2.5, 3.8, -30], [0, 5.0, -38]];
-  coinCoords.forEach(([x, y, z]) => {
+  const coords = [
+    [0, 1.2, -7], [-7, 2.4, -6], [7, 2.4, -6],
+    [0, 3.2, -16], [3.2, 3.2, -23], [0, 5.4, -36]
+  ];
+  coords.forEach(([x, y, z]) => {
     const m = new THREE.Mesh(
       new THREE.CylinderGeometry(0.42, 0.42, 0.15, 16),
       new THREE.MeshStandardMaterial({ color: 0xfacc15, emissive: 0xca8a04, emissiveIntensity: 0.4 })
@@ -719,14 +775,26 @@ function launchGame(game) {
     scene.add(m);
     coinMeshes.push({ mesh: m, baseY: y, taken: false });
   });
+}
 
+function launchGame(game) {
+  initThreeOnce();
+  clearWorldObjects();
+  activeGame = game;
+  score = 0;
+  syncCoinDisplays();
+
+  scene.background = new THREE.Color(game.sky);
+  scene.fog = new THREE.FogExp2(game.sky, 0.0045);
+
+  buildModeLayout(game);
   buildPlayerMesh();
   velY = 0; grounded = false; yaw = 0;
 
   $('ig-game-name').textContent = game.title;
   $('home-screen').classList.add('hidden');
   $('world-view').classList.add('active');
-  toast(`تم الدخول إلى ${game.title}`);
+  toast(`بدأت لعبة ${game.title}`);
 }
 
 $('ig-back-home').onclick = () => {
@@ -751,7 +819,7 @@ $('ig-build-btn').onclick = () => {
   const by = Math.max(0.5, Math.round(player.position.y));
   const bz = Math.round(player.position.z + Math.cos(player.rotation.y) * 2.5);
   addBox(bx, by, bz, 2, 2, 2, activeGame?.accent || 0x38bdf8);
-  toast('تم وضع مكعب!');
+  toast('تم وضع مكعب بناء!');
 };
 
 window.addEventListener('keydown', e => {
@@ -803,7 +871,6 @@ function tick() {
   const dt = Math.min(clock.getDelta(), 0.05);
   const elapsed = clock.elapsedTime;
 
-  // Animate Home Geometric Shapes & 3D Meshes when on Home screen
   if (!activeGame) {
     const w = window.innerWidth;
     const h = window.innerHeight;
@@ -919,3 +986,4 @@ tick();
 </body>
 </html>
 
+هل تفضل أن نضيف أعداء متحركين أو فخاخ داخل أنماط القتال والنجاة، أم نزيد عدد الألعاب في القائمة الرئيسية؟
