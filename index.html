@@ -1,17 +1,18 @@
-أهلاً بك! قمت بتطوير المنصة لتشمل ألعاباً شبيهة بأشهر الألعاب العالمية ولكن بأسلوب روبلوكس (Blocky / 3D)، مع الحفاظ على تصميم واجهة Home والأشكال الهندسية المتحركة في الخلفية.
-أبرز الألعاب الشهيرة المضافة بأسلوب روبلوكس:
- * Blox Royale (شبيهة ألعاب الباتل رويال / فورتنايت): ساحة قتال مع سواتر ومناطق مرتفعة للقفز وجمع العملات والبناء السريع (B).
- * Cyber Obby Rush (شبيهة ألعاب الركض والقفز السريع): مسار عقبات مرتفع متدرج الارتفاع بسرعة حركة عالية.
- * Blocky Arena Shooter (شبيهة ألعاب التصويب والمواجهات): ساحة أعمدة وقواعد للتنقل والمناورة وكسب النقاط.
- * Treasure Tycoon (شبيهة ألعاب التطوير وجمع الثروات): منصة تطوير وجمع عملات ذهبية مكثفة.
- * Sky Drop Survival (شبيهة ألعاب النجاة على المنصات): منصات معلقة في السماء تتطلب دقة في القفز والتوازن.
-إليك الكود الكامل جاهز للتشغيل مباشرة:
+أهلاً بك! قمت بإضافة مجموعة من أشهر ألعاب مواقع Friv و Y8 و FrivMax ولكن بأسلوب ومجسمات روبلوكس ثلاثية الأبعاد (3D Blocky Style) مع الحفاظ على واجهة Home المستوحاة من الصورة، والخلفية الهندسية والمجسمات المتحركة، والأعداء والفخاخ والهجوم والقفز المزدوج.
+أبرز ألعاب Friv و Y8 و FrivMax المضافة بأسلوب روبلوكس:
+ * Fireboy & Watergirl Blox: مغامرة منصات وعقبات بأسلوب روبلوكس مع قفز مزدوج وجمع عملات.
+ * Slope 3D Blocky: انطلاق وسرعة عالية ومسارات متدرجة وتجاوز فخاخ ومنصات.
+ * Tank Fury Y8 Blox: ساحة مواجهة ودبابات/أعداء مكعبين وسواتر مع هجوم (F).
+ * Moto X3M Obby Blox: مسارات سباق وحركات وقفزات متتالية على منصات مرتفعة.
+ * Zombie Survival Y8 Blox: مواجهة أعداء مطاردين وحصد نقاط وعملات داخل ساحة مليئة بالفخاخ.
+ * FrivMax Gold Miner & Parkour: جمع الذهب والمكعبات وتجاوز العقبات المعلقة.
+إليك الكود الكامل وجاهز للتشغيل مباشرة:
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>BloxHub - Famous Games Roblox Style</title>
+<title>BloxHub - Friv, Y8 & FrivMax in Roblox Style</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
   html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Segoe UI', Tahoma, sans-serif; background: #18191b; color: #ffffff; }
@@ -92,7 +93,7 @@
   }
 
   .feed-scroll {
-    flex: 1; overflow-y: auto; padding: 20px 26px 48px;
+    flex: 1; overflow-y: auto; padding: 20px 26px 54px;
     display: flex; flex-direction: column; gap: 26px;
   }
   .user-greeting {
@@ -170,11 +171,13 @@
   }
   .thumb-badge.new { background: #22c55e; color: #052e16; }
   .thumb-badge.hot { background: #ef4444; color: #fff; }
+  .thumb-badge.y8 { background: #38bdf8; color: #082f49; }
+  .thumb-badge.friv { background: #facc15; color: #1c1917; }
   .thumb-art {
-    font-size: 1.02rem; font-weight: 900; line-height: 1.25;
+    font-size: 1.0rem; font-weight: 900; line-height: 1.25;
     text-shadow: 0 2px 8px rgba(0,0,0,0.65);
   }
-  .thumb-sub { font-size: 0.66rem; opacity: 0.92; margin-top: 5px; font-weight: 700; }
+  .thumb-sub { font-size: 0.65rem; opacity: 0.92; margin-top: 5px; font-weight: 700; }
   .game-title {
     font-size: 0.84rem; font-weight: 700; color: #f9fafb;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
@@ -197,19 +200,33 @@
     gap: 10px; z-index: 20; pointer-events: none; flex-wrap: wrap;
   }
   .ig-pill {
-    background: rgba(15, 23, 42, 0.82); backdrop-filter: blur(10px);
+    background: rgba(15, 23, 42, 0.84); backdrop-filter: blur(10px);
     border: 1px solid rgba(255,255,255,0.14); border-radius: 999px;
-    padding: 8px 15px; font-size: 0.84rem; font-weight: 700;
-    display: flex; align-items: center; gap: 12px; pointer-events: auto;
+    padding: 8px 15px; font-size: 0.82rem; font-weight: 700;
+    display: flex; align-items: center; gap: 12px; pointer-events: auto; flex-wrap: wrap;
   }
+  .hp-mini {
+    width: 78px; height: 8px; background: rgba(255,255,255,0.16); border-radius: 6px; overflow: hidden;
+    display: inline-block; vertical-align: middle;
+  }
+  .hp-mini > i { display: block; height: 100%; width: 100%; background: linear-gradient(90deg,#ef4444,#f87171); transition: width 0.2s; }
+
   .ig-btn {
-    border: none; border-radius: 10px; padding: 9px 14px;
-    font-weight: 700; font-size: 0.82rem; cursor: pointer; color: #fff;
+    border: none; border-radius: 10px; padding: 9px 13px;
+    font-weight: 700; font-size: 0.8rem; cursor: pointer; color: #fff;
     background: rgba(30, 41, 59, 0.9); border: 1px solid rgba(255,255,255,0.16);
     pointer-events: auto; transition: transform 0.15s, background 0.15s;
   }
   .ig-btn:hover { transform: translateY(-2px); background: rgba(51, 65, 85, 0.95); }
+  .ig-btn.atk-btn { background: linear-gradient(135deg, #dc2626, #b91c1c); }
   .ig-btn.home-btn { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
+
+  .ig-help {
+    position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
+    background: rgba(15, 23, 42, 0.76); border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 12px; padding: 7px 14px; font-size: 0.74rem; color: #cbd5e1;
+    pointer-events: none; z-index: 18; white-space: nowrap; max-width: 94vw; overflow: hidden; text-overflow: ellipsis;
+  }
 
   #toast {
     position: fixed; top: 68px; left: 50%; transform: translateX(-50%);
@@ -228,14 +245,20 @@
     position: absolute; top: 50%; left: 50%; width: 46px; height: 46px;
     border-radius: 50%; background: #38bdf8; transform: translate(-50%, -50%); pointer-events: none;
   }
-  #mob-jump {
-    display: none; position: fixed; bottom: 34px; right: 28px;
-    width: 68px; height: 68px; border-radius: 50%; border: none;
-    background: linear-gradient(135deg, #2563eb, #0284c7); color: #fff;
-    font-weight: 800; font-size: 0.85rem; z-index: 25; cursor: pointer;
+  .mob-actions {
+    display: none; position: fixed; bottom: 32px; right: 26px;
+    gap: 10px; flex-direction: column; z-index: 25;
   }
+  .m-act-btn {
+    width: 64px; height: 64px; border-radius: 50%; border: none;
+    color: #fff; font-weight: 800; font-size: 0.78rem; cursor: pointer;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.4);
+  }
+  #mob-jump { background: linear-gradient(135deg, #2563eb, #0284c7); }
+  #mob-atk { background: linear-gradient(135deg, #ef4444, #b91c1c); }
   @media (pointer: coarse) {
-    #joy-zone, #mob-jump { display: block; }
+    #joy-zone, .mob-actions { display: flex; }
+    .ig-help { display: none; }
   }
 </style>
 </head>
@@ -257,7 +280,7 @@
     </div>
     <div class="search-wrap">
       <span class="search-icon">🔍</span>
-      <input type="text" id="search-input" placeholder="Search">
+      <input type="text" id="search-input" placeholder="Search Friv, Y8, FrivMax...">
     </div>
     <div class="nav-right">
       <div class="hud-chip" id="top-coins-chip" title="العملات">
@@ -289,13 +312,18 @@
       </section>
 
       <section class="section-block">
-        <h3>Continue <span class="arrow">→</span></h3>
-        <div class="games-grid" id="continue-grid"></div>
+        <h3>Friv Classics in Roblox Style <span class="arrow">→</span></h3>
+        <div class="games-grid" id="friv-grid"></div>
       </section>
 
       <section class="section-block">
-        <h3>Friend Activity <span class="arrow">→</span></h3>
-        <div class="games-grid" id="activity-grid"></div>
+        <h3>Y8 Hits in Roblox Style <span class="arrow">→</span></h3>
+        <div class="games-grid" id="y8-grid"></div>
+      </section>
+
+      <section class="section-block">
+        <h3>FrivMax.com & Arcade Blox <span class="arrow">→</span></h3>
+        <div class="games-grid" id="frivmax-grid"></div>
       </section>
     </main>
   </div>
@@ -309,17 +337,23 @@
   <div class="in-game-bar">
     <div class="ig-pill">
       <span id="ig-game-name">اللعبة</span>
+      <span>الصحة: <span class="hp-mini"><i id="ig-hp-fill"></i></span></span>
       <span style="color:#facc15;">عملات: <strong id="ig-coins">120</strong></span>
       <span style="color:#38bdf8;">نقاط: <strong id="ig-score">0</strong></span>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;">
-      <button class="ig-btn" id="ig-build-btn">وضع مكعب (B)</button>
-      <button class="ig-btn" id="ig-respawn-btn">إعادة تمركز (R)</button>
+      <button class="ig-btn atk-btn" id="ig-atk-btn">هجوم (F)</button>
+      <button class="ig-btn" id="ig-build-btn">مكعب (B)</button>
+      <button class="ig-btn" id="ig-respawn-btn">تمركز (R)</button>
       <button class="ig-btn home-btn" id="ig-back-home">العودة لـ Home</button>
     </div>
   </div>
+  <div class="ig-help">WASD: حركة • Space (مرتين): قفز مزدوج • F: هجوم • B: مكعب • تجنب الفخاخ الحمراء!</div>
   <div id="joy-zone"><div id="joy-knob"></div></div>
-  <button id="mob-jump">قفز</button>
+  <div class="mob-actions">
+    <button class="m-act-btn" id="mob-atk">هجوم</button>
+    <button class="m-act-btn" id="mob-jump">قفز</button>
+  </div>
 </div>
 
 <div id="toast"></div>
@@ -372,7 +406,7 @@ window.addEventListener('resize', resize2DBG);
 const shapePalette = ['#38bdf8', '#818cf8', '#34d399', '#f472b6', '#facc15'];
 const shapeKinds = ['triangle', 'diamond', 'ring', 'hex'];
 
-for (let i = 0; i < 22; i++) {
+for (let i = 0; i < 24; i++) {
   shapes2D.push({
     x: Math.random() * 1400,
     y: Math.random() * 900,
@@ -483,7 +517,7 @@ window.addEventListener('resize', () => {
 });
 
 // ═══════════════════════════════════════════════════════
-// DATA: FRIENDS & FAMOUS GAMES IN ROBLOX STYLE
+// DATA: FRIENDS & FRIV / Y8 / FRIVMAX IN ROBLOX STYLE
 // ═══════════════════════════════════════════════════════
 const FRIENDS = [
   { add: true, name: 'Add Friends' },
@@ -497,82 +531,39 @@ const FRIENDS = [
   { name: 'Mommy', sub: '', status: '', color: '#9a3412' },
 ];
 
-const CONTINUE_GAMES = [
-  {
-    id: 'blox_royale', title: 'Blox Royale [BATTLE]', sub: 'ساحة قتال وسواتر',
-    like: '95%', players: '24.8K', badge: 'HOT', badgeType: 'hot',
-    bg: 'linear-gradient(135deg,#7c3aed,#2563eb)', sky: 0x3b82f6, floor: 0x16a34a, accent: 0xfacc15,
-    speed: 10.5, mode: 'battle'
-  },
-  {
-    id: 'cyber_obby', title: 'Cyber Obby Rush', sub: 'قفز سريع ومرتفعات',
-    like: '92%', players: '16.2K', badge: 'FLY', badgeType: 'hot',
-    bg: 'linear-gradient(135deg,#0284c7,#06b6d4)', sky: 0x0f172a, floor: 0x0ea5e9, accent: 0xf472b6,
-    speed: 13.0, mode: 'obby'
-  },
-  {
-    id: 'arena_shooter', title: 'Blocky Arena Shooter', sub: 'مناورة وأعمدة قتالية',
-    like: '88%', players: '11.4K', badge: '', badgeType: '',
-    bg: 'linear-gradient(135deg,#b91c1c,#f59e0b)', sky: 0x1e293b, floor: 0x475569, accent: 0xef4444,
-    speed: 10.8, mode: 'arena'
-  },
-  {
-    id: 'treasure_tycoon', title: 'Treasure Tycoon!', sub: 'جمع عملات وتطوير',
-    like: '94%', players: '31.0K', badge: 'NEW', badgeType: 'new',
-    bg: 'linear-gradient(135deg,#ca8a04,#ea580c)', sky: 0x7dd3fc, floor: 0x22c55e, accent: 0xfacc15,
-    speed: 9.4, mode: 'tycoon'
-  },
-  {
-    id: 'sky_drop', title: 'Sky Drop Survival', sub: 'نجاة على منصات معلقة',
-    like: '86%', players: '8.7K', badge: '', badgeType: '',
-    bg: 'linear-gradient(135deg,#0f766e,#2563eb)', sky: 0x38bdf8, floor: 0x14b8a6, accent: 0xfbbf24,
-    speed: 9.8, mode: 'sky'
-  },
-  {
-    id: 'turbo_kart', title: 'Turbo Kart Obby', sub: 'انطلاق ومسارات متدرجة',
-    like: '90%', players: '9.5K', badge: '', badgeType: '',
-    bg: 'linear-gradient(135deg,#db2777,#9333ea)', sky: 0xc084fc, floor: 0xa855f7, accent: 0x38bdf8,
-    speed: 12.2, mode: 'obby'
-  },
+const FRIV_GAMES = [
+  { id: 'fireboy_watergirl_blox', title: 'Fireboy & Watergirl Blox', sub: 'Friv • منصات وعقبات', like: '96%', players: '32.4K', badge: 'FRIV', badgeType: 'friv', bg: 'linear-gradient(135deg,#ea580c,#2563eb)', sky: 0x1e293b, floor: 0x334155, accent: 0xf97316, speed: 10.6, mode: 'obby' },
+  { id: 'moto_x3m_blox', title: 'Moto X3M Obby Blox', sub: 'Friv • سباق وقفزات', like: '94%', players: '21.8K', badge: 'HOT', badgeType: 'hot', bg: 'linear-gradient(135deg,#eab308,#dc2626)', sky: 0x7dd3fc, floor: 0x475569, accent: 0xfacc15, speed: 13.2, mode: 'obby' },
+  { id: 'snail_bob_blox', title: 'Snail Bob Quest Blox', sub: 'Friv • مغامرة مكعبة', like: '91%', players: '14.5K', badge: 'NEW', badgeType: 'new', bg: 'linear-gradient(135deg,#16a34a,#0284c7)', sky: 0xbae6fd, floor: 0x22c55e, accent: 0x38bdf8, speed: 9.2, mode: 'tycoon' },
+  { id: 'fire_ice_arena', title: 'Fire & Ice Blox Arena', sub: 'Friv • مواجهة وفخاخ', like: '90%', players: '12.1K', badge: '', badgeType: '', bg: 'linear-gradient(135deg,#ef4444,#06b6d4)', sky: 0x0f172a, floor: 0x3f6212, accent: 0x38bdf8, speed: 10.4, mode: 'battle' },
 ];
 
-const ACTIVITY_GAMES = [
-  {
-    id: 'dungeon_blocks', title: 'Dungeon Blocks Quest', sub: 'مغامرة وقلاع مكعبة',
-    like: '91%', players: '13.6K', badge: 'NEW', badgeType: 'new',
-    bg: 'linear-gradient(135deg,#334155,#0f172a)', sky: 0x1e293b, floor: 0x3f6212, accent: 0xf59e0b,
-    speed: 9.5, mode: 'arena'
-  },
-  {
-    id: 'candy_climb', title: 'Candy Tower Climb', sub: 'تسلق قمم ملونة',
-    like: '93%', players: '19.1K', badge: '', badgeType: '',
-    bg: 'linear-gradient(135deg,#ec4899,#f97316)', sky: 0xfbcfe8, floor: 0xf472b6, accent: 0xfacc15,
-    speed: 10.0, mode: 'obby'
-  },
-  {
-    id: 'gold_rush_3d', title: 'Gold Rush 3D', sub: 'سباق جمع الذهب',
-    like: '89%', players: '7.2K', badge: '', badgeType: '',
-    bg: 'linear-gradient(135deg,#d97706,#fef08a)', sky: 0x93c5fd, floor: 0x4ade80, accent: 0xfacc15,
-    speed: 11.2, mode: 'tycoon'
-  },
-  {
-    id: 'neon_parkour', title: 'Neon Parkour', sub: 'قفزات نيون دقيقة',
-    like: '96%', players: '22.4K', badge: 'HOT', badgeType: 'hot',
-    bg: 'linear-gradient(135deg,#2563eb,#10b981)', sky: 0x090d16, floor: 0x1e293b, accent: 0x38bdf8,
-    speed: 11.8, mode: 'sky'
-  },
+const Y8_GAMES = [
+  { id: 'slope_3d_blox', title: 'Slope 3D Blocky', sub: 'Y8 • سرعة ومنحدرات', like: '95%', players: '41.2K', badge: 'Y8', badgeType: 'y8', bg: 'linear-gradient(135deg,#22c55e,#15803d)', sky: 0x090d16, floor: 0x16a34a, accent: 0xfacc15, speed: 13.6, mode: 'sky' },
+  { id: 'tank_fury_y8_blox', title: 'Tank Fury Y8 Blox', sub: 'Y8 • ساحة أعداء وسواتر', like: '93%', players: '19.7K', badge: 'HOT', badgeType: 'hot', bg: 'linear-gradient(135deg,#475569,#b91c1c)', sky: 0x334155, floor: 0x475569, accent: 0xef4444, speed: 10.8, mode: 'battle' },
+  { id: 'zombie_y8_blox', title: 'Zombie Survival Y8 Blox', sub: 'Y8 • نجاة وهجوم', like: '92%', players: '26.3K', badge: 'Y8', badgeType: 'y8', bg: 'linear-gradient(135deg,#14532d,#7f1d1d)', sky: 0x1e293b, floor: 0x3f6212, accent: 0xef4444, speed: 10.5, mode: 'arena' },
+  { id: 'drift_boss_y8_blox', title: 'Drift Boss Obby Blox', sub: 'Y8 • تحكم ومنصات', like: '89%', players: '15.0K', badge: '', badgeType: '', bg: 'linear-gradient(135deg,#7c3aed,#2563eb)', sky: 0x3b82f6, floor: 0x1e293b, accent: 0xf472b6, speed: 12.0, mode: 'sky' },
+];
+
+const FRIVMAX_GAMES = [
+  { id: 'frivmax_gold_blox', title: 'FrivMax Gold Miner Blox', sub: 'FrivMax • جمع ذهب وعملات', like: '94%', players: '28.9K', badge: 'FRIVMAX', badgeType: 'friv', bg: 'linear-gradient(135deg,#f59e0b,#78350f)', sky: 0x7dd3fc, floor: 0x22c55e, accent: 0xfacc15, speed: 10.0, mode: 'tycoon' },
+  { id: 'frivmax_parkour', title: 'FrivMax Mega Parkour', sub: 'FrivMax • قفز مزدوج وعقبات', like: '92%', players: '17.4K', badge: 'NEW', badgeType: 'new', bg: 'linear-gradient(135deg,#06b6d4,#7e22ce)', sky: 0xc084fc, floor: 0x0284c7, accent: 0xfacc15, speed: 11.8, mode: 'obby' },
+  { id: 'frivmax_siege', title: 'FrivMax Siege Battle', sub: 'FrivMax • قتال أعداء', like: '90%', players: '13.8K', badge: 'HOT', badgeType: 'hot', bg: 'linear-gradient(135deg,#dc2626,#1e293b)', sky: 0x1e293b, floor: 0x475569, accent: 0xf97316, speed: 10.6, mode: 'battle' },
+  { id: 'frivmax_sky_run', title: 'FrivMax Sky Runner', sub: 'FrivMax • منصات معلقة', like: '88%', players: '11.2K', badge: '', badgeType: '', bg: 'linear-gradient(135deg,#0284c7,#10b981)', sky: 0x38bdf8, floor: 0x14b8a6, accent: 0xfbbf24, speed: 11.2, mode: 'sky' },
 ];
 
 let coins = 120;
 let score = 0;
+let hp = 100;
 let avatarColor = 0x2563eb;
 const AVATAR_PALETTE = [0x2563eb, 0xef4444, 0x10b981, 0xf59e0b, 0x8b5cf6, 0xec4899];
 let colorIdx = 0;
 
-function syncCoinDisplays() {
+function syncHUD() {
   $('home-coins').textContent = coins;
   $('ig-coins').textContent = coins;
   $('ig-score').textContent = score;
+  $('ig-hp-fill').style.width = clamp(hp, 0, 100) + '%';
 }
 
 // ═══════════════════════════════════════════════════════
@@ -628,21 +619,23 @@ function makeGameTile(game) {
 
 function renderGames(filter = '') {
   const q = filter.trim().toLowerCase();
-  const cGrid = $('continue-grid');
-  const aGrid = $('activity-grid');
-  cGrid.innerHTML = '';
-  aGrid.innerHTML = '';
+  const match = g => !q || g.title.toLowerCase().includes(q) || g.sub.toLowerCase().includes(q);
+  const fGrid = $('friv-grid');
+  const yGrid = $('y8-grid');
+  const mGrid = $('frivmax-grid');
+  fGrid.innerHTML = ''; yGrid.innerHTML = ''; mGrid.innerHTML = '';
 
-  CONTINUE_GAMES.filter(g => !q || g.title.toLowerCase().includes(q) || g.sub.toLowerCase().includes(q)).forEach(g => cGrid.appendChild(makeGameTile(g)));
-  ACTIVITY_GAMES.filter(g => !q || g.title.toLowerCase().includes(q) || g.sub.toLowerCase().includes(q)).forEach(g => aGrid.appendChild(makeGameTile(g)));
+  FRIV_GAMES.filter(match).forEach(g => fGrid.appendChild(makeGameTile(g)));
+  Y8_GAMES.filter(match).forEach(g => yGrid.appendChild(makeGameTile(g)));
+  FRIVMAX_GAMES.filter(match).forEach(g => mGrid.appendChild(makeGameTile(g)));
 }
 
 $('search-input').addEventListener('input', e => renderGames(e.target.value));
-$('top-coins-chip').onclick = () => { coins += 25; syncCoinDisplays(); toast('+25 عملة مجانية!', '#eab308'); };
-$('top-bell-chip').onclick = () => toast('اختر أي لعبة شبيهة بالألعاب الشهيرة للعب فوراً!');
+$('top-coins-chip').onclick = () => { coins += 25; syncHUD(); toast('+25 عملة مجانية!', '#eab308'); };
+$('top-bell-chip').onclick = () => toast('ألعاب Friv و Y8 و FrivMax متاحة بأسلوب روبلوكس!');
 $('rail-home').onclick = () => { $('home-screen').classList.remove('hidden'); };
-$('rail-play').onclick = () => launchGame(CONTINUE_GAMES[0]);
-$('rail-info').onclick = () => toast('WASD للحركة • Space للقفز • سحب بالماوس للكاميرا • B لوضع مكعب');
+$('rail-play').onclick = () => launchGame(FRIV_GAMES[0]);
+$('rail-info').onclick = () => toast('WASD: حركة • Space مرتين: قفز مزدوج • F: هجوم • B: بناء');
 $('rail-color').onclick = () => {
   colorIdx = (colorIdx + 1) % AVATAR_PALETTE.length;
   avatarColor = AVATAR_PALETTE[colorIdx];
@@ -650,13 +643,15 @@ $('rail-color').onclick = () => {
 };
 
 // ═══════════════════════════════════════════════════════
-// 3D ENGINE & DISTINCT GAME MODES (ROBLOX BLOCKY STYLE)
+// 3D ENGINE: PLATFORMS, COINS, TRAPS & MOVING ENEMIES
 // ═══════════════════════════════════════════════════════
 let scene, camera, renderer, player, limbs = {};
 let platforms = [];
 let coinMeshes = [];
+let traps = [];
+let enemies = [];
 let activeGame = null;
-let velY = 0, grounded = false, walkPhase = 0;
+let velY = 0, grounded = false, jumpsUsed = 0, walkPhase = 0;
 let yaw = 0, pitch = 0.35, camDist = 9;
 let orbiting = false, lastX = 0, lastY = 0;
 const keys = {};
@@ -698,6 +693,35 @@ function addBox(x, y, z, w, h, d, color) {
   return mesh;
 }
 
+function addTrap(x, y, z, w = 3.2, d = 3.2) {
+  const mesh = new THREE.Mesh(
+    new THREE.BoxGeometry(w, 0.28, d),
+    new THREE.MeshStandardMaterial({ color: 0xef4444, emissive: 0xdc2626, emissiveIntensity: 0.65, roughness: 0.3 })
+  );
+  mesh.position.set(x, y + 0.14, z);
+  scene.add(mesh);
+  traps.push({ mesh, hx: w / 2, hz: d / 2, y: y + 0.14 });
+}
+
+function spawnEnemy(x, y, z, spd = 3.4) {
+  const g = new THREE.Group();
+  const bodyMat = new THREE.MeshStandardMaterial({ color: 0xef4444, roughness: 0.45 });
+  const eyeMat = new THREE.MeshBasicMaterial({ color: 0xfef08a });
+
+  const body = new THREE.Mesh(new THREE.BoxGeometry(1.15, 1.35, 0.8), bodyMat);
+  body.position.y = 0.8;
+  body.castShadow = true;
+  const eyeL = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.18, 0.08), eyeMat);
+  eyeL.position.set(-0.24, 1.02, 0.42);
+  const eyeR = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.18, 0.08), eyeMat);
+  eyeR.position.set(0.24, 1.02, 0.42);
+
+  g.add(body, eyeL, eyeR);
+  g.position.set(x, y, z);
+  scene.add(g);
+  enemies.push({ mesh: g, bodyMat, baseY: y, speed: spd, hp: 40, alive: true, cooldown: 0 });
+}
+
 function buildPlayerMesh() {
   if (player) scene.remove(player);
   player = new THREE.Group();
@@ -727,43 +751,50 @@ function buildPlayerMesh() {
 function clearWorldObjects() {
   platforms.forEach(p => scene.remove(p.mesh));
   coinMeshes.forEach(c => scene.remove(c.mesh));
-  platforms = [];
-  coinMeshes = [];
+  traps.forEach(t => scene.remove(t.mesh));
+  enemies.forEach(e => scene.remove(e.mesh));
+  platforms = []; coinMeshes = []; traps = []; enemies = [];
 }
 
 function buildModeLayout(game) {
-  addBox(0, -0.5, 0, 32, 1, 32, game.floor);
+  addBox(0, -0.5, 0, 34, 1, 34, game.floor);
 
   if (game.mode === 'battle' || game.mode === 'arena') {
-    // Cover walls & towers for Battle Royale / Arena Shooter style
     addBox(-7, 1.0, -6, 3.5, 2.0, 1.2, game.accent);
     addBox(7, 1.0, -6, 3.5, 2.0, 1.2, game.accent);
     addBox(0, 1.0, -11, 4.5, 2.0, 1.2, 0x38bdf8);
     addBox(-9, 2.2, 5, 4.0, 4.4, 4.0, 0x334155);
     addBox(9, 2.2, 5, 4.0, 4.4, 4.0, 0x334155);
-    addBox(0, 2.0, 0, 3.2, 1.0, 3.2, game.accent);
+    addTrap(0, 0, -5, 3.0, 3.0);
+    spawnEnemy(-8, 0, -10, 3.4);
+    spawnEnemy(8, 0, -10, 3.8);
+    spawnEnemy(0, 0, 10, 3.1);
   } else if (game.mode === 'obby') {
-    // Stepping & ascending Obby course
     addBox(0, 0.7, -16, 4.6, 0.8, 4.6, game.accent);
     addBox(3.2, 1.8, -23, 4.2, 0.8, 4.2, game.accent);
     addBox(-2.8, 2.9, -30, 4.2, 0.8, 4.2, game.accent);
     addBox(0, 4.0, -38, 9, 1.0, 9, 0xfacc15);
+    addTrap(0, 0, -10, 2.6, 2.6);
+    spawnEnemy(0, 4.5, -38, 3.2);
   } else if (game.mode === 'tycoon') {
-    // Tycoon pads & elevated reward platform
     addBox(-6, 0.5, -8, 6, 1.0, 6, game.accent);
     addBox(6, 0.5, -8, 6, 1.0, 6, game.accent);
     addBox(0, 1.6, -18, 8, 1.0, 8, 0xfacc15);
+    addTrap(0, 0, -6, 2.8, 2.8);
+    spawnEnemy(6, 1.0, -8, 2.8);
   } else {
-    // Sky Drop / Parkour floating blocks
     addBox(0, 1.2, -14, 4.2, 0.8, 4.2, game.accent);
     addBox(4.5, 2.5, -21, 3.8, 0.8, 3.8, 0x38bdf8);
     addBox(-4.5, 3.8, -28, 3.8, 0.8, 3.8, game.accent);
     addBox(0, 5.0, -36, 8.5, 1.0, 8.5, 0xfacc15);
+    addTrap(0, 0, -8, 3.2, 3.2);
+    addTrap(4.5, 2.9, -21, 2.2, 2.2);
+    spawnEnemy(0, 5.5, -36, 3.5);
   }
 
   const coords = [
-    [0, 1.2, -7], [-7, 2.4, -6], [7, 2.4, -6],
-    [0, 3.2, -16], [3.2, 3.2, -23], [0, 5.4, -36]
+    [0, 1.2, -13], [-7, 2.4, -6], [7, 2.4, -6],
+    [3.2, 3.2, -23], [-2.8, 4.3, -30], [0, 5.4, -36]
   ];
   coords.forEach(([x, y, z]) => {
     const m = new THREE.Mesh(
@@ -782,7 +813,9 @@ function launchGame(game) {
   clearWorldObjects();
   activeGame = game;
   score = 0;
-  syncCoinDisplays();
+  hp = 100;
+  jumpsUsed = 0;
+  syncHUD();
 
   scene.background = new THREE.Color(game.sky);
   scene.fog = new THREE.FogExp2(game.sky, 0.0045);
@@ -797,6 +830,42 @@ function launchGame(game) {
   toast(`بدأت لعبة ${game.title}`);
 }
 
+function doJump() {
+  if (!activeGame) return;
+  if (grounded || jumpsUsed < 2) {
+    velY = 12.2;
+    grounded = false;
+    jumpsUsed++;
+  }
+}
+
+function doAttack() {
+  if (!player || !activeGame) return;
+  limbs.armR.rotation.x = -1.35;
+  setTimeout(() => { if (limbs.armR) limbs.armR.rotation.x = 0; }, 160);
+
+  let hitAny = false;
+  for (const e of enemies) {
+    if (!e.alive) continue;
+    const dist = Math.hypot(player.position.x - e.mesh.position.x, player.position.z - e.mesh.position.z);
+    if (dist <= 3.6) {
+      e.hp -= 25;
+      hitAny = true;
+      e.bodyMat.emissive.setHex(0xffffff);
+      setTimeout(() => { if (e.bodyMat) e.bodyMat.emissive.setHex(0x000000); }, 110);
+      if (e.hp <= 0) {
+        e.alive = false;
+        e.mesh.visible = false;
+        coins += 15;
+        score += 40;
+        syncHUD();
+        toast('هزمت عدواً! +15 عملة', '#10b981');
+      }
+    }
+  }
+  if (!hitAny) toast('اقترب من العدو واضغط هجوم (F)', '#38bdf8');
+}
+
 $('ig-back-home').onclick = () => {
   activeGame = null;
   $('world-view').classList.remove('active');
@@ -806,15 +875,18 @@ $('ig-back-home').onclick = () => {
 $('ig-respawn-btn').onclick = () => {
   if (!player) return;
   player.position.set(0, 0.5, 0);
-  velY = 0;
+  velY = 0; hp = 100;
+  syncHUD();
   toast('تمت إعادة التمركز', '#38bdf8');
 };
+
+$('ig-atk-btn').onclick = doAttack;
 
 $('ig-build-btn').onclick = () => {
   if (!player || coins < 2) { toast('تحتاج عملتين لوضع مكعب', '#ef4444'); return; }
   coins -= 2;
   score += 5;
-  syncCoinDisplays();
+  syncHUD();
   const bx = Math.round(player.position.x + Math.sin(player.rotation.y) * 2.5);
   const by = Math.max(0.5, Math.round(player.position.y));
   const bz = Math.round(player.position.z + Math.cos(player.rotation.y) * 2.5);
@@ -824,9 +896,8 @@ $('ig-build-btn').onclick = () => {
 
 window.addEventListener('keydown', e => {
   keys[e.code] = true;
-  if (e.code === 'Space' && grounded && activeGame) {
-    velY = 12; grounded = false; e.preventDefault();
-  }
+  if (e.code === 'Space' && activeGame) { doJump(); e.preventDefault(); }
+  if (e.code === 'KeyF' && activeGame) doAttack();
   if (e.code === 'KeyB' && activeGame) $('ig-build-btn').click();
   if (e.code === 'KeyR' && activeGame) $('ig-respawn-btn').click();
 });
@@ -862,7 +933,8 @@ window.addEventListener('mousemove', e => {
   const reset = () => { drag = false; joyX = joyY = 0; knob.style.transform = 'translate(-50%, -50%)'; };
   zone.addEventListener('touchend', reset);
   zone.addEventListener('touchcancel', reset);
-  $('mob-jump').onclick = () => { if (grounded) { velY = 12; grounded = false; } };
+  $('mob-jump').onclick = doJump;
+  $('mob-atk').onclick = doAttack;
 })();
 
 const clock = new THREE.Clock();
@@ -946,9 +1018,47 @@ function tick() {
     }
   }
   if (support !== -Infinity) {
-    player.position.y = support; velY = 0; grounded = true;
+    player.position.y = support; velY = 0; grounded = true; jumpsUsed = 0;
   } else {
     grounded = false;
+  }
+
+  for (const t of traps) {
+    if (Math.abs(player.position.x - t.mesh.position.x) <= t.hx + 0.3 &&
+        Math.abs(player.position.z - t.mesh.position.z) <= t.hz + 0.3 &&
+        Math.abs(player.position.y - t.y) < 1.1) {
+      hp = Math.max(0, hp - 25);
+      syncHUD();
+      toast('لمست فخاً أحمر! -25 صحة', '#ef4444');
+      player.position.set(0, 0.6, 0);
+      velY = 0;
+      if (hp <= 0) { hp = 100; syncHUD(); }
+      break;
+    }
+  }
+
+  for (const e of enemies) {
+    if (!e.alive) continue;
+    e.cooldown = Math.max(0, e.cooldown - dt);
+    const dx = player.position.x - e.mesh.position.x;
+    const dz = player.position.z - e.mesh.position.z;
+    const dist = Math.hypot(dx, dz);
+    if (dist < 22 && dist > 1.4) {
+      e.mesh.position.x += (dx / dist) * e.speed * dt;
+      e.mesh.position.z += (dz / dist) * e.speed * dt;
+      e.mesh.rotation.y = Math.atan2(dx, dz);
+    } else if (dist <= 1.7 && e.cooldown <= 0) {
+      e.cooldown = 1.1;
+      hp = Math.max(0, hp - 15);
+      syncHUD();
+      toast('العدو أصابك! -15 صحة', '#ef4444');
+      if (hp <= 0) {
+        hp = 100;
+        player.position.set(0, 0.6, 0);
+        velY = 0;
+        syncHUD();
+      }
+    }
   }
 
   if (player.position.y < -15) {
@@ -962,7 +1072,7 @@ function tick() {
     if (player.position.distanceTo(c.mesh.position) < 1.8) {
       c.taken = true; c.mesh.visible = false;
       coins += 10; score += 25;
-      syncCoinDisplays();
+      syncHUD();
       toast('+10 عملات!', '#eab308');
     }
   });
@@ -980,10 +1090,10 @@ function tick() {
 
 renderFriends();
 renderGames();
-syncCoinDisplays();
+syncHUD();
 tick();
 </script>
 </body>
 </html>
 
-هل تفضل أن نضيف أعداء متحركين أو فخاخ داخل أنماط القتال والنجاة، أم نزيد عدد الألعاب في القائمة الرئيسية؟
+هل تفضل أن نضيف حفظاً تلقائياً للعملات والنقاط في المتصفح (localStorage) أو إضافة ألعاب إضافية أخرى؟
