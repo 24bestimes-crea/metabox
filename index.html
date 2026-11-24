@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Metaverse V6 - Realistic</title>
+<title>Metaverse V7 - Fixed</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; user-select:none; -webkit-tap-highlight-color:transparent; }
-  html, body { overflow:hidden; font-family:'Segoe UI', Tahoma, sans-serif; background:#0f0c29; color:#fff; }
+  html, body { overflow:hidden; font-family:'Segoe UI', Tahoma, sans-serif; background:#0f0c29; color:#fff; touch-action:none; }
 
-  /* ===== Login ===== */
+  /* Login */
   #login-bg-canvas { position:absolute; inset:0; z-index:1; }
   #login-screen { position:fixed; inset:0; z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; transition:opacity .6s; }
   #login-screen h1 { font-size:2.8rem; margin-bottom:.4rem; z-index:2; background:linear-gradient(90deg,#00d2ff,#3a7bd5); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
@@ -30,23 +30,23 @@
   .divider::before,.divider::after { content:''; flex:1; border-bottom:1px solid rgba(255,255,255,.1); }
   .divider::before { margin-left:10px; } .divider::after { margin-right:10px; }
 
-  /* ===== World ===== */
+  /* World */
   #world-screen { display:none; position:fixed; inset:0; }
-  #canvas-container { width:100%; height:100%; }
-  #canvas-container canvas { display:block; }
+  #canvas-container { width:100%; height:100%; position:absolute; inset:0; }
+  #canvas-container canvas { display:block; touch-action:none; }
   #loading { position:absolute; inset:0; background:#0f0c29; color:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:100; }
   .spinner { border:4px solid rgba(255,255,255,.1); border-top-color:#00d2ff; border-radius:50%; width:40px; height:40px; animation:spin 1s linear infinite; margin-bottom:15px; }
   @keyframes spin { to { transform:rotate(360deg); } }
 
-  /* HUD - pointer-events fixed */
+  /* HUD - ALL pointer-events:none except buttons */
   #hud { position:absolute; top:12px; left:12px; right:12px; display:flex; justify-content:space-between; pointer-events:none; z-index:10; gap:8px; flex-wrap:wrap; }
-  .hud-panel { background:rgba(0,0,0,.65); padding:8px 12px; border-radius:10px; color:#fff; backdrop-filter:blur(5px); border:1px solid rgba(255,255,255,.1); display:flex; align-items:center; gap:10px; font-size:.8rem; }
+  .hud-panel { background:rgba(0,0,0,.65); padding:8px 12px; border-radius:10px; color:#fff; backdrop-filter:blur(5px); border:1px solid rgba(255,255,255,.1); display:flex; align-items:center; gap:10px; font-size:.8rem; pointer-events:none; }
   .stat-bar { width:70px; height:7px; background:rgba(255,255,255,.2); border-radius:5px; overflow:hidden; }
   .stat-fill { height:100%; width:100%; transition:width .3s; }
   .health-fill { background:#ff4757; } .energy-fill { background:#00d2ff; } .xp-fill { background:#f1c40f; }
 
-  /* Top Buttons - IMPORTANT: only buttons capture clicks */
-  .top-btn { position:absolute; top:12px; padding:8px 12px; border:none; border-radius:8px; color:#fff; cursor:pointer; font-size:.75rem; z-index:20; backdrop-filter:blur(4px); font-weight:600; min-width:40px; pointer-events:auto; }
+  /* Top Buttons */
+  .top-btn { position:absolute; top:12px; padding:8px 12px; border:none; border-radius:8px; color:#fff; cursor:pointer; font-size:.75rem; z-index:30; backdrop-filter:blur(4px); font-weight:600; min-width:40px; pointer-events:auto; touch-action:manipulation; }
   #btn-profile { right:12px; background:rgba(0,210,255,.85); }
   #btn-logout { right:100px; background:rgba(255,71,87,.85); }
   #btn-chat { right:180px; background:rgba(46,204,113,.85); }
@@ -66,7 +66,7 @@
   #chat-box { position:absolute; bottom:160px; left:12px; width:270px; max-height:200px; overflow-y:auto; z-index:12; display:flex; flex-direction:column; gap:3px; pointer-events:none; }
   #chat-box .msg { background:rgba(0,0,0,.7); color:#fff; padding:5px 9px; border-radius:8px; font-size:.75rem; backdrop-filter:blur(4px); animation:fadeIn .3s; }
   @keyframes fadeIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
-  #chat-input-wrap { position:absolute; bottom:110px; left:12px; width:270px; display:none; z-index:30; pointer-events:auto; }
+  #chat-input-wrap { position:absolute; bottom:110px; left:12px; width:270px; display:none; z-index:40; pointer-events:auto; }
   #chat-input-wrap input { width:100%; padding:9px 12px; border-radius:20px; border:1px solid #00d2ff; background:rgba(0,0,0,.85); color:#fff; outline:none; font-size:.9rem; }
 
   /* Shop/Items */
@@ -95,20 +95,23 @@
   .outfit-btn { padding:8px 12px; background:rgba(255,255,255,.1); border:2px solid transparent; border-radius:8px; color:#fff; cursor:pointer; font-size:.8rem; margin:3px; }
   .outfit-btn.active { border-color:#00ff88; background:rgba(0,255,136,.2); }
 
-  /* Joystick */
-  #joystick-zone { display:none; position:absolute; bottom:20px; left:20px; width:120px; height:120px; border-radius:50%; background:rgba(255,255,255,.08); border:2px solid rgba(255,255,255,.25); z-index:15; touch-action:none; pointer-events:auto; }
+  /* Joystick & Mobile Buttons */
+  #joystick-zone { display:none; position:absolute; bottom:20px; left:20px; width:120px; height:120px; border-radius:50%; background:rgba(255,255,255,.08); border:2px solid rgba(255,255,255,.25); z-index:25; touch-action:none; pointer-events:auto; }
   #joystick-knob { position:absolute; top:50%; left:50%; width:50px; height:50px; border-radius:50%; background:rgba(0,210,255,.7); transform:translate(-50%,-50%); pointer-events:none; }
-  #jump-btn { display:none; position:absolute; bottom:30px; right:30px; width:75px; height:75px; border-radius:50%; background:rgba(0,210,255,.7); color:#fff; font-size:.75rem; border:2px solid #fff; z-index:15; font-weight:bold; pointer-events:auto; }
-  #attack-btn { display:none; position:absolute; bottom:120px; right:30px; width:70px; height:70px; border-radius:50%; background:rgba(255,71,87,.8); color:#fff; font-size:.75rem; border:2px solid #fff; z-index:15; font-weight:bold; pointer-events:auto; }
-  #sprint-btn { display:none; position:absolute; bottom:130px; right:120px; width:60px; height:60px; border-radius:50%; background:rgba(241,196,15,.85); color:#333; font-size:.65rem; border:none; z-index:15; font-weight:bold; pointer-events:auto; }
-  #build-btn { display:none; position:absolute; bottom:200px; right:30px; width:60px; height:60px; border-radius:50%; background:rgba(155,89,182,.85); color:#fff; font-size:.65rem; border:none; z-index:15; font-weight:bold; pointer-events:auto; }
-  @media (pointer: coarse) { #joystick-zone, #jump-btn, #attack-btn, #build-btn, #sprint-btn { display:flex; align-items:center; justify-content:center; } }
+  .mob-btn { display:none; position:absolute; border-radius:50%; color:#fff; font-size:.7rem; border:2px solid #fff; z-index:25; font-weight:bold; pointer-events:auto; touch-action:manipulation; }
+  #jump-btn { bottom:30px; right:30px; width:75px; height:75px; background:rgba(0,210,255,.75); }
+  #attack-btn { bottom:120px; right:30px; width:70px; height:70px; background:rgba(255,71,87,.85); }
+  #sprint-btn { bottom:130px; right:120px; width:60px; height:60px; background:rgba(241,196,15,.9); color:#333; }
+  #build-btn { bottom:200px; right:30px; width:60px; height:60px; background:rgba(155,89,182,.9); }
+  @media (pointer: coarse) { #joystick-zone, .mob-btn { display:flex; align-items:center; justify-content:center; } }
 
   /* Block palette */
-  #block-palette { position:absolute; bottom:15px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,.85); padding:8px; border-radius:12px; z-index:20; display:none; max-width:95vw; pointer-events:auto; }
+  #block-palette { position:absolute; bottom:15px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,.85); padding:8px; border-radius:12px; z-index:35; display:none; max-width:95vw; pointer-events:auto; }
   #block-palette.active { display:block; }
   #block-palette .row { display:flex; gap:5px; flex-wrap:wrap; justify-content:center; }
   .block-btn { width:48px; height:48px; border:2px solid #555; border-radius:8px; cursor:pointer; font-size:.6rem; font-weight:bold; color:#fff; text-shadow:0 0 4px #000; }
+
+  /* Block btn.active highlight */
   .block-btn.active { border-color:#00ff88; box-shadow:0 0 10px #00ff88; }
 
   /* Animal card */
@@ -140,11 +143,9 @@
   .quest-item .bar > div { height:100%; background:linear-gradient(90deg,#00ff88,#00d2ff); transition:width .3s; }
   .quest-item .reward { color:#f1c40f; font-size:.8rem; font-weight:600; }
 
-  /* Damage flash */
   #damage-flash { position:absolute; inset:0; background:radial-gradient(circle, transparent 40%, rgba(255,0,0,.6) 100%); opacity:0; pointer-events:none; z-index:8; transition:opacity .2s; }
   #damage-flash.show { opacity:1; }
 
-  /* Sprint indicator */
   #sprint-indicator { position:absolute; bottom:20px; left:50%; transform:translateX(-50%); color:#f1c40f; font-size:.8rem; font-weight:bold; display:none; z-index:11; pointer-events:none; }
   #sprint-indicator.active { display:block; animation:pulse 0.4s infinite alternate; }
   @keyframes pulse { from { opacity:0.6; } to { opacity:1; } }
@@ -154,11 +155,10 @@
 </head>
 <body>
 
-<!-- LOGIN -->
 <div id="login-screen">
   <canvas id="login-bg-canvas"></canvas>
-  <h1>🌌 Metaverse V6</h1>
-  <p>عالم افتراضي واقعي متكامل</p>
+  <h1>🌌 Metaverse V7</h1>
+  <p>عالم افتراضي متكامل</p>
   <div class="glass-panel">
     <div id="login-form">
       <input type="email" id="login-email" placeholder="البريد الإلكتروني">
@@ -181,7 +181,6 @@
   </div>
 </div>
 
-<!-- WORLD -->
 <div id="world-screen">
   <div id="loading"><div class="spinner"></div>جاري تحميل العالم...</div>
   <div id="canvas-container"></div>
@@ -190,18 +189,9 @@
 
   <div id="hud">
     <div class="hud-panel">
-      <div>
-        <div style="font-size:.65rem;color:#ff4757;">❤️</div>
-        <div class="stat-bar"><div class="stat-fill health-fill" id="hp-bar"></div></div>
-      </div>
-      <div>
-        <div style="font-size:.65rem;color:#00d2ff;">⚡</div>
-        <div class="stat-bar"><div class="stat-fill energy-fill" id="energy-bar"></div></div>
-      </div>
-      <div>
-        <div style="font-size:.65rem;color:#f1c40f;">⭐</div>
-        <div class="stat-bar"><div class="stat-fill xp-fill" id="xp-bar"></div></div>
-      </div>
+      <div><div style="font-size:.65rem;color:#ff4757;">❤️</div><div class="stat-bar"><div class="stat-fill health-fill" id="hp-bar"></div></div></div>
+      <div><div style="font-size:.65rem;color:#00d2ff;">⚡</div><div class="stat-bar"><div class="stat-fill energy-fill" id="energy-bar"></div></div></div>
+      <div><div style="font-size:.65rem;color:#f1c40f;">⭐</div><div class="stat-bar"><div class="stat-fill xp-fill" id="xp-bar"></div></div></div>
     </div>
     <div class="hud-panel">
       <span>💰 <span id="coins-display">100</span></span>
@@ -232,16 +222,15 @@
   </div>
 
   <div id="joystick-zone"><div id="joystick-knob"></div></div>
-  <button id="jump-btn">قفز</button>
-  <button id="attack-btn">⚔️</button>
-  <button id="sprint-btn">🏃</button>
-  <button id="build-btn">🏰</button>
+  <button class="mob-btn" id="jump-btn">قفز</button>
+  <button class="mob-btn" id="attack-btn">⚔️</button>
+  <button class="mob-btn" id="sprint-btn">🏃</button>
+  <button class="mob-btn" id="build-btn">🏰</button>
 
   <div id="block-palette"><div class="row" id="block-list"></div></div>
 
   <div id="toast"></div>
 
-  <!-- PROFILE -->
   <div class="panel-overlay" id="profile-panel">
     <div class="panel-card">
       <h2>👤 الملف الشخصي</h2>
@@ -264,25 +253,19 @@
         <div class="stat-box"><div class="val" id="p-pets">0</div><div class="lbl">الحيوانات</div></div>
         <div class="stat-box"><div class="val" id="p-items">0</div><div class="lbl">المشتريات</div></div>
       </div>
-
       <h3>🎨 لون البشرة</h3>
       <div class="color-grid" id="color-grid"></div>
-
       <h3>👕 الملابس</h3>
       <div id="outfits-grid"></div>
-
       <h3>🎒 ممتلكاتي</h3>
       <div id="inventory-list" class="shop-grid" style="min-height:50px;"></div>
-
       <h3>🐾 حيواناتي</h3>
       <div id="pets-list" class="shop-grid" style="min-height:50px;"></div>
-
       <button class="btn btn-primary" id="btn-save-profile" style="margin-top:12px;">💾 حفظ</button>
       <button class="btn btn-danger" id="btn-close-profile" style="margin-top:6px;">إغلاق</button>
     </div>
   </div>
 
-  <!-- SHOP -->
   <div class="panel-overlay" id="shop-panel">
     <div class="panel-card">
       <h2>🛒 المتجر</h2>
@@ -298,20 +281,16 @@
     </div>
   </div>
 
-  <!-- QUESTS -->
   <div class="panel-overlay" id="quests-panel">
     <div class="panel-card">
       <h2>📊 المهام اليومية</h2>
-      <p style="text-align:center;color:#8899aa;font-size:.8rem;margin-bottom:12px;">
-        تتجدد كل 24 ساعة • المتبقي: <span id="quest-reset">—</span>
-      </p>
+      <p style="text-align:center;color:#8899aa;font-size:.8rem;margin-bottom:12px;">تتجدد كل 24 ساعة • المتبقي: <span id="quest-reset">—</span></p>
       <div id="quests-list"></div>
       <button class="btn btn-success" id="btn-claim-quests" style="margin-top:12px;">🎁 استلام المكافآت</button>
       <button class="btn btn-danger" id="btn-close-quests" style="margin-top:6px;">إغلاق</button>
     </div>
   </div>
 
-  <!-- CHAT -->
   <div class="panel-overlay" id="chat-panel">
     <div class="panel-card" style="max-width:500px;">
       <h2>💬 الدردشة</h2>
@@ -322,9 +301,7 @@
 </div>
 
 <script type="importmap">
-{ "imports": {
-  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
-}}
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }
 </script>
 
 <script type="module">
@@ -371,10 +348,12 @@ function beep(freq = 440, dur = 0.1, type = 'sine') {
 }
 function damageFlash() {
   const f = $('damage-flash');
+  if (!f) return;
   f.classList.add('show');
   setTimeout(() => f.classList.remove('show'), 200);
 }
 
+// ============ GAME STATE ============
 const Game = {
   user: null, profile: null,
   scene: null, camera: null, renderer: null, clock: null,
@@ -387,17 +366,19 @@ const Game = {
   buildMode: false, selectedBlock: 'wood',
   ghost: null, raycaster: new THREE.Raycaster(), mouse: new THREE.Vector2(),
   enemies: [], projectiles: [], lastAttack: 0,
-  coins: [],
-  traps: [],
+  coins: [], traps: [], worldExtras: [],
   isMobile: /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || 'ontouchstart' in window,
   currentWorld: 'main', portals: [], dayTime: 0.3,
   joystickX: 0, joystickY: 0,
-  nearbyAnimal: null, teleporting: false,
+  nearbyAnimal: null,
   questProgress: { tame: 0, kill: 0, coins: 0, build: 0 },
   lastAutoSave: 0,
   portalCooldown: 0,
+  camTouchId: null, camTouchX: 0, camTouchY: 0,
+  hasReinit: false,
 };
 
+// ============ CONSTANTS ============
 const BLOCKS = {
   grass:  { color: 0x4caf50, price: 1,  name: 'عشب', emoji: '🟩' },
   dirt:   { color: 0x8b4513, price: 1,  name: 'تراب', emoji: '🟫' },
@@ -472,16 +453,16 @@ const DAILY_QUESTS_POOL = [
   { id:'spend100', type:'coins', need:100, reward:50, title:'💰 مشتري', desc:'أنفق 100 عملة' },
 ];
 
+// ============ PROFILE ============
 function loadProfile(uid, defaultName = 'لاعب') {
-  const key = `mv6_profile_${uid}`;
+  const key = `mv7_profile_${uid}`;
   let data = null;
   try { data = JSON.parse(localStorage.getItem(key) || 'null'); } catch {}
   if (!data) data = {
     name: defaultName, gender: 'neutral', outfit: 'casual', skinColor: 0xf5d0a9,
     level: 1, xp: 0, coins: 100, hp: 100, energy: 100,
     inventory: [], pets: [], equippedWeapon: 'fists',
-    quests: null, questDate: null,
-    createdAt: Date.now()
+    quests: null, questDate: null, createdAt: Date.now()
   };
   data.hp = data.hp ?? 100;
   data.energy = data.energy ?? 100;
@@ -524,6 +505,7 @@ function addQuestProgress(type, amount = 1) {
   Game.profile.save();
 }
 
+// ============ BG ============
 (function initBg() {
   const canvas = $('login-bg-canvas'), ctx = canvas.getContext('2d');
   let shapes = [];
@@ -563,6 +545,7 @@ function addQuestProgress(type, amount = 1) {
   addEventListener('resize', resize);
 })();
 
+// ============ AUTH ============
 $('link-to-signup').onclick = () => { $('login-form').style.display='none'; $('signup-form').style.display='block'; };
 $('link-to-login').onclick = () => { $('signup-form').style.display='none'; $('login-form').style.display='block'; };
 $('btn-google').onclick = async () => {
@@ -605,7 +588,9 @@ $('btn-logout').onclick = () => {
   }
   Game.scene = null; Game.camera = null; Game.player = null;
   Game.animals = []; Game.enemies = []; Game.buildings.clear();
+  Game.coins = []; Game.traps = []; Game.portals = [];
   Game.user = null;
+  if (document.pointerLockElement) document.exitPointerLock();
   $('world-screen').style.display = 'none';
   $('login-screen').style.display = 'flex';
   $('login-screen').style.opacity = '1';
@@ -620,7 +605,7 @@ function updateHUD() {
   $('xp-bar').style.width = clamp(Game.profile.xp % 100, 0, 100) + '%';
 }
 
-// ============ WORLD INIT ============
+// ============ WORLD ============
 function initWorld() {
   const s = new THREE.Scene();
   s.background = new THREE.Color(WORLDS.main.sky);
@@ -675,7 +660,6 @@ function initWorld() {
 // ============ TERRAIN ============
 function buildTerrain() {
   const s = Game.scene;
-  // الأرض المسطحة
   const ground = new THREE.Mesh(
     new THREE.PlaneGeometry(300, 300, 1, 1),
     new THREE.MeshStandardMaterial({ color: 0x3a7d44 })
@@ -685,7 +669,6 @@ function buildTerrain() {
   s.add(ground);
   Game.ground = ground;
 
-  // تلال
   for (let i = 0; i < 8; i++) {
     const r = rand(8, 16);
     const h = rand(2, 6);
@@ -698,8 +681,6 @@ function buildTerrain() {
     hill.receiveShadow = !Game.isMobile;
     s.add(hill);
   }
-
-  // جبال صخرية
   for (let i = 0; i < 5; i++) {
     const r = rand(4, 8);
     const h = rand(8, 15);
@@ -712,8 +693,6 @@ function buildTerrain() {
     s.add(mtn);
     Game.collidables.push({ position: mtn.position, userData: { radius: r } });
   }
-
-  // بحيرة
   const lake = new THREE.Mesh(
     new THREE.CircleGeometry(12, 32),
     new THREE.MeshStandardMaterial({ color: 0x2a6fdb, transparent: true, opacity: 0.8 })
@@ -722,7 +701,6 @@ function buildTerrain() {
   lake.position.set(40, 0.05, 40);
   s.add(lake);
 
-  // صخور صغيرة
   for (let i = 0; i < 20; i++) {
     const r = rand(0.5, 1.5);
     const rock = new THREE.Mesh(
@@ -740,7 +718,6 @@ function buildTerrain() {
 function buildForest() {
   for (let i = 0; i < 25; i++) {
     const x = rand(-90, 90), z = rand(-90, 90);
-    // تجاهل مكان اللاعب
     if (Math.hypot(x, z) < 8) continue;
     const trunkH = rand(2, 4);
     const trunk = new THREE.Mesh(
@@ -750,7 +727,6 @@ function buildForest() {
     trunk.position.set(x, trunkH/2, z);
     trunk.castShadow = !Game.isMobile;
     Game.scene.add(trunk);
-    // أوراق
     const leaves = new THREE.Mesh(
       new THREE.ConeGeometry(rand(1.5, 2.5), rand(2, 3.5), 8),
       new THREE.MeshStandardMaterial({ color: 0x2d7d3a, flatShading: true })
@@ -762,77 +738,49 @@ function buildForest() {
   }
 }
 
-// ============ MAIN WORLD ============
 function buildMainWorldStructures() {
-  // بيوت
   buildHouse(15, 15, 0x8b6f47);
   buildHouse(-20, 25, 0xa0522d);
   buildHouse(30, -10, 0x8b4513);
-  // منصات
   buildPlatform(0, -30, 6, 0xaaaaaa);
   buildPlatform(-35, 0, 8, 0x777777);
 }
 
 function buildHouse(x, z, color) {
   const g = new THREE.Group();
-  // الجدران
-  const walls = new THREE.Mesh(
-    new THREE.BoxGeometry(6, 4, 6),
-    new THREE.MeshStandardMaterial({ color })
-  );
+  const walls = new THREE.Mesh(new THREE.BoxGeometry(6, 4, 6), new THREE.MeshStandardMaterial({ color }));
   walls.position.y = 2;
   walls.castShadow = !Game.isMobile;
   walls.receiveShadow = !Game.isMobile;
   g.add(walls);
-  // السقف
-  const roof = new THREE.Mesh(
-    new THREE.ConeGeometry(5, 2.5, 4),
-    new THREE.MeshStandardMaterial({ color: 0xa02a2a })
-  );
+  const roof = new THREE.Mesh(new THREE.ConeGeometry(5, 2.5, 4), new THREE.MeshStandardMaterial({ color: 0xa02a2a }));
   roof.position.y = 5.2;
   roof.rotation.y = Math.PI / 4;
   roof.castShadow = !Game.isMobile;
   g.add(roof);
-  // الباب
-  const door = new THREE.Mesh(
-    new THREE.BoxGeometry(1.2, 2.2, 0.1),
-    new THREE.MeshStandardMaterial({ color: 0x4a2a10 })
-  );
+  const door = new THREE.Mesh(new THREE.BoxGeometry(1.2, 2.2, 0.1), new THREE.MeshStandardMaterial({ color: 0x4a2a10 }));
   door.position.set(0, 1.1, 3.05);
   g.add(door);
-  // نوافذ
   [[-2, 2.5, 3.05], [2, 2.5, 3.05]].forEach(([wx, wy, wz]) => {
-    const win = new THREE.Mesh(
-      new THREE.BoxGeometry(1, 1, 0.1),
-      new THREE.MeshStandardMaterial({ color: 0x88ccff, transparent: true, opacity: 0.7 })
-    );
+    const win = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 0.1), new THREE.MeshStandardMaterial({ color: 0x88ccff, transparent: true, opacity: 0.7 }));
     win.position.set(wx, wy, wz);
     g.add(win);
   });
-  // مدخنة
-  const chimney = new THREE.Mesh(
-    new THREE.BoxGeometry(0.8, 2, 0.8),
-    new THREE.MeshStandardMaterial({ color: 0x555555 })
-  );
+  const chimney = new THREE.Mesh(new THREE.BoxGeometry(0.8, 2, 0.8), new THREE.MeshStandardMaterial({ color: 0x555555 }));
   chimney.position.set(2, 5.5, -2);
   g.add(chimney);
-
   g.position.set(x, 0, z);
   Game.scene.add(g);
   Game.collidables.push({ position: new THREE.Vector3(x, 2, z), userData: { radius: 4 } });
 }
 
 function buildPlatform(x, z, size, color) {
-  const platform = new THREE.Mesh(
-    new THREE.BoxGeometry(size, 0.5, size),
-    new THREE.MeshStandardMaterial({ color })
-  );
+  const platform = new THREE.Mesh(new THREE.BoxGeometry(size, 0.5, size), new THREE.MeshStandardMaterial({ color }));
   platform.position.set(x, 0.25, z);
   platform.receiveShadow = !Game.isMobile;
   Game.scene.add(platform);
 }
 
-// ============ PORTALS ============
 function buildPortals() {
   createPortal('action', new THREE.Vector3(25, 0, -25), '⚔️ الأكشن', 0xff2266);
   createPortal('horror', new THREE.Vector3(-25, 0, -25), '👻 المرعب', 0x220044);
@@ -861,45 +809,38 @@ function createPortal(worldId, pos, label, color) {
   Game.portals.push(g);
 }
 
-// ============ REALISTIC PLAYER ============
+// ============ PLAYER ============
 function buildPlayer() {
   if (Game.player) Game.scene.remove(Game.player);
   const g = new THREE.Group();
-
   const skinColor = Game.profile.skinColor || 0xf5d0a9;
   const outfitColor = OUTFITS[Game.profile.outfit]?.color || 0x2196f3;
-
   const skinMat = new THREE.MeshStandardMaterial({ color: skinColor });
   const clothMat = new THREE.MeshStandardMaterial({ color: outfitColor });
   const pantsMat = new THREE.MeshStandardMaterial({ color: 0x222255 });
   const shoesMat = new THREE.MeshStandardMaterial({ color: 0x111111 });
   const hairMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a });
 
-  // الجذع (قميص)
   const torso = new THREE.Mesh(new THREE.BoxGeometry(0.9, 1.1, 0.5), clothMat);
   torso.position.y = 1.55;
   torso.castShadow = !Game.isMobile;
   g.add(torso);
   Game.avatar.torso = torso;
 
-  // الرقبة
   const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 0.15, 8), skinMat);
   neck.position.y = 2.2;
   g.add(neck);
 
-  // الرأس
   const head = new THREE.Mesh(new THREE.SphereGeometry(0.36, 16, 16), skinMat);
   head.position.y = 2.6;
   head.castShadow = !Game.isMobile;
   g.add(head);
   Game.avatar.head = head;
 
-  // الشعر
   const hair = new THREE.Mesh(new THREE.SphereGeometry(0.38, 16, 12, 0, Math.PI*2, 0, Math.PI*0.6), hairMat);
   hair.position.y = 2.68;
   g.add(hair);
 
-  // العيون
   const eyeMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
   const pupilMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
   [-0.12, 0.12].forEach(x => {
@@ -911,18 +852,15 @@ function buildPlayer() {
     g.add(pupil);
   });
 
-  // الأنف
   const nose = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.12, 4), skinMat);
   nose.position.set(0, 2.55, 0.36);
   nose.rotation.x = Math.PI / 2;
   g.add(nose);
 
-  // الفم
   const mouth = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.03, 0.02), new THREE.MeshBasicMaterial({ color: 0x660000 }));
   mouth.position.set(0, 2.45, 0.35);
   g.add(mouth);
 
-  // الذراعان
   const armGeo = new THREE.BoxGeometry(0.22, 0.9, 0.22);
   const armL = new THREE.Mesh(armGeo, clothMat);
   armL.position.set(-0.6, 1.5, 0);
@@ -935,7 +873,6 @@ function buildPlayer() {
   g.add(armR);
   Game.avatar.armR = armR;
 
-  // اليدان
   const handL = new THREE.Mesh(new THREE.SphereGeometry(0.14, 8, 8), skinMat);
   handL.position.set(-0.6, 1.05, 0);
   g.add(handL);
@@ -943,7 +880,6 @@ function buildPlayer() {
   handR.position.set(0.6, 1.05, 0);
   g.add(handR);
 
-  // الساقان
   const legGeo = new THREE.BoxGeometry(0.28, 0.9, 0.28);
   const legL = new THREE.Mesh(legGeo, pantsMat);
   legL.position.set(-0.22, 0.55, 0);
@@ -956,7 +892,6 @@ function buildPlayer() {
   g.add(legR);
   Game.avatar.legR = legR;
 
-  // الأحذية
   const shoeL = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.15, 0.4), shoesMat);
   shoeL.position.set(-0.22, 0.075, 0.05);
   g.add(shoeL);
@@ -973,10 +908,16 @@ function buildPlayer() {
 
 function updateAvatarColors() {
   if (!Game.player) return;
+  const currentPos = Game.player.position.clone();
+  const currentRot = Game.player.rotation.y;
   buildPlayer();
+  if (Game.player) {
+    Game.player.position.copy(currentPos);
+    Game.player.rotation.y = currentRot;
+  }
 }
 
-// ============ REALISTIC CREATURES ============
+// ============ CREATURES ============
 function spawnCreature(typeId, x, z) {
   const t = CREATURE_TYPES[typeId];
   if (!t || !Game.scene) return;
@@ -985,19 +926,16 @@ function spawnCreature(typeId, x, z) {
   const darkMat = new THREE.MeshStandardMaterial({ color: 0x000000 });
   const whiteMat = new THREE.MeshStandardMaterial({ color: 0xffffff });
 
-  // جسم أساسي
   const body = new THREE.Mesh(new THREE.SphereGeometry(0.55, 12, 12), bodyMat);
   body.scale.set(1.2, 0.8, 1.6);
   body.position.y = 0.65;
   body.castShadow = !Game.isMobile;
   g.add(body);
 
-  // رأس
   const head = new THREE.Mesh(new THREE.SphereGeometry(0.42, 12, 12), bodyMat);
   head.position.set(0, 0.95, 0.7);
   g.add(head);
 
-  // عينان
   [-0.15, 0.15].forEach(ex => {
     const eye = new THREE.Mesh(new THREE.SphereGeometry(0.07, 8, 8), whiteMat);
     eye.position.set(ex, 1.05, 1.05);
@@ -1007,12 +945,10 @@ function spawnCreature(typeId, x, z) {
     g.add(pupil);
   });
 
-  // أنف
   const nose = new THREE.Mesh(new THREE.SphereGeometry(0.08, 6, 6), darkMat);
   nose.position.set(0, 0.9, 1.1);
   g.add(nose);
 
-  // أرجل
   const legGeo = new THREE.CylinderGeometry(0.1, 0.1, 0.5, 6);
   [[-0.25, 0.7], [0.25, 0.7], [-0.25, -0.5], [0.25, -0.5]].forEach(([lx, lz]) => {
     const leg = new THREE.Mesh(legGeo, bodyMat);
@@ -1020,7 +956,6 @@ function spawnCreature(typeId, x, z) {
     g.add(leg);
   });
 
-  // ذيل / أذنين / أجنحة حسب النوع
   if (typeId === 'rabbit') {
     [-0.15, 0.15].forEach(ex => {
       const ear = new THREE.Mesh(new THREE.CapsuleGeometry(0.08, 0.5, 4, 6), bodyMat);
@@ -1038,7 +973,6 @@ function spawnCreature(typeId, x, z) {
       g.add(ear);
     });
   } else if (typeId === 'dragon') {
-    // أجنحة
     const wingMat = new THREE.MeshStandardMaterial({ color: t.color, transparent: true, opacity: 0.7, side: THREE.DoubleSide });
     [-1, 1].forEach(side => {
       const wing = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 0.9), wingMat);
@@ -1046,7 +980,6 @@ function spawnCreature(typeId, x, z) {
       wing.rotation.y = side * 0.4;
       g.add(wing);
     });
-    // قرون
     [-0.2, 0.2].forEach(ex => {
       const horn = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.3, 4), darkMat);
       horn.position.set(ex, 1.35, 0.65);
@@ -1068,34 +1001,38 @@ function spawnCreature(typeId, x, z) {
   Game.animals.push(g);
 }
 
-// ============ INPUT (FIXED mouse/buttons) ============
+// ============ INPUT (FIXED) ============
 function setupInput() {
-  // Keyboard
+  // Keyboard - ignore when typing
   addEventListener('keydown', e => {
-    if (e.target.tagName === 'INPUT') return;
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
     Game.keys[e.code] = true;
     if (e.code === 'Space' && Game.isGrounded && Game.player) {
       Game.velocityY = 12; Game.isGrounded = false;
+      e.preventDefault();
     }
     if (e.code === 'KeyB') toggleBuild();
-    if (e.code === 'KeyT' && $('chat-input-wrap').style.display !== 'block') openChat();
+    if (e.code === 'KeyT' && $('chat-input-wrap').style.display !== 'block') {
+      openChat(); e.preventDefault();
+    }
     if (e.code === 'Escape') {
       closeAllPanels();
       if (Game.buildMode) toggleBuild(false);
+      if (document.pointerLockElement) document.exitPointerLock();
     }
     const digits = ['Digit1','Digit2','Digit3','Digit4','Digit5','Digit6'];
     const blockKeys = Object.keys(BLOCKS);
     digits.forEach((code, i) => { if (e.code === code && blockKeys[i]) selectBlock(blockKeys[i]); });
   });
   addEventListener('keyup', e => Game.keys[e.code] = false);
-  addEventListener('blur', () => Game.keys = {});
+  addEventListener('blur', () => { Game.keys = {}; Game.isSprinting = false; });
 
   if (!Game.isMobile) {
-    // فقط النقر على canvas يفعّل pointer lock
+    // Click on canvas only = pointer lock
     Game.renderer.domElement.addEventListener('click', (e) => {
-      // تجاهل إذا كان النقر على عنصر UI
+      e.stopPropagation();
       if (e.target !== Game.renderer.domElement) return;
-      if (!Game.isLocked && !Game.buildMode) {
+      if (!Game.isLocked && !Game.buildMode && !anyPanelOpen()) {
         try { Game.renderer.domElement.requestPointerLock(); } catch (err) {}
       }
     });
@@ -1106,31 +1043,31 @@ function setupInput() {
     });
 
     document.addEventListener('mousemove', e => {
-      if (!Game.isLocked) return;
-      // حماية من قفزات الماوس
-      const mx = clamp(e.movementX || 0, -100, 100);
-      const my = clamp(e.movementY || 0, -100, 100);
+      if (!Game.isLocked || Game.buildMode) return;
+      // Guard against spikes
+      const mx = clamp(e.movementX || 0, -80, 80);
+      const my = clamp(e.movementY || 0, -80, 80);
       Game.yaw -= mx * 0.0022;
       Game.pitch = clamp(Game.pitch - my * 0.0022, -1.0, 0.55);
     });
 
-    // النقر على UI لا يجب أن يهاجم
     document.addEventListener('mousedown', e => {
-      if (e.button === 0 && Game.isLocked) attack();
+      if (e.button === 0 && Game.isLocked && !Game.buildMode && !anyPanelOpen()) attack();
     });
 
-    document.addEventListener('contextmenu', e => {
-      if (Game.buildMode || Game.isLocked) e.preventDefault();
-    });
+    // Block right-click menu
+    addEventListener('contextmenu', e => e.preventDefault());
 
+    // Build mode mouse tracking
     addEventListener('mousemove', e => {
       if (!Game.buildMode) return;
       Game.mouse.x = (e.clientX / innerWidth) * 2 - 1;
       Game.mouse.y = -(e.clientY / innerHeight) * 2 + 1;
     });
 
-    addEventListener('click', e => {
-      if (!Game.buildMode || !Game.isLocked) return;
+    // Build mode clicks
+    addEventListener('mousedown', e => {
+      if (!Game.buildMode || anyPanelOpen()) return;
       if (e.button === 0) placeBlock();
       else if (e.button === 2) removeBlock();
     });
@@ -1144,6 +1081,11 @@ function setupInput() {
   });
 }
 
+function anyPanelOpen() {
+  return document.querySelector('.panel-overlay.active') !== null;
+}
+
+// ============ MOBILE CONTROLS (FIXED) ============
 function setupMobileControls() {
   if (!Game.isMobile) return;
   const zone = $('joystick-zone'), knob = $('joystick-knob');
@@ -1170,42 +1112,77 @@ function setupMobileControls() {
     Game.joystickY = dy / 50;
   }, { passive: false });
 
-  zone.addEventListener('touchend', () => {
+  zone.addEventListener('touchend', e => {
+    e.preventDefault();
+    active = false;
+    knob.style.transform = 'translate(-50%, -50%)';
+    Game.joystickX = Game.joystickY = 0;
+  }, { passive: false });
+
+  zone.addEventListener('touchcancel', () => {
     active = false;
     knob.style.transform = 'translate(-50%, -50%)';
     Game.joystickX = Game.joystickY = 0;
   });
 
-  let camTouch = null;
+  // Camera touch on right half
   Game.renderer.domElement.addEventListener('touchstart', e => {
+    if (anyPanelOpen()) return;
     const r = Game.renderer.domElement.getBoundingClientRect();
     for (const t of e.touches) {
-      if (t.clientX > r.width / 2) camTouch = { id: t.identifier, x: t.clientX, y: t.clientY };
-    }
-  }, { passive: true });
-
-  Game.renderer.domElement.addEventListener('touchmove', e => {
-    if (!camTouch) return;
-    for (const t of e.touches) {
-      if (t.identifier === camTouch.id) {
-        Game.yaw -= (t.clientX - camTouch.x) * 0.006;
-        Game.pitch = clamp(Game.pitch - (t.clientY - camTouch.y) * 0.006, -1.0, 0.55);
-        camTouch.x = t.clientX; camTouch.y = t.clientY;
+      if (t.clientX > r.width / 2) {
+        Game.camTouchId = t.identifier;
+        Game.camTouchX = t.clientX;
+        Game.camTouchY = t.clientY;
       }
     }
   }, { passive: true });
 
-  Game.renderer.domElement.addEventListener('touchend', () => camTouch = null);
+  Game.renderer.domElement.addEventListener('touchmove', e => {
+    if (Game.camTouchId === null || Game.buildMode) return;
+    for (const t of e.touches) {
+      if (t.identifier === Game.camTouchId) {
+        Game.yaw -= (t.clientX - Game.camTouchX) * 0.006;
+        Game.pitch = clamp(Game.pitch - (t.clientY - Game.camTouchY) * 0.006, -1.0, 0.55);
+        Game.camTouchX = t.clientX;
+        Game.camTouchY = t.clientY;
+      }
+    }
+  }, { passive: true });
 
-  $('jump-btn').addEventListener('touchstart', e => {
-    e.preventDefault(); e.stopPropagation();
+  Game.renderer.domElement.addEventListener('touchend', e => {
+    for (const t of e.changedTouches) {
+      if (t.identifier === Game.camTouchId) Game.camTouchId = null;
+    }
+  });
+
+  // Buttons - use pointerdown to guarantee
+  const bind = (id, onDown, onUp) => {
+    const el = $(id);
+    if (!el) return;
+    el.addEventListener('touchstart', e => { e.preventDefault(); e.stopPropagation(); if (onDown) onDown(); }, { passive: false });
+    el.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); if (onDown) onDown(); });
+    if (onUp) {
+      el.addEventListener('touchend', e => { e.preventDefault(); if (onUp) onUp(); }, { passive: false });
+      el.addEventListener('touchcancel', e => { if (onUp) onUp(); });
+      el.addEventListener('pointerup', e => { if (onUp) onUp(); });
+    }
+  };
+
+  bind('jump-btn', () => {
     if (Game.isGrounded) { Game.velocityY = 12; Game.isGrounded = false; }
   });
-  $('attack-btn').addEventListener('touchstart', e => { e.preventDefault(); e.stopPropagation(); attack(); });
-  $('build-btn').addEventListener('touchstart', e => { e.preventDefault(); e.stopPropagation(); toggleBuild(); });
-  // Sprint: hold
-  $('sprint-btn').addEventListener('touchstart', e => { e.preventDefault(); e.stopPropagation(); Game.isSprinting = true; });
-  $('sprint-btn').addEventListener('touchend', e => { e.preventDefault(); Game.isSprinting = false; });
+
+  bind('attack-btn', () => attack());
+
+  bind('sprint-btn', () => {
+    if (Game.profile.energy > 5) Game.isSprinting = true;
+  }, () => {
+    Game.isSprinting = false;
+    $('sprint-indicator').classList.remove('active');
+  });
+
+  bind('build-btn', () => toggleBuild());
 }
 
 // ============ ANIMATE ============
@@ -1232,14 +1209,20 @@ function animate() {
   }
 
   if (Game.profile) {
-    Game.profile.energy = clamp(Game.profile.energy + dt * (Game.isSprinting ? -5 : 3), 0, 100);
+    // Faster regen when not sprinting
+    const regen = Game.isSprinting ? -4 : 6;
+    Game.profile.energy = clamp(Game.profile.energy + dt * regen, 0, 100);
     $('energy-bar').style.width = Game.profile.energy + '%';
-    if (Game.profile.energy < 5) Game.isSprinting = false;
+    if (Game.profile.energy < 5) {
+      Game.isSprinting = false;
+      $('sprint-indicator').classList.remove('active');
+    }
   }
 
   Game.renderer.render(Game.scene, Game.camera);
 }
 
+// ============ PLAYER UPDATE ============
 function updatePlayer(dt) {
   const p = Game.player;
   if (!p) return;
@@ -1251,9 +1234,12 @@ function updatePlayer(dt) {
   if (Game.keys.KeyD || Game.keys.ArrowRight) mx += 1;
   if (Game.isMobile) { mx += Game.joystickX; mz += Game.joystickY; }
 
-  // Sprint
   const shiftDown = Game.keys.ShiftLeft || Game.keys.ShiftRight || Game.isSprinting;
-  if (shiftDown && (mx || mz) && Game.profile.energy > 5) {
+
+  const len = Math.hypot(mx, mz);
+  const moving = len > 0.1;
+
+  if (shiftDown && moving && Game.profile.energy > 5) {
     Game.isSprinting = true;
     $('sprint-indicator').classList.add('active');
   } else {
@@ -1261,17 +1247,24 @@ function updatePlayer(dt) {
     $('sprint-indicator').classList.remove('active');
   }
 
-  const len = Math.hypot(mx, mz);
-  const moving = len > 0.1;
   const sprintMult = Game.isSprinting ? 1.8 : 1;
   const energyFactor = 0.6 + (Game.profile.energy / 100) * 0.4;
   const speed = 8 * energyFactor * sprintMult;
 
   if (moving) {
     mx /= len; mz /= len;
-    const sinY = Math.sin(Game.yaw), cosY = Math.cos(Game.yaw);
-    const wx = mx * cosY - mz * sinY;
-    const wz = mx * sinY + mz * cosY;
+    // FIXED rotation: yaw=0 means camera looks toward -Z
+    // forward vector = (-sin(yaw), 0, -cos(yaw))
+    // right vector = (cos(yaw), 0, -sin(yaw))
+    const forwardX = -Math.sin(Game.yaw);
+    const forwardZ = -Math.cos(Game.yaw);
+    const rightX = Math.cos(Game.yaw);
+    const rightZ = -Math.sin(Game.yaw);
+
+    // mz=-1 means forward (W), mz=+1 backward (S)
+    // mx=+1 means right (D), mx=-1 left (A)
+    const wx = -mz * forwardX + mx * rightX;
+    const wz = -mz * forwardZ + mx * rightZ;
 
     const nx = p.position.x + wx * speed * dt;
     const nz = p.position.z + wz * speed * dt;
@@ -1285,28 +1278,33 @@ function updatePlayer(dt) {
     if (Math.abs(nx) > 140 || Math.abs(nz) > 140) canMove = false;
     if (canMove) { p.position.x = nx; p.position.z = nz; }
 
-    p.rotation.y = THREE.MathUtils.lerp(p.rotation.y, Math.atan2(wx, wz), 0.25);
+    // Rotate player toward movement direction
+    const targetRot = Math.atan2(wx, wz);
+    let diff = targetRot - p.rotation.y;
+    while (diff > Math.PI) diff -= Math.PI * 2;
+    while (diff < -Math.PI) diff += Math.PI * 2;
+    p.rotation.y += diff * 0.25;
   }
 
   Game.velocityY -= 25 * dt;
   p.position.y += Game.velocityY * dt;
   if (p.position.y <= 0) { p.position.y = 0; Game.velocityY = 0; Game.isGrounded = true; }
 
-  // Anim limbs
+  // Animate limbs
   const speedAnim = Game.isSprinting ? 0.018 : 0.01;
-  if (moving && Game.avatar.legL) {
+  if (moving && Game.avatar.legL && Game.avatar.legR) {
     const t = performance.now() * speedAnim;
     Game.avatar.legL.rotation.x = Math.sin(t) * 0.6;
     Game.avatar.legR.rotation.x = -Math.sin(t) * 0.6;
-    Game.avatar.armL.rotation.x = -Math.sin(t) * 0.5;
-    Game.avatar.armR.rotation.x = Math.sin(t) * 0.5;
-  } else if (Game.avatar.legL) {
+    if (Game.avatar.armL) Game.avatar.armL.rotation.x = -Math.sin(t) * 0.5;
+    if (Game.avatar.armR) Game.avatar.armR.rotation.x = Math.sin(t) * 0.5;
+  } else {
     ['legL','legR','armL','armR'].forEach(k => {
       if (Game.avatar[k]) Game.avatar[k].rotation.x *= 0.85;
     });
   }
 
-  // Camera
+  // Camera follow - FIXED
   const camDist = 8, camHeight = 3.5;
   const cx = p.position.x + Math.sin(Game.yaw) * camDist * Math.cos(Game.pitch);
   const cz = p.position.z + Math.cos(Game.yaw) * camDist * Math.cos(Game.pitch);
@@ -1317,6 +1315,7 @@ function updatePlayer(dt) {
   updateNearbyAnimal();
 }
 
+// ============ ANIMALS ============
 function updateAnimals(dt) {
   const p = Game.player;
   Game.animals.forEach(a => {
@@ -1346,6 +1345,7 @@ function updateAnimals(dt) {
   }
 }
 
+// ============ ENEMIES ============
 function updateEnemies(dt) {
   const p = Game.player;
   if (!p) return;
@@ -1455,8 +1455,9 @@ function updateDayNight(dt) {
 
 // ============ ATTACK ============
 function attack() {
-  if (!Game.player || Game.profile.energy < 10) {
-    if (Game.profile.energy < 10) toast('⚡ طاقة غير كافية!', '#f1c40f');
+  if (!Game.player || !Game.profile) return;
+  if (Game.profile.energy < 10) {
+    toast('⚡ طاقة غير كافية!', '#f1c40f');
     return;
   }
   const now = Date.now();
@@ -1544,8 +1545,17 @@ function toggleBuild(force) {
   Game.buildMode = force !== undefined ? force : !Game.buildMode;
   $('block-palette').classList.toggle('active', Game.buildMode);
   if (Game.ghost) Game.ghost.visible = Game.buildMode;
-  if (Game.isMobile) { Game.mouse.set(0, 0); return; }
-  if (Game.buildMode && document.pointerLockElement) document.exitPointerLock();
+  if (Game.buildMode) {
+    if (document.pointerLockElement) document.exitPointerLock();
+    Game.mouse.set(0, 0);
+  } else if (!Game.isMobile) {
+    // Re-lock when exiting build
+    setTimeout(() => {
+      if (!anyPanelOpen() && Game.renderer) {
+        try { Game.renderer.domElement.requestPointerLock(); } catch (e) {}
+      }
+    }, 100);
+  }
 }
 
 function updateGhost() {
@@ -1621,13 +1631,13 @@ function saveBuildings() {
   Game.buildings.forEach((mesh, key) => {
     data.push({ key, type: mesh.userData.blockType, pos: mesh.position.toArray() });
   });
-  try { localStorage.setItem(`mv6_build_${Game.user.uid}`, JSON.stringify(data)); } catch {}
+  try { localStorage.setItem(`mv7_build_${Game.user.uid}`, JSON.stringify(data)); } catch {}
 }
 
 function loadBuildings() {
   if (!Game.user) return;
   try {
-    const data = JSON.parse(localStorage.getItem(`mv6_build_${Game.user.uid}`) || '[]');
+    const data = JSON.parse(localStorage.getItem(`mv7_build_${Game.user.uid}`) || '[]');
     data.forEach(b => {
       const info = BLOCKS[b.type];
       if (!info) return;
@@ -1700,7 +1710,7 @@ function updateWeather(dt) {
   }
 }
 
-// ============ PORTALS ============
+// ============ PORTALS + WORLD SWITCH (FIXED) ============
 function updatePortals(dt) {
   if (!Game.player) return;
   Game.portalCooldown = Math.max(0, Game.portalCooldown - dt);
@@ -1712,10 +1722,27 @@ function updatePortals(dt) {
       toast(`🌍 الانتقال إلى ${portal.userData.label}...`);
       setTimeout(() => {
         switchWorld(portal.userData.worldId);
-        Game.player.position.set(0, 0, 0);
+        if (Game.player) Game.player.position.set(0, 0, 0);
       }, 600);
     }
   });
+}
+
+function clearWorldExtras() {
+  if (!Game.scene) return;
+  Game.enemies.forEach(e => Game.scene.remove(e.group));
+  Game.enemies = [];
+  Game.coins.forEach(c => Game.scene.remove(c.mesh));
+  Game.coins = [];
+  Game.traps.forEach(t => Game.scene.remove(t.mesh));
+  Game.traps = [];
+  Game.worldExtras.forEach(o => { try { Game.scene.remove(o); } catch(e) {} });
+  Game.worldExtras = [];
+  // Reset weather particles
+  if (Game.weather.particles) {
+    Game.scene.remove(Game.weather.particles);
+    Game.weather.particles = null;
+  }
 }
 
 function switchWorld(id) {
@@ -1724,18 +1751,13 @@ function switchWorld(id) {
   Game.currentWorld = id;
   Game.scene.background = new THREE.Color(w.sky);
   Game.scene.fog = new THREE.Fog(w.fog, 50, 140);
-  Game.ground.material.color.setHex(w.ground);
+  if (Game.ground) Game.ground.material.color.setHex(w.ground);
   $('world-badge').textContent = `${w.emoji} ${w.name}`;
 
-  // Clean world objects
-  Game.enemies.forEach(e => Game.scene.remove(e.group));
-  Game.enemies = [];
-  Game.coins.forEach(c => Game.scene.remove(c.mesh));
-  Game.coins = [];
-  Game.traps.forEach(t => Game.scene.remove(t.mesh));
-  Game.traps = [];
+  clearWorldExtras();
+  // Reset weather to match new world
+  setWeather('clear');
 
-  // Spawn per world
   if (id === 'action') {
     for (let i = 0; i < 6; i++) spawnEnemy('normal');
     if (Math.random() < 0.4) spawnEnemy('boss');
@@ -1777,7 +1799,6 @@ function spawnEnemy(kind = 'normal') {
   body.scale.y = 1.4;
   body.castShadow = !Game.isMobile;
   g.add(body);
-  // عينان
   const eyeMat = new THREE.MeshBasicMaterial({ color: 0xff0000 });
   [-0.2, 0.2].forEach(x => {
     const eye = new THREE.Mesh(new THREE.SphereGeometry(0.1, 6, 6), eyeMat);
@@ -1839,11 +1860,11 @@ function buildFunPlatforms() {
     );
     platform.position.set(rand(-30, 30), rand(1, 4), rand(-30, 30));
     Game.scene.add(platform);
+    Game.worldExtras.push(platform);
   }
 }
 
 function buildSportsArena() {
-  // الملعب
   const field = new THREE.Mesh(
     new THREE.PlaneGeometry(30, 20),
     new THREE.MeshStandardMaterial({ color: 0x2ecc71 })
@@ -1851,7 +1872,7 @@ function buildSportsArena() {
   field.rotation.x = -Math.PI/2;
   field.position.y = 0.06;
   Game.scene.add(field);
-  // خطوط
+  Game.worldExtras.push(field);
   const line = new THREE.Mesh(
     new THREE.PlaneGeometry(30, 0.2),
     new THREE.MeshBasicMaterial({ color: 0xffffff })
@@ -1859,13 +1880,14 @@ function buildSportsArena() {
   line.rotation.x = -Math.PI/2;
   line.position.y = 0.07;
   Game.scene.add(line);
-  // كرة
+  Game.worldExtras.push(line);
   const ball = new THREE.Mesh(
     new THREE.SphereGeometry(0.5, 16, 16),
     new THREE.MeshStandardMaterial({ color: 0xffffff })
   );
   ball.position.set(0, 0.5, 0);
   Game.scene.add(ball);
+  Game.worldExtras.push(ball);
 }
 
 // ============ TAMING ============
@@ -1954,10 +1976,14 @@ $('ac-feed-btn').onclick = () => {
 function setupShopUI() {
   $('btn-shop').onclick = () => {
     $('shop-panel').classList.add('active');
+    if (document.pointerLockElement) document.exitPointerLock();
     $('shop-coins').textContent = Game.profile.coins;
     renderShop('homes');
   };
-  $('btn-close-shop').onclick = () => $('shop-panel').classList.remove('active');
+  $('btn-close-shop').onclick = () => {
+    $('shop-panel').classList.remove('active');
+    relockPointer();
+  };
   document.querySelectorAll('[data-shop]').forEach(b => { b.onclick = () => renderShop(b.dataset.shop); });
 }
 
@@ -1995,7 +2021,10 @@ function setupProfileUI() {
     if (document.pointerLockElement) document.exitPointerLock();
     renderProfile();
   };
-  $('btn-close-profile').onclick = () => $('profile-panel').classList.remove('active');
+  $('btn-close-profile').onclick = () => {
+    $('profile-panel').classList.remove('active');
+    relockPointer();
+  };
   $('btn-save-profile').onclick = () => {
     Game.profile.name = $('input-name').value || 'لاعب';
     Game.profile.gender = $('input-gender').value;
@@ -2005,7 +2034,21 @@ function setupProfileUI() {
     toast('✅ تم الحفظ');
     beep(660, 0.1);
     $('profile-panel').classList.remove('active');
+    relockPointer();
   };
+}
+
+function relockPointer() {
+  if (Game.isMobile) {
+    // Reset camera touch state
+    Game.camTouchId = null;
+    return;
+  }
+  setTimeout(() => {
+    if (!anyPanelOpen() && Game.renderer && !Game.buildMode) {
+      try { Game.renderer.domElement.requestPointerLock(); } catch (e) {}
+    }
+  }, 150);
 }
 
 function renderProfile() {
@@ -2069,7 +2112,10 @@ function setupQuestsUI() {
     if (document.pointerLockElement) document.exitPointerLock();
     renderQuests();
   };
-  $('btn-close-quests').onclick = () => $('quests-panel').classList.remove('active');
+  $('btn-close-quests').onclick = () => {
+    $('quests-panel').classList.remove('active');
+    relockPointer();
+  };
   $('btn-claim-quests').onclick = () => {
     let total = 0, count = 0;
     Game.profile.quests.forEach(q => {
@@ -2122,7 +2168,10 @@ function setupChatUI() {
     $('chat-panel').classList.add('active');
     if (document.pointerLockElement) document.exitPointerLock();
   };
-  $('btn-close-chat').onclick = () => $('chat-panel').classList.remove('active');
+  $('btn-close-chat').onclick = () => {
+    $('chat-panel').classList.remove('active');
+    relockPointer();
+  };
   input.addEventListener('keydown', e => {
     e.stopPropagation();
     if (e.key === 'Enter') {
@@ -2131,10 +2180,13 @@ function setupChatUI() {
       input.value = '';
       inputWrap.style.display = 'none';
       if (!Game.isMobile && Game.renderer && !Game.buildMode) {
-        try { Game.renderer.domElement.requestPointerLock(); } catch (err) {}
+        relockPointer();
       }
     }
-    if (e.key === 'Escape') inputWrap.style.display = 'none';
+    if (e.key === 'Escape') {
+      inputWrap.style.display = 'none';
+      if (!Game.isMobile) relockPointer();
+    }
   });
   setInterval(() => {
     if (!Game.profile) return;
@@ -2213,7 +2265,7 @@ function setupUI() {
   setupQuestsUI();
 }
 
-console.log('🎮 Metaverse V6 loaded');
+console.log('🎮 Metaverse V7 loaded');
 </script>
 </body>
 </html>
