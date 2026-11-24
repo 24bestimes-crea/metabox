@@ -8,7 +8,7 @@
   <meta id="seoDesc" name="description" content="منصة عرض سينمائية للأفلام والمسلسلات والأنمي مع صفوف أفقية وتنظيم ذكي بالذكاء الاصطناعي وربط مباشر بقاعدة بيانات Firebase." />
   <meta id="seoKeywords" name="keywords" content="أفلام, مسلسلات, أنمي, مواسم, حلقات, مشاهدة, ذكاء اصطناعي, Firebase" />
   <meta id="ogTitle" property="og:title" content="StreamFlix AI — أفلام، مسلسلات، وأنمي" />
-  <meta id="ogDesc" property="og:description" content="تصفح أحدث الأفلام والمسلسلات والأنمي في صفوف أفقية مع معاينة فورية للقطات." />
+  <meta id="ogDesc" property="og:description" content="تصفح أحدث الأفلام والمسلسلات والأنمي في صفوف أفقية مع عرض الوصف والنوع والسنة عند تمرير الماوس." />
   <meta id="ogType" property="og:type" content="website" />
   <script id="jsonLdSchema" type="application/ld+json">{}</script>
 
@@ -283,7 +283,7 @@
     .hero h1 { font-size: clamp(1.6rem, 3.4vw, 2.5rem); margin-bottom: 8px; }
     .hero p { color: #e5e7eb; font-size: 0.9rem; margin-bottom: 14px; }
 
-    /* Horizontal Shelf Rows Matching Reference Image */
+    /* Horizontal Shelf Rows */
     main { padding: 18px 4% 68px; }
 
     .shelf-section { margin-bottom: 30px; }
@@ -307,9 +307,7 @@
 
     .shelf-title .chevron { color: var(--muted); font-size: 1.15rem; }
 
-    .shelf-wrapper {
-      position: relative;
-    }
+    .shelf-wrapper { position: relative; }
 
     .shelf-row {
       display: flex;
@@ -337,13 +335,13 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 5;
+      z-index: 6;
       opacity: 0.9;
     }
 
     .scroll-next-btn:hover { background: rgba(10,11,14,0.95); }
 
-    /* Vertical Poster Card Matching Reference Image */
+    /* Vertical Poster Card */
     .poster-card {
       flex: 0 0 165px;
       width: 165px;
@@ -372,22 +370,82 @@
       border: 1px solid var(--border);
     }
 
-    .poster-frame img,
-    .poster-frame video.hover-clip {
+    .poster-frame img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
+      transition: filter 0.22s ease, transform 0.25s ease;
     }
 
-    .poster-frame video.hover-clip {
+    .poster-card:hover .poster-frame img {
+      filter: brightness(0.32) blur(1px);
+      transform: scale(1.03);
+    }
+
+    /* Hover Overlay: Type, Year, and Description */
+    .hover-info-overlay {
       position: absolute;
       inset: 0;
+      z-index: 4;
+      background: linear-gradient(
+        to top,
+        rgba(8, 10, 15, 0.97) 0%,
+        rgba(12, 15, 22, 0.88) 65%,
+        rgba(12, 15, 22, 0.72) 100%
+      );
+      padding: 36px 10px 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      gap: 6px;
       opacity: 0;
       pointer-events: none;
+      transition: opacity 0.2s ease;
+      text-align: right;
     }
 
-    .poster-card.previewing .poster-frame video.hover-clip.active-clip { opacity: 1; }
+    .poster-card:hover .hover-info-overlay {
+      opacity: 1;
+    }
+
+    .hover-meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .hover-type-tag {
+      background: rgba(56, 189, 248, 0.2);
+      color: var(--accent);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .hover-year-tag {
+      background: rgba(251, 191, 36, 0.18);
+      color: var(--gold);
+      border: 1px solid rgba(251, 191, 36, 0.35);
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .hover-desc-text {
+      font-size: 0.74rem;
+      color: #f3f4f6;
+      line-height: 1.45;
+      display: -webkit-box;
+      -webkit-line-clamp: 6;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
 
     .corner-n {
       position: absolute;
@@ -400,7 +458,7 @@
       line-height: 1;
       padding: 4px 5px;
       border-radius: 2px;
-      z-index: 2;
+      z-index: 3;
     }
 
     .top10-badge {
@@ -416,7 +474,7 @@
       border-bottom-right-radius: 4px;
       text-align: center;
       line-height: 1.05;
-      z-index: 2;
+      z-index: 3;
     }
 
     .status-ribbon-wrap {
@@ -430,6 +488,11 @@
       gap: 3px;
       z-index: 2;
       pointer-events: none;
+      transition: opacity 0.18s ease;
+    }
+
+    .poster-card:hover .status-ribbon-wrap {
+      opacity: 0;
     }
 
     .ribbon-tag {
@@ -451,9 +514,7 @@
       border-radius: 3px;
     }
 
-    .poster-caption {
-      padding: 6px 2px 0;
-    }
+    .poster-caption { padding: 6px 2px 0; }
 
     .poster-name {
       font-size: 0.8rem;
@@ -643,7 +704,7 @@
     </div>
   </section>
 
-  <!-- Hero Banner -->
+  <!-- Compact Hero -->
   <section class="hero" id="hero">
     <div class="hero-content">
       <span class="hero-badge" id="heroBadge">مميز اليوم</span>
@@ -746,16 +807,6 @@
         </div>
 
         <div class="form-field">
-          <label>لقطات الإعلان عند تمرير الماوس (روابط صور مفصولة بفاصلة)</label>
-          <input type="text" id="newPreviewShots" value="https://mango.blender.org/wp-content/uploads/2013/05/01_thom_celia_bridge.jpg, https://download.blender.org/ED/ed_hd.jpg" />
-        </div>
-
-        <div class="form-field">
-          <label>رابط مقطع إعلان قصير لمعاينة الماوس (اختياري MP4)</label>
-          <input type="url" id="newTrailerPreview" value="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" />
-        </div>
-
-        <div class="form-field">
           <label>التسميات (Labels)</label>
           <div class="labels-picker" id="newLabelsPicker"></div>
         </div>
@@ -837,12 +888,7 @@
         top10: true,
         labels: ["جديد", "رائج الآن", "حصري"],
         poster: "https://peach.blender.org/wp-content/uploads/sintel_poster.jpg",
-        previewShots: [
-          "https://mango.blender.org/wp-content/uploads/2013/05/01_thom_celia_bridge.jpg",
-          "https://download.blender.org/ED/ed_hd.jpg"
-        ],
-        trailerPreview: SAMPLE_V4,
-        desc: "موسم جديد مليء بالمفاجآت واللحظات الدرامية المشوقة.",
+        desc: "موسم جديد مليء بالمفاجآت واللحظات الدرامية المشوقة وتجارب اجتماعية غير متوقعة.",
         seasons: [
           {
             seasonNumber: 1,
@@ -863,12 +909,7 @@
         top10: false,
         labels: ["جديد", "مدبلج"],
         poster: "https://mango.blender.org/wp-content/uploads/2013/05/01_thom_celia_bridge.jpg",
-        previewShots: [
-          "https://peach.blender.org/wp-content/uploads/bbb-splash.png",
-          "https://peach.blender.org/wp-content/uploads/sintel_poster.jpg"
-        ],
-        trailerPreview: SAMPLE_V2,
-        desc: "قصة رومانسية وكوميدية في أجواء مليئة بالحيوية والإبداع.",
+        desc: "قصة رومانسية وكوميدية في وكالة إعلانات مليئة بالحيوية والإبداع والمواقف الطريفة.",
         seasons: [
           {
             seasonNumber: 1,
@@ -889,12 +930,7 @@
         top10: false,
         labels: ["الأعلى تقييماً", "رائج الآن", "مترجم"],
         poster: "https://download.blender.org/ED/ed_hd.jpg",
-        previewShots: [
-          "https://peach.blender.org/wp-content/uploads/sintel_poster.jpg",
-          "https://mango.blender.org/wp-content/uploads/2013/05/01_thom_celia_bridge.jpg"
-        ],
-        trailerPreview: SAMPLE_V1,
-        desc: "بلدة غامضة تحتجز كل من يدخلها وسط مخاطر ليلية لا تنتهي.",
+        desc: "بلدة غامضة تحتجز كل من يدخلها وسط مخاطر ليلية لا تنتهي وسعي مستمر للنجاة.",
         seasons: [
           {
             seasonNumber: 1,
@@ -915,12 +951,7 @@
         top10: false,
         labels: ["كلاسيكي", "الأعلى تقييماً", "مترجم"],
         poster: "https://peach.blender.org/wp-content/uploads/bbb-splash.png",
-        previewShots: [
-          "https://download.blender.org/ED/ed_hd.jpg",
-          "https://peach.blender.org/wp-content/uploads/sintel_poster.jpg"
-        ],
-        trailerPreview: SAMPLE_V3,
-        desc: "مستشار ذكي يعتمد على الملاحظة الدقيقة والتحليل النفسي لحل القضايا.",
+        desc: "مستشار ذكي يعتمد على الملاحظة الدقيقة والتحليل النفسي لكشف الحقائق وحل القضايا.",
         seasons: [
           {
             seasonNumber: 1,
@@ -941,12 +972,7 @@
         top10: false,
         labels: ["جديد", "مترجم", "رائج الآن"],
         poster: "https://mango.blender.org/wp-content/uploads/2013/05/01_thom_celia_bridge.jpg",
-        previewShots: [
-          "https://peach.blender.org/wp-content/uploads/bbb-splash.png",
-          "https://download.blender.org/ED/ed_hd.jpg"
-        ],
-        trailerPreview: SAMPLE_V2,
-        desc: "حلقة جديدة متاحة الآن ضمن رحلة مليئة بالأمل والمغامرة.",
+        desc: "حلقة جديدة متاحة الآن ضمن رحلة أنمي مليئة بالأمل والمغامرة واللحظات المؤثرة.",
         seasons: [
           {
             seasonNumber: 1,
@@ -967,12 +993,7 @@
         top10: false,
         labels: ["الأعلى تقييماً", "حصري", "مترجم"],
         poster: "https://peach.blender.org/wp-content/uploads/sintel_poster.jpg",
-        previewShots: [
-          "https://download.blender.org/ED/ed_hd.jpg",
-          "https://mango.blender.org/wp-content/uploads/2013/05/01_thom_celia_bridge.jpg"
-        ],
-        trailerPreview: SAMPLE_V4,
-        desc: "صراع البقاء في عالم ما بعد الكارثة مع مواسم وحلقات متلاحقة.",
+        desc: "صراع البقاء في عالم ما بعد الكارثة مع مواسم وحلقات متلاحقة وقرارات مصيرية.",
         seasons: [
           {
             seasonNumber: 1,
@@ -992,12 +1013,7 @@
         top10: true,
         labels: ["حصري", "الأعلى تقييماً", "مدبلج"],
         poster: "https://download.blender.org/ED/ed_hd.jpg",
-        previewShots: [
-          "https://peach.blender.org/wp-content/uploads/sintel_poster.jpg"
-        ],
-        trailerPreview: SAMPLE_V1,
-        video: SAMPLE_V1,
-        desc: "لص نبيل يستلهم خططه من مغامرات أرسين لوبين الكلاسيكية."
+        desc: "فيلم تشويق ومغامرات يتبع خططاً ذكية مستوحاة من أرسين لوبين لاستعادة حق قديم."
       },
       {
         type: "series",
@@ -1008,11 +1024,7 @@
         top10: false,
         labels: ["الأعلى تقييماً", "كلاسيكي", "مترجم"],
         poster: "https://peach.blender.org/wp-content/uploads/bbb-splash.png",
-        previewShots: [
-          "https://mango.blender.org/wp-content/uploads/2013/05/01_thom_celia_bridge.jpg"
-        ],
-        trailerPreview: SAMPLE_V3,
-        desc: "تحول درامي حاد يأخذ القصة إلى مسارات مليئة بالتوتر والذكاء.",
+        desc: "تحول درامي حاد يأخذ القصة إلى مسارات مليئة بالتوتر والذكاء والصراعات المتصاعدة.",
         seasons: [
           {
             seasonNumber: 1,
@@ -1033,12 +1045,7 @@
         top10: true,
         labels: ["رائج الآن", "مترجم", "الأعلى تقييماً"],
         poster: "https://mango.blender.org/wp-content/uploads/2013/05/01_thom_celia_bridge.jpg",
-        previewShots: [
-          "https://peach.blender.org/wp-content/uploads/bbb-splash.png",
-          "https://peach.blender.org/wp-content/uploads/sintel_poster.jpg"
-        ],
-        trailerPreview: SAMPLE_V2,
-        desc: "مغامرة بحرية أسطورية للبحث عن الكنز الأعظم في المحيطات.",
+        desc: "مغامرة بحرية أسطورية للبحث عن الكنز الأعظم في المحيطات بصحبة طاقم لا يهاب التحديات.",
         seasons: [
           {
             seasonNumber: 1,
@@ -1248,9 +1255,6 @@ Sitemap: ${baseUrl}sitemap.xml
       document.getElementById("newYear").value = "2026";
       document.getElementById("newRibbon").value = "New Season";
       document.getElementById("newPoster").value = "https://peach.blender.org/wp-content/uploads/sintel_poster.jpg";
-      document.getElementById("newPreviewShots").value =
-        "https://mango.blender.org/wp-content/uploads/2013/05/01_thom_celia_bridge.jpg, https://download.blender.org/ED/ed_hd.jpg";
-      document.getElementById("newTrailerPreview").value = SAMPLE_V2;
       document.getElementById("newVideo").value = SAMPLE_V1;
       renderLabelsUI();
       toggleFormFieldsByType();
@@ -1270,10 +1274,6 @@ Sitemap: ${baseUrl}sitemap.xml
       document.getElementById("newTitle").value = item.title || "";
       document.getElementById("newRibbon").value = item.ribbon || "";
       document.getElementById("newPoster").value = item.poster || "";
-      document.getElementById("newPreviewShots").value = Array.isArray(item.previewShots)
-        ? item.previewShots.join(", ")
-        : (item.poster || "");
-      document.getElementById("newTrailerPreview").value = item.trailerPreview || SAMPLE_V2;
       document.getElementById("newVideo").value = item.video || SAMPLE_V1;
       document.getElementById("newSeasonsJson").value = JSON.stringify(
         Array.isArray(item.seasons) && item.seasons.length
@@ -1340,13 +1340,6 @@ Sitemap: ${baseUrl}sitemap.xml
         else labels.push("الأعلى تقييماً", "حصري");
       }
 
-      const shots = Array.isArray(item.previewShots) && item.previewShots.length
-        ? item.previewShots
-        : [item.poster];
-
-      const firstEpVideo = item.seasons?.[0]?.episodes?.[0]?.video || item.video || SAMPLE_V2;
-      const trailerPreview = item.trailerPreview || firstEpVideo;
-
       const ribbon = item.ribbon !== undefined
         ? item.ribbon
         : (labels.includes("جديد") ? "New Season" : (labels.includes("رائج الآن") ? "New Episode" : ""));
@@ -1365,9 +1358,9 @@ Sitemap: ${baseUrl}sitemap.xml
 
       return {
         ...item,
+        year: String(item.year || "2025"),
+        desc: item.desc || "عمل متاح للمشاهدة عبر المنصة.",
         labels: labels.slice(0, 3),
-        previewShots: shots,
-        trailerPreview,
         ribbon,
         top10,
         aiScore
@@ -1434,7 +1427,7 @@ Sitemap: ${baseUrl}sitemap.xml
       };
       const labelText = activeLabel === "all" ? "All Labels" : activeLabel;
       const pageTitle = `${tabNames[activeTab] || "Catalog"} — ${labelText} | StreamFlix AI`;
-      const pageDesc = `مشاهدة ${tabNames[activeTab] || "المحتوى"} ضمن تسمية ${labelText} مع صفوف أفقية ومعاينة فورية للقطات.`;
+      const pageDesc = `مشاهدة ${tabNames[activeTab] || "المحتوى"} ضمن تسمية ${labelText} مع صفوف أفقية وعرض الوصف والنوع والسنة عند تمرير الماوس.`;
 
       titleEl.textContent = pageTitle;
       descEl.setAttribute("content", pageDesc);
@@ -1481,10 +1474,6 @@ Sitemap: ${baseUrl}sitemap.xml
       const card = document.createElement("article");
       card.className = "poster-card";
 
-      const shots = Array.isArray(item.previewShots) && item.previewShots.length
-        ? item.previewShots
-        : [item.poster];
-
       const watchNowBadge = item.showWatchNow
         ? `<span class="ribbon-watch">Watch Now</span>`
         : "";
@@ -1495,12 +1484,22 @@ Sitemap: ${baseUrl}sitemap.xml
         ? `<div class="top10-badge">TOP<br/>10</div>`
         : "";
 
+      const fullTypeText = `${typeLabel(item.type)}${item.genre ? " • " + item.genre : ""}`;
+      const yearText = item.year || "—";
+      const descText = item.desc || "لا يوجد وصف متاح لهذا العمل.";
+
       card.innerHTML = `
         <div class="poster-frame">
           <span class="corner-n">N</span>
           ${top10Badge}
           <img src="${item.poster}" alt="${item.title}" loading="lazy" />
-          <video class="hover-clip" muted loop playsinline preload="none" src="${item.trailerPreview || ""}"></video>
+          <div class="hover-info-overlay" aria-hidden="true">
+            <div class="hover-meta-row">
+              <span class="hover-type-tag">${fullTypeText}</span>
+              <span class="hover-year-tag">${yearText}</span>
+            </div>
+            <p class="hover-desc-text">${descText}</p>
+          </div>
           <div class="status-ribbon-wrap">
             ${ribbonBadge}
             ${watchNowBadge}
@@ -1515,46 +1514,8 @@ Sitemap: ${baseUrl}sitemap.xml
         </div>
       `;
 
-      const stageImg = card.querySelector(".poster-frame img");
-      const hoverVideo = card.querySelector(".hover-clip");
       const editBtn = card.querySelector(".mini-act.edit");
       const delBtn = card.querySelector(".mini-act.del");
-      let shotInterval = null;
-      let shotIdx = 0;
-
-      card.addEventListener("mouseenter", () => {
-        card.classList.add("previewing");
-        shotIdx = 0;
-        stageImg.src = shots[0];
-
-        if (shots.length > 1) {
-          shotInterval = setInterval(() => {
-            shotIdx = (shotIdx + 1) % shots.length;
-            stageImg.src = shots[shotIdx];
-          }, 950);
-        }
-
-        if (hoverVideo && hoverVideo.src) {
-          hoverVideo.classList.add("active-clip");
-          hoverVideo.play().catch(() => {
-            hoverVideo.classList.remove("active-clip");
-          });
-        }
-      });
-
-      card.addEventListener("mouseleave", () => {
-        card.classList.remove("previewing");
-        if (shotInterval) {
-          clearInterval(shotInterval);
-          shotInterval = null;
-        }
-        stageImg.src = item.poster;
-        if (hoverVideo) {
-          hoverVideo.pause();
-          hoverVideo.currentTime = 0;
-          hoverVideo.classList.remove("active-clip");
-        }
-      });
 
       editBtn.addEventListener("click", (e) => {
         e.stopPropagation();
@@ -1636,6 +1597,7 @@ Sitemap: ${baseUrl}sitemap.xml
           item.title.toLowerCase().includes(q) ||
           item.desc.toLowerCase().includes(q) ||
           item.genre.toLowerCase().includes(q) ||
+          String(item.year || "").toLowerCase().includes(q) ||
           (item.labels || []).some((l) => l.toLowerCase().includes(q));
 
         return matchesTab && matchesGenre && matchesLabel && matchesQuery;
@@ -1924,13 +1886,6 @@ Sitemap: ${baseUrl}sitemap.xml
       const ribbon = document.getElementById("newRibbon").value.trim();
       const poster = document.getElementById("newPoster").value.trim();
       const desc = document.getElementById("newDesc").value.trim();
-      const trailerPreview = document.getElementById("newTrailerPreview").value.trim();
-
-      const previewShots = document
-        .getElementById("newPreviewShots")
-        .value.split(",")
-        .map((s) => s.trim())
-        .filter(Boolean);
 
       const selectedLabels = Array.from(
         newLabelsPicker.querySelectorAll("input[type='checkbox']:checked")
@@ -1945,8 +1900,6 @@ Sitemap: ${baseUrl}sitemap.xml
         showWatchNow: ribbon.toLowerCase().includes("episode"),
         top10: selectedLabels.includes("الأعلى تقييماً"),
         poster,
-        previewShots: previewShots.length ? previewShots : [poster],
-        trailerPreview: trailerPreview || SAMPLE_V2,
         labels: selectedLabels.length ? selectedLabels : ["جديد"],
         desc
       };
