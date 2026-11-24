@@ -5,27 +5,27 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title id="seoTitle">StreamFlix AI — منصة أفلام، مسلسلات، وأنمي</title>
-  <meta id="seoDesc" name="description" content="منصة عرض سينمائية للأفلام والمسلسلات والأنمي مع تنظيم ذكي بالذكاء الاصطناعي وربط مباشر بقاعدة بيانات Firebase." />
+  <meta id="seoDesc" name="description" content="منصة عرض سينمائية للأفلام والمسلسلات والأنمي مع صفوف أفقية وتنظيم ذكي بالذكاء الاصطناعي وربط مباشر بقاعدة بيانات Firebase." />
   <meta id="seoKeywords" name="keywords" content="أفلام, مسلسلات, أنمي, مواسم, حلقات, مشاهدة, ذكاء اصطناعي, Firebase" />
   <meta id="ogTitle" property="og:title" content="StreamFlix AI — أفلام، مسلسلات، وأنمي" />
-  <meta id="ogDesc" property="og:description" content="تصفح أحدث الأفلام والمسلسلات والأنمي مع معاينة فورية للقطات وتنظيم ذكي." />
+  <meta id="ogDesc" property="og:description" content="تصفح أحدث الأفلام والمسلسلات والأنمي في صفوف أفقية مع معاينة فورية للقطات." />
   <meta id="ogType" property="og:type" content="website" />
   <script id="jsonLdSchema" type="application/ld+json">{}</script>
 
   <style>
     :root {
-      --bg: #0b0d12;
-      --bg-elev: #141821;
-      --bg-card: #1b202c;
-      --text: #f8fafc;
-      --muted: #94a3b8;
+      --bg: #0a0b0e;
+      --bg-row: #111318;
+      --bg-card: #181c24;
+      --text: #ffffff;
+      --muted: #9ca3af;
       --red: #e50914;
       --red-glow: rgba(229, 9, 20, 0.35);
       --accent: #38bdf8;
       --gold: #fbbf24;
       --green: #10b981;
       --border: rgba(255, 255, 255, 0.09);
-      --radius: 10px;
+      --radius: 8px;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -35,10 +35,10 @@
       background-color: var(--bg);
       color: var(--text);
       overflow-x: hidden;
-      line-height: 1.5;
+      line-height: 1.45;
     }
 
-    /* Navbar */
+    /* Header */
     header {
       position: fixed;
       top: 0; left: 0; right: 0;
@@ -46,36 +46,34 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      padding: 12px 4%;
-      background: linear-gradient(to bottom, rgba(11,13,18,0.95), rgba(11,13,18,0.2));
+      gap: 10px;
+      padding: 11px 4%;
+      background: linear-gradient(to bottom, rgba(10,11,14,0.96), rgba(10,11,14,0.35));
       backdrop-filter: blur(10px);
-      transition: background-color 0.25s ease, border-color 0.25s ease;
       border-bottom: 1px solid transparent;
+      transition: all 0.25s ease;
       flex-wrap: wrap;
     }
 
     header.scrolled {
-      background: rgba(11, 13, 18, 0.96);
+      background: rgba(10, 11, 14, 0.98);
       border-bottom-color: var(--border);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
     }
 
     .brand {
-      font-size: 1.55rem;
+      font-size: 1.5rem;
       font-weight: 900;
       color: var(--red);
       text-decoration: none;
-      letter-spacing: 0.5px;
       display: flex;
       align-items: center;
       gap: 6px;
     }
 
     .brand span {
-      font-size: 0.72rem;
-      background: rgba(56, 189, 248, 0.15);
-      color: var(--accent);
+      font-size: 0.7rem;
+      background: rgba(255,255,255,0.1);
+      color: #e5e7eb;
       padding: 2px 7px;
       border-radius: 999px;
       font-weight: 800;
@@ -84,27 +82,25 @@
     .nav-tabs, .controls {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 7px;
       flex-wrap: wrap;
     }
 
     .tab-btn {
-      background: rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.07);
       color: var(--text);
       border: 1px solid var(--border);
       border-radius: 999px;
-      padding: 6px 14px;
-      font-size: 0.84rem;
+      padding: 5px 13px;
+      font-size: 0.82rem;
       font-weight: 700;
       cursor: pointer;
-      transition: all 0.2s ease;
     }
 
-    .tab-btn:hover { background: rgba(255, 255, 255, 0.14); }
     .tab-btn.active {
       background: var(--red);
       border-color: var(--red);
-      box-shadow: 0 0 18px var(--red-glow);
+      box-shadow: 0 0 16px var(--red-glow);
     }
 
     .controls input,
@@ -112,138 +108,109 @@
     .modal select,
     .modal input,
     .modal textarea {
-      background: #10141d;
+      background: #12151c;
       color: var(--text);
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 7px 11px;
-      font-size: 0.85rem;
+      border-radius: 7px;
+      padding: 6px 10px;
+      font-size: 0.84rem;
       outline: none;
       font-family: inherit;
     }
 
-    .controls input:focus,
-    .controls select:focus { border-color: var(--accent); }
-
     .btn {
       border: none;
-      border-radius: 8px;
-      padding: 9px 16px;
-      font-size: 0.86rem;
+      border-radius: 7px;
+      padding: 8px 14px;
+      font-size: 0.84rem;
       font-weight: 700;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      transition: transform 0.15s ease, filter 0.2s ease;
     }
 
-    .btn:hover { filter: brightness(1.07); }
-    .btn:active { transform: scale(0.97); }
-    .btn-play { background: #ffffff; color: #090b10; }
-    .btn-secondary { background: rgba(148, 163, 184, 0.18); color: #fff; border: 1px solid var(--border); }
-    .btn-accent { background: var(--accent); color: #06131c; }
+    .btn-play { background: #ffffff; color: #090a0d; }
+    .btn-secondary { background: rgba(255, 255, 255, 0.12); color: #fff; border: 1px solid var(--border); }
+    .btn-accent { background: var(--accent); color: #05111a; }
     .btn-ai { background: linear-gradient(135deg, #6366f1, #38bdf8); color: #fff; }
     .btn-green { background: var(--green); color: #052e16; }
     .btn-red { background: var(--red); color: #fff; }
 
-    /* Top Status & AI Bar */
+    /* Utility & Labels Bar */
     .top-utility {
-      margin-top: 66px;
-      padding: 10px 4%;
-      background: #10141d;
+      margin-top: 62px;
+      padding: 8px 4%;
+      background: #0f1116;
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 10px;
       flex-wrap: wrap;
-      font-size: 0.83rem;
+      font-size: 0.8rem;
       color: var(--muted);
     }
 
-    .utility-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
+    .utility-actions { display: flex; gap: 7px; flex-wrap: wrap; }
 
-    .ai-insight {
-      color: #cbd5e1;
-      background: rgba(99, 102, 241, 0.12);
-      border: 1px solid rgba(99, 102, 241, 0.28);
-      padding: 5px 11px;
-      border-radius: 999px;
-      font-size: 0.78rem;
-    }
-
-    /* 7 Labels Filter Strip */
     .labels-bar {
-      padding: 12px 4%;
-      background: rgba(20, 24, 33, 0.75);
+      padding: 10px 4%;
+      background: #12141b;
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       gap: 8px;
       overflow-x: auto;
-      scrollbar-width: thin;
     }
 
     .label-chip {
       white-space: nowrap;
       background: var(--bg-card);
-      color: #e2e8f0;
+      color: #e5e7eb;
       border: 1px solid var(--border);
-      padding: 6px 13px;
-      border-radius: 8px;
-      font-size: 0.82rem;
+      padding: 5px 12px;
+      border-radius: 7px;
+      font-size: 0.8rem;
       font-weight: 700;
       cursor: pointer;
-      transition: all 0.2s ease;
     }
 
-    .label-chip:hover { border-color: rgba(255, 255, 255, 0.3); }
     .label-chip.active {
-      background: rgba(251, 191, 36, 0.16);
-      border-color: var(--gold);
-      color: var(--gold);
+      background: rgba(229, 9, 20, 0.18);
+      border-color: var(--red);
+      color: #fff;
     }
 
     /* Animated Marquee Slider */
     .marquee-wrap {
-      padding: 14px 4%;
-      background: #0e1118;
+      padding: 11px 4%;
+      background: #0d0f14;
       border-bottom: 1px solid var(--border);
       overflow: hidden;
     }
 
     .marquee-header {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      margin-bottom: 10px;
-      font-size: 0.86rem;
+      align-items: center;
+      font-size: 0.82rem;
       color: var(--muted);
+      margin-bottom: 8px;
     }
 
-    .marquee-header strong { color: #fff; font-size: 0.95rem; }
+    .marquee-header strong { color: #fff; }
 
-    .marquee-track-box {
-      overflow: hidden;
-      position: relative;
-    }
+    .marquee-track-box { overflow: hidden; }
 
     .marquee-track {
       display: flex;
-      gap: 14px;
+      gap: 12px;
       width: max-content;
-      animation: marqueeScroll 36s linear infinite;
+      animation: marqueeScroll 38s linear infinite;
     }
 
-    .marquee-track-box:hover .marquee-track {
-      animation-play-state: paused;
-    }
+    .marquee-track-box:hover .marquee-track { animation-play-state: paused; }
 
     @keyframes marqueeScroll {
       0% { transform: translateX(0); }
@@ -251,56 +218,46 @@
     }
 
     .slide-pill {
-      width: 265px;
-      background: var(--bg-elev);
+      width: 245px;
+      background: var(--bg-card);
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 8px;
+      border-radius: 8px;
+      padding: 7px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 9px;
       cursor: pointer;
-      transition: transform 0.2s ease, border-color 0.2s ease;
       flex-shrink: 0;
     }
 
-    .slide-pill:hover {
-      transform: translateY(-2px);
-      border-color: var(--accent);
-    }
-
     .slide-pill img {
-      width: 72px;
-      height: 46px;
+      width: 44px;
+      height: 62px;
       object-fit: cover;
-      border-radius: 6px;
+      border-radius: 5px;
       flex-shrink: 0;
     }
 
     .slide-pill-info { min-width: 0; }
     .slide-pill-info strong {
       display: block;
-      font-size: 0.84rem;
+      font-size: 0.82rem;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
+    .slide-pill-info span { font-size: 0.7rem; color: var(--gold); font-weight: 700; }
 
-    .slide-pill-info span {
-      font-size: 0.72rem;
-      color: var(--gold);
-      font-weight: 700;
-    }
-
-    /* Hero Banner */
+    /* Compact Hero */
     .hero {
       position: relative;
-      min-height: 60vh;
+      min-height: 44vh;
       display: flex;
       align-items: flex-end;
-      padding: 44px 4% 56px;
+      padding: 32px 4% 38px;
       background-size: cover;
       background-position: center;
+      border-bottom: 1px solid var(--border);
     }
 
     .hero::after {
@@ -308,193 +265,228 @@
       position: absolute;
       inset: 0;
       background:
-        linear-gradient(to top, var(--bg) 5%, rgba(11,13,18,0.35) 55%, rgba(11,13,18,0.68) 100%),
-        linear-gradient(to left, rgba(11,13,18,0.88) 0%, rgba(11,13,18,0.18) 65%);
+        linear-gradient(to top, var(--bg) 6%, rgba(10,11,14,0.45) 55%, rgba(10,11,14,0.72) 100%),
+        linear-gradient(to left, rgba(10,11,14,0.9) 0%, rgba(10,11,14,0.22) 65%);
     }
 
-    .hero-content { position: relative; z-index: 2; max-width: 620px; }
-
+    .hero-content { position: relative; z-index: 2; max-width: 580px; }
     .hero-badge {
+      display: inline-block;
+      background: var(--red);
+      color: #fff;
+      font-size: 0.74rem;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+    }
+    .hero h1 { font-size: clamp(1.6rem, 3.4vw, 2.5rem); margin-bottom: 8px; }
+    .hero p { color: #e5e7eb; font-size: 0.9rem; margin-bottom: 14px; }
+
+    /* Horizontal Shelf Rows Matching Reference Image */
+    main { padding: 18px 4% 68px; }
+
+    .shelf-section { margin-bottom: 30px; }
+
+    .shelf-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 11px;
+    }
+
+    .shelf-title {
+      font-size: 1.08rem;
+      font-weight: 800;
+      color: #f9fafb;
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: var(--red);
-      color: #fff;
-      font-size: 0.76rem;
-      font-weight: 800;
-      padding: 4px 11px;
-      border-radius: 999px;
-      margin-bottom: 12px;
+      cursor: pointer;
     }
 
-    .hero h1 { font-size: clamp(1.85rem, 4vw, 3.1rem); line-height: 1.15; margin-bottom: 12px; }
-    .hero p { color: #e2e8f0; font-size: 0.96rem; line-height: 1.65; margin-bottom: 20px; }
+    .shelf-title .chevron { color: var(--muted); font-size: 1.15rem; }
 
-    /* Main Sections & Cards */
-    main { padding: 14px 4% 70px; }
-    .section { margin-bottom: 36px; }
-    .section-title {
-      font-size: 1.18rem;
-      font-weight: 800;
-      margin-bottom: 14px;
+    .shelf-wrapper {
+      position: relative;
+    }
+
+    .shelf-row {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      padding-bottom: 6px;
+      scrollbar-width: none;
+    }
+
+    .shelf-row::-webkit-scrollbar { display: none; }
+
+    .scroll-next-btn {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: calc(100% - 34px);
+      width: 38px;
+      background: linear-gradient(to right, rgba(10,11,14,0.92), rgba(10,11,14,0));
+      border: none;
+      color: #fff;
+      font-size: 1.4rem;
+      font-weight: 900;
+      cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 8px;
+      justify-content: center;
+      z-index: 5;
+      opacity: 0.9;
     }
 
-    .row-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 18px;
-    }
+    .scroll-next-btn:hover { background: rgba(10,11,14,0.95); }
 
-    .card {
-      background: var(--bg-elev);
-      border-radius: var(--radius);
-      overflow: hidden;
+    /* Vertical Poster Card Matching Reference Image */
+    .poster-card {
+      flex: 0 0 165px;
+      width: 165px;
       cursor: pointer;
-      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-      border: 1px solid var(--border);
-      position: relative;
       display: flex;
       flex-direction: column;
+      transition: transform 0.2s ease;
     }
 
-    .card:hover {
-      transform: translateY(-6px) scale(1.02);
-      box-shadow: 0 18px 34px rgba(0, 0, 0, 0.72);
-      border-color: rgba(255, 255, 255, 0.26);
+    @media (min-width: 768px) {
+      .poster-card {
+        flex: 0 0 182px;
+        width: 182px;
+      }
     }
 
-    .media-stage {
+    .poster-card:hover { transform: translateY(-4px); }
+
+    .poster-frame {
       position: relative;
       width: 100%;
-      aspect-ratio: 16 / 10;
-      background: #090b10;
+      aspect-ratio: 2 / 3;
+      border-radius: var(--radius);
       overflow: hidden;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
     }
 
-    .media-stage img,
-    .media-stage video.hover-clip {
+    .poster-frame img,
+    .poster-frame video.hover-clip {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
-      transition: opacity 0.25s ease, transform 0.4s ease;
     }
 
-    .card:hover .media-stage img { transform: scale(1.05); }
-
-    .media-stage video.hover-clip {
+    .poster-frame video.hover-clip {
       position: absolute;
       inset: 0;
       opacity: 0;
       pointer-events: none;
     }
 
-    .card.previewing .media-stage video.hover-clip.active-clip { opacity: 1; }
+    .poster-card.previewing .poster-frame video.hover-clip.active-clip { opacity: 1; }
 
-    .promo-indicator {
+    .corner-n {
       position: absolute;
-      bottom: 8px;
-      right: 8px;
-      background: rgba(0, 0, 0, 0.78);
+      top: 6px;
+      right: 6px;
+      background: var(--red);
       color: #fff;
-      font-size: 0.68rem;
-      font-weight: 700;
-      padding: 2px 7px;
-      border-radius: 5px;
-      opacity: 0;
-      transition: opacity 0.2s ease;
+      font-weight: 900;
+      font-size: 0.72rem;
+      line-height: 1;
+      padding: 4px 5px;
+      border-radius: 2px;
+      z-index: 2;
     }
 
-    .card.previewing .promo-indicator { opacity: 1; }
+    .top10-badge {
+      position: absolute;
+      top: 0;
+      left: 8px;
+      background: #dc2626;
+      color: #fff;
+      font-size: 0.62rem;
+      font-weight: 900;
+      padding: 3px 5px;
+      border-bottom-left-radius: 4px;
+      border-bottom-right-radius: 4px;
+      text-align: center;
+      line-height: 1.05;
+      z-index: 2;
+    }
 
-    .card-body {
-      padding: 11px 13px 13px;
+    .status-ribbon-wrap {
+      position: absolute;
+      bottom: 6px;
+      left: 0;
+      right: 0;
       display: flex;
       flex-direction: column;
-      flex: 1;
+      align-items: center;
+      gap: 3px;
+      z-index: 2;
+      pointer-events: none;
     }
 
-    .card-title {
-      font-size: 0.96rem;
+    .ribbon-tag {
+      background: var(--red);
+      color: #fff;
+      font-size: 0.68rem;
       font-weight: 800;
-      margin-bottom: 6px;
+      padding: 2px 8px;
+      border-radius: 3px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.65);
+    }
+
+    .ribbon-watch {
+      background: #f3f4f6;
+      color: #111827;
+      font-size: 0.66rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 3px;
+    }
+
+    .poster-caption {
+      padding: 6px 2px 0;
+    }
+
+    .poster-name {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #e5e7eb;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      margin-bottom: 4px;
     }
 
-    .card-meta {
-      font-size: 0.75rem;
-      color: var(--muted);
+    .poster-mini-actions {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 7px;
+      gap: 4px;
+      opacity: 0.85;
     }
 
-    .type-pill {
-      background: rgba(56, 189, 248, 0.15);
-      color: var(--accent);
-      padding: 2px 8px;
-      border-radius: 5px;
-      font-weight: 700;
-      font-size: 0.7rem;
-    }
-
-    .card-labels {
-      display: flex;
-      gap: 5px;
-      flex-wrap: wrap;
-      margin-bottom: 10px;
-    }
-
-    .mini-label {
+    .mini-act {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      color: #d1d5db;
+      border-radius: 4px;
       font-size: 0.68rem;
       font-weight: 700;
-      padding: 2px 7px;
-      border-radius: 5px;
-      background: rgba(251, 191, 36, 0.14);
-      color: var(--gold);
-    }
-
-    .card-actions {
-      margin-top: auto;
-      padding-top: 8px;
-      border-top: 1px solid var(--border);
-      display: flex;
-      gap: 6px;
-    }
-
-    .mini-btn {
-      flex: 1;
-      border: 1px solid var(--border);
-      background: rgba(255, 255, 255, 0.06);
-      color: #e2e8f0;
-      border-radius: 6px;
-      padding: 5px 8px;
-      font-size: 0.73rem;
-      font-weight: 700;
+      padding: 3px 4px;
       cursor: pointer;
-      transition: background 0.15s ease, color 0.15s ease;
     }
 
-    .mini-btn.edit:hover {
-      background: rgba(56, 189, 248, 0.2);
-      border-color: var(--accent);
-      color: var(--accent);
-    }
+    .mini-act.edit:hover { border-color: var(--accent); color: var(--accent); }
+    .mini-act.del:hover { border-color: var(--red); color: #fca5a5; }
 
-    .mini-btn.del:hover {
-      background: rgba(229, 9, 20, 0.24);
-      border-color: var(--red);
-      color: #fca5a5;
-    }
-
-    .empty-msg { color: var(--muted); font-size: 0.92rem; padding: 10px 0; }
+    .empty-msg { color: var(--muted); font-size: 0.9rem; padding: 8px 0; }
 
     /* Modals */
     .modal-backdrop {
@@ -564,7 +556,7 @@
     .next-ep-text span { color: var(--accent); font-weight: 800; }
 
     .modal-info { padding: 16px 18px 22px; }
-    .modal-info h3 { margin-bottom: 6px; font-size: 1.22rem; }
+    .modal-info h3 { margin-bottom: 6px; font-size: 1.2rem; }
     .modal-info p { color: var(--muted); font-size: 0.9rem; line-height: 1.6; margin-bottom: 14px; }
 
     .episodes-box { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
@@ -587,13 +579,7 @@
     .form-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
     .form-field label { font-size: 0.82rem; color: var(--muted); }
 
-    .labels-picker {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 12px;
-    }
-
+    .labels-picker { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
     .labels-picker label {
       display: inline-flex;
       align-items: center;
@@ -609,7 +595,7 @@
 </head>
 <body>
   <header id="navbar">
-    <a href="#" class="brand">STREAMFLIX <span>AI + SEO</span></a>
+    <a href="#" class="brand">STREAMFLIX <span>AI + ROWS</span></a>
 
     <nav class="nav-tabs" aria-label="الأقسام الرئيسية">
       <button class="tab-btn active" data-type="all">الكل</button>
@@ -620,7 +606,7 @@
     </nav>
 
     <div class="controls">
-      <input type="search" id="searchInput" placeholder="ابحث ذكياً..." aria-label="بحث" />
+      <input type="search" id="searchInput" placeholder="ابحث..." aria-label="بحث" />
       <select id="genreSelect" aria-label="التصنيف">
         <option value="all">كل التصنيفات</option>
         <option value="خيال علمي">خيال علمي</option>
@@ -635,21 +621,15 @@
 
   <div class="top-utility">
     <span id="dbStatus">حالة Firebase: جاري الاتصال بمشروع metaverse-metabox...</span>
-    <span class="ai-insight" id="aiSummary">الذكاء الاصطناعي: جاهز لتصنيف المحتوى وتحديث السيو تلقائياً.</span>
+    <span id="aiSummary">الذكاء الاصطناعي: جاهز لتنظيم الصفوف وتحديث السيو تلقائياً.</span>
     <div class="utility-actions">
-      <button class="btn btn-secondary" id="downloadSitemapBtn" style="padding:5px 11px;font-size:0.78rem;">
-        ⬇ sitemap.xml
-      </button>
-      <button class="btn btn-secondary" id="downloadRobotsBtn" style="padding:5px 11px;font-size:0.78rem;">
-        ⬇ robots.txt
-      </button>
-      <button class="btn btn-secondary" id="seedDataBtn" style="padding:5px 11px;font-size:0.78rem;">
-        تعبئة بيانات تجريبية في Firestore
-      </button>
+      <button class="btn btn-secondary" id="downloadSitemapBtn" style="padding:4px 10px;font-size:0.76rem;">⬇ sitemap.xml</button>
+      <button class="btn btn-secondary" id="downloadRobotsBtn" style="padding:4px 10px;font-size:0.76rem;">⬇ robots.txt</button>
+      <button class="btn btn-secondary" id="seedDataBtn" style="padding:4px 10px;font-size:0.76rem;">تعبئة بيانات تجريبية</button>
     </div>
   </div>
 
-  <!-- 7 Labels Bar -->
+  <!-- 7 Labels Filter Strip -->
   <div class="labels-bar" id="labelsBar" aria-label="التسميات السبعة"></div>
 
   <!-- Animated Marquee Slider -->
@@ -676,22 +656,8 @@
     </div>
   </section>
 
-  <main>
-    <section class="section" id="aiPicksSection">
-      <h2 class="section-title">✦ مختارات الذكاء الاصطناعي لك</h2>
-      <div class="row-grid" id="aiPicksGrid"></div>
-    </section>
-
-    <section class="section" id="myListSection">
-      <h2 class="section-title">قائمتي</h2>
-      <div class="row-grid" id="myListGrid"></div>
-    </section>
-
-    <section class="section">
-      <h2 class="section-title" id="mainSectionTitle">المحتوى المتاح</h2>
-      <div class="row-grid" id="catalogGrid"></div>
-    </section>
-  </main>
+  <!-- Horizontal Shelf Rows Container -->
+  <main id="shelvesContainer"></main>
 
   <!-- Player Modal -->
   <div class="modal-backdrop" id="playerModal" role="dialog" aria-modal="true">
@@ -766,11 +732,16 @@
 
         <div class="form-field">
           <label>العنوان</label>
-          <input type="text" id="newTitle" placeholder="مثال: أفق النجوم" required />
+          <input type="text" id="newTitle" placeholder="مثال: FROM" required />
         </div>
 
         <div class="form-field">
-          <label>صورة الغلاف الرئيسية (Poster URL)</label>
+          <label>شارة البطاقة السفلية (مثال: New Season / Recently Added / Watch Now)</label>
+          <input type="text" id="newRibbon" placeholder="New Season" />
+        </div>
+
+        <div class="form-field">
+          <label>صورة البوستر الطولي (Poster URL)</label>
           <input type="url" id="newPoster" value="https://peach.blender.org/wp-content/uploads/sintel_poster.jpg" required />
         </div>
 
@@ -858,93 +829,226 @@
 
     const DEFAULT_ITEMS = [
       {
-        type: "movie",
-        title: "Sintel",
-        genre: "خيال علمي",
-        year: "2010",
-        metaText: "فيلم • 15 د",
-        labels: ["حصري", "الأعلى تقييماً", "مترجم"],
+        type: "series",
+        title: "Love is Blind, Habibi",
+        genre: "مغامرة",
+        year: "2026",
+        ribbon: "New Season",
+        top10: true,
+        labels: ["جديد", "رائج الآن", "حصري"],
         poster: "https://peach.blender.org/wp-content/uploads/sintel_poster.jpg",
         previewShots: [
           "https://mango.blender.org/wp-content/uploads/2013/05/01_thom_celia_bridge.jpg",
           "https://download.blender.org/ED/ed_hd.jpg"
         ],
-        trailerPreview: SAMPLE_V1,
-        video: SAMPLE_V1,
-        desc: "رحلة فتاة شجاعة تبحث عن تنين صغير في عالم مليء بالمخاطر والذكريات."
-      },
-      {
-        type: "series",
-        title: "وقائع السماء (مسلسل)",
-        genre: "مغامرة",
-        year: "2026",
-        metaText: "مسلسل • موسمين",
-        labels: ["جديد", "رائج الآن", "مدبلج"],
-        poster: "https://mango.blender.org/wp-content/uploads/2013/05/01_thom_celia_bridge.jpg",
-        previewShots: [
-          "https://peach.blender.org/wp-content/uploads/sintel_poster.jpg",
-          "https://peach.blender.org/wp-content/uploads/bbb-splash.png"
-        ],
         trailerPreview: SAMPLE_V4,
-        desc: "سلسلة مغامرات وتشويق تدور حول فريق يستكشف عوالم وأسراراً قديمة عبر مواسم متتابعة.",
+        desc: "موسم جديد مليء بالمفاجآت واللحظات الدرامية المشوقة.",
         seasons: [
           {
             seasonNumber: 1,
             title: "الموسم الأول",
             episodes: [
-              { ep: 1, name: "الحلقة 1: البداية", duration: "10 د", video: SAMPLE_V4 },
-              { ep: 2, name: "الحلقة 2: الإشارة المفقودة", duration: "12 د", video: SAMPLE_V1 }
+              { ep: 1, name: "الحلقة 1", duration: "10 د", video: SAMPLE_V4 },
+              { ep: 2, name: "الحلقة 2", duration: "12 د", video: SAMPLE_V1 }
             ]
-          },
+          }
+        ]
+      },
+      {
+        type: "series",
+        title: "Daydreamer",
+        genre: "مغامرة",
+        year: "2025",
+        ribbon: "Recently Added",
+        top10: false,
+        labels: ["جديد", "مدبلج"],
+        poster: "https://mango.blender.org/wp-content/uploads/2013/05/01_thom_celia_bridge.jpg",
+        previewShots: [
+          "https://peach.blender.org/wp-content/uploads/bbb-splash.png",
+          "https://peach.blender.org/wp-content/uploads/sintel_poster.jpg"
+        ],
+        trailerPreview: SAMPLE_V2,
+        desc: "قصة رومانسية وكوميدية في أجواء مليئة بالحيوية والإبداع.",
+        seasons: [
           {
-            seasonNumber: 2,
-            title: "الموسم الثاني",
+            seasonNumber: 1,
+            title: "الموسم الأول",
             episodes: [
-              { ep: 1, name: "الحلقة 1: العودة", duration: "10 د", video: SAMPLE_V2 }
+              { ep: 1, name: "الحلقة 1", duration: "10 د", video: SAMPLE_V2 },
+              { ep: 2, name: "الحلقة 2", duration: "11 د", video: SAMPLE_V3 }
+            ]
+          }
+        ]
+      },
+      {
+        type: "series",
+        title: "FROM",
+        genre: "خيال علمي",
+        year: "2026",
+        ribbon: "New Seasons",
+        top10: false,
+        labels: ["الأعلى تقييماً", "رائج الآن", "مترجم"],
+        poster: "https://download.blender.org/ED/ed_hd.jpg",
+        previewShots: [
+          "https://peach.blender.org/wp-content/uploads/sintel_poster.jpg",
+          "https://mango.blender.org/wp-content/uploads/2013/05/01_thom_celia_bridge.jpg"
+        ],
+        trailerPreview: SAMPLE_V1,
+        desc: "بلدة غامضة تحتجز كل من يدخلها وسط مخاطر ليلية لا تنتهي.",
+        seasons: [
+          {
+            seasonNumber: 1,
+            title: "الموسم الأول",
+            episodes: [
+              { ep: 1, name: "الحلقة 1", duration: "10 د", video: SAMPLE_V1 },
+              { ep: 2, name: "الحلقة 2", duration: "11 د", video: SAMPLE_V4 }
+            ]
+          }
+        ]
+      },
+      {
+        type: "series",
+        title: "The Mentalist",
+        genre: "أكشن",
+        year: "2014",
+        ribbon: "",
+        top10: false,
+        labels: ["كلاسيكي", "الأعلى تقييماً", "مترجم"],
+        poster: "https://peach.blender.org/wp-content/uploads/bbb-splash.png",
+        previewShots: [
+          "https://download.blender.org/ED/ed_hd.jpg",
+          "https://peach.blender.org/wp-content/uploads/sintel_poster.jpg"
+        ],
+        trailerPreview: SAMPLE_V3,
+        desc: "مستشار ذكي يعتمد على الملاحظة الدقيقة والتحليل النفسي لحل القضايا.",
+        seasons: [
+          {
+            seasonNumber: 1,
+            title: "الموسم الأول",
+            episodes: [
+              { ep: 1, name: "الحلقة 1", duration: "10 د", video: SAMPLE_V3 }
             ]
           }
         ]
       },
       {
         type: "anime",
-        title: "وادي الأرنب (أنمي)",
+        title: "Sunshine Through the Rain",
         genre: "أنمي",
         year: "2025",
-        metaText: "أنمي • موسم 1",
-        labels: ["رائج الآن", "مترجم", "الأعلى تقييماً"],
-        poster: "https://peach.blender.org/wp-content/uploads/bbb-splash.png",
+        ribbon: "New Episode",
+        showWatchNow: true,
+        top10: false,
+        labels: ["جديد", "مترجم", "رائج الآن"],
+        poster: "https://mango.blender.org/wp-content/uploads/2013/05/01_thom_celia_bridge.jpg",
         previewShots: [
-          "https://download.blender.org/ED/ed_hd.jpg",
-          "https://peach.blender.org/wp-content/uploads/sintel_poster.jpg"
+          "https://peach.blender.org/wp-content/uploads/bbb-splash.png",
+          "https://download.blender.org/ED/ed_hd.jpg"
         ],
         trailerPreview: SAMPLE_V2,
-        desc: "عمل أنمي كوميدي ومغامرات في غابة نابضة بالحياة مع حلقات متسلسلة.",
+        desc: "حلقة جديدة متاحة الآن ضمن رحلة مليئة بالأمل والمغامرة.",
         seasons: [
           {
             seasonNumber: 1,
             title: "الموسم الأول",
             episodes: [
-              { ep: 1, name: "الحلقة 1: صباح هادئ", duration: "10 د", video: SAMPLE_V2 },
-              { ep: 2, name: "الحلقة 2: فخ الغابة", duration: "11 د", video: SAMPLE_V3 }
+              { ep: 1, name: "الحلقة 1", duration: "10 د", video: SAMPLE_V2 },
+              { ep: 2, name: "الحلقة 2 (الجديدة)", duration: "11 د", video: SAMPLE_V1 }
+            ]
+          }
+        ]
+      },
+      {
+        type: "series",
+        title: "The Walking Dead",
+        genre: "أكشن",
+        year: "2022",
+        ribbon: "",
+        top10: false,
+        labels: ["الأعلى تقييماً", "حصري", "مترجم"],
+        poster: "https://peach.blender.org/wp-content/uploads/sintel_poster.jpg",
+        previewShots: [
+          "https://download.blender.org/ED/ed_hd.jpg",
+          "https://mango.blender.org/wp-content/uploads/2013/05/01_thom_celia_bridge.jpg"
+        ],
+        trailerPreview: SAMPLE_V4,
+        desc: "صراع البقاء في عالم ما بعد الكارثة مع مواسم وحلقات متلاحقة.",
+        seasons: [
+          {
+            seasonNumber: 1,
+            title: "الموسم الأول",
+            episodes: [
+              { ep: 1, name: "الحلقة 1", duration: "10 د", video: SAMPLE_V4 }
             ]
           }
         ]
       },
       {
         type: "movie",
-        title: "حلم الآلة الكلاسيكي",
-        genre: "خيال علمي",
-        year: "2006",
-        metaText: "فيلم • 11 د",
-        labels: ["كلاسيكي", "حصري", "مترجم"],
+        title: "Lupin",
+        genre: "أكشن",
+        year: "2024",
+        ribbon: "",
+        top10: true,
+        labels: ["حصري", "الأعلى تقييماً", "مدبلج"],
         poster: "https://download.blender.org/ED/ed_hd.jpg",
         previewShots: [
-          "https://peach.blender.org/wp-content/uploads/bbb-splash.png",
+          "https://peach.blender.org/wp-content/uploads/sintel_poster.jpg"
+        ],
+        trailerPreview: SAMPLE_V1,
+        video: SAMPLE_V1,
+        desc: "لص نبيل يستلهم خططه من مغامرات أرسين لوبين الكلاسيكية."
+      },
+      {
+        type: "series",
+        title: "Breaking Bad",
+        genre: "خيال علمي",
+        year: "2013",
+        ribbon: "",
+        top10: false,
+        labels: ["الأعلى تقييماً", "كلاسيكي", "مترجم"],
+        poster: "https://peach.blender.org/wp-content/uploads/bbb-splash.png",
+        previewShots: [
           "https://mango.blender.org/wp-content/uploads/2013/05/01_thom_celia_bridge.jpg"
         ],
         trailerPreview: SAMPLE_V3,
-        video: SAMPLE_V3,
-        desc: "تحفة بصرية كلاسيكية تستكشف العلاقة بين الإنسان والآلة والذاكرة."
+        desc: "تحول درامي حاد يأخذ القصة إلى مسارات مليئة بالتوتر والذكاء.",
+        seasons: [
+          {
+            seasonNumber: 1,
+            title: "الموسم الأول",
+            episodes: [
+              { ep: 1, name: "الحلقة 1", duration: "10 د", video: SAMPLE_V3 }
+            ]
+          }
+        ]
+      },
+      {
+        type: "anime",
+        title: "ONE PIECE",
+        genre: "أنمي",
+        year: "2026",
+        ribbon: "New Episode",
+        showWatchNow: true,
+        top10: true,
+        labels: ["رائج الآن", "مترجم", "الأعلى تقييماً"],
+        poster: "https://mango.blender.org/wp-content/uploads/2013/05/01_thom_celia_bridge.jpg",
+        previewShots: [
+          "https://peach.blender.org/wp-content/uploads/bbb-splash.png",
+          "https://peach.blender.org/wp-content/uploads/sintel_poster.jpg"
+        ],
+        trailerPreview: SAMPLE_V2,
+        desc: "مغامرة بحرية أسطورية للبحث عن الكنز الأعظم في المحيطات.",
+        seasons: [
+          {
+            seasonNumber: 1,
+            title: "الموسم الأول",
+            episodes: [
+              { ep: 1, name: "الحلقة 1", duration: "10 د", video: SAMPLE_V2 },
+              { ep: 2, name: "الحلقة 2", duration: "11 د", video: SAMPLE_V4 }
+            ]
+          }
+        ]
       }
     ];
 
@@ -979,6 +1083,7 @@
     const labelsBar = document.getElementById("labelsBar");
     const marqueeTrack = document.getElementById("marqueeTrack");
     const activeFilterSummary = document.getElementById("activeFilterSummary");
+    const shelvesContainer = document.getElementById("shelvesContainer");
 
     const tabBtns = document.querySelectorAll(".tab-btn");
     const searchInput = document.getElementById("searchInput");
@@ -989,12 +1094,6 @@
     const heroDesc = document.getElementById("heroDesc");
     const heroPlayBtn = document.getElementById("heroPlayBtn");
     const heroListBtn = document.getElementById("heroListBtn");
-
-    const aiPicksGrid = document.getElementById("aiPicksGrid");
-    const myListSection = document.getElementById("myListSection");
-    const myListGrid = document.getElementById("myListGrid");
-    const catalogGrid = document.getElementById("catalogGrid");
-    const mainSectionTitle = document.getElementById("mainSectionTitle");
 
     const playerModal = document.getElementById("playerModal");
     const closePlayerBtn = document.getElementById("closePlayerBtn");
@@ -1147,6 +1246,7 @@ Sitemap: ${baseUrl}sitemap.xml
       submitFormBtn.textContent = "حفظ في Firestore";
       addItemForm.reset();
       document.getElementById("newYear").value = "2026";
+      document.getElementById("newRibbon").value = "New Season";
       document.getElementById("newPoster").value = "https://peach.blender.org/wp-content/uploads/sintel_poster.jpg";
       document.getElementById("newPreviewShots").value =
         "https://mango.blender.org/wp-content/uploads/2013/05/01_thom_celia_bridge.jpg, https://download.blender.org/ED/ed_hd.jpg";
@@ -1168,6 +1268,7 @@ Sitemap: ${baseUrl}sitemap.xml
       document.getElementById("newGenre").value = item.genre || "خيال علمي";
       document.getElementById("newYear").value = item.year || "2026";
       document.getElementById("newTitle").value = item.title || "";
+      document.getElementById("newRibbon").value = item.ribbon || "";
       document.getElementById("newPoster").value = item.poster || "";
       document.getElementById("newPreviewShots").value = Array.isArray(item.previewShots)
         ? item.previewShots.join(", ")
@@ -1235,7 +1336,7 @@ Sitemap: ${baseUrl}sitemap.xml
 
       if (!labels.length) {
         if (yearNum >= 2025) labels.push("جديد", "رائج الآن");
-        else if (yearNum <= 2012) labels.push("كلاسيكي", "مترجم");
+        else if (yearNum <= 2014) labels.push("كلاسيكي", "مترجم");
         else labels.push("الأعلى تقييماً", "حصري");
       }
 
@@ -1245,6 +1346,14 @@ Sitemap: ${baseUrl}sitemap.xml
 
       const firstEpVideo = item.seasons?.[0]?.episodes?.[0]?.video || item.video || SAMPLE_V2;
       const trailerPreview = item.trailerPreview || firstEpVideo;
+
+      const ribbon = item.ribbon !== undefined
+        ? item.ribbon
+        : (labels.includes("جديد") ? "New Season" : (labels.includes("رائج الآن") ? "New Episode" : ""));
+
+      const top10 = typeof item.top10 === "boolean"
+        ? item.top10
+        : labels.includes("الأعلى تقييماً");
 
       const aiScore =
         (labels.includes("رائج الآن") ? 35 : 0) +
@@ -1259,6 +1368,8 @@ Sitemap: ${baseUrl}sitemap.xml
         labels: labels.slice(0, 3),
         previewShots: shots,
         trailerPreview,
+        ribbon,
+        top10,
         aiScore
       };
     }
@@ -1302,7 +1413,7 @@ Sitemap: ${baseUrl}sitemap.xml
         ogTitleEl.setAttribute("content", pageTitle);
         ogDescEl.setAttribute("content", pageDesc);
 
-        const schemaObj = {
+        schemaEl.textContent = JSON.stringify({
           "@context": "https://schema.org",
           "@type": focusItem.type === "movie" ? "Movie" : "TVSeries",
           "name": focusItem.title,
@@ -1310,21 +1421,20 @@ Sitemap: ${baseUrl}sitemap.xml
           "genre": focusItem.genre,
           "datePublished": String(focusItem.year || ""),
           "image": focusItem.poster
-        };
-        schemaEl.textContent = JSON.stringify(schemaObj);
+        });
         return;
       }
 
       const tabNames = {
-        all: "كل المحتوى",
-        movie: "الأفلام",
-        series: "المسلسلات",
-        anime: "الأنمي",
-        mylist: "قائمتي"
+        all: "Your Next Watch",
+        movie: "Movies",
+        series: "TV Shows",
+        anime: "Anime",
+        mylist: "My List"
       };
-      const labelText = activeLabel === "all" ? "كل التسميات" : activeLabel;
-      const pageTitle = `${tabNames[activeTab] || "المحتوى"} — ${labelText} | StreamFlix AI`;
-      const pageDesc = `مشاهدة ${tabNames[activeTab] || "المحتوى"} ضمن تسمية ${labelText} مع معاينة فورية للقطات وتنظيم ذكي.`;
+      const labelText = activeLabel === "all" ? "All Labels" : activeLabel;
+      const pageTitle = `${tabNames[activeTab] || "Catalog"} — ${labelText} | StreamFlix AI`;
+      const pageDesc = `مشاهدة ${tabNames[activeTab] || "المحتوى"} ضمن تسمية ${labelText} مع صفوف أفقية ومعاينة فورية للقطات.`;
 
       titleEl.textContent = pageTitle;
       descEl.setAttribute("content", pageDesc);
@@ -1332,7 +1442,7 @@ Sitemap: ${baseUrl}sitemap.xml
       ogDescEl.setAttribute("content", pageDesc);
       kwEl.setAttribute("content", `StreamFlix, ${tabNames[activeTab]}, ${labelText}, ${SEVEN_LABELS.join(", ")}`);
 
-      const listSchema = {
+      schemaEl.textContent = JSON.stringify({
         "@context": "https://schema.org",
         "@type": "ItemList",
         "name": pageTitle,
@@ -1343,8 +1453,7 @@ Sitemap: ${baseUrl}sitemap.xml
           "name": item.title,
           "url": window.location.href
         }))
-      };
-      schemaEl.textContent = JSON.stringify(listSchema);
+      });
     }
 
     function renderMarqueeSlider() {
@@ -1368,43 +1477,48 @@ Sitemap: ${baseUrl}sitemap.xml
       });
     }
 
-    function createCard(item) {
+    function createPosterCard(item) {
       const card = document.createElement("article");
-      card.className = "card";
+      card.className = "poster-card";
 
       const shots = Array.isArray(item.previewShots) && item.previewShots.length
         ? item.previewShots
         : [item.poster];
 
-      const labelsHtml = (item.labels || [])
-        .slice(0, 3)
-        .map((l) => `<span class="mini-label">${l}</span>`)
-        .join("");
+      const watchNowBadge = item.showWatchNow
+        ? `<span class="ribbon-watch">Watch Now</span>`
+        : "";
+      const ribbonBadge = item.ribbon
+        ? `<span class="ribbon-tag">${item.ribbon}</span>`
+        : "";
+      const top10Badge = item.top10
+        ? `<div class="top10-badge">TOP<br/>10</div>`
+        : "";
 
       card.innerHTML = `
-        <div class="media-stage">
+        <div class="poster-frame">
+          <span class="corner-n">N</span>
+          ${top10Badge}
           <img src="${item.poster}" alt="${item.title}" loading="lazy" />
           <video class="hover-clip" muted loop playsinline preload="none" src="${item.trailerPreview || ""}"></video>
-          <span class="promo-indicator">▶ معاينة لقطات الإعلان</span>
-        </div>
-        <div class="card-body">
-          <div class="card-title">${item.title}</div>
-          <div class="card-meta">
-            <span class="type-pill">${typeLabel(item.type)}</span>
-            <span>${item.metaText || item.genre}</span>
+          <div class="status-ribbon-wrap">
+            ${ribbonBadge}
+            ${watchNowBadge}
           </div>
-          <div class="card-labels">${labelsHtml}</div>
-          <div class="card-actions">
-            <button type="button" class="mini-btn edit">✎ تعديل</button>
-            <button type="button" class="mini-btn del">🗑 حذف</button>
+        </div>
+        <div class="poster-caption">
+          <div class="poster-name" title="${item.title}">${item.title}</div>
+          <div class="poster-mini-actions">
+            <button type="button" class="mini-act edit">✎ تعديل</button>
+            <button type="button" class="mini-act del">🗑 حذف</button>
           </div>
         </div>
       `;
 
-      const stageImg = card.querySelector(".media-stage img");
+      const stageImg = card.querySelector(".poster-frame img");
       const hoverVideo = card.querySelector(".hover-clip");
-      const editBtn = card.querySelector(".mini-btn.edit");
-      const delBtn = card.querySelector(".mini-btn.del");
+      const editBtn = card.querySelector(".mini-act.edit");
+      const delBtn = card.querySelector(".mini-act.del");
       let shotInterval = null;
       let shotIdx = 0;
 
@@ -1456,6 +1570,99 @@ Sitemap: ${baseUrl}sitemap.xml
       return card;
     }
 
+    function buildHorizontalShelf(titleText, items) {
+      const section = document.createElement("section");
+      section.className = "shelf-section";
+
+      const header = document.createElement("div");
+      header.className = "shelf-header";
+      header.innerHTML = `<h2 class="shelf-title">${titleText} <span class="chevron">›</span></h2>`;
+      section.appendChild(header);
+
+      if (!items.length) {
+        const empty = document.createElement("p");
+        empty.className = "empty-msg";
+        empty.textContent = "لا توجد عناصر في هذا الصف حالياً.";
+        section.appendChild(empty);
+        return section;
+      }
+
+      const wrapper = document.createElement("div");
+      wrapper.className = "shelf-wrapper";
+
+      const row = document.createElement("div");
+      row.className = "shelf-row";
+      items.forEach((item) => row.appendChild(createPosterCard(item)));
+
+      const nextBtn = document.createElement("button");
+      nextBtn.type = "button";
+      nextBtn.className = "scroll-next-btn";
+      nextBtn.setAttribute("aria-label", "تمرير الصف");
+      nextBtn.textContent = "›";
+      nextBtn.addEventListener("click", () => {
+        row.scrollBy({ left: -540, behavior: "smooth" });
+      });
+
+      wrapper.appendChild(row);
+      wrapper.appendChild(nextBtn);
+      section.appendChild(wrapper);
+      return section;
+    }
+
+    function renderShelves() {
+      const q = searchInput.value.trim().toLowerCase();
+      const g = genreSelect.value;
+
+      const tabNames = {
+        all: "الكل",
+        movie: "أفلام",
+        series: "مسلسلات",
+        anime: "أنمي",
+        mylist: "قائمتي"
+      };
+      activeFilterSummary.textContent = `${tabNames[activeTab]} • ${activeLabel === "all" ? "كل التسميات (7)" : activeLabel}`;
+
+      const filtered = catalog.filter((item) => {
+        const matchesTab =
+          activeTab === "all" ||
+          (activeTab === "mylist" && isInList(item.id)) ||
+          item.type === activeTab;
+        const matchesGenre = g === "all" || item.genre === g;
+        const matchesLabel =
+          activeLabel === "all" ||
+          (Array.isArray(item.labels) && item.labels.includes(activeLabel));
+        const matchesQuery =
+          !q ||
+          item.title.toLowerCase().includes(q) ||
+          item.desc.toLowerCase().includes(q) ||
+          item.genre.toLowerCase().includes(q) ||
+          (item.labels || []).some((l) => l.toLowerCase().includes(q));
+
+        return matchesTab && matchesGenre && matchesLabel && matchesQuery;
+      });
+
+      shelvesContainer.innerHTML = "";
+
+      if (!filtered.length) {
+        shelvesContainer.innerHTML = `<p class="empty-msg">لا توجد عناصر مطابقة للتصفية الحالية.</p>`;
+        return;
+      }
+
+      const savedList = filtered.filter((item) => isInList(item.id));
+      const awardOrTop = filtered.filter((item) => item.top10 || (item.labels || []).includes("الأعلى تقييماً"));
+      const animeOrDrama = filtered.filter((item) => item.type === "anime" || (item.labels || []).includes("مترجم"));
+      const criticallyAcclaimed = filtered.filter((item) => (item.labels || []).includes("حصري") || (item.labels || []).includes("رائج الآن"));
+
+      shelvesContainer.appendChild(buildHorizontalShelf("Your Next Watch", filtered));
+      if (savedList.length) {
+        shelvesContainer.appendChild(buildHorizontalShelf("My List • قائمتي", savedList));
+      }
+      shelvesContainer.appendChild(buildHorizontalShelf("Award-Winning TV Shows", awardOrTop.length ? awardOrTop : filtered));
+      shelvesContainer.appendChild(buildHorizontalShelf("K-Dramas & Anime", animeOrDrama.length ? animeOrDrama : filtered));
+      shelvesContainer.appendChild(buildHorizontalShelf("Critically Acclaimed TV Shows", criticallyAcclaimed.length ? criticallyAcclaimed : filtered));
+    }
+
+    // Auto-Next Episode Countdown (5s starting 25s before end)
     function clearAutoNext(markDismissed = false) {
       if (autoNextTimer) {
         clearInterval(autoNextTimer);
@@ -1562,7 +1769,7 @@ Sitemap: ${baseUrl}sitemap.xml
       if (!item) return;
       heroItem = item;
       hero.style.backgroundImage = `url('${item.poster}')`;
-      const lbl = (item.labels && item.labels[0]) || "مميز اليوم";
+      const lbl = item.ribbon || (item.labels && item.labels[0]) || "مميز اليوم";
       heroBadge.textContent = `${lbl} • ${typeLabel(item.type)} • ${item.genre}`;
       heroTitle.textContent = item.title;
       heroDesc.textContent = item.desc;
@@ -1638,79 +1845,8 @@ Sitemap: ${baseUrl}sitemap.xml
       applyAutoSEO(null);
     }
 
-    function renderAIPicks() {
-      const topPicks = [...catalog]
-        .sort((a, b) => (b.aiScore || 0) - (a.aiScore || 0))
-        .slice(0, 4);
-
-      aiPicksGrid.innerHTML = "";
-      if (!topPicks.length) {
-        aiPicksGrid.innerHTML = `<p class="empty-msg">أضف محتوى أو اضغط "تعبئة بيانات تجريبية" لعرض توصيات الذكاء الاصطناعي.</p>`;
-        return;
-      }
-      topPicks.forEach((item) => aiPicksGrid.appendChild(createCard(item)));
-    }
-
-    function renderCatalog() {
-      const q = searchInput.value.trim().toLowerCase();
-      const g = genreSelect.value;
-
-      const tabNames = {
-        all: "الكل",
-        movie: "أفلام",
-        series: "مسلسلات",
-        anime: "أنمي",
-        mylist: "قائمتي"
-      };
-      activeFilterSummary.textContent = `${tabNames[activeTab]} • ${activeLabel === "all" ? "كل التسميات (7)" : activeLabel}`;
-
-      const filtered = catalog.filter((item) => {
-        const matchesTab =
-          activeTab === "all" ||
-          (activeTab === "mylist" && isInList(item.id)) ||
-          item.type === activeTab;
-        const matchesGenre = g === "all" || item.genre === g;
-        const matchesLabel =
-          activeLabel === "all" ||
-          (Array.isArray(item.labels) && item.labels.includes(activeLabel));
-        const matchesQuery =
-          !q ||
-          item.title.toLowerCase().includes(q) ||
-          item.desc.toLowerCase().includes(q) ||
-          item.genre.toLowerCase().includes(q) ||
-          (item.labels || []).some((l) => l.toLowerCase().includes(q));
-
-        return matchesTab && matchesGenre && matchesLabel && matchesQuery;
-      });
-
-      mainSectionTitle.textContent =
-        activeLabel === "all"
-          ? `${tabNames[activeTab] || "المحتوى المتاح"}`
-          : `${tabNames[activeTab]} — تسمية: ${activeLabel}`;
-
-      catalogGrid.innerHTML = "";
-      if (!filtered.length) {
-        catalogGrid.innerHTML = `<p class="empty-msg">لا توجد عناصر مطابقة للتصفية الحالية.</p>`;
-        return;
-      }
-      filtered.forEach((item) => catalogGrid.appendChild(createCard(item)));
-    }
-
-    function renderMyList() {
-      myListSection.style.display = activeTab === "mylist" ? "none" : "block";
-      const saved = catalog.filter((item) => isInList(item.id));
-      myListGrid.innerHTML = "";
-      if (!saved.length) {
-        myListGrid.innerHTML = `<p class="empty-msg">قائمتك فارغة حالياً.</p>`;
-        return;
-      }
-      saved.forEach((item) => myListGrid.appendChild(createCard(item)));
-    }
-
     function renderAll() {
-      renderMyList();
-      renderAIPicks();
-      renderCatalog();
+      renderShelves();
       renderMarqueeSlider();
       applyAutoSEO(null);
     }
@@ -1726,14 +1862,14 @@ Sitemap: ${baseUrl}sitemap.xml
           dbStatus.textContent = `متصل بـ Firestore (metaverse-metabox) — ${catalog.length} عنصر`;
         }
         organizeWithAI(false);
-        setupHero(catalog[1] || catalog[0]);
+        setupHero(catalog[2] || catalog[0]);
         renderAll();
       } catch (err) {
         console.error(err);
         dbStatus.textContent = "تعذر الاتصال بـ Firestore — تحقق من قواعد الأمان (Rules)";
         catalog = DEFAULT_ITEMS.map((item, i) => ({ id: "fallback_" + i, ...item }));
         organizeWithAI(false);
-        setupHero(catalog[1] || catalog[0]);
+        setupHero(catalog[2] || catalog[0]);
         renderAll();
       }
     }
@@ -1758,12 +1894,11 @@ Sitemap: ${baseUrl}sitemap.xml
         alert("حدث خطأ أثناء الإضافة: " + err.message);
       } finally {
         seedDataBtn.disabled = false;
-        seedDataBtn.textContent = "تعبئة بيانات تجريبية في Firestore";
+        seedDataBtn.textContent = "تعبئة بيانات تجريبية";
       }
     });
 
     aiOrganizeBtn.addEventListener("click", () => organizeWithAI(true));
-
     newType.addEventListener("change", toggleFormFieldsByType);
 
     openAddModalBtn.addEventListener("click", openAddModal);
@@ -1786,6 +1921,7 @@ Sitemap: ${baseUrl}sitemap.xml
       const title = document.getElementById("newTitle").value.trim();
       const genre = document.getElementById("newGenre").value;
       const year = document.getElementById("newYear").value.trim();
+      const ribbon = document.getElementById("newRibbon").value.trim();
       const poster = document.getElementById("newPoster").value.trim();
       const desc = document.getElementById("newDesc").value.trim();
       const trailerPreview = document.getElementById("newTrailerPreview").value.trim();
@@ -1805,12 +1941,14 @@ Sitemap: ${baseUrl}sitemap.xml
         title,
         genre,
         year,
+        ribbon,
+        showWatchNow: ribbon.toLowerCase().includes("episode"),
+        top10: selectedLabels.includes("الأعلى تقييماً"),
         poster,
         previewShots: previewShots.length ? previewShots : [poster],
         trailerPreview: trailerPreview || SAMPLE_V2,
         labels: selectedLabels.length ? selectedLabels : ["جديد"],
-        desc,
-        metaText: typeLabel(type)
+        desc
       };
 
       if (type === "movie") {
@@ -1873,8 +2011,8 @@ Sitemap: ${baseUrl}sitemap.xml
       document.getElementById("navbar").classList.toggle("scrolled", window.scrollY > 40);
     });
 
-    searchInput.addEventListener("input", renderCatalog);
-    genreSelect.addEventListener("change", renderCatalog);
+    searchInput.addEventListener("input", renderShelves);
+    genreSelect.addEventListener("change", renderShelves);
     heroPlayBtn.addEventListener("click", () => openItemModal(heroItem));
     heroListBtn.addEventListener("click", () => toggleList(heroItem?.id));
     modalToggleListBtn.addEventListener("click", () => toggleList(currentItem?.id));
@@ -1888,3 +2026,4 @@ Sitemap: ${baseUrl}sitemap.xml
   </script>
 </body>
 </html>
+
