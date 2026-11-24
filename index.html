@@ -1,20 +1,31 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>StreamFlix + Firebase — أفلام، مسلسلات، وأنمي</title>
+  <title id="seoTitle">StreamFlix AI — منصة أفلام، مسلسلات، وأنمي</title>
+  <meta id="seoDesc" name="description" content="منصة عرض سينمائية للأفلام والمسلسلات والأنمي مع تنظيم ذكي بالذكاء الاصطناعي وربط مباشر بقاعدة بيانات Firebase." />
+  <meta id="seoKeywords" name="keywords" content="أفلام, مسلسلات, أنمي, مواسم, حلقات, مشاهدة, ذكاء اصطناعي, Firebase" />
+  <meta id="ogTitle" property="og:title" content="StreamFlix AI — أفلام، مسلسلات، وأنمي" />
+  <meta id="ogDesc" property="og:description" content="تصفح أحدث الأفلام والمسلسلات والأنمي مع معاينة فورية للقطات وتنظيم ذكي." />
+  <meta id="ogType" property="og:type" content="website" />
+  <script id="jsonLdSchema" type="application/ld+json">{}</script>
+
   <style>
     :root {
-      --bg: #141414;
-      --bg-elev: #1f1f1f;
-      --bg-card: #242424;
-      --text: #ffffff;
-      --muted: #b3b3b3;
+      --bg: #0b0d12;
+      --bg-elev: #141821;
+      --bg-card: #1b202c;
+      --text: #f8fafc;
+      --muted: #94a3b8;
       --red: #e50914;
+      --red-glow: rgba(229, 9, 20, 0.35);
       --accent: #38bdf8;
+      --gold: #fbbf24;
       --green: #10b981;
-      --radius: 7px;
+      --border: rgba(255, 255, 255, 0.09);
+      --radius: 10px;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -24,32 +35,50 @@
       background-color: var(--bg);
       color: var(--text);
       overflow-x: hidden;
+      line-height: 1.5;
     }
 
+    /* Navbar */
     header {
       position: fixed;
       top: 0; left: 0; right: 0;
-      z-index: 50;
+      z-index: 60;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
       padding: 12px 4%;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.92), rgba(0,0,0,0));
-      transition: background-color 0.25s ease;
+      background: linear-gradient(to bottom, rgba(11,13,18,0.95), rgba(11,13,18,0.2));
+      backdrop-filter: blur(10px);
+      transition: background-color 0.25s ease, border-color 0.25s ease;
+      border-bottom: 1px solid transparent;
       flex-wrap: wrap;
     }
 
     header.scrolled {
-      background: rgba(20, 20, 20, 0.97);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.55);
+      background: rgba(11, 13, 18, 0.96);
+      border-bottom-color: var(--border);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
     }
 
     .brand {
-      font-size: 1.5rem;
+      font-size: 1.55rem;
       font-weight: 900;
       color: var(--red);
       text-decoration: none;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .brand span {
+      font-size: 0.72rem;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent);
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-weight: 800;
     }
 
     .nav-tabs, .controls {
@@ -60,53 +89,216 @@
     }
 
     .tab-btn {
-      background: rgba(255,255,255,0.08);
+      background: rgba(255, 255, 255, 0.06);
       color: var(--text);
-      border: 1px solid rgba(255,255,255,0.12);
+      border: 1px solid var(--border);
       border-radius: 999px;
-      padding: 6px 13px;
+      padding: 6px 14px;
       font-size: 0.84rem;
       font-weight: 700;
       cursor: pointer;
+      transition: all 0.2s ease;
     }
 
-    .tab-btn.active { background: var(--red); border-color: var(--red); }
+    .tab-btn:hover { background: rgba(255, 255, 255, 0.14); }
+    .tab-btn.active {
+      background: var(--red);
+      border-color: var(--red);
+      box-shadow: 0 0 18px var(--red-glow);
+    }
 
     .controls input,
     .controls select,
     .modal select,
     .modal input,
     .modal textarea {
-      background: #121212;
+      background: #10141d;
       color: var(--text);
-      border: 1px solid rgba(255,255,255,0.22);
-      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      border-radius: 8px;
       padding: 7px 11px;
-      font-size: 0.86rem;
+      font-size: 0.85rem;
       outline: none;
       font-family: inherit;
     }
 
-    .status-bar {
+    .controls input:focus,
+    .controls select:focus { border-color: var(--accent); }
+
+    .btn {
+      border: none;
+      border-radius: 8px;
+      padding: 9px 16px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.15s ease, filter 0.2s ease;
+    }
+
+    .btn:hover { filter: brightness(1.07); }
+    .btn:active { transform: scale(0.97); }
+    .btn-play { background: #ffffff; color: #090b10; }
+    .btn-secondary { background: rgba(148, 163, 184, 0.18); color: #fff; border: 1px solid var(--border); }
+    .btn-accent { background: var(--accent); color: #06131c; }
+    .btn-ai { background: linear-gradient(135deg, #6366f1, #38bdf8); color: #fff; }
+    .btn-green { background: var(--green); color: #052e16; }
+    .btn-red { background: var(--red); color: #fff; }
+
+    /* Top Status & AI Bar */
+    .top-utility {
       margin-top: 66px;
-      padding: 8px 4%;
-      background: #1b1b1b;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding: 10px 4%;
+      background: #10141d;
+      border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 10px;
       flex-wrap: wrap;
-      font-size: 0.84rem;
+      font-size: 0.83rem;
       color: var(--muted);
     }
 
+    .utility-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .ai-insight {
+      color: #cbd5e1;
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid rgba(99, 102, 241, 0.28);
+      padding: 5px 11px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+    }
+
+    /* 7 Labels Filter Strip */
+    .labels-bar {
+      padding: 12px 4%;
+      background: rgba(20, 24, 33, 0.75);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: thin;
+    }
+
+    .label-chip {
+      white-space: nowrap;
+      background: var(--bg-card);
+      color: #e2e8f0;
+      border: 1px solid var(--border);
+      padding: 6px 13px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .label-chip:hover { border-color: rgba(255, 255, 255, 0.3); }
+    .label-chip.active {
+      background: rgba(251, 191, 36, 0.16);
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    /* Animated Marquee Slider */
+    .marquee-wrap {
+      padding: 14px 4%;
+      background: #0e1118;
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .marquee-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 0.86rem;
+      color: var(--muted);
+    }
+
+    .marquee-header strong { color: #fff; font-size: 0.95rem; }
+
+    .marquee-track-box {
+      overflow: hidden;
+      position: relative;
+    }
+
+    .marquee-track {
+      display: flex;
+      gap: 14px;
+      width: max-content;
+      animation: marqueeScroll 36s linear infinite;
+    }
+
+    .marquee-track-box:hover .marquee-track {
+      animation-play-state: paused;
+    }
+
+    @keyframes marqueeScroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(50%); }
+    }
+
+    .slide-pill {
+      width: 265px;
+      background: var(--bg-elev);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .slide-pill:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent);
+    }
+
+    .slide-pill img {
+      width: 72px;
+      height: 46px;
+      object-fit: cover;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+
+    .slide-pill-info { min-width: 0; }
+    .slide-pill-info strong {
+      display: block;
+      font-size: 0.84rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .slide-pill-info span {
+      font-size: 0.72rem;
+      color: var(--gold);
+      font-weight: 700;
+    }
+
+    /* Hero Banner */
     .hero {
       position: relative;
-      min-height: 62vh;
+      min-height: 60vh;
       display: flex;
       align-items: flex-end;
-      padding: 40px 4% 52px;
+      padding: 44px 4% 56px;
       background-size: cover;
       background-position: center;
     }
@@ -116,54 +308,44 @@
       position: absolute;
       inset: 0;
       background:
-        linear-gradient(to top, var(--bg) 6%, rgba(20,20,20,0.35) 55%, rgba(20,20,20,0.65) 100%),
-        linear-gradient(to left, rgba(20,20,20,0.85) 0%, rgba(20,20,20,0.15) 65%);
+        linear-gradient(to top, var(--bg) 5%, rgba(11,13,18,0.35) 55%, rgba(11,13,18,0.68) 100%),
+        linear-gradient(to left, rgba(11,13,18,0.88) 0%, rgba(11,13,18,0.18) 65%);
     }
 
-    .hero-content { position: relative; z-index: 2; max-width: 600px; }
+    .hero-content { position: relative; z-index: 2; max-width: 620px; }
 
     .hero-badge {
-      display: inline-block;
-      background: var(--red);
-      color: #fff;
-      font-size: 0.75rem;
-      font-weight: 700;
-      padding: 4px 10px;
-      border-radius: 4px;
-      margin-bottom: 10px;
-    }
-
-    .hero h1 { font-size: clamp(1.8rem, 4vw, 3rem); line-height: 1.15; margin-bottom: 12px; }
-    .hero p { color: #e5e5e5; font-size: 0.96rem; line-height: 1.6; margin-bottom: 18px; }
-
-    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
-
-    .btn {
-      border: none;
-      border-radius: var(--radius);
-      padding: 9px 18px;
-      font-size: 0.88rem;
-      font-weight: 700;
-      cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      background: var(--red);
+      color: #fff;
+      font-size: 0.76rem;
+      font-weight: 800;
+      padding: 4px 11px;
+      border-radius: 999px;
+      margin-bottom: 12px;
     }
 
-    .btn-play { background: #fff; color: #000; }
-    .btn-secondary { background: rgba(109, 109, 110, 0.72); color: #fff; }
-    .btn-accent { background: var(--accent); color: #07131d; }
-    .btn-green { background: var(--green); color: #052e16; }
-    .btn-red { background: var(--red); color: #fff; }
+    .hero h1 { font-size: clamp(1.85rem, 4vw, 3.1rem); line-height: 1.15; margin-bottom: 12px; }
+    .hero p { color: #e2e8f0; font-size: 0.96rem; line-height: 1.65; margin-bottom: 20px; }
 
-    main { padding: 14px 4% 64px; }
-    .section { margin-bottom: 32px; }
-    .section-title { font-size: 1.18rem; font-weight: 800; margin-bottom: 14px; }
+    /* Main Sections & Cards */
+    main { padding: 14px 4% 70px; }
+    .section { margin-bottom: 36px; }
+    .section-title {
+      font-size: 1.18rem;
+      font-weight: 800;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
     .row-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 18px;
     }
 
     .card {
@@ -171,48 +353,171 @@
       border-radius: var(--radius);
       overflow: hidden;
       cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      border: 1px solid rgba(255,255,255,0.06);
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      border: 1px solid var(--border);
+      position: relative;
+      display: flex;
+      flex-direction: column;
     }
 
-    .card:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 12px 26px rgba(0,0,0,0.65); }
-    .card img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; display: block; }
-    .card-body { padding: 10px 12px 12px; }
-    .card-title { font-size: 0.95rem; font-weight: 700; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .card-meta { font-size: 0.75rem; color: var(--muted); display: flex; justify-content: space-between; align-items: center; }
+    .card:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 18px 34px rgba(0, 0, 0, 0.72);
+      border-color: rgba(255, 255, 255, 0.26);
+    }
+
+    .media-stage {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      background: #090b10;
+      overflow: hidden;
+    }
+
+    .media-stage img,
+    .media-stage video.hover-clip {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: opacity 0.25s ease, transform 0.4s ease;
+    }
+
+    .card:hover .media-stage img { transform: scale(1.05); }
+
+    .media-stage video.hover-clip {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .card.previewing .media-stage video.hover-clip.active-clip { opacity: 1; }
+
+    .promo-indicator {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      background: rgba(0, 0, 0, 0.78);
+      color: #fff;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 5px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .card.previewing .promo-indicator { opacity: 1; }
+
+    .card-body {
+      padding: 11px 13px 13px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .card-title {
+      font-size: 0.96rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .card-meta {
+      font-size: 0.75rem;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 7px;
+    }
 
     .type-pill {
-      background: rgba(56, 189, 248, 0.16);
+      background: rgba(56, 189, 248, 0.15);
       color: var(--accent);
-      padding: 2px 7px;
-      border-radius: 4px;
+      padding: 2px 8px;
+      border-radius: 5px;
       font-weight: 700;
       font-size: 0.7rem;
     }
 
+    .card-labels {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .mini-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 5px;
+      background: rgba(251, 191, 36, 0.14);
+      color: var(--gold);
+    }
+
+    .card-actions {
+      margin-top: auto;
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 6px;
+    }
+
+    .mini-btn {
+      flex: 1;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.06);
+      color: #e2e8f0;
+      border-radius: 6px;
+      padding: 5px 8px;
+      font-size: 0.73rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .mini-btn.edit:hover {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .mini-btn.del:hover {
+      background: rgba(229, 9, 20, 0.24);
+      border-color: var(--red);
+      color: #fca5a5;
+    }
+
     .empty-msg { color: var(--muted); font-size: 0.92rem; padding: 10px 0; }
 
+    /* Modals */
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.86);
+      background: rgba(0, 0, 0, 0.88);
       display: none;
       align-items: center;
       justify-content: center;
       padding: 16px;
-      z-index: 100;
+      z-index: 120;
     }
 
     .modal-backdrop.open { display: flex; }
 
     .modal {
       width: 100%;
-      max-width: 900px;
+      max-width: 920px;
       max-height: 92vh;
       overflow-y: auto;
-      background: #181818;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.14);
+      background: #141821;
+      border-radius: 12px;
+      border: 1px solid var(--border);
     }
 
     .modal-top {
@@ -220,16 +525,28 @@
       justify-content: space-between;
       align-items: center;
       padding: 12px 18px;
-      background: #111;
+      background: #0d1017;
+      border-bottom: 1px solid var(--border);
       position: sticky;
       top: 0;
       z-index: 10;
     }
 
-    .close-btn { background: transparent; color: #fff; border: none; font-size: 1.4rem; cursor: pointer; }
-    video { width: 100%; max-height: 55vh; background: #000; display: block; }
+    .close-btn {
+      background: transparent;
+      color: #fff;
+      border: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+    }
 
-    /* Auto-Next Episode Bar */
+    video#videoPlayer {
+      width: 100%;
+      max-height: 55vh;
+      background: #000;
+      display: block;
+    }
+
     .next-ep-banner {
       display: none;
       align-items: center;
@@ -237,46 +554,64 @@
       gap: 12px;
       flex-wrap: wrap;
       padding: 12px 18px;
-      background: #232323;
-      border-top: 1px solid rgba(255,255,255,0.1);
-      border-bottom: 1px solid rgba(255,255,255,0.1);
+      background: #1f2534;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
     }
 
     .next-ep-banner.show { display: flex; }
-    .next-ep-text { font-size: 0.9rem; line-height: 1.4; }
-    .next-ep-text strong { color: #fff; }
+    .next-ep-text { font-size: 0.9rem; }
     .next-ep-text span { color: var(--accent); font-weight: 800; }
 
     .modal-info { padding: 16px 18px 22px; }
-    .modal-info h3 { margin-bottom: 6px; font-size: 1.2rem; }
-    .modal-info p { color: var(--muted); font-size: 0.9rem; line-height: 1.55; margin-bottom: 14px; }
+    .modal-info h3 { margin-bottom: 6px; font-size: 1.22rem; }
+    .modal-info p { color: var(--muted); font-size: 0.9rem; line-height: 1.6; margin-bottom: 14px; }
 
-    .episodes-box { margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.1); }
+    .episodes-box { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
     .episodes-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
     .episodes-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
 
     .ep-card {
       background: var(--bg-card);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      border-radius: 8px;
       padding: 10px 12px;
       cursor: pointer;
     }
 
-    .ep-card.active { border-color: var(--red); background: rgba(229, 9, 20, 0.14); }
+    .ep-card.active { border-color: var(--red); background: rgba(229, 9, 20, 0.16); }
     .ep-card strong { display: block; font-size: 0.88rem; margin-bottom: 3px; }
     .ep-card span { font-size: 0.76rem; color: var(--muted); }
 
-    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
     .form-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
     .form-field label { font-size: 0.82rem; color: var(--muted); }
+
+    .labels-picker {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .labels-picker label {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 5px 10px;
+      border-radius: 7px;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
   <header id="navbar">
-    <a href="#" class="brand">STREAMFLIX</a>
+    <a href="#" class="brand">STREAMFLIX <span>AI + SEO</span></a>
 
-    <nav class="nav-tabs" aria-label="الأقسام">
+    <nav class="nav-tabs" aria-label="الأقسام الرئيسية">
       <button class="tab-btn active" data-type="all">الكل</button>
       <button class="tab-btn" data-type="movie">أفلام</button>
       <button class="tab-btn" data-type="series">مسلسلات</button>
@@ -285,7 +620,7 @@
     </nav>
 
     <div class="controls">
-      <input type="search" id="searchInput" placeholder="ابحث..." />
+      <input type="search" id="searchInput" placeholder="ابحث ذكياً..." aria-label="بحث" />
       <select id="genreSelect" aria-label="التصنيف">
         <option value="all">كل التصنيفات</option>
         <option value="خيال علمي">خيال علمي</option>
@@ -293,17 +628,42 @@
         <option value="أنمي">أنمي</option>
         <option value="أكشن">أكشن</option>
       </select>
-      <button class="btn btn-accent" id="openAddModalBtn">+ إضافة لقاعدة البيانات</button>
+      <button class="btn btn-ai" id="aiOrganizeBtn">✦ تنظيم ذكي بالـ AI</button>
+      <button class="btn btn-accent" id="openAddModalBtn">+ إضافة</button>
     </div>
   </header>
 
-  <div class="status-bar">
+  <div class="top-utility">
     <span id="dbStatus">حالة Firebase: جاري الاتصال بمشروع metaverse-metabox...</span>
-    <button class="btn btn-secondary" id="seedDataBtn" style="padding:5px 12px;font-size:0.78rem;">
-      تعبئة بيانات تجريبية في Firestore
-    </button>
+    <span class="ai-insight" id="aiSummary">الذكاء الاصطناعي: جاهز لتصنيف المحتوى وتحديث السيو تلقائياً.</span>
+    <div class="utility-actions">
+      <button class="btn btn-secondary" id="downloadSitemapBtn" style="padding:5px 11px;font-size:0.78rem;">
+        ⬇ sitemap.xml
+      </button>
+      <button class="btn btn-secondary" id="downloadRobotsBtn" style="padding:5px 11px;font-size:0.78rem;">
+        ⬇ robots.txt
+      </button>
+      <button class="btn btn-secondary" id="seedDataBtn" style="padding:5px 11px;font-size:0.78rem;">
+        تعبئة بيانات تجريبية في Firestore
+      </button>
+    </div>
   </div>
 
+  <!-- 7 Labels Bar -->
+  <div class="labels-bar" id="labelsBar" aria-label="التسميات السبعة"></div>
+
+  <!-- Animated Marquee Slider -->
+  <section class="marquee-wrap" aria-label="سلايدر متحرك">
+    <div class="marquee-header">
+      <strong>✦ شريط العروض والتسميات المتحرك</strong>
+      <span id="activeFilterSummary">الكل • كل التسميات</span>
+    </div>
+    <div class="marquee-track-box">
+      <div class="marquee-track" id="marqueeTrack"></div>
+    </div>
+  </section>
+
+  <!-- Hero Banner -->
   <section class="hero" id="hero">
     <div class="hero-content">
       <span class="hero-badge" id="heroBadge">مميز اليوم</span>
@@ -317,6 +677,11 @@
   </section>
 
   <main>
+    <section class="section" id="aiPicksSection">
+      <h2 class="section-title">✦ مختارات الذكاء الاصطناعي لك</h2>
+      <div class="row-grid" id="aiPicksGrid"></div>
+    </section>
+
     <section class="section" id="myListSection">
       <h2 class="section-title">قائمتي</h2>
       <div class="row-grid" id="myListGrid"></div>
@@ -337,7 +702,6 @@
       </div>
       <video id="videoPlayer" controls playsinline></video>
 
-      <!-- Auto Next Episode Countdown Banner -->
       <div class="next-ep-banner" id="nextEpBanner">
         <div class="next-ep-text">
           الحلقة التالية: <strong id="nextEpName"></strong> — سيتم التشغيل خلال <span id="nextEpCountdown">5</span> ثوانٍ
@@ -351,7 +715,11 @@
       <div class="modal-info">
         <h3 id="infoTitle"></h3>
         <p id="infoDesc"></p>
-        <button class="btn btn-secondary" id="modalToggleListBtn"></button>
+        <div class="btn-row">
+          <button class="btn btn-secondary" id="modalToggleListBtn"></button>
+          <button class="btn btn-accent" id="modalEditItemBtn">✎ تعديل العمل</button>
+          <button class="btn btn-red" id="modalDeleteItemBtn">🗑 حذف العمل</button>
+        </div>
 
         <div class="episodes-box" id="episodesBox" style="display:none;">
           <div class="episodes-head">
@@ -364,11 +732,11 @@
     </div>
   </div>
 
-  <!-- Add Item to Firestore Modal -->
+  <!-- Add / Edit Item Modal -->
   <div class="modal-backdrop" id="addModal" role="dialog" aria-modal="true">
     <div class="modal">
       <div class="modal-top">
-        <strong>إضافة فيلم / مسلسل / أنمي إلى Firestore</strong>
+        <strong id="formModalTitle">إضافة عمل جديد إلى Firestore</strong>
         <button class="close-btn" id="closeAddBtn" aria-label="إغلاق">✕</button>
       </div>
       <form class="modal-info" id="addItemForm">
@@ -398,22 +766,37 @@
 
         <div class="form-field">
           <label>العنوان</label>
-          <input type="text" id="newTitle" placeholder="مثال: مغامرة الفضاء" required />
+          <input type="text" id="newTitle" placeholder="مثال: أفق النجوم" required />
         </div>
 
         <div class="form-field">
-          <label>رابط صورة الغلاف (Poster URL)</label>
+          <label>صورة الغلاف الرئيسية (Poster URL)</label>
           <input type="url" id="newPoster" value="https://peach.blender.org/wp-content/uploads/sintel_poster.jpg" required />
         </div>
 
+        <div class="form-field">
+          <label>لقطات الإعلان عند تمرير الماوس (روابط صور مفصولة بفاصلة)</label>
+          <input type="text" id="newPreviewShots" value="https://mango.blender.org/wp-content/uploads/2013/05/01_thom_celia_bridge.jpg, https://download.blender.org/ED/ed_hd.jpg" />
+        </div>
+
+        <div class="form-field">
+          <label>رابط مقطع إعلان قصير لمعاينة الماوس (اختياري MP4)</label>
+          <input type="url" id="newTrailerPreview" value="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" />
+        </div>
+
+        <div class="form-field">
+          <label>التسميات (Labels)</label>
+          <div class="labels-picker" id="newLabelsPicker"></div>
+        </div>
+
         <div class="form-field" id="movieVideoField">
-          <label>رابط الفيديو المباشر (للأفلام - MP4)</label>
+          <label>رابط الفيلم الكامل (MP4)</label>
           <input type="url" id="newVideo" value="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4" />
         </div>
 
         <div class="form-field" id="seasonsJsonField" style="display:none;">
-          <label>المواسم والحلقات (JSON للمسلسلات والأنمي)</label>
-          <textarea id="newSeasonsJson" rows="6">[
+          <label>المواسم والحلقات (JSON)</label>
+          <textarea id="newSeasonsJson" rows="5">[
   {
     "seasonNumber": 1,
     "title": "الموسم الأول",
@@ -426,10 +809,10 @@
 
         <div class="form-field">
           <label>الوصف</label>
-          <textarea id="newDesc" rows="2" placeholder="نبذة مختصرة عن العمل..." required></textarea>
+          <textarea id="newDesc" rows="2" placeholder="نبذة مختصرة..." required></textarea>
         </div>
 
-        <button type="submit" class="btn btn-green">حفظ في Firebase Firestore</button>
+        <button type="submit" class="btn btn-green" id="submitFormBtn">حفظ في Firestore</button>
       </form>
     </div>
   </div>
@@ -440,7 +823,10 @@
       getFirestore,
       collection,
       getDocs,
-      addDoc
+      addDoc,
+      doc,
+      updateDoc,
+      deleteDoc
     } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -455,6 +841,16 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
+    const SEVEN_LABELS = [
+      "حصري",
+      "جديد",
+      "الأعلى تقييماً",
+      "مدبلج",
+      "مترجم",
+      "كلاسيكي",
+      "رائج الآن"
+    ];
+
     const SAMPLE_V1 = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4";
     const SAMPLE_V2 = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
     const SAMPLE_V3 = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4";
@@ -467,7 +863,13 @@
         genre: "خيال علمي",
         year: "2010",
         metaText: "فيلم • 15 د",
+        labels: ["حصري", "الأعلى تقييماً", "مترجم"],
         poster: "https://peach.blender.org/wp-content/uploads/sintel_poster.jpg",
+        previewShots: [
+          "https://mango.blender.org/wp-content/uploads/2013/05/01_thom_celia_bridge.jpg",
+          "https://download.blender.org/ED/ed_hd.jpg"
+        ],
+        trailerPreview: SAMPLE_V1,
         video: SAMPLE_V1,
         desc: "رحلة فتاة شجاعة تبحث عن تنين صغير في عالم مليء بالمخاطر والذكريات."
       },
@@ -475,10 +877,16 @@
         type: "series",
         title: "وقائع السماء (مسلسل)",
         genre: "مغامرة",
-        year: "2024",
+        year: "2026",
         metaText: "مسلسل • موسمين",
+        labels: ["جديد", "رائج الآن", "مدبلج"],
         poster: "https://mango.blender.org/wp-content/uploads/2013/05/01_thom_celia_bridge.jpg",
-        desc: "سلسلة مغامرات وتشويق تدور حول فريق يستكشف عوالم وأسراراً قديمة.",
+        previewShots: [
+          "https://peach.blender.org/wp-content/uploads/sintel_poster.jpg",
+          "https://peach.blender.org/wp-content/uploads/bbb-splash.png"
+        ],
+        trailerPreview: SAMPLE_V4,
+        desc: "سلسلة مغامرات وتشويق تدور حول فريق يستكشف عوالم وأسراراً قديمة عبر مواسم متتابعة.",
         seasons: [
           {
             seasonNumber: 1,
@@ -501,10 +909,16 @@
         type: "anime",
         title: "وادي الأرنب (أنمي)",
         genre: "أنمي",
-        year: "2023",
+        year: "2025",
         metaText: "أنمي • موسم 1",
+        labels: ["رائج الآن", "مترجم", "الأعلى تقييماً"],
         poster: "https://peach.blender.org/wp-content/uploads/bbb-splash.png",
-        desc: "عمل أنمي كوميدي ومغامرات في غابة نابضة بالحياة.",
+        previewShots: [
+          "https://download.blender.org/ED/ed_hd.jpg",
+          "https://peach.blender.org/wp-content/uploads/sintel_poster.jpg"
+        ],
+        trailerPreview: SAMPLE_V2,
+        desc: "عمل أنمي كوميدي ومغامرات في غابة نابضة بالحياة مع حلقات متسلسلة.",
         seasons: [
           {
             seasonNumber: 1,
@@ -515,26 +929,57 @@
             ]
           }
         ]
+      },
+      {
+        type: "movie",
+        title: "حلم الآلة الكلاسيكي",
+        genre: "خيال علمي",
+        year: "2006",
+        metaText: "فيلم • 11 د",
+        labels: ["كلاسيكي", "حصري", "مترجم"],
+        poster: "https://download.blender.org/ED/ed_hd.jpg",
+        previewShots: [
+          "https://peach.blender.org/wp-content/uploads/bbb-splash.png",
+          "https://mango.blender.org/wp-content/uploads/2013/05/01_thom_celia_bridge.jpg"
+        ],
+        trailerPreview: SAMPLE_V3,
+        video: SAMPLE_V3,
+        desc: "تحفة بصرية كلاسيكية تستكشف العلاقة بين الإنسان والآلة والذاكرة."
       }
     ];
 
     const LIST_KEY = "streamflix_fb_list_v1";
     const PROGRESS_KEY = "streamflix_fb_progress_v1";
+    const AI_SORT_KEY = "streamflix_ai_sorted_v1";
 
     let catalog = [];
     let myList = JSON.parse(localStorage.getItem(LIST_KEY) || "[]");
     let progressMap = JSON.parse(localStorage.getItem(PROGRESS_KEY) || "{}");
+    let aiSortedEnabled = localStorage.getItem(AI_SORT_KEY) === "1";
+
     let activeTab = "all";
+    let activeLabel = "all";
     let heroItem = null;
     let currentItem = null;
+    let editingItemId = null;
     let currentSeasonIdx = 0;
     let currentEpIdx = 0;
 
+    const PRE_END_SECONDS = 25;
     let autoNextTimer = null;
     let pendingNextTarget = null;
+    let dismissedForCurrentEp = false;
 
     const dbStatus = document.getElementById("dbStatus");
+    const aiSummary = document.getElementById("aiSummary");
+    const aiOrganizeBtn = document.getElementById("aiOrganizeBtn");
+    const downloadSitemapBtn = document.getElementById("downloadSitemapBtn");
+    const downloadRobotsBtn = document.getElementById("downloadRobotsBtn");
     const seedDataBtn = document.getElementById("seedDataBtn");
+    const labelsBar = document.getElementById("labelsBar");
+    const marqueeTrack = document.getElementById("marqueeTrack");
+    const activeFilterSummary = document.getElementById("activeFilterSummary");
+
     const tabBtns = document.querySelectorAll(".tab-btn");
     const searchInput = document.getElementById("searchInput");
     const genreSelect = document.getElementById("genreSelect");
@@ -544,6 +989,8 @@
     const heroDesc = document.getElementById("heroDesc");
     const heroPlayBtn = document.getElementById("heroPlayBtn");
     const heroListBtn = document.getElementById("heroListBtn");
+
+    const aiPicksGrid = document.getElementById("aiPicksGrid");
     const myListSection = document.getElementById("myListSection");
     const myListGrid = document.getElementById("myListGrid");
     const catalogGrid = document.getElementById("catalogGrid");
@@ -556,6 +1003,8 @@
     const infoTitle = document.getElementById("infoTitle");
     const infoDesc = document.getElementById("infoDesc");
     const modalToggleListBtn = document.getElementById("modalToggleListBtn");
+    const modalEditItemBtn = document.getElementById("modalEditItemBtn");
+    const modalDeleteItemBtn = document.getElementById("modalDeleteItemBtn");
     const episodesBox = document.getElementById("episodesBox");
     const seasonSelect = document.getElementById("seasonSelect");
     const episodesList = document.getElementById("episodesList");
@@ -567,19 +1016,453 @@
     const cancelAutoNextBtn = document.getElementById("cancelAutoNextBtn");
 
     const addModal = document.getElementById("addModal");
+    const formModalTitle = document.getElementById("formModalTitle");
+    const submitFormBtn = document.getElementById("submitFormBtn");
     const openAddModalBtn = document.getElementById("openAddModalBtn");
     const closeAddBtn = document.getElementById("closeAddBtn");
     const addItemForm = document.getElementById("addItemForm");
     const newType = document.getElementById("newType");
     const movieVideoField = document.getElementById("movieVideoField");
     const seasonsJsonField = document.getElementById("seasonsJsonField");
+    const newLabelsPicker = document.getElementById("newLabelsPicker");
 
-    function clearAutoNext() {
+    function typeLabel(type) {
+      if (type === "movie") return "فيلم";
+      if (type === "series") return "مسلسل";
+      if (type === "anime") return "أنمي";
+      return type;
+    }
+
+    function escapeXml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&apos;");
+    }
+
+    function getBaseSiteUrl() {
+      const origin = window.location.origin && window.location.origin !== "null"
+        ? window.location.origin
+        : "https://username.github.io";
+      const path = window.location.pathname || "/";
+      const dir = path.endsWith("/") ? path : path.substring(0, path.lastIndexOf("/") + 1);
+      return `${origin}${dir}`;
+    }
+
+    function triggerFileDownload(filename, content, mimeType) {
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function generateSitemapXml() {
+      const baseUrl = getBaseSiteUrl();
+      const today = new Date().toISOString().split("T")[0];
+      const staticPaths = ["", "?tab=movie", "?tab=series", "?tab=anime"];
+
+      const itemUrls = catalog.map((item) => {
+        const slug = encodeURIComponent(String(item.id || item.title || "item"));
+        return `
+  <url>
+    <loc>${escapeXml(baseUrl)}?item=${slug}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>`;
+      });
+
+      const baseUrls = staticPaths.map((p, idx) => `
+  <url>
+    <loc>${escapeXml(baseUrl + p)}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>${idx === 0 ? "1.0" : "0.9"}</priority>
+  </url>`);
+
+      return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${baseUrls.join("")}${itemUrls.join("")}
+</urlset>`;
+    }
+
+    function generateRobotsTxt() {
+      const baseUrl = getBaseSiteUrl();
+      return `User-agent: *
+Allow: /
+
+Sitemap: ${baseUrl}sitemap.xml
+`;
+    }
+
+    function renderLabelsUI() {
+      labelsBar.innerHTML = "";
+      const allChip = document.createElement("button");
+      allChip.type = "button";
+      allChip.className = "label-chip" + (activeLabel === "all" ? " active" : "");
+      allChip.textContent = "كل التسميات (7)";
+      allChip.addEventListener("click", () => {
+        activeLabel = "all";
+        renderLabelsUI();
+        renderAll();
+      });
+      labelsBar.appendChild(allChip);
+
+      SEVEN_LABELS.forEach((lbl) => {
+        const chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = "label-chip" + (activeLabel === lbl ? " active" : "");
+        chip.textContent = lbl;
+        chip.addEventListener("click", () => {
+          activeLabel = activeLabel === lbl ? "all" : lbl;
+          renderLabelsUI();
+          renderAll();
+        });
+        labelsBar.appendChild(chip);
+      });
+
+      newLabelsPicker.innerHTML = "";
+      SEVEN_LABELS.forEach((lbl, idx) => {
+        const lab = document.createElement("label");
+        lab.innerHTML = `<input type="checkbox" value="${lbl}" ${idx < 2 ? "checked" : ""} /> ${lbl}`;
+        newLabelsPicker.appendChild(lab);
+      });
+    }
+
+    function toggleFormFieldsByType() {
+      const isMovie = newType.value === "movie";
+      movieVideoField.style.display = isMovie ? "flex" : "none";
+      seasonsJsonField.style.display = isMovie ? "none" : "flex";
+    }
+
+    function openAddModal() {
+      editingItemId = null;
+      formModalTitle.textContent = "إضافة عمل جديد إلى Firestore";
+      submitFormBtn.textContent = "حفظ في Firestore";
+      addItemForm.reset();
+      document.getElementById("newYear").value = "2026";
+      document.getElementById("newPoster").value = "https://peach.blender.org/wp-content/uploads/sintel_poster.jpg";
+      document.getElementById("newPreviewShots").value =
+        "https://mango.blender.org/wp-content/uploads/2013/05/01_thom_celia_bridge.jpg, https://download.blender.org/ED/ed_hd.jpg";
+      document.getElementById("newTrailerPreview").value = SAMPLE_V2;
+      document.getElementById("newVideo").value = SAMPLE_V1;
+      renderLabelsUI();
+      toggleFormFieldsByType();
+      addModal.classList.add("open");
+    }
+
+    function openEditModal(item) {
+      if (!item) return;
+      editingItemId = item.id;
+      formModalTitle.textContent = `تعديل: ${item.title}`;
+      submitFormBtn.textContent = "تحديث البيانات في Firestore";
+
+      renderLabelsUI();
+      newType.value = item.type || "movie";
+      document.getElementById("newGenre").value = item.genre || "خيال علمي";
+      document.getElementById("newYear").value = item.year || "2026";
+      document.getElementById("newTitle").value = item.title || "";
+      document.getElementById("newPoster").value = item.poster || "";
+      document.getElementById("newPreviewShots").value = Array.isArray(item.previewShots)
+        ? item.previewShots.join(", ")
+        : (item.poster || "");
+      document.getElementById("newTrailerPreview").value = item.trailerPreview || SAMPLE_V2;
+      document.getElementById("newVideo").value = item.video || SAMPLE_V1;
+      document.getElementById("newSeasonsJson").value = JSON.stringify(
+        Array.isArray(item.seasons) && item.seasons.length
+          ? item.seasons
+          : [
+              {
+                seasonNumber: 1,
+                title: "الموسم الأول",
+                episodes: [
+                  { ep: 1, name: "الحلقة 1", duration: "10 د", video: SAMPLE_V2 }
+                ]
+              }
+            ],
+        null,
+        2
+      );
+      document.getElementById("newDesc").value = item.desc || "";
+
+      const itemLabels = Array.isArray(item.labels) ? item.labels : [];
+      newLabelsPicker.querySelectorAll("input[type='checkbox']").forEach((cb) => {
+        cb.checked = itemLabels.includes(cb.value);
+      });
+
+      toggleFormFieldsByType();
+      addModal.classList.add("open");
+    }
+
+    async function deleteCatalogItem(item) {
+      if (!item || !item.id) return;
+      const confirmed = confirm(`هل أنت متأكد من حذف "${item.title}" نهائياً من Firestore؟`);
+      if (!confirmed) return;
+
+      if (String(item.id).startsWith("fallback_")) {
+        catalog = catalog.filter((x) => x.id !== item.id);
+        myList = myList.filter((id) => id !== item.id);
+        saveList();
+        if (currentItem?.id === item.id) closePlayer();
+        renderAll();
+        return;
+      }
+
+      try {
+        await deleteDoc(doc(db, "catalog", item.id));
+        myList = myList.filter((id) => id !== item.id);
+        saveList();
+        if (currentItem?.id === item.id) {
+          closePlayer();
+        }
+        await loadCatalogFromFirebase();
+      } catch (err) {
+        alert("فشل الحذف من Firestore: " + err.message);
+      }
+    }
+
+    function aiNormalizeItem(item) {
+      const labels = Array.isArray(item.labels) && item.labels.length
+        ? item.labels.filter((l) => SEVEN_LABELS.includes(l))
+        : [];
+      const yearNum = parseInt(item.year, 10) || 2020;
+
+      if (!labels.length) {
+        if (yearNum >= 2025) labels.push("جديد", "رائج الآن");
+        else if (yearNum <= 2012) labels.push("كلاسيكي", "مترجم");
+        else labels.push("الأعلى تقييماً", "حصري");
+      }
+
+      const shots = Array.isArray(item.previewShots) && item.previewShots.length
+        ? item.previewShots
+        : [item.poster];
+
+      const firstEpVideo = item.seasons?.[0]?.episodes?.[0]?.video || item.video || SAMPLE_V2;
+      const trailerPreview = item.trailerPreview || firstEpVideo;
+
+      const aiScore =
+        (labels.includes("رائج الآن") ? 35 : 0) +
+        (labels.includes("جديد") ? 25 : 0) +
+        (labels.includes("الأعلى تقييماً") ? 25 : 0) +
+        (labels.includes("حصري") ? 15 : 0) +
+        (myList.includes(item.id) ? 30 : 0) +
+        Math.max(0, (yearNum - 2000));
+
+      return {
+        ...item,
+        labels: labels.slice(0, 3),
+        previewShots: shots,
+        trailerPreview,
+        aiScore
+      };
+    }
+
+    function organizeWithAI(showToast = false) {
+      catalog = catalog.map(aiNormalizeItem);
+      if (aiSortedEnabled) {
+        catalog.sort((a, b) => b.aiScore - a.aiScore);
+      }
+
+      const counts = {
+        movie: catalog.filter((i) => i.type === "movie").length,
+        series: catalog.filter((i) => i.type === "series").length,
+        anime: catalog.filter((i) => i.type === "anime").length
+      };
+      aiSummary.textContent =
+        `AI منظم: ${counts.movie} أفلام • ${counts.series} مسلسلات • ${counts.anime} أنمي` +
+        (aiSortedEnabled ? " (مرتب حسب الأولوية الذكية)" : "");
+
+      if (showToast) {
+        aiSortedEnabled = true;
+        localStorage.setItem(AI_SORT_KEY, "1");
+        catalog.sort((a, b) => b.aiScore - a.aiScore);
+        renderAll();
+      }
+    }
+
+    function applyAutoSEO(focusItem = null) {
+      const titleEl = document.getElementById("seoTitle");
+      const descEl = document.getElementById("seoDesc");
+      const kwEl = document.getElementById("seoKeywords");
+      const ogTitleEl = document.getElementById("ogTitle");
+      const ogDescEl = document.getElementById("ogDesc");
+      const schemaEl = document.getElementById("jsonLdSchema");
+
+      if (focusItem) {
+        const pageTitle = `${focusItem.title} (${focusItem.year || ""}) — StreamFlix AI`;
+        const pageDesc = `${focusItem.desc} | تصنيف: ${focusItem.genre} | ${typeLabel(focusItem.type)}`;
+        titleEl.textContent = pageTitle;
+        descEl.setAttribute("content", pageDesc);
+        ogTitleEl.setAttribute("content", pageTitle);
+        ogDescEl.setAttribute("content", pageDesc);
+
+        const schemaObj = {
+          "@context": "https://schema.org",
+          "@type": focusItem.type === "movie" ? "Movie" : "TVSeries",
+          "name": focusItem.title,
+          "description": focusItem.desc,
+          "genre": focusItem.genre,
+          "datePublished": String(focusItem.year || ""),
+          "image": focusItem.poster
+        };
+        schemaEl.textContent = JSON.stringify(schemaObj);
+        return;
+      }
+
+      const tabNames = {
+        all: "كل المحتوى",
+        movie: "الأفلام",
+        series: "المسلسلات",
+        anime: "الأنمي",
+        mylist: "قائمتي"
+      };
+      const labelText = activeLabel === "all" ? "كل التسميات" : activeLabel;
+      const pageTitle = `${tabNames[activeTab] || "المحتوى"} — ${labelText} | StreamFlix AI`;
+      const pageDesc = `مشاهدة ${tabNames[activeTab] || "المحتوى"} ضمن تسمية ${labelText} مع معاينة فورية للقطات وتنظيم ذكي.`;
+
+      titleEl.textContent = pageTitle;
+      descEl.setAttribute("content", pageDesc);
+      ogTitleEl.setAttribute("content", pageTitle);
+      ogDescEl.setAttribute("content", pageDesc);
+      kwEl.setAttribute("content", `StreamFlix, ${tabNames[activeTab]}, ${labelText}, ${SEVEN_LABELS.join(", ")}`);
+
+      const listSchema = {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "name": pageTitle,
+        "numberOfItems": catalog.length,
+        "itemListElement": catalog.slice(0, 12).map((item, idx) => ({
+          "@type": "ListItem",
+          "position": idx + 1,
+          "name": item.title,
+          "url": window.location.href
+        }))
+      };
+      schemaEl.textContent = JSON.stringify(listSchema);
+    }
+
+    function renderMarqueeSlider() {
+      const source = catalog.length ? catalog : DEFAULT_ITEMS.map((d, i) => aiNormalizeItem({ id: "def_" + i, ...d }));
+      const loopItems = [...source, ...source];
+      marqueeTrack.innerHTML = "";
+
+      loopItems.forEach((item) => {
+        const pill = document.createElement("div");
+        pill.className = "slide-pill";
+        const firstLabel = (item.labels && item.labels[0]) || "جديد";
+        pill.innerHTML = `
+          <img src="${item.poster}" alt="${item.title}" loading="lazy" />
+          <div class="slide-pill-info">
+            <strong>${item.title}</strong>
+            <span>#${firstLabel} • ${typeLabel(item.type)}</span>
+          </div>
+        `;
+        pill.addEventListener("click", () => openItemModal(item));
+        marqueeTrack.appendChild(pill);
+      });
+    }
+
+    function createCard(item) {
+      const card = document.createElement("article");
+      card.className = "card";
+
+      const shots = Array.isArray(item.previewShots) && item.previewShots.length
+        ? item.previewShots
+        : [item.poster];
+
+      const labelsHtml = (item.labels || [])
+        .slice(0, 3)
+        .map((l) => `<span class="mini-label">${l}</span>`)
+        .join("");
+
+      card.innerHTML = `
+        <div class="media-stage">
+          <img src="${item.poster}" alt="${item.title}" loading="lazy" />
+          <video class="hover-clip" muted loop playsinline preload="none" src="${item.trailerPreview || ""}"></video>
+          <span class="promo-indicator">▶ معاينة لقطات الإعلان</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">${item.title}</div>
+          <div class="card-meta">
+            <span class="type-pill">${typeLabel(item.type)}</span>
+            <span>${item.metaText || item.genre}</span>
+          </div>
+          <div class="card-labels">${labelsHtml}</div>
+          <div class="card-actions">
+            <button type="button" class="mini-btn edit">✎ تعديل</button>
+            <button type="button" class="mini-btn del">🗑 حذف</button>
+          </div>
+        </div>
+      `;
+
+      const stageImg = card.querySelector(".media-stage img");
+      const hoverVideo = card.querySelector(".hover-clip");
+      const editBtn = card.querySelector(".mini-btn.edit");
+      const delBtn = card.querySelector(".mini-btn.del");
+      let shotInterval = null;
+      let shotIdx = 0;
+
+      card.addEventListener("mouseenter", () => {
+        card.classList.add("previewing");
+        shotIdx = 0;
+        stageImg.src = shots[0];
+
+        if (shots.length > 1) {
+          shotInterval = setInterval(() => {
+            shotIdx = (shotIdx + 1) % shots.length;
+            stageImg.src = shots[shotIdx];
+          }, 950);
+        }
+
+        if (hoverVideo && hoverVideo.src) {
+          hoverVideo.classList.add("active-clip");
+          hoverVideo.play().catch(() => {
+            hoverVideo.classList.remove("active-clip");
+          });
+        }
+      });
+
+      card.addEventListener("mouseleave", () => {
+        card.classList.remove("previewing");
+        if (shotInterval) {
+          clearInterval(shotInterval);
+          shotInterval = null;
+        }
+        stageImg.src = item.poster;
+        if (hoverVideo) {
+          hoverVideo.pause();
+          hoverVideo.currentTime = 0;
+          hoverVideo.classList.remove("active-clip");
+        }
+      });
+
+      editBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        openEditModal(item);
+      });
+
+      delBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        deleteCatalogItem(item);
+      });
+
+      card.addEventListener("click", () => openItemModal(item));
+      return card;
+    }
+
+    function clearAutoNext(markDismissed = false) {
       if (autoNextTimer) {
         clearInterval(autoNextTimer);
         autoNextTimer = null;
       }
       pendingNextTarget = null;
+      if (markDismissed) dismissedForCurrentEp = true;
       nextEpBanner.classList.remove("show");
     }
 
@@ -606,21 +1489,20 @@
           };
         }
       }
-
       return null;
     }
 
     function goToNextEpisodeNow() {
       if (!pendingNextTarget) return;
       const target = pendingNextTarget;
-      clearAutoNext();
+      clearAutoNext(false);
       currentSeasonIdx = target.sIdx;
       currentEpIdx = target.eIdx;
       renderSeasonsAndEpisodes();
     }
 
     function startAutoNextCountdown() {
-      clearAutoNext();
+      if (autoNextTimer || dismissedForCurrentEp) return;
       const nextTarget = getNextEpisodeTarget();
       if (!nextTarget) return;
 
@@ -640,11 +1522,14 @@
       }, 1000);
     }
 
-    function typeLabel(type) {
-      if (type === "movie") return "فيلم";
-      if (type === "series") return "مسلسل";
-      if (type === "anime") return "أنمي";
-      return type;
+    function handleTimeUpdate() {
+      if (autoNextTimer || dismissedForCurrentEp) return;
+      const dur = videoPlayer.duration;
+      if (!Number.isFinite(dur) || dur <= 0) return;
+      const remaining = dur - videoPlayer.currentTime;
+      if (remaining <= PRE_END_SECONDS && remaining > 0) {
+        startAutoNextCountdown();
+      }
     }
 
     function saveList() { localStorage.setItem(LIST_KEY, JSON.stringify(myList)); }
@@ -677,21 +1562,24 @@
       if (!item) return;
       heroItem = item;
       hero.style.backgroundImage = `url('${item.poster}')`;
-      heroBadge.textContent = `${typeLabel(item.type)} • ${item.genre}`;
+      const lbl = (item.labels && item.labels[0]) || "مميز اليوم";
+      heroBadge.textContent = `${lbl} • ${typeLabel(item.type)} • ${item.genre}`;
       heroTitle.textContent = item.title;
       heroDesc.textContent = item.desc;
       updateHeroListBtn();
     }
 
     function playVideoSource(src, titleLabel) {
-      clearAutoNext();
+      dismissedForCurrentEp = false;
+      clearAutoNext(false);
       modalTitle.textContent = titleLabel;
       videoPlayer.src = src;
       videoPlayer.play().catch(() => {});
     }
 
     function renderSeasonsAndEpisodes() {
-      clearAutoNext();
+      clearAutoNext(false);
+      dismissedForCurrentEp = false;
       const hasEpisodes = Array.isArray(currentItem.seasons) && currentItem.seasons.length > 0;
       if (!hasEpisodes) {
         episodesBox.style.display = "none";
@@ -729,6 +1617,7 @@
 
     function openItemModal(item) {
       currentItem = item;
+      applyAutoSEO(item);
       const saved = progressMap[item.id];
       currentSeasonIdx = saved ? Math.min(saved.sIdx, (item.seasons?.length || 1) - 1) : 0;
       currentEpIdx = saved ? Math.min(saved.eIdx, (item.seasons?.[currentSeasonIdx]?.episodes?.length || 1) - 1) : 0;
@@ -741,33 +1630,39 @@
     }
 
     function closePlayer() {
-      clearAutoNext();
+      clearAutoNext(false);
       videoPlayer.pause();
       videoPlayer.removeAttribute("src");
       videoPlayer.load();
       playerModal.classList.remove("open");
+      applyAutoSEO(null);
     }
 
-    function createCard(item) {
-      const card = document.createElement("article");
-      card.className = "card";
-      card.innerHTML = `
-        <img src="${item.poster}" alt="${item.title}" loading="lazy" />
-        <div class="card-body">
-          <div class="card-title">${item.title}</div>
-          <div class="card-meta">
-            <span class="type-pill">${typeLabel(item.type)}</span>
-            <span>${item.metaText || item.genre}</span>
-          </div>
-        </div>
-      `;
-      card.addEventListener("click", () => openItemModal(item));
-      return card;
+    function renderAIPicks() {
+      const topPicks = [...catalog]
+        .sort((a, b) => (b.aiScore || 0) - (a.aiScore || 0))
+        .slice(0, 4);
+
+      aiPicksGrid.innerHTML = "";
+      if (!topPicks.length) {
+        aiPicksGrid.innerHTML = `<p class="empty-msg">أضف محتوى أو اضغط "تعبئة بيانات تجريبية" لعرض توصيات الذكاء الاصطناعي.</p>`;
+        return;
+      }
+      topPicks.forEach((item) => aiPicksGrid.appendChild(createCard(item)));
     }
 
     function renderCatalog() {
       const q = searchInput.value.trim().toLowerCase();
       const g = genreSelect.value;
+
+      const tabNames = {
+        all: "الكل",
+        movie: "أفلام",
+        series: "مسلسلات",
+        anime: "أنمي",
+        mylist: "قائمتي"
+      };
+      activeFilterSummary.textContent = `${tabNames[activeTab]} • ${activeLabel === "all" ? "كل التسميات (7)" : activeLabel}`;
 
       const filtered = catalog.filter((item) => {
         const matchesTab =
@@ -775,26 +1670,27 @@
           (activeTab === "mylist" && isInList(item.id)) ||
           item.type === activeTab;
         const matchesGenre = g === "all" || item.genre === g;
+        const matchesLabel =
+          activeLabel === "all" ||
+          (Array.isArray(item.labels) && item.labels.includes(activeLabel));
         const matchesQuery =
           !q ||
           item.title.toLowerCase().includes(q) ||
           item.desc.toLowerCase().includes(q) ||
-          item.genre.toLowerCase().includes(q);
-        return matchesTab && matchesGenre && matchesQuery;
+          item.genre.toLowerCase().includes(q) ||
+          (item.labels || []).some((l) => l.toLowerCase().includes(q));
+
+        return matchesTab && matchesGenre && matchesLabel && matchesQuery;
       });
 
-      const titlesMap = {
-        all: "كل الأفلام والمسلسلات والأنمي",
-        movie: "الأفلام",
-        series: "المسلسلات (المواسم والحلقات)",
-        anime: "الأنمي",
-        mylist: "نتائج قائمتي"
-      };
-      mainSectionTitle.textContent = titlesMap[activeTab] || "المحتوى المتاح";
+      mainSectionTitle.textContent =
+        activeLabel === "all"
+          ? `${tabNames[activeTab] || "المحتوى المتاح"}`
+          : `${tabNames[activeTab]} — تسمية: ${activeLabel}`;
 
       catalogGrid.innerHTML = "";
       if (!filtered.length) {
-        catalogGrid.innerHTML = `<p class="empty-msg">لا توجد عناصر مطابقة حالياً.</p>`;
+        catalogGrid.innerHTML = `<p class="empty-msg">لا توجد عناصر مطابقة للتصفية الحالية.</p>`;
         return;
       }
       filtered.forEach((item) => catalogGrid.appendChild(createCard(item)));
@@ -813,7 +1709,10 @@
 
     function renderAll() {
       renderMyList();
+      renderAIPicks();
       renderCatalog();
+      renderMarqueeSlider();
+      applyAutoSEO(null);
     }
 
     async function loadCatalogFromFirebase() {
@@ -823,19 +1722,29 @@
           dbStatus.textContent = "متصل بـ Firestore (metaverse-metabox) — المجموعة catalog فارغة حالياً";
           catalog = [];
         } else {
-          catalog = snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+          catalog = snap.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }));
           dbStatus.textContent = `متصل بـ Firestore (metaverse-metabox) — ${catalog.length} عنصر`;
         }
+        organizeWithAI(false);
         setupHero(catalog[1] || catalog[0]);
         renderAll();
       } catch (err) {
         console.error(err);
-        dbStatus.textContent = "تعذر الاتصال بـ Firestore — تحقق من قواعد الأمان (Rules) في Firebase";
+        dbStatus.textContent = "تعذر الاتصال بـ Firestore — تحقق من قواعد الأمان (Rules)";
         catalog = DEFAULT_ITEMS.map((item, i) => ({ id: "fallback_" + i, ...item }));
+        organizeWithAI(false);
         setupHero(catalog[1] || catalog[0]);
         renderAll();
       }
     }
+
+    downloadSitemapBtn.addEventListener("click", () => {
+      triggerFileDownload("sitemap.xml", generateSitemapXml(), "application/xml;charset=utf-8");
+    });
+
+    downloadRobotsBtn.addEventListener("click", () => {
+      triggerFileDownload("robots.txt", generateRobotsTxt(), "text/plain;charset=utf-8");
+    });
 
     seedDataBtn.addEventListener("click", async () => {
       seedDataBtn.disabled = true;
@@ -853,16 +1762,22 @@
       }
     });
 
-    newType.addEventListener("change", () => {
-      const isMovie = newType.value === "movie";
-      movieVideoField.style.display = isMovie ? "flex" : "none";
-      seasonsJsonField.style.display = isMovie ? "none" : "flex";
-    });
+    aiOrganizeBtn.addEventListener("click", () => organizeWithAI(true));
 
-    openAddModalBtn.addEventListener("click", () => addModal.classList.add("open"));
+    newType.addEventListener("change", toggleFormFieldsByType);
+
+    openAddModalBtn.addEventListener("click", openAddModal);
     closeAddBtn.addEventListener("click", () => addModal.classList.remove("open"));
     addModal.addEventListener("click", (e) => {
       if (e.target === addModal) addModal.classList.remove("open");
+    });
+
+    modalEditItemBtn.addEventListener("click", () => {
+      if (currentItem) openEditModal(currentItem);
+    });
+
+    modalDeleteItemBtn.addEventListener("click", () => {
+      if (currentItem) deleteCatalogItem(currentItem);
     });
 
     addItemForm.addEventListener("submit", async (e) => {
@@ -873,6 +1788,17 @@
       const year = document.getElementById("newYear").value.trim();
       const poster = document.getElementById("newPoster").value.trim();
       const desc = document.getElementById("newDesc").value.trim();
+      const trailerPreview = document.getElementById("newTrailerPreview").value.trim();
+
+      const previewShots = document
+        .getElementById("newPreviewShots")
+        .value.split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
+
+      const selectedLabels = Array.from(
+        newLabelsPicker.querySelectorAll("input[type='checkbox']:checked")
+      ).map((cb) => cb.value);
 
       const payload = {
         type,
@@ -880,12 +1806,16 @@
         genre,
         year,
         poster,
+        previewShots: previewShots.length ? previewShots : [poster],
+        trailerPreview: trailerPreview || SAMPLE_V2,
+        labels: selectedLabels.length ? selectedLabels : ["جديد"],
         desc,
         metaText: typeLabel(type)
       };
 
       if (type === "movie") {
         payload.video = document.getElementById("newVideo").value.trim();
+        payload.seasons = [];
       } else {
         try {
           payload.seasons = JSON.parse(document.getElementById("newSeasonsJson").value);
@@ -896,9 +1826,23 @@
       }
 
       try {
-        await addDoc(collection(db, "catalog"), payload);
+        if (editingItemId && !String(editingItemId).startsWith("fallback_")) {
+          await updateDoc(doc(db, "catalog", editingItemId), payload);
+          if (currentItem?.id === editingItemId) {
+            currentItem = { id: editingItemId, ...payload };
+            infoTitle.textContent = `${currentItem.title} (${currentItem.year})`;
+            infoDesc.textContent = currentItem.desc;
+            renderSeasonsAndEpisodes();
+            applyAutoSEO(currentItem);
+          }
+        } else {
+          await addDoc(collection(db, "catalog"), payload);
+        }
+
+        editingItemId = null;
         addModal.classList.remove("open");
         addItemForm.reset();
+        renderLabelsUI();
         await loadCatalogFromFirebase();
       } catch (err) {
         alert("فشل الحفظ في Firestore: " + err.message);
@@ -920,9 +1864,10 @@
       renderSeasonsAndEpisodes();
     });
 
+    videoPlayer.addEventListener("timeupdate", handleTimeUpdate);
     videoPlayer.addEventListener("ended", startAutoNextCountdown);
     playNextNowBtn.addEventListener("click", goToNextEpisodeNow);
-    cancelAutoNextBtn.addEventListener("click", clearAutoNext);
+    cancelAutoNextBtn.addEventListener("click", () => clearAutoNext(true));
 
     window.addEventListener("scroll", () => {
       document.getElementById("navbar").classList.toggle("scrolled", window.scrollY > 40);
@@ -938,6 +1883,7 @@
       if (e.target === playerModal) closePlayer();
     });
 
+    renderLabelsUI();
     loadCatalogFromFirebase();
   </script>
 </body>
