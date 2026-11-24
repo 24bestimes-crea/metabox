@@ -1,2289 +1,1430 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Metaverse V9.6 - Terrain & Realistic Character</title>
-<style>
-  * { margin:0; padding:0; box-sizing:border-box; user-select:none; -webkit-tap-highlight-color:transparent; }
-  html, body { overflow:hidden; font-family:'Segoe UI', Tahoma, sans-serif; background:#0a0a15; color:#fff; touch-action:none; }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>آفاق التكنولوجيا الحيوية — واجهة النجاة الهولوجرامية</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
-  #login-bg-canvas { position:absolute; inset:0; z-index:1; }
-  #login-screen { position:fixed; inset:0; z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; transition:opacity .6s; background:radial-gradient(ellipse at center, #1a1a3a 0%, #0a0a15 100%); }
-  #login-screen h1 { font-size:3rem; margin-bottom:.4rem; z-index:2; background:linear-gradient(90deg,#00d2ff,#3a7bd5,#8a2be2); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-  #login-screen p { color:#8899aa; margin-bottom:2rem; z-index:2; font-size:1rem; }
-  .glass-panel { background:rgba(255,255,255,.04); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,.1); border-radius:24px; padding:28px; z-index:2; display:flex; flex-direction:column; width:360px; max-width:92vw; box-shadow:0 20px 60px rgba(0,0,0,.6); }
-  .glass-panel input { width:100%; padding:13px 16px; margin-bottom:12px; background:rgba(0,0,0,.5); border:1px solid rgba(255,255,255,.15); border-radius:12px; color:#fff; font-size:.95rem; outline:none; }
-  .btn { width:100%; padding:11px; margin-bottom:8px; border:none; border-radius:12px; font-size:.9rem; font-weight:700; cursor:pointer; transition:.2s; display:flex; justify-content:center; align-items:center; gap:8px; }
-  .btn:hover:not(:disabled) { transform:translateY(-2px); }
-  .btn:disabled { opacity:.45; cursor:not-allowed; }
-  .btn-primary { background:linear-gradient(135deg,#00d2ff,#3a7bd5); color:#fff; }
-  .btn-google { background:#fff; color:#333; }
-  .btn-guest { background:transparent; color:#8899aa; border:1px solid rgba(255,255,255,.2); }
-  .btn-danger { background:linear-gradient(135deg,#ff4757,#c0392b); color:#fff; }
-  .btn-success { background:linear-gradient(135deg,#2ecc71,#27ae60); color:#fff; }
-  .btn-warning { background:linear-gradient(135deg,#f1c40f,#e67e22); color:#000; }
-  .btn-link { background:none; border:none; color:#00d2ff; cursor:pointer; font-size:.85rem; margin-top:6px; font-weight:600; }
-  .divider { display:flex; align-items:center; margin:12px 0; color:#555; font-size:.8rem; }
-  .divider::before,.divider::after { content:''; flex:1; border-bottom:1px solid rgba(255,255,255,.08); }
+  <style>
+    /* =========================================================================
+       المتغيرات اللونية والهوية البصرية الهولوجرامية (Dark Glassmorphism)
+       ========================================================================= */
+    :root {
+      --holo-cyan: #00f2fe;
+      --holo-cyan-dim: rgba(0, 242, 254, 0.16);
+      --holo-cyan-glow: rgba(0, 242, 254, 0.45);
+      --holo-gold: #f1c40f;
+      --holo-gold-dim: rgba(241, 196, 15, 0.16);
+      --holo-gold-glow: rgba(241, 196, 15, 0.45);
+      --holo-wild: #ff3b5c;
+      --holo-wild-glow: rgba(255, 59, 92, 0.45);
+      --glass-bg: rgba(7, 15, 26, 0.62);
+      --glass-bg-elevated: rgba(11, 23, 40, 0.78);
+      --surface-dark: #040811;
+      --text-primary: #eef9ff;
+      --text-muted: #8fb3c9;
+    }
 
-  #world-select { position:fixed; inset:0; z-index:5000; background:linear-gradient(135deg,#0a0a1a,#1a0a2a,#0a1a2a); display:none; flex-direction:column; padding:20px; overflow-y:auto; }
-  #world-select.active { display:flex; }
-  #world-select h1 { text-align:center; font-size:2.1rem; margin-bottom:6px; background:linear-gradient(90deg,#00d2ff,#8a2be2,#ff006e); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-  #world-select .subtitle { text-align:center; color:#8899aa; margin-bottom:20px; font-size:.9rem; }
-  .worlds-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:16px; max-width:1240px; margin:0 auto; width:100%; padding-bottom:30px; }
-  .world-card { background:rgba(255,255,255,.04); border:2px solid rgba(255,255,255,.08); border-radius:20px; padding:18px; cursor:pointer; transition:.3s; position:relative; }
-  .world-card:hover:not(.locked) { transform:translateY(-6px); border-color:#00d2ff; box-shadow:0 20px 40px rgba(0,210,255,.25); }
-  .world-card.locked { opacity:.5; cursor:not-allowed; }
-  .world-card .lock-tag { position:absolute; top:12px; left:12px; font-size:.7rem; background:rgba(0,0,0,.6); padding:3px 8px; border-radius:8px; color:#ff6b7a; }
-  .world-card .icon { font-size:1.3rem; font-weight:800; text-align:center; margin-bottom:8px; color:#00d2ff; }
-  .world-card h3 { text-align:center; margin-bottom:6px; font-size:1.1rem; }
-  .world-card .desc { text-align:center; color:#8899aa; font-size:.8rem; margin-bottom:10px; min-height:2.4em; }
-  .world-card .stats { display:flex; justify-content:space-between; font-size:.75rem; padding-top:8px; border-top:1px solid rgba(255,255,255,.08); color:#f1c40f; }
+    * {
+      box-sizing: border-box;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0, 242, 254, 0.35) transparent;
+    }
 
-  #world-screen { display:none; position:fixed; inset:0; }
-  #canvas-container { width:100%; height:100%; position:absolute; inset:0; }
-  #loading { position:absolute; inset:0; background:#0a0a15; color:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:100; transition:opacity .4s; }
-  .spinner { border:4px solid rgba(255,255,255,.1); border-top-color:#00d2ff; border-radius:50%; width:50px; height:50px; animation:spin 1s linear infinite; margin-bottom:20px; }
-  @keyframes spin { to { transform:rotate(360deg); } }
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: var(--surface-dark);
+      color: var(--text-primary);
+      margin: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+      user-select: none;
+    }
 
-  #hud { position:absolute; top:10px; left:10px; right:10px; display:flex; justify-content:space-between; pointer-events:none; z-index:10; gap:8px; flex-wrap:wrap; }
-  .hud-panel { background:rgba(10,10,20,.86); padding:8px 14px; border-radius:14px; backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,.1); display:flex; align-items:center; gap:12px; font-size:.78rem; }
-  .stat-group { display:flex; flex-direction:column; gap:3px; min-width:68px; }
-  .stat-label { font-size:.64rem; font-weight:700; }
-  .stat-bar { height:6px; background:rgba(255,255,255,.15); border-radius:3px; overflow:hidden; }
-  .stat-fill { height:100%; width:100%; transition:width .25s; }
-  .health-fill { background:linear-gradient(90deg,#ff4757,#ff6b7a); }
-  .energy-fill { background:linear-gradient(90deg,#00d2ff,#3a7bd5); }
-  .xp-fill { background:linear-gradient(90deg,#f1c40f,#f39c12); }
-  .currency { display:flex; gap:10px; font-weight:700; font-size:.82rem; flex-wrap:wrap; }
+    /* خطوط المسح الضوئي الخفيفة لإضفاء طابع الهولوجرام */
+    .holo-scanlines {
+      background-image: repeating-linear-gradient(
+        to bottom,
+        rgba(0, 242, 254, 0.03) 0px,
+        rgba(0, 242, 254, 0.03) 1px,
+        transparent 1px,
+        transparent 4px
+      );
+    }
 
-  .top-bar-actions { position:absolute; top:62px; left:10px; right:10px; display:flex; gap:6px; flex-wrap:wrap; z-index:30; pointer-events:none; }
-  .top-btn { padding:7px 11px; border:none; border-radius:10px; color:#fff; cursor:pointer; font-size:.76rem; font-weight:700; pointer-events:auto; transition:.2s; box-shadow:0 4px 10px rgba(0,0,0,.35); }
-  .top-btn:hover { transform:translateY(-2px); }
+    /* شبكة الفضاء الهندسية الخلفية */
+    .holo-grid {
+      background-size: 56px 56px;
+      background-image:
+        linear-gradient(to right, rgba(0, 242, 254, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 242, 254, 0.05) 1px, transparent 1px);
+    }
 
-  #world-badge, #weather-badge, #mode-badge {
-    position:absolute; top:104px; background:rgba(10,10,20,.85); color:#fff;
-    padding:6px 12px; border-radius:12px; z-index:11; font-size:.76rem;
-    font-weight:700; pointer-events:none; border:1px solid rgba(255,255,255,.15);
-  }
-  #world-badge { right:10px; }
-  #weather-badge { right:170px; }
-  #mode-badge { right:310px; color:#2ecc71; }
+    /* البطاقات والألواح الزجاجية الهولوجرامية */
+    .glass-panel {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(0, 242, 254, 0.28);
+      box-shadow:
+        0 10px 35px rgba(0, 0, 0, 0.55),
+        inset 0 0 22px rgba(0, 242, 254, 0.05);
+      border-radius: 18px;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+    }
 
-  #action-prompt {
-    position:fixed; bottom:180px; left:50%; transform:translateX(-50%);
-    background:rgba(10,15,30,.94); border:2px solid #00d2ff; border-radius:16px;
-    padding:12px 20px; z-index:28; display:none; text-align:center; min-width:260px; max-width:92vw;
-    box-shadow:0 12px 30px rgba(0,0,0,.6); pointer-events:auto;
-  }
-  #action-prompt.active { display:block; }
-  #action-prompt h4 { color:#00d2ff; margin-bottom:6px; font-size:.95rem; }
-  #action-prompt p { font-size:.8rem; color:#cbd5e1; margin-bottom:8px; }
-  #action-prompt .btns { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
-  #action-prompt button { padding:7px 13px; border:none; border-radius:9px; font-weight:700; font-size:.78rem; cursor:pointer; }
+    .glass-panel-gold {
+      background: var(--glass-bg-elevated);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(241, 196, 15, 0.42);
+      box-shadow:
+        0 12px 38px rgba(0, 0, 0, 0.6),
+        inset 0 0 20px rgba(241, 196, 15, 0.07);
+      border-radius: 18px;
+    }
 
-  #chat-toggle { position:absolute; left:12px; top:50%; transform:translateY(-50%); width:54px; height:54px; border-radius:50%; background:rgba(46,204,113,.92); color:#fff; border:none; cursor:pointer; z-index:30; font-size:.8rem; font-weight:700; pointer-events:auto; }
-  #chat-panel { position:absolute; left:12px; top:50%; transform:translateY(-50%) translateX(-120%); width:310px; max-width:85vw; height:64vh; background:rgba(10,10,25,.96); border:1px solid rgba(46,204,113,.35); border-radius:16px; z-index:35; display:flex; flex-direction:column; transition:transform .3s ease; }
-  #chat-panel.active { transform:translateY(-50%) translateX(0); }
-  #chat-panel-header { padding:10px 14px; border-bottom:1px solid rgba(255,255,255,.1); display:flex; justify-content:space-between; align-items:center; }
-  #chat-list { flex:1; overflow-y:auto; padding:10px; display:flex; flex-direction:column; gap:6px; }
-  #chat-list .msg { background:rgba(255,255,255,.06); padding:7px 10px; border-radius:10px; font-size:.78rem; }
-  #chat-list .msg.self { background:rgba(0,210,255,.16); border-right:3px solid #00d2ff; }
-  #chat-input-wrap { padding:8px; border-top:1px solid rgba(255,255,255,.1); display:flex; gap:6px; }
-  #chat-input { flex:1; padding:8px 12px; border-radius:18px; border:1px solid rgba(46,204,113,.4); background:rgba(0,0,0,.5); color:#fff; outline:none; font-size:.82rem; }
-  #chat-send { padding:0 14px; border-radius:18px; background:#2ecc71; border:none; color:#fff; font-weight:700; cursor:pointer; }
+    .holo-card {
+      background: rgba(8, 18, 32, 0.68);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(0, 242, 254, 0.22);
+      border-radius: 16px;
+      transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+    }
 
-  #minimap { position:absolute; bottom:14px; left:14px; width:148px; height:148px; border-radius:50%; background:rgba(10,10,20,.88); border:3px solid rgba(0,210,255,.45); z-index:15; overflow:hidden; cursor:pointer; }
-  #minimap-canvas { width:100%; height:100%; }
+    .holo-card:hover {
+      border-color: var(--holo-cyan);
+      box-shadow: 0 0 24px rgba(0, 242, 254, 0.22), inset 0 0 14px rgba(0, 242, 254, 0.08);
+      transform: translateY(-2px);
+    }
 
-  #joystick-zone { display:none; position:absolute; bottom:26px; left:26px; width:120px; height:120px; border-radius:50%; background:rgba(0,210,255,.12); border:2px solid rgba(0,210,255,.4); z-index:25; touch-action:none; }
-  #joystick-knob { position:absolute; top:50%; left:50%; width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg,#00d2ff,#3a7bd5); transform:translate(-50%,-50%); pointer-events:none; }
-  .mob-btn { display:none; position:absolute; border-radius:50%; color:#fff; font-weight:700; border:2px solid rgba(255,255,255,.3); z-index:25; cursor:pointer; align-items:center; justify-content:center; font-size:.74rem; }
-  #jump-btn { bottom:36px; right:36px; width:70px; height:70px; background:linear-gradient(135deg,#00d2ff,#3a7bd5); }
-  #attack-btn { bottom:118px; right:36px; width:70px; height:70px; background:linear-gradient(135deg,#ff4757,#c0392b); }
-  #sprint-btn { bottom:40px; right:118px; width:60px; height:60px; background:linear-gradient(135deg,#f1c40f,#e67e22); color:#000; }
-  #build-btn { bottom:118px; right:118px; width:60px; height:60px; background:linear-gradient(135deg,#9b59b6,#8e44ad); }
-  @media (pointer: coarse) { #joystick-zone, .mob-btn { display:flex; } #minimap { display:none; } }
+    .holo-card.is-active {
+      border-color: var(--holo-cyan);
+      background: rgba(0, 242, 254, 0.11);
+      box-shadow: 0 0 28px rgba(0, 242, 254, 0.3), inset 0 0 18px rgba(0, 242, 254, 0.12);
+    }
 
-  .panel-overlay { position:fixed; inset:0; background:rgba(5,5,15,.92); z-index:60; display:none; align-items:center; justify-content:center; padding:14px; overflow-y:auto; }
-  .panel-overlay.active { display:flex; }
-  .panel-card { background:rgba(20,20,40,.98); padding:22px; border-radius:20px; border:1px solid rgba(0,210,255,.25); max-width:900px; width:100%; max-height:92vh; overflow-y:auto; }
-  .panel-card h2 { color:#00d2ff; margin-bottom:14px; text-align:center; font-size:1.3rem; }
-  .panel-card h3 { color:#f1c40f; margin:14px 0 8px; font-size:.95rem; }
-  .panel-card input, .panel-card select { width:100%; padding:9px; border-radius:10px; border:1px solid #444; background:rgba(0,0,0,.45); color:#fff; font-size:.88rem; margin-bottom:8px; }
-  .panel-card label { color:#9fb0c2; font-size:.78rem; display:block; margin-bottom:3px; }
+    .holo-card.is-gold-focus {
+      border-color: var(--holo-gold);
+      box-shadow: 0 0 24px rgba(241, 196, 15, 0.25), inset 0 0 14px rgba(241, 196, 15, 0.08);
+    }
 
-  .grid-list { display:grid; grid-template-columns:repeat(auto-fill,minmax(155px,1fr)); gap:10px; margin:10px 0; }
-  .card-item { background:rgba(255,255,255,.06); padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,.1); display:flex; flex-direction:column; justify-content:space-between; gap:6px; }
-  .card-item .title { font-weight:700; font-size:.86rem; color:#fff; }
-  .card-item .sub { font-size:.74rem; color:#9fb0c2; }
-  .card-item .cost { font-size:.76rem; color:#f1c40f; font-weight:700; }
+    /* أزرار التنقل الهولوجرامية */
+    .nav-tab {
+      position: relative;
+      border: 1px solid rgba(0, 242, 254, 0.2);
+      background: rgba(8, 19, 34, 0.55);
+      color: var(--text-muted);
+      border-radius: 12px;
+      transition: all 0.22s ease;
+    }
 
-  .profile-header { display:flex; gap:18px; flex-wrap:wrap; align-items:center; background:rgba(0,210,255,.08); padding:14px; border-radius:16px; margin-bottom:12px; }
-  #profile-preview-canvas { width:130px; height:150px; border-radius:14px; background:rgba(10,10,25,.9); border:2px solid rgba(0,210,255,.45); }
-  .profile-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(80px,1fr)); gap:8px; margin-top:8px; }
-  .stat-box { background:rgba(0,210,255,.08); padding:7px; border-radius:10px; text-align:center; }
-  .stat-box .val { font-size:1rem; font-weight:700; color:#00d2ff; }
-  .stat-box .lbl { font-size:.66rem; color:#9fb0c2; }
+    .nav-tab:hover {
+      color: var(--text-primary);
+      border-color: rgba(0, 242, 254, 0.55);
+      background: rgba(0, 242, 254, 0.08);
+    }
 
-  .color-grid { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px; }
-  .color-swatch { width:32px; height:32px; border-radius:50%; cursor:pointer; border:3px solid transparent; }
-  .color-swatch.active { border-color:#00ff88; transform:scale(1.1); }
-  .chip-btn { padding:7px 12px; background:rgba(255,255,255,.08); border:2px solid transparent; border-radius:10px; color:#fff; cursor:pointer; font-size:.78rem; margin:3px; font-weight:600; }
-  .chip-btn.active { border-color:#00ff88; background:rgba(0,255,136,.16); color:#00ff88; }
+    .nav-tab.active {
+      color: var(--text-primary);
+      border-color: var(--holo-cyan);
+      background: linear-gradient(135deg, rgba(0, 242, 254, 0.22), rgba(0, 242, 254, 0.05));
+      box-shadow: 0 0 20px rgba(0, 242, 254, 0.28), inset 0 0 10px rgba(0, 242, 254, 0.12);
+    }
 
-  .quest-item, .achievement-item { display:flex; align-items:center; gap:10px; padding:10px 12px; margin:7px 0; background:rgba(255,255,255,.06); border-radius:12px; }
-  .quest-item .info, .achievement-item .info { flex:1; }
-  .quest-item .bar { height:6px; background:rgba(255,255,255,.1); border-radius:3px; margin-top:6px; overflow:hidden; }
-  .quest-item .bar > div { height:100%; background:linear-gradient(90deg,#00ff88,#00d2ff); }
+    .nav-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 18%;
+      right: 18%;
+      height: 2px;
+      background: var(--holo-gold);
+      box-shadow: 0 0 10px var(--holo-gold);
+      border-radius: 999px;
+    }
 
-  #toast { position:fixed; top:142px; left:50%; transform:translateX(-50%); background:#2ecc71; color:#fff; padding:9px 18px; border-radius:12px; z-index:9999; opacity:0; transition:opacity .3s; font-size:.84rem; max-width:90vw; text-align:center; pointer-events:none; font-weight:700; }
-  #toast.show { opacity:1; }
-  #damage-flash { position:fixed; inset:0; background:radial-gradient(circle, transparent 40%, rgba(255,0,0,.6) 100%); opacity:0; pointer-events:none; z-index:8; transition:opacity .2s; }
-  #damage-flash.show { opacity:1; }
+    /* أزرار الإجراءات */
+    .btn-cyan {
+      background: linear-gradient(135deg, rgba(0, 242, 254, 0.24), rgba(0, 175, 215, 0.14));
+      border: 1px solid var(--holo-cyan);
+      color: #ffffff;
+      box-shadow: 0 0 16px rgba(0, 242, 254, 0.22);
+      transition: all 0.2s ease;
+    }
 
-  #block-palette { position:absolute; bottom:20px; left:50%; transform:translateX(-50%); background:rgba(10,10,20,.92); padding:10px; border-radius:14px; z-index:35; display:none; max-width:95vw; pointer-events:auto; border:1px solid rgba(0,210,255,.35); }
-  #block-palette.active { display:block; }
-  #block-palette .row { display:flex; gap:6px; flex-wrap:wrap; justify-content:center; }
-  .block-btn { width:54px; height:52px; border:2px solid #555; border-radius:10px; cursor:pointer; font-size:.66rem; font-weight:700; color:#fff; }
-  .block-btn.active { border-color:#00ff88; }
+    .btn-cyan:hover:not(:disabled) {
+      background: linear-gradient(135deg, rgba(0, 242, 254, 0.38), rgba(0, 242, 254, 0.2));
+      box-shadow: 0 0 24px rgba(0, 242, 254, 0.42);
+      transform: translateY(-1px);
+    }
 
-  #map-modal { position:fixed; inset:0; background:rgba(5,5,15,.95); z-index:70; display:none; flex-direction:column; align-items:center; justify-content:center; padding:16px; gap:10px; }
-  #map-modal.active { display:flex; }
-  #map-canvas { max-width:86vw; max-height:70vh; width:560px; height:560px; border-radius:18px; border:3px solid #00d2ff; background:#111; }
-</style>
+    .btn-gold {
+      background: linear-gradient(135deg, rgba(241, 196, 15, 0.28), rgba(212, 160, 12, 0.14));
+      border: 1px solid var(--holo-gold);
+      color: #fff6cf;
+      box-shadow: 0 0 16px rgba(241, 196, 15, 0.24);
+      transition: all 0.2s ease;
+    }
+
+    .btn-gold:hover:not(:disabled) {
+      background: linear-gradient(135deg, rgba(241, 196, 15, 0.42), rgba(241, 196, 15, 0.22));
+      box-shadow: 0 0 24px rgba(241, 196, 15, 0.45);
+      transform: translateY(-1px);
+    }
+
+    /* منصة الهولوجرام الدوارة في المنتصف (Holo-Pad) */
+    @keyframes spinHoloPad {
+      0% { transform: rotateX(72deg) rotateZ(0deg); }
+      100% { transform: rotateX(72deg) rotateZ(360deg); }
+    }
+
+    @keyframes spinHoloRingReverse {
+      0% { transform: rotateX(72deg) rotateZ(360deg); }
+      100% { transform: rotateX(72deg) rotateZ(0deg); }
+    }
+
+    @keyframes floatExplorer {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-7px); }
+    }
+
+    @keyframes pulseBeam {
+      0%, 100% { opacity: 0.25; }
+      50% { opacity: 0.55; }
+    }
+
+    @keyframes jetParticle {
+      0% {
+        transform: translateY(0) scale(1);
+        opacity: 0.95;
+      }
+      100% {
+        transform: translateY(34px) scale(0.2);
+        opacity: 0;
+      }
+    }
+
+    .holo-pad-outer {
+      transform-style: preserve-3d;
+      animation: spinHoloPad 18s linear infinite;
+    }
+
+    .holo-pad-inner {
+      transform-style: preserve-3d;
+      animation: spinHoloRingReverse 11s linear infinite;
+    }
+
+    .explorer-float {
+      animation: floatExplorer 4.2s ease-in-out infinite;
+    }
+
+    .holo-beam {
+      animation: pulseBeam 3.2s ease-in-out infinite;
+    }
+
+    .jet-spark {
+      animation: jetParticle 1.1s ease-out infinite;
+    }
+
+    /* حالة إخفاء الواجهة لعرض مساحة اللعب الحية */
+    body.hud-hidden .hud-chrome {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-10px);
+    }
+
+    .hud-chrome {
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+
+    .live-view-badge {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+
+    body.hud-hidden .live-view-badge {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  </style>
 </head>
-<body>
 
-<!-- LOGIN -->
-<div id="login-screen">
-  <canvas id="login-bg-canvas"></canvas>
-  <h1>Metaverse V9.6</h1>
-  <p>إصلاح التضاريس بالكامل • شخصية واقعية انسيابية • بقاء، بناء، صناعة، وأعشاش</p>
-  <div class="glass-panel">
-    <div id="login-form">
-      <input type="email" id="login-email" placeholder="البريد الإلكتروني">
-      <input type="password" id="login-password" placeholder="كلمة المرور">
-      <button class="btn btn-primary" id="btn-login-submit">تسجيل الدخول</button>
-      <button class="btn-link" id="link-to-signup">ليس لديك حساب؟ سجّل الآن</button>
+<body class="relative min-h-screen overflow-x-hidden">
+  <!-- =======================================================================
+       خلفية بيئية متحركة (Canvas للجزيئات + شبكة هولوجرامية + طبقات إضاءة)
+       ======================================================================= -->
+  <div id="ambient-backdrop" class="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+    <!-- طبقة تدرج لون العالم النشط -->
+    <div id="world-atmosphere-layer" class="absolute inset-0 transition-all duration-700"
+         style="background: radial-gradient(circle at 50% 35%, rgba(0, 242, 254, 0.14), rgba(5, 16, 28, 0.92) 68%, #03070e 100%);">
     </div>
-    <div id="signup-form" style="display:none;">
-      <input type="text" id="signup-name" placeholder="اسم اللاعب">
-      <input type="email" id="signup-email" placeholder="البريد الإلكتروني">
-      <input type="password" id="signup-password" placeholder="كلمة المرور (6+ أحرف)">
-      <button class="btn btn-primary" id="btn-signup-submit">إنشاء الحساب</button>
-      <button class="btn-link" id="link-to-login">لديك حساب؟ سجّل الدخول</button>
-    </div>
-    <div class="divider">أو</div>
-    <button class="btn btn-google" id="btn-google">دخول بـ Google</button>
-    <button class="btn btn-guest" id="btn-guest">دخول تجريبي سريع</button>
-  </div>
-</div>
-
-<!-- WORLD SELECT -->
-<div id="world-select">
-  <h1>اختر عالمك</h1>
-  <p class="subtitle">20 عالماً • 12 تحدياً في كل عالم • مخلوقات أسطورية وبرج تحديات</p>
-  <div class="worlds-grid" id="worlds-grid"></div>
-</div>
-
-<!-- WORLD SCREEN -->
-<div id="world-screen">
-  <div id="loading"><div class="spinner"></div>جاري تحميل العالم...</div>
-  <div id="canvas-container"></div>
-  <div id="damage-flash"></div>
-
-  <div id="hud">
-    <div class="hud-panel">
-      <div class="stat-group">
-        <div class="stat-label" style="color:#ff4757;">الصحة</div>
-        <div class="stat-bar"><div class="stat-fill health-fill" id="hp-bar"></div></div>
-      </div>
-      <div class="stat-group">
-        <div class="stat-label" style="color:#00d2ff;">الطاقة</div>
-        <div class="stat-bar"><div class="stat-fill energy-fill" id="energy-bar"></div></div>
-      </div>
-      <div class="stat-group">
-        <div class="stat-label" style="color:#f1c40f;">الخبرة</div>
-        <div class="stat-bar"><div class="stat-fill xp-fill" id="xp-bar"></div></div>
-      </div>
-    </div>
-    <div class="hud-panel">
-      <div class="currency">
-        <span>عملات: <span id="coins-display">150</span></span>
-        <span>جواهر: <span id="gems-display">0</span></span>
-        <span>حطب: <span id="wood-display">0</span></span>
-        <span>حجر: <span id="stone-display">0</span></span>
-        <span>مستوى: <span id="level-display">1</span></span>
-      </div>
-    </div>
+    <!-- شبكة هندسية وخطوط مسح -->
+    <div class="absolute inset-0 holo-grid opacity-80"></div>
+    <div class="absolute inset-0 holo-scanlines"></div>
+    <!-- كانفاس الجزيئات الضوئية الحيوية -->
+    <canvas id="bio-particles-canvas" class="absolute inset-0 w-full h-full"></canvas>
   </div>
 
-  <div class="top-bar-actions">
-    <button class="top-btn" style="background:#0097e6;" id="btn-profile">البروفايل</button>
-    <button class="top-btn" style="background:#27ae60;" id="btn-map">الخريطة</button>
-    <button class="top-btn" style="background:#f39c12;color:#000;" id="btn-shop">المتجر</button>
-    <button class="top-btn" style="background:#e67e22;" id="btn-craft">الصناعة</button>
-    <button class="top-btn" style="background:#16a085;" id="btn-blueprint">كتيب البناء</button>
-    <button class="top-btn" style="background:#8e44ad;" id="btn-quests">المهام</button>
-    <button class="top-btn" style="background:#d35400;" id="btn-achievements">الإنجازات</button>
-    <button class="top-btn" style="background:#2980b9;" id="btn-world-challenges">تحديات العالم</button>
-    <button class="top-btn" style="background:#6c5ce7;" id="btn-ideas">إضافات وأفكار</button>
-    <button class="top-btn" style="background:#00b894;" id="btn-worlds">العوالم</button>
-    <button class="top-btn" style="background:#c0392b;" id="btn-logout">خروج</button>
+  <!-- زر استعادة الواجهة عند تفعيل وضع المعاينة الحية للكانفاس -->
+  <div class="live-view-badge fixed bottom-5 left-1/2 -translate-x-1/2 z-50">
+    <button id="restore-hud-btn" type="button"
+      class="btn-cyan px-6 py-3 rounded-full text-sm font-bold tracking-wide flex items-center gap-2.5 cursor-pointer">
+      <span class="w-2.5 h-2.5 rounded-full bg-[#00f2fe] shadow-[0_0_10px_#00f2fe]"></span>
+      <span>إظهار الواجهة الهولوجرامية</span>
+    </button>
   </div>
 
-  <div id="world-badge">العالم الرئيسي</div>
-  <div id="weather-badge">الطقس: صافٍ</div>
-  <div id="mode-badge">الوضع: استكشاف</div>
+  <!-- =======================================================================
+       الحاوية الرئيسية للواجهة الهولوجرامية
+       ======================================================================= -->
+  <div class="hud-chrome relative z-10 max-w-[1440px] mx-auto px-3 sm:px-6 py-3 sm:py-5 flex flex-col min-h-screen gap-4">
 
-  <div id="action-prompt">
-    <h4 id="ap-title">تفاعل</h4>
-    <p id="ap-desc">وصف</p>
-    <div class="btns" id="ap-btns"></div>
-  </div>
-
-  <button id="chat-toggle">دردشة</button>
-  <div id="chat-panel">
-    <div id="chat-panel-header">
-      <h3 style="font-size:.9rem;color:#2ecc71;">الدردشة</h3>
-      <button id="chat-close" style="background:none;border:none;color:#ff4757;font-size:1.1rem;cursor:pointer;">✕</button>
-    </div>
-    <div id="chat-list"></div>
-    <div id="chat-input-wrap">
-      <input id="chat-input" placeholder="اكتب رسالة...">
-      <button id="chat-send">إرسال</button>
-    </div>
-  </div>
-
-  <div id="minimap" title="اضغط لفتح الخريطة">
-    <canvas id="minimap-canvas" width="148" height="148"></canvas>
-  </div>
-
-  <div id="joystick-zone"><div id="joystick-knob"></div></div>
-  <button class="mob-btn" id="jump-btn">قفز</button>
-  <button class="mob-btn" id="attack-btn">هجوم/قطع</button>
-  <button class="mob-btn" id="sprint-btn">ركض</button>
-  <button class="mob-btn" id="build-btn">بناء</button>
-
-  <div id="block-palette"><div class="row" id="block-list"></div></div>
-  <div id="toast"></div>
-
-  <!-- MAP MODAL -->
-  <div id="map-modal">
-    <canvas id="map-canvas" width="560" height="560"></canvas>
-    <button class="btn btn-danger" id="btn-close-map" style="width:auto;padding:8px 24px;">إغلاق الخريطة</button>
-  </div>
-
-  <!-- PROFILE PANEL -->
-  <div class="panel-overlay" id="profile-panel">
-    <div class="panel-card">
-      <h2>الملف الشخصي وتخصيص الشخصية الواقعية</h2>
-      <div class="profile-header">
-        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
-          <canvas id="profile-preview-canvas" width="130" height="150"></canvas>
-          <span id="gender-badge" style="font-size:.76rem;color:#00d2ff;font-weight:700;">محايد</span>
+    <!-- =====================================================================
+         الشريط العلوي المبسط (Minimalist Top HUD Bar)
+         ===================================================================== -->
+    <header class="glass-panel px-4 py-3 flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-3">
+      <!-- الهوية ومؤشرات الحالة الحيوية -->
+      <div class="flex flex-wrap items-center justify-between sm:justify-start gap-3 sm:gap-5">
+        <!-- شعار النظام -->
+        <div class="flex items-center gap-2.5 pl-2 border-l border-[#00f2fe]/20">
+          <div class="w-9 h-9 rounded-xl border border-[#00f2fe]/60 bg-[#00f2fe]/10 flex items-center justify-center shadow-[0_0_15px_rgba(0,242,254,0.25)]">
+            <svg class="w-5 h-5 text-[#00f2fe]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <polygon points="12 2 21 7 21 17 12 22 3 17 3 7 12 2"></polygon>
+              <circle cx="12" cy="12" r="3" class="text-[#f1c40f]" stroke="currentColor"></circle>
+            </svg>
+          </div>
+          <div>
+            <div class="text-xs text-[#00f2fe] font-semibold tracking-wider">نظام النجاة الحيوي</div>
+            <div class="text-sm font-extrabold text-white">أفق التكنولوجيا الحيوية</div>
+          </div>
         </div>
-        <div style="flex:1;min-width:220px;">
-          <label>اسم اللاعب:</label>
-          <input type="text" id="input-name">
-          <label>الجنس:</label>
-          <select id="input-gender">
-            <option value="male">ذكر</option>
-            <option value="female">أنثى</option>
-            <option value="neutral">محايد</option>
-          </select>
-          <label>تعبير الوجه:</label>
-          <select id="input-expression">
-            <option value="confident">واثق</option>
-            <option value="smile">مبتسم</option>
-            <option value="focused">جاد</option>
-          </select>
-          <div class="profile-stats">
-            <div class="stat-box"><div class="val" id="p-level">1</div><div class="lbl">المستوى</div></div>
-            <div class="stat-box"><div class="val" id="p-coins">150</div><div class="lbl">عملات</div></div>
-            <div class="stat-box"><div class="val" id="p-gems">0</div><div class="lbl">جواهر</div></div>
-            <div class="stat-box"><div class="val" id="p-pets">0</div><div class="lbl">مخلوقات</div></div>
-            <div class="stat-box"><div class="val" id="p-eggs">0</div><div class="lbl">بيض</div></div>
+
+        <!-- الطاقة الحيوية / الصحة (Bio-Energy / Health) -->
+        <div class="min-w-[135px] sm:min-w-[155px]">
+          <div class="flex items-center justify-between text-xs mb-1">
+            <span class="text-[#8fb3c9] font-medium">الطاقة الحيوية</span>
+            <span id="hud-health-val" class="font-bold text-[#00f2fe]">88%</span>
+          </div>
+          <div class="h-2 rounded-full bg-white/10 overflow-hidden border border-[#00f2fe]/25">
+            <div id="hud-health-bar" class="h-full rounded-full transition-all duration-300"
+                 style="width: 88%; background: linear-gradient(90deg, #00c6ff, #00f2fe); box-shadow: 0 0 10px #00f2fe;"></div>
+          </div>
+        </div>
+
+        <!-- الأكسجين / الدرع (Oxygen / Shield) -->
+        <div class="min-w-[135px] sm:min-w-[155px]">
+          <div class="flex items-center justify-between text-xs mb-1">
+            <span class="text-[#8fb3c9] font-medium">الأكسجين والدرع</span>
+            <span id="hud-shield-val" class="font-bold text-[#f1c40f]">94%</span>
+          </div>
+          <div class="h-2 rounded-full bg-white/10 overflow-hidden border border-[#f1c40f]/25">
+            <div id="hud-shield-bar" class="h-full rounded-full transition-all duration-300"
+                 style="width: 94%; background: linear-gradient(90deg, #d4ac0d, #f1c40f); box-shadow: 0 0 10px #f1c40f;"></div>
+          </div>
+        </div>
+
+        <!-- المخلوقات المروّضة والرصيد الذهبي -->
+        <div class="flex items-center gap-2.5">
+          <div class="px-3 py-1.5 rounded-xl bg-[#00f2fe]/10 border border-[#00f2fe]/35 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-[#00f2fe] shadow-[0_0_8px_#00f2fe]"></span>
+            <span class="text-xs text-[#8fb3c9]">مروّضة:</span>
+            <span id="hud-tamed-count" class="text-xs sm:text-sm font-extrabold text-[#00f2fe]">2 / 4</span>
+          </div>
+
+          <div class="px-3 py-1.5 rounded-xl bg-[#f1c40f]/10 border border-[#f1c40f]/40 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-[#f1c40f] shadow-[0_0_8px_#f1c40f]"></span>
+            <span id="hud-credits" class="text-xs sm:text-sm font-extrabold text-[#f1c40f]">1,450</span>
+            <span class="text-[11px] text-[#f1c40f]/80">وحدة</span>
           </div>
         </div>
       </div>
-      <h3>لون البشرة</h3>
-      <div class="color-grid" id="color-grid"></div>
-      <h3>تسريحة الشعر</h3>
-      <div id="hair-grid"></div>
-      <h3>الملابس</h3>
-      <div id="outfits-grid"></div>
-      <h3>الحقيبة</h3>
-      <div id="backpacks-grid"></div>
-      <h3>مخلوقاتي المروضة</h3>
-      <div id="pets-list" class="grid-list"></div>
-      <h3>البيض في منزلي / حقيبتي</h3>
-      <div id="eggs-list" class="grid-list"></div>
-      <h3>صندوق المنزل (حماية من السرقة - حد أقصى غرض واحد في كل سرقة)</h3>
-      <div id="stash-list" class="grid-list"></div>
-      <div style="display:flex;gap:8px;margin-top:14px;">
-        <button class="btn btn-primary" id="btn-save-profile" style="flex:1;">حفظ التعديلات</button>
-        <button class="btn btn-danger" id="btn-close-profile" style="flex:1;">إغلاق</button>
+
+      <!-- التبويبات ومؤشر العالم الحالي وزر إخفاء الواجهة -->
+      <div class="flex flex-wrap items-center justify-between xl:justify-end gap-2">
+        <!-- مؤشر العالم النشط -->
+        <div id="hud-current-world"
+             class="px-3 py-1.5 rounded-xl bg-white/5 border border-white/15 text-xs font-semibold text-[#eef9ff] flex items-center gap-2">
+          <span id="hud-world-dot" class="w-2 h-2 rounded-full bg-[#00f2fe] shadow-[0_0_8px_#00f2fe]"></span>
+          <span id="hud-world-name">غابة الليل المتوهجة</span>
+        </div>
+
+        <!-- تبويبات التنقل الأربعة -->
+        <nav aria-label="القوائم الرئيسية" class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+          <button type="button" data-tab="store" class="nav-tab px-3 sm:px-4 py-2 text-xs sm:text-sm font-bold cursor-pointer">
+            المتجر
+          </button>
+          <button type="button" data-tab="customization" class="nav-tab active px-3 sm:px-4 py-2 text-xs sm:text-sm font-bold cursor-pointer">
+            التخصيص
+          </button>
+          <button type="button" data-tab="worlds" class="nav-tab px-3 sm:px-4 py-2 text-xs sm:text-sm font-bold cursor-pointer">
+            اختيار العوالم
+          </button>
+          <button type="button" data-tab="codex" class="nav-tab px-3 sm:px-4 py-2 text-xs sm:text-sm font-bold cursor-pointer">
+            الموسوعة
+          </button>
+        </nav>
+
+        <!-- زر إخفاء الواجهة / معاينة الكانفاس المباشر -->
+        <button id="toggle-hud-btn" type="button" title="إخفاء الواجهة لمعاينة ساحة اللعب"
+          class="px-3 py-2 rounded-xl border border-[#f1c40f]/45 bg-[#f1c40f]/10 hover:bg-[#f1c40f]/20 text-[#f1c40f] text-xs font-bold transition cursor-pointer flex items-center gap-1.5">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+          <span>معاينة حية</span>
+        </button>
       </div>
-    </div>
-  </div>
+    </header>
 
-  <!-- SHOP PANEL -->
-  <div class="panel-overlay" id="shop-panel">
-    <div class="panel-card">
-      <h2>المتجر</h2>
-      <p style="text-align:center;color:#f1c40f;margin-bottom:10px;font-weight:700;">
-        عملات: <span id="shop-coins">150</span> | جواهر: <span id="shop-gems">0</span>
-      </p>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">
-        <button class="btn btn-primary" data-shop="weapons" style="flex:1;min-width:85px;">الأسلحة والأدوات</button>
-        <button class="btn btn-primary" data-shop="skills" style="flex:1;min-width:85px;">المهارات</button>
-        <button class="btn btn-primary" data-shop="food" style="flex:1;min-width:85px;">الطعام</button>
-        <button class="btn btn-primary" data-shop="gems" style="flex:1;min-width:85px;">الجواهر</button>
+    <!-- شريط إشعارات تفاعلي خفيف (بديل أنيق عن التنبيهات التقليدية) -->
+    <div id="holo-toast"
+         class="hidden glass-panel-gold px-4 py-2.5 text-xs sm:text-sm font-semibold text-[#fff6cf] flex items-center justify-between gap-3">
+      <div class="flex items-center gap-2.5">
+        <span class="w-2 h-2 rounded-full bg-[#f1c40f] shadow-[0_0_10px_#f1c40f]"></span>
+        <span id="holo-toast-text">تم تحديث النظام الهولوجرامي.</span>
       </div>
-      <div id="shop-items" class="grid-list"></div>
-      <button class="btn btn-danger" id="btn-close-shop" style="margin-top:12px;">إغلاق</button>
+      <button id="holo-toast-close" type="button" class="text-[#f1c40f]/80 hover:text-white text-xs px-2 cursor-pointer">
+        إغلاق
+      </button>
     </div>
+
+    <!-- =====================================================================
+         منطقة المحتوى الديناميكي (تُبقي المساحة المركزية مفتوحة قدر الإمكان)
+         ===================================================================== -->
+    <main class="flex-1 flex flex-col justify-between gap-4">
+
+      <!-- -------------------------------------------------------------------
+           1. عرض التخصيص والمتجر (Customization & Store View)
+           ------------------------------------------------------------------- -->
+      <section id="view-customization-store" class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center my-auto">
+
+        <!-- العمود الأيمن: فئات المعدات والبطاقات الشفافة -->
+        <div class="lg:col-span-4 flex flex-col gap-3">
+          <div class="glass-panel p-4">
+            <div class="flex items-center justify-between mb-3">
+              <div>
+                <span id="mode-badge" class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#00f2fe]/15 text-[#00f2fe] border border-[#00f2fe]/35">
+                  وحدة التخصيص المباشر
+                </span>
+                <h1 id="panel-main-title" class="text-lg sm:text-xl font-extrabold text-white mt-1.5">
+                  تخصيص مستكشف التكنولوجيا الحيوية
+                </h1>
+              </div>
+              <!-- زر تبديل سريع بين التخصيص والمتجر -->
+              <button id="switch-store-custom-btn" type="button"
+                class="btn-gold px-3 py-1.5 rounded-xl text-xs font-bold cursor-pointer">
+                فتح المتجر
+              </button>
+            </div>
+
+            <!-- أزرار فئات التجهيز الأربع -->
+            <div id="category-tabs" class="grid grid-cols-2 gap-2">
+              <button type="button" data-category="suits" class="cat-btn nav-tab active px-3 py-2 text-xs font-bold text-right cursor-pointer">
+                الأزياء والبدلات
+              </button>
+              <button type="button" data-category="jetpacks" class="cat-btn nav-tab px-3 py-2 text-xs font-bold text-right cursor-pointer">
+                الحقائب النفاثة
+              </button>
+              <button type="button" data-category="hair" class="cat-btn nav-tab px-3 py-2 text-xs font-bold text-right cursor-pointer">
+                قصات الشعر المتوهجة
+              </button>
+              <button type="button" data-category="tools" class="cat-btn nav-tab px-3 py-2 text-xs font-bold text-right cursor-pointer">
+                الأدوات الهولوجرامية
+              </button>
+            </div>
+          </div>
+
+          <!-- قائمة البطاقات الشفافة للعناصر -->
+          <div id="items-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2.5 max-h-[420px] overflow-y-auto pl-1">
+            <!-- تُملأ ديناميكياً عبر JavaScript -->
+          </div>
+        </div>
+
+        <!-- العمود الأوسط: منصة الهولوجرام الدوارة والشخصية ثلاثية الأبعاد التمثيلية -->
+        <div class="lg:col-span-4 flex flex-col items-center justify-center relative py-4 min-h-[420px] sm:min-h-[470px]">
+          <!-- عمود الضوء الهولوجرامي الخلفي الخفيف -->
+          <div class="holo-beam absolute top-8 bottom-14 w-48 sm:w-56 rounded-full pointer-events-none"
+               style="background: linear-gradient(to top, rgba(0, 242, 254, 0.22), rgba(0, 242, 254, 0.04) 65%, transparent);">
+          </div>
+
+          <!-- شارة معلومات الشخصية العلوية -->
+          <div class="relative z-20 glass-panel px-4 py-1.5 text-center mb-2">
+            <div class="text-[11px] text-[#00f2fe] font-bold">نموذج الاستعراض الحي (GLB جاهز)</div>
+            <div id="rig-status-caption" class="text-xs text-[#eef9ff] font-semibold">بدلة النجاة الأساسية — رمادي داكن</div>
+          </div>
+
+          <!-- مجسم المستكشف التمثيلي المتفاعل مع التجهيزات -->
+          <div class="explorer-float relative z-20 flex flex-col items-center justify-center my-1">
+            <svg id="explorer-rig-svg" class="w-44 h-64 sm:w-52 sm:h-72 drop-shadow-[0_0_22px_rgba(0,242,254,0.35)]" viewBox="0 0 220 310" fill="none">
+              <!-- هالة الطاقة الخلفية للشخصية -->
+              <ellipse id="rig-aura" cx="110" cy="155" rx="68" ry="115" fill="rgba(0, 242, 254, 0.06)" />
+
+              <!-- الحقيبة النفاثة الخلفية (تظهر أو تتغير حسب الاختيار) -->
+              <g id="rig-jetpack" opacity="0.25">
+                <rect x="62" y="92" width="24" height="68" rx="8" fill="#132238" stroke="#00f2fe" stroke-width="1.6" />
+                <rect x="134" y="92" width="24" height="68" rx="8" fill="#132238" stroke="#00f2fe" stroke-width="1.6" />
+                <path id="rig-jet-nozzle-l" d="M66 160 L82 160 L85 170 L63 170 Z" fill="#00f2fe" />
+                <path id="rig-jet-nozzle-r" d="M138 160 L154 160 L157 170 L135 170 Z" fill="#00f2fe" />
+              </g>
+
+              <!-- شرارات الجزيئات النفاثة -->
+              <g id="rig-jet-particles" opacity="0">
+                <circle class="jet-spark" cx="74" cy="178" r="3.5" fill="#00f2fe" />
+                <circle class="jet-spark" cx="146" cy="178" r="3.5" fill="#f1c40f" style="animation-delay: 0.45s;" />
+              </g>
+
+              <!-- الأرجل -->
+              <path d="M90 175 L84 268 L98 268 L106 185 Z" fill="#1b2432" stroke="#5b7891" stroke-width="1.5" />
+              <path d="M130 175 L136 268 L122 268 L114 185 Z" fill="#1b2432" stroke="#5b7891" stroke-width="1.5" />
+              <!-- أشرطة توهج الأرجل -->
+              <line id="rig-leg-glow-l" x1="91" y1="205" x2="88" y2="252" stroke="#00f2fe" stroke-width="2" opacity="0.5" />
+              <line id="rig-leg-glow-r" x1="129" y1="205" x2="132" y2="252" stroke="#00f2fe" stroke-width="2" opacity="0.5" />
+
+              <!-- الجذع والبدلة / الدرع -->
+              <path id="rig-torso" d="M82 90 L138 90 L130 178 L90 178 Z" fill="#232c3b" stroke="#7d9bb5" stroke-width="1.8" />
+              <!-- خطوط الدرع الحيوي -->
+              <path id="rig-armor-accent" d="M92 104 L110 124 L128 104" stroke="#00f2fe" stroke-width="2.2" fill="none" />
+              <circle id="rig-core" cx="110" cy="136" r="7" fill="#00f2fe" opacity="0.7" />
+
+              <!-- الذراع اليمنى + الأداة الهولوجرامية -->
+              <path d="M82 96 L58 142 L68 148 L88 112 Z" fill="#232c3b" stroke="#7d9bb5" stroke-width="1.5" />
+              <!-- الأداة الهولوجرامية (فأس ليزري / قوس طاقة / سوار ترويض) -->
+              <g id="rig-tool">
+                <line x1="56" y1="145" x2="36" y2="112" stroke="#00f2fe" stroke-width="2.5" />
+                <path id="rig-tool-blade" d="M26 105 Q40 96 50 112 Q36 118 26 105 Z" fill="rgba(0,242,254,0.35)" stroke="#00f2fe" stroke-width="1.6" />
+              </g>
+
+              <!-- الذراع اليسرى + سوار الترويض على المعصم -->
+              <path d="M138 96 L162 142 L152 148 L132 112 Z" fill="#232c3b" stroke="#7d9bb5" stroke-width="1.5" />
+              <ellipse id="rig-wristband" cx="157" cy="144" rx="8" ry="4" fill="none" stroke="#f1c40f" stroke-width="2.2" />
+
+              <!-- الرأس -->
+              <circle cx="110" cy="60" r="22" fill="#283548" stroke="#94b5cf" stroke-width="1.8" />
+              <!-- قناع / نظارة هولوجرامية -->
+              <path id="rig-visor" d="M91 57 Q110 51 129 57 L126 65 Q110 61 94 65 Z" fill="rgba(0,242,254,0.35)" stroke="#00f2fe" stroke-width="1.5" />
+
+              <!-- الشعر المتوهج (يتغير حسب القصة المختارة) -->
+              <path id="rig-hair" d="M86 54 Q88 26 112 25 Q136 26 135 55 Q126 38 110 38 Q94 38 86 54 Z"
+                    fill="rgba(0,242,254,0.28)" stroke="#00f2fe" stroke-width="1.8" />
+            </svg>
+          </div>
+
+          <!-- منصة الهولوجرام الدوارة (Holo-Pad) -->
+          <div class="relative w-64 sm:w-72 h-24 -mt-8 flex items-center justify-center pointer-events-none">
+            <div class="holo-pad-outer absolute w-60 h-60 rounded-full border-2 border-[#00f2fe]/70 shadow-[0_0_25px_rgba(0,242,254,0.4)] flex items-center justify-center">
+              <span class="w-3 h-3 rounded-full bg-[#f1c40f] shadow-[0_0_12px_#f1c40f] -mt-56"></span>
+            </div>
+            <div class="holo-pad-inner absolute w-44 h-44 rounded-full border border-dashed border-[#f1c40f]/75 flex items-center justify-center">
+              <div class="w-24 h-24 rounded-full border border-[#00f2fe]/40 bg-[#00f2fe]/10"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- العمود الأيسر: المواصفات الفنية للعنصر المحدد وإجراء التجهيز أو الشراء -->
+        <div class="lg:col-span-4">
+          <div id="inspector-card" class="glass-panel-gold p-5 flex flex-col gap-4">
+            <div class="flex items-start justify-between gap-2 border-b border-[#f1c40f]/25 pb-3">
+              <div>
+                <div id="insp-category-label" class="text-xs font-bold text-[#f1c40f]">البدلة النشطة</div>
+                <h2 id="insp-title" class="text-xl font-extrabold text-white mt-0.5">بدلة النجاة الأساسية</h2>
+              </div>
+              <div id="insp-price-badge" class="px-3 py-1 rounded-xl bg-[#f1c40f]/15 border border-[#f1c40f]/45 text-xs font-extrabold text-[#f1c40f]">
+                مجاني / مملوك
+              </div>
+            </div>
+
+            <p id="insp-desc" class="text-xs sm:text-sm text-[#c4dfee] leading-relaxed">
+              بدلة رمادية داكنة أساسية مصممة لتحمل الظروف البيئية الأولى وتوفير مرونة حركة عالية قبل تركيب الدروع الحيوية.
+            </p>
+
+            <!-- مؤشرات الأداء والطاقة للعنصر -->
+            <div class="space-y-2.5 bg-black/25 p-3.5 rounded-xl border border-white/10">
+              <div>
+                <div class="flex justify-between text-xs mb-1">
+                  <span class="text-[#8fb3c9]">كفاءة الحماية والدرع</span>
+                  <span id="insp-stat-defense" class="font-bold text-[#00f2fe]">+15%</span>
+                </div>
+                <div class="h-1.5 rounded-full bg-white/10 overflow-hidden">
+                  <div id="insp-bar-defense" class="h-full bg-[#00f2fe] rounded-full transition-all duration-300" style="width: 30%;"></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex justify-between text-xs mb-1">
+                  <span class="text-[#8fb3c9]">التناغم الطاقي الحيوي</span>
+                  <span id="insp-stat-energy" class="font-bold text-[#f1c40f]">+20%</span>
+                </div>
+                <div class="h-1.5 rounded-full bg-white/10 overflow-hidden">
+                  <div id="insp-bar-energy" class="h-full bg-[#f1c40f] rounded-full transition-all duration-300" style="width: 40%;"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ملخص التجهيز الحالي الكامل للشخصية -->
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <div class="p-2.5 rounded-xl bg-white/5 border border-[#00f2fe]/20">
+                <div class="text-[#8fb3c9] text-[11px]">الزي الحالي</div>
+                <div id="summary-suit" class="font-bold text-white truncate mt-0.5">بدلة النجاة الأساسية</div>
+              </div>
+              <div class="p-2.5 rounded-xl bg-white/5 border border-[#00f2fe]/20">
+                <div class="text-[#8fb3c9] text-[11px]">الحقيبة النفاثة</div>
+                <div id="summary-jetpack" class="font-bold text-white truncate mt-0.5">بدون حقيبة</div>
+              </div>
+              <div class="p-2.5 rounded-xl bg-white/5 border border-[#00f2fe]/20">
+                <div class="text-[#8fb3c9] text-[11px]">الشعر المتوهج</div>
+                <div id="summary-hair" class="font-bold text-white truncate mt-0.5">خصلة فيروزية هادئة</div>
+              </div>
+              <div class="p-2.5 rounded-xl bg-white/5 border border-[#00f2fe]/20">
+                <div class="text-[#8fb3c9] text-[11px]">الأداة الهولوجرامية</div>
+                <div id="summary-tool" class="font-bold text-white truncate mt-0.5">فأس ليزري</div>
+              </div>
+            </div>
+
+            <!-- زر التجهيز أو الشراء -->
+            <button id="insp-action-btn" type="button"
+              class="btn-cyan w-full py-3 rounded-xl text-sm font-extrabold cursor-pointer">
+              مجهّز حالياً على الشخصية
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- -------------------------------------------------------------------
+           2. عرض اختيار العوالم الأربعة (Worlds Selection View)
+           ------------------------------------------------------------------- -->
+      <section id="view-worlds" class="hidden my-auto space-y-4">
+        <div class="glass-panel p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <span class="text-xs font-bold text-[#00f2fe]">الانتقال الفضائي والبيئي</span>
+            <h2 class="text-xl sm:text-2xl font-extrabold text-white">اختيار العوالم الأربعة</h2>
+            <p class="text-xs sm:text-sm text-[#8fb3c9] mt-0.5">
+              كل عالم يمتلك إضاءة درامية خاصة، ضباباً جوياً متفاعلاً، وموارد حيوية فريدة للتشييد والترويض.
+            </p>
+          </div>
+          <div class="px-3.5 py-2 rounded-xl bg-[#00f2fe]/10 border border-[#00f2fe]/35 text-xs font-bold text-[#00f2fe] self-start sm:self-auto">
+            محرك الإضاءة والضباب: نشط
+          </div>
+        </div>
+
+        <div id="worlds-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+          <!-- تُملأ ديناميكياً عبر JavaScript -->
+        </div>
+      </section>
+
+      <!-- -------------------------------------------------------------------
+           3. عرض الموسوعة الحيوية للمخلوقات (Codex / Bestiary View)
+           ------------------------------------------------------------------- -->
+      <section id="view-codex" class="hidden my-auto space-y-4">
+        <div class="glass-panel p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <span class="text-xs font-bold text-[#f1c40f]">سجل الكائنات الحيوية المتوهجة</span>
+            <h2 class="text-xl sm:text-2xl font-extrabold text-white">موسوعة المخلوقات والترويض</h2>
+            <p class="text-xs sm:text-sm text-[#8fb3c9] mt-0.5">
+              تتحول عروق المخلوق من التوهج الأحمر البري إلى التوهج الفيروزي الهادئ عند الترويض مع تفعيل السرج الضوئي للركوب والطيران.
+            </p>
+          </div>
+          <div class="flex items-center gap-2 text-xs font-bold">
+            <span class="px-3 py-1.5 rounded-xl bg-[#ff3b5c]/15 border border-[#ff3b5c]/45 text-[#ff7b91]">
+              بري: عروق حمراء
+            </span>
+            <span class="px-3 py-1.5 rounded-xl bg-[#00f2fe]/15 border border-[#00f2fe]/45 text-[#00f2fe]">
+              مروّض: توهج فيروزي وسرج ضوئي
+            </span>
+          </div>
+        </div>
+
+        <div id="codex-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- تُملأ ديناميكياً عبر JavaScript -->
+        </div>
+      </section>
+
+    </main>
   </div>
 
-  <!-- CRAFTING PANEL -->
-  <div class="panel-overlay" id="craft-panel">
-    <div class="panel-card">
-      <h2>نظام صناعة الأدوات (Crafting)</h2>
-      <p style="text-align:center;color:#9fb0c2;margin-bottom:12px;font-size:.84rem;">
-        اقطع الأشجار لجمع الحطب واجمع الحجارة لصناعة الأدوات وإشعال النار
-      </p>
-      <div id="craft-list" class="grid-list"></div>
-      <button class="btn btn-danger" id="btn-close-craft" style="margin-top:12px;">إغلاق</button>
-    </div>
-  </div>
-
-  <!-- BLUEPRINT / HOUSE BOOK PANEL -->
-  <div class="panel-overlay" id="blueprint-panel">
-    <div class="panel-card">
-      <h2>كتيب البناء (اختيار الشكل والتطوير بالحطب)</h2>
-      <p style="text-align:center;color:#9fb0c2;margin-bottom:12px;font-size:.84rem;">
-        اختر تصميماً للمنزل أو الحديقة، ثم ضع مخططه في العالم وأضف الحطب لإتمام بنائه تدريجياً
-      </p>
-      <div id="blueprint-list" class="grid-list"></div>
-      <button class="btn btn-danger" id="btn-close-blueprint" style="margin-top:12px;">إغلاق</button>
-    </div>
-  </div>
-
-  <!-- QUESTS PANEL -->
-  <div class="panel-overlay" id="quests-panel">
-    <div class="panel-card">
-      <h2>المهام اليومية</h2>
-      <div id="quests-list"></div>
-      <div style="display:flex;gap:8px;margin-top:12px;">
-        <button class="btn btn-success" id="btn-claim-quests" style="flex:1;">استلام المكافآت</button>
-        <button class="btn btn-danger" id="btn-close-quests" style="flex:1;">إغلاق</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ACHIEVEMENTS PANEL -->
-  <div class="panel-overlay" id="achievements-panel">
-    <div class="panel-card">
-      <h2>الإنجازات</h2>
-      <div id="achievements-list"></div>
-      <button class="btn btn-danger" id="btn-close-achievements" style="margin-top:12px;">إغلاق</button>
-    </div>
-  </div>
-
-  <!-- WORLD CHALLENGES PANEL (12+ per world) -->
-  <div class="panel-overlay" id="challenges-panel">
-    <div class="panel-card">
-      <h2>تحديات العالم (12 تحدياً)</h2>
-      <div id="world-challenges-list" class="grid-list"></div>
-      <button class="btn btn-danger" id="btn-close-challenges" style="margin-top:12px;">إغلاق</button>
-    </div>
-  </div>
-
-  <!-- 100+ ADDITIONS & 50+ IDEAS CATALOG -->
-  <div class="panel-overlay" id="ideas-panel">
-    <div class="panel-card">
-      <h2>100+ إضافة وظيفية و50+ فكرة ممتعة مدمجة</h2>
-      <div id="ideas-content" style="font-size:.82rem;line-height:1.7;color:#cbd5e1;"></div>
-      <button class="btn btn-danger" id="btn-close-ideas" style="margin-top:12px;">إغلاق</button>
-    </div>
-  </div>
-</div>
-
-<script type="importmap">
-{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }
-</script>
-
-<script type="module">
-import * as THREE from 'three';
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-
-const firebaseConfig = {
-  apiKey: "AIzaSyAQposIwGN_F9EbUqpxarN7guZ_IaZjvOQ",
-  authDomain: "metaverse-metabox.firebaseapp.com",
-  projectId: "metaverse-metabox",
-  storageBucket: "metaverse-metabox.firebasestorage.app",
-  messagingSenderId: "509642391976",
-  appId: "1:509642391976:web:93746bbba00ad47bcb5d9d"
-};
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-
-const $ = id => document.getElementById(id);
-const rand = (a, b) => a + Math.random() * (b - a);
-const pick = arr => arr[Math.floor(Math.random() * arr.length)];
-const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-const dist2D = (a, b) => Math.hypot(a.x - b.x, a.z - b.z);
-
-// Exact terrain surface height at world (x, z)
-function getTerrainHeight(x, z) {
-  return Math.sin(x * 0.05) * 1.1 + Math.cos(z * 0.07) * 0.9 + Math.sin((x + z) * 0.03) * 1.4;
-}
-
-// Offset from character group origin to the bottom of the boots
-const CHARACTER_FOOT_OFFSET = 0.90;
-
-function toast(msg, color = '#2ecc71', duration = 2200) {
-  const t = $('toast');
-  if (!t) return;
-  t.textContent = msg;
-  t.style.background = color;
-  t.classList.add('show');
-  clearTimeout(t._timer);
-  t._timer = setTimeout(() => t.classList.remove('show'), duration);
-}
-
-function damageFlash() {
-  const df = $('damage-flash');
-  if (!df) return;
-  df.classList.add('show');
-  setTimeout(() => df.classList.remove('show'), 220);
-}
-
-// ═══════════════════════════════════════════════════════════
-// AUDIO SYSTEM
-// ═══════════════════════════════════════════════════════════
-const Audio = {
-  ctx: null, masterGain: null, musicGain: null, sfxGain: null,
-  musicPlaying: false, currentMusic: null, currentMusicNodes: [],
-
-  init() {
-    if (this.ctx) return;
-    try {
-      this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-      this.masterGain = this.ctx.createGain();
-      this.masterGain.gain.value = 0.5;
-      this.masterGain.connect(this.ctx.destination);
-      this.musicGain = this.ctx.createGain();
-      this.musicGain.gain.value = 0.12;
-      this.musicGain.connect(this.masterGain);
-      this.sfxGain = this.ctx.createGain();
-      this.sfxGain.gain.value = 0.4;
-      this.sfxGain.connect(this.masterGain);
-    } catch (e) {}
-  },
-  resume() { if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume(); },
-  playTone(freq, duration = 0.15, type = 'sine', volume = 0.3, target = null) {
-    if (!this.ctx) return;
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-    osc.type = type;
-    osc.frequency.value = freq;
-    gain.gain.setValueAtTime(volume, this.ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
-    osc.connect(gain);
-    gain.connect(target || this.sfxGain);
-    osc.start();
-    osc.stop(this.ctx.currentTime + duration);
-  },
-  sfx(name) {
-    if (!this.ctx) return;
-    switch (name) {
-      case 'jump': this.playTone(440, 0.1, 'sine', 0.2); setTimeout(() => this.playTone(660, 0.1, 'sine', 0.15), 50); break;
-      case 'attack': this.playTone(210, 0.08, 'sawtooth', 0.25); break;
-      case 'chop': this.playTone(150, 0.12, 'triangle', 0.32); setTimeout(() => this.playTone(95, 0.1, 'square', 0.2), 60); break;
-      case 'fire': this.playTone(130, 0.35, 'sawtooth', 0.22); break;
-      case 'hatch': [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => this.playTone(f, 0.18, 'sine', 0.25), i * 90)); break;
-      case 'coin': this.playTone(880, 0.08, 'sine', 0.22); break;
-      case 'levelup': [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => this.playTone(f, 0.2, 'sine', 0.28), i * 100)); break;
-      case 'hurt': this.playTone(180, 0.15, 'sawtooth', 0.28); break;
-      case 'build': this.playTone(330, 0.1, 'square', 0.2); break;
-      case 'animal_dog': this.playTone(220, 0.15, 'sawtooth', 0.18); break;
-      case 'animal_cat': this.playTone(880, 0.22, 'sine', 0.14); break;
-      case 'animal_dragon': [110, 145, 95].forEach((f, i) => setTimeout(() => this.playTone(f, 0.35, 'sawtooth', 0.28), i * 110)); break;
-      case 'animal_chimera': [240, 360, 480, 300].forEach((f, i) => setTimeout(() => this.playTone(f, 0.2, 'triangle', 0.25), i * 90)); break;
-      case 'animal_wolf': this.playTone(330, 0.35, 'sine', 0.18); break;
-      case 'animal_rabbit': this.playTone(1200, 0.08, 'sine', 0.14); break;
-    }
-  },
-  playMusic(worldId) {
-    if (!this.ctx) return;
-    this.stopMusic();
-    const scale = [261, 329, 392, 523, 659];
-    this.currentMusic = worldId;
-    this.musicPlaying = true;
-    let idx = 0;
-    const playNext = () => {
-      if (!this.musicPlaying || this.currentMusic !== worldId) return;
-      const freq = scale[idx % scale.length];
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.value = freq;
-      gain.gain.setValueAtTime(0.001, this.ctx.currentTime);
-      gain.gain.linearRampToValueAtTime(0.07, this.ctx.currentTime + 0.05);
-      gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 1.2);
-      osc.connect(gain);
-      gain.connect(this.musicGain);
-      osc.start();
-      osc.stop(this.ctx.currentTime + 1.2);
-      this.currentMusicNodes.push(osc);
-      idx++;
-      setTimeout(playNext, 1300);
-    };
-    playNext();
-  },
-  stopMusic() {
-    this.musicPlaying = false;
-    this.currentMusicNodes.forEach(n => { try { n.stop(); } catch (e) {} });
-    this.currentMusicNodes = [];
-  }
-};
-
-// ═══════════════════════════════════════════════════════════
-// GAME STATE
-// ═══════════════════════════════════════════════════════════
-const Game = {
-  user: null, profile: null,
-  scene: null, camera: null, renderer: null, clock: null,
-  player: null, avatar: { parts: {} }, weaponMesh: null,
-  keys: {}, yaw: 0, pitch: 0.25, cameraDistance: 8.2,
-  isRotating: false, lastMouseX: 0, lastMouseY: 0,
-  velocityY: 0, isGrounded: true, isSprinting: false,
-  weatherSpeedModifier: 1,
-  animals: [], trees: [], nests: [], campfires: [], towerTraps: [],
-  collidables: [], buildings: new Map(), coins: [], platforms: [], portals: [], returnPortal: null,
-  houseBuildSite: null,
-  lastAutoSave: 0, attackAnimTime: 0, portalCooldown: 0,
-  currentWorld: 'main',
-  joystickX: 0, joystickY: 0,
-  weather: { current: 'clear' },
-  buildMode: false, selectedBlock: 'wood', ghost: null,
-  sunLight: null, ground: null,
-  motherPursuit: { active: false, timer: 0, creatureType: null },
-  thiefEvent: { active: false, mesh: null, stolenItem: null, timer: 0 }
-};
-
-// ═══════════════════════════════════════════════════════════
-// DATA DEFINITIONS
-// ═══════════════════════════════════════════════════════════
-const CREATURE_TYPES = {
-  fire_dragon: { name: 'تنين النار', level: 18, color: 0xe63946, emissive: 0xff5500, scale: 2.1, speed: 7.5, rarity: 'أسطوري', sound: 'animal_dragon', bodyParts: 'dragon' },
-  ice_dragon: { name: 'تنين الجليد', level: 16, color: 0x38bdf8, emissive: 0x0284c7, scale: 2.0, speed: 7, rarity: 'أسطوري', sound: 'animal_dragon', bodyParts: 'dragon' },
-  forest_dragon: { name: 'تنين الغابة', level: 14, color: 0x22c55e, emissive: 0x15803d, scale: 1.9, speed: 7, rarity: 'أسطوري', sound: 'animal_dragon', bodyParts: 'dragon' },
-  rock_dragon: { name: 'تنين الصخر', level: 20, color: 0x78716c, emissive: 0x44403c, scale: 2.3, speed: 6, rarity: 'أسطوري', sound: 'animal_dragon', bodyParts: 'dragon' },
-  chimera: { name: 'كيميرا مجنحة', level: 22, color: 0xd97706, emissive: 0xfbbf24, scale: 1.95, speed: 8.5, rarity: 'خرافي', sound: 'animal_chimera', bodyParts: 'chimera' },
-  fox: { name: 'ثعلب الغابة المضيء', level: 4, color: 0x2dd4bf, emissive: 0x0d9488, scale: 1.05, speed: 7.2, rarity: 'نادر', sound: 'animal_wolf', bodyParts: 'fox' },
-  beetle: { name: 'خنفساء مدرعة', level: 6, color: 0x4b5563, scale: 1.25, speed: 3.8, rarity: 'نادر', sound: 'animal_dog', bodyParts: 'beetle' },
-  cat: { name: 'قط أليف', level: 1, color: 0xf49738, scale: 0.75, speed: 5, rarity: 'شائع', sound: 'animal_cat', bodyParts: 'cat' },
-  rabbit: { name: 'أرنب بري', level: 1, color: 0xe8e2d5, scale: 0.68, speed: 4.5, rarity: 'شائع', sound: 'animal_rabbit', bodyParts: 'rabbit' },
-  wolf: { name: 'ذئب برّي', level: 5, color: 0x6b7280, scale: 1.2, speed: 7, rarity: 'غير شائع', sound: 'animal_wolf', bodyParts: 'wolf' },
-};
-
-const CRAFT_RECIPES = [
-  { id: 'axe', name: 'فأس تقطيع الأشجار', wood: 3, stone: 2, desc: 'يزيد سرعة ومردود قطع الأشجار وجمع الحطب' },
-  { id: 'pickaxe', name: 'معول التعدين', wood: 2, stone: 4, desc: 'يضاعف جمع الحجارة والبلورات' },
-  { id: 'torch_fire', name: 'موقد نار مخيم', wood: 5, stone: 3, desc: 'يشعل ناراً أمامك لتدفئة وتقوية الطاقة' },
-  { id: 'iron_sword', name: 'سيف مصنوع', wood: 2, stone: 6, desc: 'سلاح قوي لهزيمة الأعداء والزعماء' },
-  { id: 'bow', name: 'قوس الصياد', wood: 6, stone: 2, desc: 'هجوم بعيد المدى' },
-  { id: 'trap_kit', name: 'فخ دفاع للمنزل', wood: 4, stone: 4, desc: 'يضع فخاً لحماية منزلك من المتسللين' },
-];
-
-const HOUSE_BLUEPRINTS = [
-  { id: 'cabin', name: 'كوخ خشبي دافئ', woodNeeded: 8, color: 0x8b5a2b, size: [6, 4, 6], desc: 'كوخ خشبي مثالي للبداية وصندوق تخزين' },
-  { id: 'garden_villa', name: 'منزل وحديقة مسورة', woodNeeded: 14, color: 0xa0522d, size: [9, 4.5, 9], desc: 'منزل واسع مع سياج حديقة وأشجار زينة' },
-  { id: 'watch_tower', name: 'برج المراقبة', woodNeeded: 20, color: 0x6d4c41, size: [6, 11, 6], desc: 'برج مرتفع لإطلالة شاملة وحماية عالية' },
-  { id: 'fortress', name: 'قلعة المحارب', woodNeeded: 28, color: 0x5d4037, size: [12, 7, 12], desc: 'حصن كبير مع صندوق تخزين وحماية متقدمة' },
-];
-
-const SHOP = {
-  weapons: [
-    { id: 'iron_sword', name: 'سيف حديدي', price: 250, damage: 28 },
-    { id: 'magic_staff', name: 'عصا سحرية', price: 650, damage: 45 },
-    { id: 'dragon_bow', name: 'قوس التنين', price: 1100, damage: 60 },
-  ],
-  skills: [
-    { id: 'double_jump', name: 'قفز مزدوج', price: 500 },
-    { id: 'tame_master', name: 'ترويض متقدم', price: 350 },
-  ],
-  food: [
-    { id: 'carrot', name: 'جزر', price: 10 },
-    { id: 'grass', name: 'أعشاب', price: 8 },
-    { id: 'meat', name: 'لحم', price: 20 },
-    { id: 'honey', name: 'عسل', price: 30 },
-    { id: 'crystal', name: 'بلورة', price: 70 },
-    { id: 'ember', name: 'جمرة', price: 120 },
-  ],
-  gems: [
-    { id: 'gem_10', name: '10 جواهر', price: 800, gems: 10 },
-    { id: 'gem_30', name: '30 جوهرة', price: 2000, gems: 30 },
-  ]
-};
-
-const WORLDS = {
-  main: { name: 'العالم الرئيسي', tag: 'رئيسي', fog: 0x87CEEB, ground: 0x3a7d44, sky: 0x87CEEB, desc: 'غابات، أعشاش، برج التحديات، وبناء المنزل', minLevel: 1 },
-  volcano: { name: 'عالم الحمم البركانية', tag: 'بركان', fog: 0x442200, ground: 0x2b1d16, sky: 0x331100, desc: 'براكين، أنهار حمم، تنانين وبلورات', minLevel: 2 },
-  ice: { name: 'القمم الجليدية', tag: 'جليد', fog: 0xccddff, ground: 0xdbeafe, sky: 0xddeeff, desc: 'جبال جليدية، أكواخ، ومخلوقات قطبية', minLevel: 2 },
-  sky: { name: 'الجزر العائمة', tag: 'سماء', fog: 0xddeeff, ground: 0x5c9442, sky: 0xcbe4ff, desc: 'جزر معلقة، جسور، وشلالات', minLevel: 3 },
-  underwater: { name: 'الأعماق المضيئة', tag: 'بحري', fog: 0x004466, ground: 0x005577, sky: 0x006688, desc: 'فطر مضيء، شعاب، ومخلوقات بحرية', minLevel: 3 },
-  action: { name: 'عالم الأكشن', tag: 'قتال', fog: 0x333333, ground: 0x444444, sky: 0x222222, desc: 'أعداء وزعماء وتحديات قتالية', minLevel: 1 },
-  horror: { name: 'عالم المرعب', tag: 'رعب', fog: 0x220000, ground: 0x1a0a0a, sky: 0x110000, desc: 'أشباح وفخاخ وأجواء غامضة', minLevel: 4 },
-  fun: { name: 'عالم المرح', tag: 'منصات', fog: 0xffccff, ground: 0xff99cc, sky: 0xffccff, desc: 'منصات ملونة وقفز وتحديات سريعة', minLevel: 2 },
-  sports: { name: 'عالم الرياضة', tag: 'رياضة', fog: 0x00aaff, ground: 0x2ecc71, sky: 0x00aaff, desc: 'مضمار سرعة وتحديات رشاقة', minLevel: 4 },
-  space: { name: 'الفضاء', tag: 'فضاء', fog: 0x000022, ground: 0x333344, sky: 0x000011, desc: 'كواكب ونجوم وروبوتات', minLevel: 5 },
-  candy: { name: 'أرض الحلوى', tag: 'حلوى', fog: 0xffddee, ground: 0xffaacc, sky: 0xffddee, desc: 'أشجار حلوى ومنصات وردية', minLevel: 5 },
-  cyber: { name: 'المدينة السيبرانية', tag: 'نيون', fog: 0x110022, ground: 0x222233, sky: 0x0a0015, desc: 'أبراج نيون وتحديات تقنية', minLevel: 6 },
-  egypt: { name: 'مصر القديمة', tag: 'أهرامات', fog: 0xddb870, ground: 0xc8a860, sky: 0xe8cc90, desc: 'أهرامات ورمال وكنوز', minLevel: 6 },
-  medieval: { name: 'العصور الوسطى', tag: 'قلاع', fog: 0x99aa88, ground: 0x778866, sky: 0xaabb99, desc: 'قلاع وأبراج حجرية', minLevel: 7 },
-  desert: { name: 'الصحراء الكبرى', tag: 'صحراء', fog: 0xddcc88, ground: 0xd4b870, sky: 0xe8dd99, desc: 'كثبان رملية ومغامرات', minLevel: 7 },
-  jungle: { name: 'الأدغال الكثيفة', tag: 'أدغال', fog: 0x335522, ground: 0x2d6622, sky: 0x446633, desc: 'أشجار كثيفة ومخلوقات نادرة', minLevel: 8 },
-  moon: { name: 'سطح القمر', tag: 'قمر', fog: 0x222233, ground: 0x888899, sky: 0x111122, desc: 'فوهات قمرية ومناظر كونية', minLevel: 8 },
-  pirate: { name: 'عالم القراصنة', tag: 'قراصنة', fog: 0x224466, ground: 0x336688, sky: 0x446699, desc: 'مغامرات بحرية وكنوز مخفية', minLevel: 9 },
-  future: { name: 'عالم المستقبل', tag: 'مستقبل', fog: 0x220044, ground: 0x333355, sky: 0x110033, desc: 'تقنيات متقدمة وزعماء آليون', minLevel: 9 },
-  void: { name: 'الفراغ الكوني', tag: 'فراغ', fog: 0x150826, ground: 0x1c122e, sky: 0x0d0618, desc: 'تحديات كونية متقدمة', minLevel: 10 },
-};
-
-const BLOCKS = {
-  wood: { color: 0xa0522d, price: 3, name: 'خشب' },
-  stone: { color: 0x808080, price: 4, name: 'حجر' },
-  grass: { color: 0x4caf50, price: 2, name: 'عشب' },
-  glass: { color: 0x88ccff, price: 6, name: 'زجاج', transparent: true },
-  gold: { color: 0xffd700, price: 25, name: 'ذهب' },
-};
-
-const OUTFITS = {
-  casual: { name: 'مستكشف', color: 0x2b6cb0, pants: 0x4a5568, accent: 0x90cdf4 },
-  tech: { name: 'درع تقني', color: 0x2c5282, pants: 0x1a365d, accent: 0x00ffff },
-  jungle: { name: 'تمويه الأدغال', color: 0x2f855a, pants: 0x22543d, accent: 0x68d391 },
-  winter: { name: 'معطف الشتاء', color: 0x8b5a2b, pants: 0x3b2f2f, accent: 0xffffff },
-};
-const HAIRSTYLES = { spiky: { name: 'مغامر' }, braid: { name: 'مجدول' }, bun: { name: 'كعكة' }, short: { name: 'قصير' } };
-const BACKPACKS = { rucksack: { name: 'حقيبة ظهر', color: 0xc2a878 }, explorer: { name: 'حقيبة + فانوس', color: 0x556b2f }, core: { name: 'حقيبة طاقة', color: 0x4a5568 } };
-const SKIN_COLORS = [0xf5d0a9, 0xe0ac69, 0xc68642, 0x8d5524, 0xffdbac];
-
-const ACHIEVEMENTS = [
-  { id: 'first_chop', title: 'قاطع الأخشاب', desc: 'اقطع 5 أشجار واجمع الحطب', reward: 120, check: p => (p.treesChopped || 0) >= 5 },
-  { id: 'house_builder', title: 'بنّاء المنزل', desc: 'أكمل بناء منزل من كتيب البناء', reward: 300, check: p => (p.housesCompleted || 0) >= 1 },
-  { id: 'egg_thief', title: 'سارق الأعشاش', desc: 'انقل بيضة مخلوق إلى منزلك بنجاح', reward: 250, check: p => (p.eggsStolen || 0) >= 1 },
-  { id: 'tower_climber', title: 'متسلق البرج', desc: 'اجمع كنز قمة برج التحديات', reward: 400, check: p => (p.towerCleared || 0) >= 1 },
-  { id: 'tamer_3', title: 'مروّض المخلوقات', desc: 'امتلك 3 مخلوقات أو أكثر', reward: 350, check: p => p.pets.length >= 3 },
-];
-
-// ═══════════════════════════════════════════════════════════
-// PROFILE & SAVE
-// ═══════════════════════════════════════════════════════════
-function loadProfile(uid, defaultName = 'مغامر') {
-  const key = `mv96_profile_${uid}`;
-  let data = null;
-  try { data = JSON.parse(localStorage.getItem(key) || 'null'); } catch {}
-  if (!data) {
-    data = {
-      name: defaultName, gender: 'neutral', expression: 'confident',
-      hairstyle: 'spiky', backpack: 'rucksack', outfit: 'casual', skinColor: 0xe0ac69,
-      level: 1, xp: 0, coins: 150, gems: 0, hp: 100, energy: 100,
-      wood: 4, stone: 3,
-      inventory: [], pets: [], eggs: [], stash: ['سيف خشبي', 'جزر', 'بلورة'],
-      crafted: [], equippedWeapon: 'fists',
-      quests: null, questDate: null, achievements: [],
-      treesChopped: 0, housesCompleted: 0, eggsStolen: 0, towerCleared: 0,
-      activeHouse: null
-    };
-  }
-  data.wood = data.wood ?? 4;
-  data.stone = data.stone ?? 3;
-  data.eggs = data.eggs || [];
-  data.stash = data.stash || ['سيف خشبي', 'جزر'];
-  data.crafted = data.crafted || [];
-  data.achievements = data.achievements || [];
-  if (!data.quests || data.questDate !== new Date().toDateString()) {
-    data.questDate = new Date().toDateString();
-    data.quests = [
-      { id: 'q_chop', title: 'قطع الأشجار', desc: 'اقطع 4 أشجار', type: 'chop', need: 4, progress: 0, reward: 120, claimed: false },
-      { id: 'q_egg', title: 'مغامرة العش', desc: 'اسرق بيضة وأحضرها لمنزلك', type: 'egg', need: 1, progress: 0, reward: 200, claimed: false },
-      { id: 'q_tower', title: 'تحدي البرج', desc: 'تجاوز فخاخ برج التحديات', type: 'tower', need: 1, progress: 0, reward: 250, claimed: false },
-    ];
-  }
-  data.save = function() {
-    const { save, ...rest } = this;
-    try { localStorage.setItem(key, JSON.stringify(rest)); } catch (e) {}
-  };
-  return data;
-}
-
-function addQuestProgress(type, amount = 1) {
-  if (!Game.profile) return;
-  Game.profile.quests.forEach(q => {
-    if (q.type === type && !q.claimed) q.progress = Math.min(q.need, (q.progress || 0) + amount);
-  });
-  ACHIEVEMENTS.forEach(ach => {
-    if (!Game.profile.achievements.includes(ach.id) && ach.check(Game.profile)) {
-      Game.profile.achievements.push(ach.id);
-      Game.profile.coins += ach.reward;
-      Audio.sfx('levelup');
-      toast(`إنجاز: ${ach.title} (+${ach.reward} عملة)`, '#f1c40f', 3200);
-    }
-  });
-  Game.profile.save();
-  updateHUD();
-}
-
-// ═══════════════════════════════════════════════════════════
-// LOGIN & WORLD SELECT
-// ═══════════════════════════════════════════════════════════
-(function initBg() {
-  const canvas = $('login-bg-canvas');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const resize = () => { canvas.width = innerWidth; canvas.height = innerHeight; };
-  resize();
-  addEventListener('resize', resize);
-  const draw = () => {
-    const ls = $('login-screen');
-    if (!ls || ls.style.display === 'none') return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = 'rgba(0,210,255,0.08)';
-    for (let i = 0; i < 18; i++) {
-      ctx.beginPath();
-      ctx.arc(((i * 97 + performance.now() * 0.02) % canvas.width), ((i * 61) % canvas.height), 14, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    requestAnimationFrame(draw);
-  };
-  draw();
-})();
-
-$('link-to-signup').onclick = () => { $('login-form').style.display = 'none'; $('signup-form').style.display = 'block'; };
-$('link-to-login').onclick = () => { $('signup-form').style.display = 'none'; $('login-form').style.display = 'block'; };
-$('btn-google').onclick = async () => { Audio.init(); Audio.resume(); try { await signInWithPopup(auth, new GoogleAuthProvider()); } catch (e) { toast(e.message, '#ff4757'); } };
-$('btn-login-submit').onclick = async () => { Audio.init(); Audio.resume(); try { await signInWithEmailAndPassword(auth, $('login-email').value, $('login-password').value); } catch (e) { toast(e.message, '#ff4757'); } };
-$('btn-signup-submit').onclick = async () => {
-  Audio.init(); Audio.resume();
-  try {
-    const c = await createUserWithEmailAndPassword(auth, $('signup-email').value, $('signup-password').value);
-    if ($('signup-name').value) await updateProfile(c.user, { displayName: $('signup-name').value });
-  } catch (e) { toast(e.message, '#ff4757'); }
-};
-$('btn-guest').onclick = () => { Audio.init(); Audio.resume(); showWorldSelect({ uid: 'guest_v96', displayName: 'مغامر', isGuest: true }); };
-onAuthStateChanged(auth, u => { if (u && !Game.user) showWorldSelect(u); });
-
-function showWorldSelect(user) {
-  Game.user = user;
-  Game.profile = loadProfile(user.uid, user.displayName || 'مغامر');
-  updateHUD();
-  $('login-screen').style.opacity = '0';
-  setTimeout(() => {
-    $('login-screen').style.display = 'none';
-    $('world-select').classList.add('active');
-    renderWorldCards();
-    Audio.playMusic('main');
-  }, 400);
-}
-
-function renderWorldCards() {
-  const grid = $('worlds-grid');
-  grid.innerHTML = '';
-  Object.entries(WORLDS).forEach(([id, w]) => {
-    const locked = Game.profile.level < w.minLevel;
-    const card = document.createElement('div');
-    card.className = 'world-card' + (locked ? ' locked' : '');
-    card.innerHTML = `
-      ${locked ? `<div class="lock-tag">مستوى ${w.minLevel}</div>` : ''}
-      <div class="icon">${w.tag}</div>
-      <h3>${w.name}</h3>
-      <p class="desc">${w.desc}</p>
-      <div class="stats"><span>12 تحدياً</span><span>مطلوب: ${w.minLevel}</span></div>
-    `;
-    card.onclick = () => {
-      if (locked) return toast(`تحتاج مستوى ${w.minLevel}`, '#ff4757');
-      enterWorld(id);
-    };
-    grid.appendChild(card);
-  });
-}
-
-function enterWorld(worldId) {
-  Game.currentWorld = worldId;
-  $('world-select').classList.remove('active');
-  $('world-screen').style.display = 'block';
-  Audio.playMusic(worldId);
-  initWorld(worldId);
-}
-
-function closeAllPanels() {
-  document.querySelectorAll('.panel-overlay.active').forEach(p => p.classList.remove('active'));
-}
-
-$('btn-worlds').onclick = () => {
-  if (Game.profile) Game.profile.save();
-  clearWorld();
-  if (Game.renderer) { Game.renderer.dispose(); Game.renderer.domElement.remove(); Game.renderer = null; }
-  $('world-screen').style.display = 'none';
-  $('world-select').classList.add('active');
-  renderWorldCards();
-};
-
-$('btn-logout').onclick = () => {
-  if (Game.profile) Game.profile.save();
-  if (Game.user && !Game.user.isGuest) signOut(auth).catch(() => {});
-  clearWorld();
-  if (Game.renderer) { Game.renderer.dispose(); Game.renderer.domElement.remove(); Game.renderer = null; }
-  Audio.stopMusic();
-  Game.user = null;
-  $('world-screen').style.display = 'none';
-  $('world-select').classList.remove('active');
-  $('login-screen').style.display = 'flex';
-  $('login-screen').style.opacity = '1';
-};
-
-function updateHUD() {
-  if (!Game.profile) return;
-  $('coins-display').textContent = Game.profile.coins;
-  $('gems-display').textContent = Game.profile.gems;
-  $('wood-display').textContent = Game.profile.wood;
-  $('stone-display').textContent = Game.profile.stone;
-  $('level-display').textContent = Game.profile.level;
-  $('hp-bar').style.width = clamp(Game.profile.hp, 0, 100) + '%';
-  $('energy-bar').style.width = clamp(Game.profile.energy, 0, 100) + '%';
-  $('xp-bar').style.width = clamp(Game.profile.xp % 100, 0, 100) + '%';
-}
-
-// ═══════════════════════════════════════════════════════════
-// WORLD INIT & TERRAIN (High-Resolution Mesh Matching Formula)
-// ═══════════════════════════════════════════════════════════
-function initWorld(worldId = 'main') {
-  const w = WORLDS[worldId];
-  const s = new THREE.Scene();
-  s.background = new THREE.Color(w.sky);
-  s.fog = new THREE.Fog(w.fog, 75, 210);
-  Game.scene = s;
-
-  Game.camera = new THREE.PerspectiveCamera(65, innerWidth / innerHeight, 0.1, 800);
-  Game.renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
-  Game.renderer.setSize(innerWidth, innerHeight);
-  Game.renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-  Game.renderer.shadowMap.enabled = true;
-  Game.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-  $('canvas-container').innerHTML = '';
-  $('canvas-container').appendChild(Game.renderer.domElement);
-
-  s.add(new THREE.HemisphereLight(0xffffff, 0x334155, 1.15));
-  const sun = new THREE.DirectionalLight(0xfffbeb, 2.2);
-  sun.position.set(45, 75, 45);
-  sun.castShadow = true;
-  sun.shadow.mapSize.width = 1024;
-  sun.shadow.mapSize.height = 1024;
-  s.add(sun);
-  Game.sunLight = sun;
-  s.add(new THREE.AmbientLight(0x404060, 0.45));
-
-  buildTerrain(worldId);
-  buildChoppableTrees(28);
-  buildChallengeTower(28, -28);
-  buildCreatureNests();
-  buildPortals(worldId);
-  buildReturnPortal(worldId);
-  restoreHouseSiteIfSaved();
-
-  const spawns = ['fire_dragon', 'ice_dragon', 'forest_dragon', 'rock_dragon', 'chimera', 'fox', 'beetle', 'cat', 'rabbit', 'wolf'];
-  spawns.forEach((t, i) => {
-    const a = (i / spawns.length) * Math.PI * 2;
-    const r = rand(15, 45);
-    spawnCreature(t, Math.cos(a) * r, Math.sin(a) * r);
-  });
-
-  buildPlayer();
-  setupInput();
-  setupMobileControls();
-  setupUI();
-  setWeather('clear');
-
-  const ld = $('loading');
-  ld.style.opacity = '0';
-  setTimeout(() => ld.style.display = 'none', 350);
-  $('world-badge').textContent = w.name;
-
-  Game.clock = new THREE.Clock();
-  Game.portalCooldown = 0;
-  animate();
-}
-
-function buildTerrain(worldId) {
-  const w = WORLDS[worldId];
-  const geo = new THREE.PlaneGeometry(300, 300, 128, 128);
-  const pos = geo.attributes.position;
-  for (let i = 0; i < pos.count; i++) {
-    const wx = pos.getX(i);
-    const wz = -pos.getY(i);
-    pos.setZ(i, getTerrainHeight(wx, wz));
-  }
-  geo.computeVertexNormals();
-  const ground = new THREE.Mesh(
-    geo,
-    new THREE.MeshStandardMaterial({ color: w.ground, roughness: 0.85, flatShading: worldId === 'ice' || worldId === 'sky' })
-  );
-  ground.rotation.x = -Math.PI / 2;
-  ground.receiveShadow = true;
-  Game.scene.add(ground);
-  Game.ground = ground;
-}
-
-// ═══════════════════════════════════════════════════════════
-// CHOPPABLE TREES & CAMPFIRES
-// ═══════════════════════════════════════════════════════════
-function buildChoppableTrees(count) {
-  for (let i = 0; i < count; i++) {
-    const x = rand(-85, 85), z = rand(-85, 85);
-    if (Math.hypot(x, z) < 10) continue;
-    const y = getTerrainHeight(x, z);
-    const g = new THREE.Group();
-    const trunk = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.32, 0.45, 3.2, 10),
-      new THREE.MeshStandardMaterial({ color: 0x5d3a1a, roughness: 0.85 })
-    );
-    trunk.position.y = 1.6;
-    trunk.castShadow = true;
-    g.add(trunk);
-
-    const crown = new THREE.Mesh(
-      new THREE.DodecahedronGeometry(1.75, 1),
-      new THREE.MeshStandardMaterial({ color: 0x2e7d32, roughness: 0.75 })
-    );
-    crown.position.y = 3.7;
-    crown.castShadow = true;
-    g.add(crown);
-
-    g.position.set(x, y, z);
-    Game.scene.add(g);
-    Game.trees.push({ mesh: g, hp: 3, position: g.position });
-    Game.collidables.push({ position: g.position, userData: { radius: 0.75 } });
-  }
-}
-
-function spawnCampfire(x, z) {
-  const y = getTerrainHeight(x, z);
-  const g = new THREE.Group();
-  for (let i = 0; i < 6; i++) {
-    const ang = (i / 6) * Math.PI * 2;
-    const stone = new THREE.Mesh(new THREE.DodecahedronGeometry(0.28, 0), new THREE.MeshStandardMaterial({ color: 0x555555 }));
-    stone.position.set(Math.cos(ang) * 0.8, 0.15, Math.sin(ang) * 0.8);
-    g.add(stone);
-  }
-  const flame = new THREE.Mesh(
-    new THREE.ConeGeometry(0.55, 1.3, 8),
-    new THREE.MeshBasicMaterial({ color: 0xff6d00 })
-  );
-  flame.position.y = 0.7;
-  g.add(flame);
-  g.position.set(x, y, z);
-  Game.scene.add(g);
-  Game.campfires.push({ mesh: g, flame, position: g.position });
-}
-
-// ═══════════════════════════════════════════════════════════
-// CHALLENGE TOWER WITH TRAPS
-// ═══════════════════════════════════════════════════════════
-function buildChallengeTower(x, z) {
-  const baseY = getTerrainHeight(x, z);
-  const g = new THREE.Group();
-  const levels = 5;
-  for (let i = 0; i < levels; i++) {
-    const plat = new THREE.Mesh(
-      new THREE.BoxGeometry(8, 0.7, 8),
-      new THREE.MeshStandardMaterial({ color: i % 2 === 0 ? 0x475569 : 0x334155, roughness: 0.7 })
-    );
-    plat.position.set(0, i * 2.8 + 1.5, 0);
-    plat.receiveShadow = true;
-    g.add(plat);
-    Game.platforms.push({ mesh: plat, worldOffset: new THREE.Vector3(x, baseY, z) });
-
-    for (let t = 0; t < 2; t++) {
-      const spike = new THREE.Mesh(
-        new THREE.ConeGeometry(0.45, 0.9, 6),
-        new THREE.MeshStandardMaterial({ color: 0xff4757, emissive: 0x990000 })
-      );
-      const sx = x + (t === 0 ? -1.8 : 1.8);
-      const sy = baseY + i * 2.8 + 2.2;
-      const sz = z + (t === 0 ? -1.5 : 1.5);
-      spike.position.set(sx, sy, sz);
-      Game.scene.add(spike);
-      Game.towerTraps.push({ mesh: spike, position: spike.position.clone(), hitCooldown: 0 });
-    }
-  }
-  const prize = new THREE.Mesh(
-    new THREE.OctahedronGeometry(0.8, 0),
-    new THREE.MeshStandardMaterial({ color: 0xffd700, emissive: 0xf59e0b, emissiveIntensity: 0.7 })
-  );
-  prize.position.set(x, baseY + levels * 2.8 + 2.4, z);
-  Game.scene.add(prize);
-  Game.coins.push({ mesh: prize, value: 250, baseY: prize.position.y, phase: 0, isTowerPrize: true });
-
-  g.position.set(x, baseY, z);
-  Game.scene.add(g);
-}
-
-// ═══════════════════════════════════════════════════════════
-// CREATURE NESTS, EGG STEALING, MOTHER PURSUIT & HATCHING
-// ═══════════════════════════════════════════════════════════
-function buildCreatureNests() {
-  const nestTypes = ['fire_dragon', 'ice_dragon', 'chimera', 'fox'];
-  nestTypes.forEach((typeId, idx) => {
-    const ang = (idx / nestTypes.length) * Math.PI * 2 + 0.5;
-    const x = Math.cos(ang) * 32;
-    const z = Math.sin(ang) * 32;
-    const y = getTerrainHeight(x, z);
-
-    const g = new THREE.Group();
-    const nestRing = new THREE.Mesh(
-      new THREE.TorusGeometry(1.1, 0.25, 8, 16),
-      new THREE.MeshStandardMaterial({ color: 0x7c4a21 })
-    );
-    nestRing.rotation.x = Math.PI / 2;
-    nestRing.position.y = 0.2;
-    g.add(nestRing);
-
-    const egg = new THREE.Mesh(
-      new THREE.SphereGeometry(0.42, 12, 12),
-      new THREE.MeshStandardMaterial({ color: CREATURE_TYPES[typeId].color, emissive: CREATURE_TYPES[typeId].color, emissiveIntensity: 0.3 })
-    );
-    egg.scale.set(0.85, 1.25, 0.85);
-    egg.position.y = 0.55;
-    g.add(egg);
-
-    g.position.set(x, y, z);
-    Game.scene.add(g);
-    Game.nests.push({ group: g, eggMesh: egg, typeId, hasEgg: true, respawnTimer: 0, position: g.position });
-  });
-}
-
-function stealEggFromNest(nest) {
-  if (!nest.hasEgg) return toast('العش فارغ حالياً', '#f1c40f');
-  nest.hasEgg = false;
-  nest.eggMesh.visible = false;
-  nest.respawnTimer = 45;
-
-  const t = CREATURE_TYPES[nest.typeId];
-  Game.profile.eggs.push({
-    id: 'egg_' + Date.now(),
-    typeId: nest.typeId,
-    name: `بيضة ${t.name}`,
-    progress: 15
-  });
-  Game.profile.save();
-  updateHUD();
-  Audio.sfx(t.sound);
-  toast(`سرقت بيضة ${t.name}، انتبه فالأم تلاحقك الآن`, '#ff4757', 3500);
-
-  Game.motherPursuit = { active: true, timer: 16, creatureType: nest.typeId };
-  spawnCreature(nest.typeId, nest.position.x + 2, nest.position.z + 2);
-}
-
-function hatchEgg(eggObj, method = 'coins') {
-  if (method === 'coins') {
-    if (Game.profile.coins < 80) return toast('تحتاج 80 عملة للتسريع', '#ff4757');
-    Game.profile.coins -= 80;
-  } else {
-    toast('جاري عرض مقطع إعلاني قصير لتسريع الفقس...', '#00d2ff', 2200);
-  }
-  const t = CREATURE_TYPES[eggObj.typeId] || CREATURE_TYPES.fox;
-  Game.profile.eggs = Game.profile.eggs.filter(e => e.id !== eggObj.id);
-  Game.profile.pets.push({
-    id: 'pet_' + Date.now(),
-    typeId: eggObj.typeId,
-    name: t.name,
-    level: Math.max(1, Math.floor(t.level * 0.5))
-  });
-  Game.profile.eggsStolen = (Game.profile.eggsStolen || 0) + 1;
-  addQuestProgress('egg', 1);
-  Game.profile.save();
-  updateHUD();
-  Audio.sfx('hatch');
-  toast(`فقست البيضة وحصلت على ${t.name}`, '#2ecc71', 3000);
-  renderProfile();
-}
-
-// ═══════════════════════════════════════════════════════════
-// HOUSE BLUEPRINT, PROGRESSIVE BUILD & THIEF LIMIT (1 ITEM)
-// ═══════════════════════════════════════════════════════════
-function selectBlueprint(bp) {
-  if (!Game.player) return;
-  const x = Math.round(Game.player.position.x + Math.sin(Game.player.rotation.y) * 5);
-  const z = Math.round(Game.player.position.z + Math.cos(Game.player.rotation.y) * 5);
-  const y = getTerrainHeight(x, z);
-
-  if (Game.houseBuildSite?.mesh) Game.scene.remove(Game.houseBuildSite.mesh);
-
-  const g = new THREE.Group();
-  const [w, h, d] = bp.size;
-  const wire = new THREE.Mesh(
-    new THREE.BoxGeometry(w, h, d),
-    new THREE.MeshBasicMaterial({ color: 0x00ff88, wireframe: true })
-  );
-  wire.position.y = h / 2;
-  g.add(wire);
-
-  const solidBox = new THREE.Mesh(
-    new THREE.BoxGeometry(w, h, d),
-    new THREE.MeshStandardMaterial({ color: bp.color, transparent: true, opacity: 0.15, roughness: 0.75 })
-  );
-  solidBox.position.y = h / 2;
-  solidBox.scale.y = 0.05;
-  solidBox.castShadow = true;
-  solidBox.receiveShadow = true;
-  g.add(solidBox);
-
-  g.position.set(x, y, z);
-  Game.scene.add(g);
-
-  Game.houseBuildSite = {
-    blueprintId: bp.id, name: bp.name, woodAdded: 0, woodNeeded: bp.woodNeeded,
-    size: bp.size, color: bp.color, completed: false, mesh: g, solidBox, wire, position: g.position
-  };
-  Game.profile.activeHouse = {
-    blueprintId: bp.id, name: bp.name, woodAdded: 0, woodNeeded: bp.woodNeeded,
-    size: bp.size, color: bp.color, completed: false, x, z
-  };
-  Game.profile.save();
-  closeAllPanels();
-  toast(`تم وضع مخطط ${bp.name} • اقطع الأشجار وأضف الحطب لإتمامه`, '#00d2ff', 3200);
-}
-
-function addWoodToHouse() {
-  const site = Game.houseBuildSite;
-  if (!site || site.completed) return;
-  if (Game.profile.wood <= 0) return toast('لا تملك حطباً • اقطع شجرة أولاً', '#ff4757');
-
-  Game.profile.wood -= 1;
-  site.woodAdded += 1;
-  const ratio = clamp(site.woodAdded / site.woodNeeded, 0.05, 1);
-  site.solidBox.scale.y = ratio;
-  site.solidBox.material.opacity = 0.25 + ratio * 0.7;
-  Audio.sfx('build');
-
-  if (site.woodAdded >= site.woodNeeded) {
-    site.completed = true;
-    site.wire.visible = false;
-    site.solidBox.material.opacity = 1;
-    Game.profile.housesCompleted = (Game.profile.housesCompleted || 0) + 1;
-    toast(`اكتمل بناء ${site.name} وصندوق التخزين جاهز`, '#2ecc71', 3500);
-    Audio.sfx('levelup');
-  } else {
-    toast(`تم إضافة حطب (${site.woodAdded}/${site.woodNeeded})`, '#f1c40f');
-  }
-
-  Game.profile.activeHouse = {
-    blueprintId: site.blueprintId, name: site.name,
-    woodAdded: site.woodAdded, woodNeeded: site.woodNeeded,
-    size: site.size, color: site.color, completed: site.completed,
-    x: site.position.x, z: site.position.z
-  };
-  Game.profile.save();
-  updateHUD();
-}
-
-function restoreHouseSiteIfSaved() {
-  const ah = Game.profile?.activeHouse;
-  if (!ah) return;
-  const y = getTerrainHeight(ah.x, ah.z);
-  const g = new THREE.Group();
-  const [w, h, d] = ah.size;
-  const wire = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), new THREE.MeshBasicMaterial({ color: 0x00ff88, wireframe: true }));
-  wire.position.y = h / 2;
-  wire.visible = !ah.completed;
-  g.add(wire);
-
-  const ratio = clamp(ah.woodAdded / ah.woodNeeded, 0.05, 1);
-  const solidBox = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), new THREE.MeshStandardMaterial({ color: ah.color, transparent: true, opacity: ah.completed ? 1 : 0.25 + ratio * 0.7 }));
-  solidBox.position.y = h / 2;
-  solidBox.scale.y = ratio;
-  g.add(solidBox);
-
-  g.position.set(ah.x, y, ah.z);
-  Game.scene.add(g);
-  Game.houseBuildSite = { ...ah, mesh: g, solidBox, wire, position: g.position };
-}
-
-// ═══════════════════════════════════════════════════════════
-// REALISTIC & SMOOTH AVATAR BUILDER (Grounded at y = 0)
-// ═══════════════════════════════════════════════════════════
-function createAvatarGroup(profile) {
-  const g = new THREE.Group();
-  const gender = profile.gender || 'neutral';
-  const outfit = OUTFITS[profile.outfit] || OUTFITS.casual;
-  const hairId = profile.hairstyle || 'spiky';
-  const bag = BACKPACKS[profile.backpack] || BACKPACKS.rucksack;
-  const expr = profile.expression || 'confident';
-
-  const skinMat = new THREE.MeshStandardMaterial({
-    color: profile.skinColor || 0xe0ac69,
-    roughness: 0.52,
-    metalness: 0.04
-  });
-  const clothMat = new THREE.MeshStandardMaterial({
-    color: outfit.color,
-    roughness: 0.72,
-    metalness: 0.08
-  });
-  const pantsMat = new THREE.MeshStandardMaterial({
-    color: outfit.pants || 0x334155,
-    roughness: 0.78,
-    metalness: 0.05
-  });
-  const accentMat = new THREE.MeshStandardMaterial({
-    color: outfit.accent || 0xe2e8f0,
-    roughness: 0.35,
-    metalness: 0.45
-  });
-  const hairMat = new THREE.MeshStandardMaterial({
-    color: gender === 'female' ? 0x5c381c : 0x362214,
-    roughness: 0.65,
-    metalness: 0.08
-  });
-
-  const widthScale = gender === 'male' ? 1.12 : (gender === 'female' ? 0.92 : 1.0);
-  // Shift body up by +0.90 so boot bottom rests right at local y = 0
-  const bodyLift = CHARACTER_FOOT_OFFSET;
-
-  const hips = new THREE.Mesh(new THREE.CapsuleGeometry(0.24, 0.16, 8, 16), pantsMat);
-  hips.rotation.z = Math.PI / 2;
-  hips.scale.set(1, widthScale, 0.9);
-  hips.position.y = 0.06 + bodyLift;
-  hips.castShadow = true;
-  g.add(hips);
-
-  const torso = new THREE.Mesh(new THREE.CapsuleGeometry(0.28, 0.52, 10, 18), clothMat);
-  torso.scale.set(widthScale, 1, 0.88);
-  torso.position.y = 0.58 + bodyLift;
-  torso.castShadow = true;
-  g.add(torso);
-
-  const collar = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.045, 8, 20), accentMat);
-  collar.rotation.x = Math.PI / 2;
-  collar.position.set(0, 0.98 + bodyLift, 0.02);
-  g.add(collar);
-
-  const headPivot = new THREE.Group();
-  headPivot.position.set(0, 1.15 + bodyLift, 0.03);
-
-  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.13, 0.22, 12), skinMat);
-  neck.position.y = 0.06;
-  headPivot.add(neck);
-
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.32, 20, 20), skinMat);
-  head.scale.set(0.92, 1.08, 0.96);
-  head.position.y = 0.42;
-  head.castShadow = true;
-  headPivot.add(head);
-
-  const nose = new THREE.Mesh(new THREE.ConeGeometry(0.055, 0.14, 8), skinMat);
-  nose.rotation.x = Math.PI / 2.2;
-  nose.position.set(0, 0.41, 0.34);
-  headPivot.add(nose);
-
-  [-0.11, 0.11].forEach(ex => {
-    const eyeWhite = new THREE.Mesh(new THREE.SphereGeometry(0.052, 10, 10), new THREE.MeshBasicMaterial({ color: 0xffffff }));
-    eyeWhite.scale.set(1, 0.8, 0.5);
-    eyeWhite.position.set(ex, 0.46, 0.28);
-    headPivot.add(eyeWhite);
-
-    const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.028, 8, 8), new THREE.MeshBasicMaterial({ color: 0x18181b }));
-    pupil.position.set(ex, 0.46, 0.30);
-    headPivot.add(pupil);
-
-    const brow = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.022, 0.03), hairMat);
-    brow.position.set(ex, 0.54, 0.29);
-    brow.rotation.z = expr === 'focused' ? (ex < 0 ? -0.22 : 0.22) : 0;
-    headPivot.add(brow);
-  });
-
-  const mouth = new THREE.Mesh(
-    new THREE.BoxGeometry(expr === 'smile' ? 0.13 : 0.09, 0.022, 0.03),
-    new THREE.MeshBasicMaterial({ color: 0x7c2d12 })
-  );
-  mouth.position.set(0, 0.28, 0.30);
-  headPivot.add(mouth);
-
-  const hairCap = new THREE.Mesh(new THREE.SphereGeometry(0.34, 18, 18), hairMat);
-  hairCap.scale.set(0.96, 1.05, 1.02);
-  hairCap.position.set(0, 0.47, -0.02);
-  headPivot.add(hairCap);
-
-  if (hairId === 'braid') {
-    const braid = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.04, 0.65, 10), hairMat);
-    braid.position.set(0, 0.12, -0.34);
-    braid.rotation.x = 0.18;
-    headPivot.add(braid);
-  } else if (hairId === 'bun') {
-    const bun = new THREE.Mesh(new THREE.SphereGeometry(0.14, 12, 12), hairMat);
-    bun.position.set(0, 0.78, -0.14);
-    headPivot.add(bun);
-  } else if (hairId === 'spiky') {
-    for (let i = -2; i <= 2; i++) {
-      const spike = new THREE.Mesh(new THREE.ConeGeometry(0.065, 0.22, 7), hairMat);
-      spike.position.set(i * 0.09, 0.82, 0.02);
-      spike.rotation.z = -i * 0.14;
-      headPivot.add(spike);
-    }
-  }
-  g.add(headPivot);
-
-  if (bag.color) {
-    const pack = new THREE.Mesh(new THREE.CapsuleGeometry(0.2, 0.34, 8, 12), new THREE.MeshStandardMaterial({ color: bag.color, roughness: 0.65 }));
-    pack.position.set(0, 0.64 + bodyLift, -0.31);
-    pack.castShadow = true;
-    g.add(pack);
-  }
-
-  const makeArm = side => {
-    const pivot = new THREE.Group();
-    pivot.position.set(side * 0.42 * widthScale, 0.88 + bodyLift, 0);
-    const sleeve = new THREE.Mesh(new THREE.CapsuleGeometry(0.095, 0.34, 8, 12), clothMat);
-    sleeve.position.y = -0.22;
-    sleeve.castShadow = true;
-    pivot.add(sleeve);
-
-    const forearm = new THREE.Mesh(new THREE.CapsuleGeometry(0.08, 0.3, 8, 12), skinMat);
-    forearm.position.y = -0.56;
-    pivot.add(forearm);
-    g.add(pivot);
-    return pivot;
-  };
-  const armL = makeArm(-1);
-  const armR = makeArm(1);
-
-  const makeLeg = side => {
-    const pivot = new THREE.Group();
-    pivot.position.set(side * 0.16 * widthScale, 0.02 + bodyLift, 0);
-    const thigh = new THREE.Mesh(new THREE.CapsuleGeometry(0.115, 0.36, 8, 12), pantsMat);
-    thigh.position.y = -0.24;
-    thigh.castShadow = true;
-    pivot.add(thigh);
-
-    const shin = new THREE.Mesh(new THREE.CapsuleGeometry(0.095, 0.34, 8, 12), pantsMat);
-    shin.position.y = -0.62;
-    pivot.add(shin);
-
-    const boot = new THREE.Mesh(new THREE.BoxGeometry(0.17, 0.12, 0.28), accentMat);
-    boot.position.set(0, -0.84, 0.04);
-    pivot.add(boot);
-    g.add(pivot);
-    return pivot;
-  };
-  const legL = makeLeg(-1);
-  const legR = makeLeg(1);
-
-  return { group: g, parts: { armL, armR, legL, legR, head: headPivot } };
-}
-
-function buildPlayer() {
-  if (Game.player) Game.scene.remove(Game.player);
-  const built = createAvatarGroup(Game.profile);
-  Game.avatar.parts = built.parts;
-  const startY = getTerrainHeight(0, 0);
-  built.group.position.set(0, startY, 0);
-  Game.scene.add(built.group);
-  Game.player = built.group;
-  updateWeaponModel();
-}
-
-function updateWeaponModel() {
-  if (Game.weaponMesh?.parent) Game.weaponMesh.parent.remove(Game.weaponMesh);
-  Game.weaponMesh = null;
-  const wId = Game.profile?.equippedWeapon;
-  if (!wId || wId === 'fists') return;
-  const blade = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.9, 0.04), new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.8 }));
-  blade.position.set(0, -0.68, 0.15);
-  blade.rotation.x = Math.PI / 2.4;
-  Game.avatar.parts?.armR?.add(blade);
-  Game.weaponMesh = blade;
-}
-
-// ═══════════════════════════════════════════════════════════
-// CREATURES WITH VISIBLE ANIMATIONS
-// ═══════════════════════════════════════════════════════════
-function spawnCreature(typeId, x, z) {
-  const t = CREATURE_TYPES[typeId];
-  if (!t || !Game.scene) return;
-  const g = new THREE.Group();
-  const mat = new THREE.MeshStandardMaterial({ color: t.color, emissive: t.emissive || 0x000000, emissiveIntensity: t.emissive ? 0.45 : 0, roughness: 0.55 });
-
-  const body = new THREE.Mesh(new THREE.SphereGeometry(0.55, 14, 12), mat);
-  body.scale.set(0.95, 0.85, 1.5);
-  body.position.y = 0.7;
-  body.castShadow = true;
-  g.add(body);
-
-  const headGroup = new THREE.Group();
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.35, 12, 12), mat);
-  head.position.set(0, 0, 0.25);
-  headGroup.add(head);
-
-  if (t.bodyParts === 'dragon' || t.bodyParts === 'chimera') {
-    const wingMat = new THREE.MeshStandardMaterial({ color: t.color, transparent: true, opacity: 0.75, side: THREE.DoubleSide });
-    [-1, 1].forEach(s => {
-      const wing = new THREE.Mesh(new THREE.PlaneGeometry(2.2, 1.3), wingMat);
-      wing.position.set(s * 1.1, 1.15, 0);
-      wing.rotation.y = s * 0.5;
-      wing.name = 'wing';
-      g.add(wing);
-    });
-  }
-  if (t.bodyParts === 'chimera') {
-    const horn = new THREE.Mesh(new THREE.ConeGeometry(0.12, 0.45, 6), new THREE.MeshBasicMaterial({ color: 0xffffff }));
-    horn.position.set(0, 0.35, 0.25);
-    headGroup.add(horn);
-  }
-  headGroup.position.set(0, 1.0, 0.65);
-  g.add(headGroup);
-
-  const legs = [];
-  [[-0.25, 0.45], [0.25, 0.45], [-0.25, -0.45], [0.25, -0.45]].forEach(([lx, lz]) => {
-    const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.55, 6), mat);
-    leg.position.set(lx, 0.28, lz);
-    legs.push(leg);
-    g.add(leg);
-  });
-
-  g.scale.setScalar(t.scale);
-  const y = getTerrainHeight(x, z);
-  g.position.set(x, y, z);
-  g.userData = {
-    typeId, sound: t.sound, level: t.level,
-    state: 'walking', stateTimer: rand(2, 4),
-    direction: rand(0, Math.PI * 2),
-    baseSpeed: t.speed * 0.35,
-    legs, headGroup, phase: rand(0, 6)
-  };
-  Game.scene.add(g);
-  Game.animals.push(g);
-}
-
-function updateAnimals(dt) {
-  if (!Game.player) return;
-  const pPos = Game.player.position;
-
-  Game.animals.forEach(a => {
-    const u = a.userData;
-    u.stateTimer -= dt;
-    u.phase += dt * 7;
-
-    const dToPlayer = dist2D(pPos, a.position);
-    const pursuingPlayer = Game.motherPursuit.active && Game.motherPursuit.creatureType === u.typeId;
-
-    if (pursuingPlayer) {
-      u.state = 'running';
-      u.direction = Math.atan2(pPos.z - a.position.z, pPos.x - a.position.x);
-      if (dToPlayer < 2.2) {
-        Game.profile.hp = clamp(Game.profile.hp - 12 * dt, 0, 100);
-        $('hp-bar').style.width = Game.profile.hp + '%';
-        damageFlash();
+  <!-- =======================================================================
+       منطق الواجهة التفاعلية، إدارة الحالة، وجزيئات الخلفية (Interactive JS)
+       ======================================================================= -->
+  <script>
+    (function () {
+      'use strict';
+
+      // =====================================================================
+      // 1. بيانات الحالة والتجهيزات والعوالم والمخلوقات
+      // =====================================================================
+      const state = {
+        activeTab: 'customization', // 'store' | 'customization' | 'worlds' | 'codex'
+        activeCategory: 'suits',    // 'suits' | 'jetpacks' | 'hair' | 'tools'
+        selectedItemId: 'suit-base',
+        credits: 1450,
+        health: 88,
+        shield: 94,
+        currentWorldId: 'night-forest',
+        hudHidden: false,
+
+        ownedIds: new Set([
+          'suit-base',
+          'jet-none',
+          'hair-cyan',
+          'tool-laser-axe'
+        ]),
+
+        equipped: {
+          suits: 'suit-base',
+          jetpacks: 'jet-none',
+          hair: 'hair-cyan',
+          tools: 'tool-laser-axe'
+        }
+      };
+
+      const catalog = {
+        suits: [
+          {
+            id: 'suit-base',
+            name: 'بدلة النجاة الأساسية',
+            price: 0,
+            tag: 'أساسي',
+            desc: 'بدلة رمادية داكنة أساسية بدون إضافات، تمنح توازناً أولياً للبقاء واستكشاف البيئات المجهولة.',
+            defense: 15,
+            energy: 20,
+            torsoFill: '#232c3b',
+            accentColor: '#7d9bb5'
+          },
+          {
+            id: 'suit-tactical',
+            name: 'درع تكتيكي مضيء',
+            price: 450,
+            tag: 'درع طاقي',
+            desc: 'صفائح درع تكتيكية مزودة بمسارات ضوئية فيروزية تمتص الصدمات وتعزز مقاومة الإشعاع البيئي.',
+            defense: 68,
+            energy: 60,
+            torsoFill: '#0e2235',
+            accentColor: '#00f2fe'
+          },
+          {
+            id: 'suit-bioweave',
+            name: 'بدلة النسيج الحيوي الذهبية',
+            price: 850,
+            tag: 'نخبة حيوية',
+            desc: 'ألياف عضوية متطورة تتفاعل مع نبض الطاقة الحيوية وتدعم التناغم مع المخلوقات المروّضة.',
+            defense: 88,
+            energy: 92,
+            torsoFill: '#1a202c',
+            accentColor: '#f1c40f'
+          }
+        ],
+        jetpacks: [
+          {
+            id: 'jet-none',
+            name: 'بدون حقيبة نفاثة',
+            price: 0,
+            tag: 'قياسي',
+            desc: 'حركة أرضية مباشرة دون نظام دفع خلفي.',
+            defense: 0,
+            energy: 10,
+            active: false,
+            sparkColor: '#00f2fe'
+          },
+          {
+            id: 'jet-cyan',
+            name: 'حقيبة الدفع الفيروزية',
+            price: 520,
+            tag: 'جزيئات ضوئية',
+            desc: 'حقيبة ظهر تقنية تطلق جزيئات فيروزية متوهجة للقفزات الطويلة والانزلاق فوق المنحدرات.',
+            defense: 25,
+            energy: 75,
+            active: true,
+            sparkColor: '#00f2fe'
+          },
+          {
+            id: 'jet-gold-flux',
+            name: 'حقيبة التدفق الشمسي الذهبية',
+            price: 920,
+            tag: 'تحليق متقدم',
+            desc: 'نظام دفع عالي الكفاءة يولد شرارات ذهبية وفيروزية مع استهلاك منخفض للطاقة.',
+            defense: 40,
+            energy: 96,
+            active: true,
+            sparkColor: '#f1c40f'
+          }
+        ],
+        hair: [
+          {
+            id: 'hair-cyan',
+            name: 'خصلة فيروزية هادئة',
+            price: 0,
+            tag: 'متوهج',
+            desc: 'قصة شعر انسيابية ذات أطراف مضيئة باللون الفيروزي تعزز الرؤية في الظلام.',
+            defense: 5,
+            energy: 35,
+            color: '#00f2fe'
+          },
+          {
+            id: 'hair-gold-crest',
+            name: 'تاج الطاقة الذهبي',
+            price: 380,
+            tag: 'هولوجرامي',
+            desc: 'خصلات متوهجة بتدرجات ذهبية دافئة مع ألياف ضوئية نشطة.',
+            defense: 10,
+            energy: 65,
+            color: '#f1c40f'
+          },
+          {
+            id: 'hair-aurora-pulse',
+            name: 'نبض الشفق الحيوي',
+            price: 640,
+            tag: 'نبض حيوي',
+            desc: 'توهج متناغم يتفاعل مع كثافة الطاقة المحيطة بالمستكشف.',
+            defense: 15,
+            energy: 85,
+            color: '#38f9d7'
+          }
+        ],
+        tools: [
+          {
+            id: 'tool-laser-axe',
+            name: 'فأس ليزري',
+            price: 0,
+            tag: 'بناء وحصاد',
+            desc: 'أداة قطع هولوجرامية عالية الدقة لجمع الأخشاب الحيوية والكريستالات وتشييد القواعد.',
+            defense: 20,
+            energy: 45,
+            color: '#00f2fe',
+            shape: 'axe'
+          },
+          {
+            id: 'tool-energy-bow',
+            name: 'قوس طاقة',
+            price: 490,
+            tag: 'دفاع بعيد المدى',
+            desc: 'قوس ضوئي يطلق نبضات طاقة مركزة للدفاع ضد التهديدات البرية.',
+            defense: 55,
+            energy: 78,
+            color: '#f1c40f',
+            shape: 'bow'
+          },
+          {
+            id: 'tool-taming-band',
+            name: 'سوار الترويض على المعصم',
+            price: 680,
+            tag: 'ترويض وركوب',
+            desc: 'جهاز معصم هولوجرامي يبث موجات تهدئة حيوية لتحويل المخلوقات البرية إلى رفاق مروّضين.',
+            defense: 35,
+            energy: 95,
+            color: '#00f2fe',
+            shape: 'band'
+          }
+        ]
+      };
+
+      const worlds = [
+        {
+          id: 'night-forest',
+          name: 'غابة الليل المتوهجة',
+          badge: 'أبواغ فيروزية وفطر عملاق',
+          lighting: 'إضاءة ليلية درامية + ضباب أخضر وفيروزي',
+          desc: 'أشجار عملاقة تتشابك مع فطر ونباتات مضيئة في الظلام، تنبعث منها إضاءات نقطية خافتة وجزيئات حية.',
+          gradient: 'radial-gradient(circle at 50% 30%, rgba(0, 242, 254, 0.2), rgba(5, 26, 28, 0.92) 65%, #03090c 100%)',
+          accent: '#00f2fe',
+          particleColor: '0, 242, 254'
+        },
+        {
+          id: 'magma-valley',
+          name: 'وادي الصهارة والسبج',
+          badge: 'صخور سبج وأنهار حمم',
+          lighting: 'تباين ناري داكن + توهج برتقالي وذهبي',
+          desc: 'منحدرات من السبج الأسود اللامع تتخللها أنهار صهارة برتقالية متوهجة مع بلورات حرارية نادرة.',
+          gradient: 'radial-gradient(circle at 50% 35%, rgba(255, 115, 29, 0.22), rgba(26, 10, 8, 0.94) 68%, #070303 100%)',
+          accent: '#ff7b29',
+          particleColor: '255, 140, 45'
+        },
+        {
+          id: 'auroral-peaks',
+          name: 'القمم الجليدية الشفقية',
+          badge: 'شفق قطبي أخضر وبنفسجي',
+          lighting: 'جليد عاكس + ستائر شفق قطبي متموجة',
+          desc: 'قمم ثلجية شاهقة تعكس أضواء الشفق القطبي الأخضر والبنفسجي في سماء قطبية صافية وضباب بارد.',
+          gradient: 'radial-gradient(circle at 50% 25%, rgba(168, 85, 247, 0.2), rgba(8, 24, 38, 0.92) 68%, #040b14 100%)',
+          accent: '#a855f7',
+          particleColor: '120, 255, 214'
+        },
+        {
+          id: 'sky-islands',
+          name: 'الجزر السماوية المعلقة',
+          badge: 'صخور طائرة وجسور ضوئية',
+          lighting: 'أفق سماوي عميق + شلالات وجسور طاقة',
+          desc: 'كتل صخرية معلقة في السماء تربطها جسور ضوئية وشلالات تنساب نحو السحب في فضاء مفتوح.',
+          gradient: 'radial-gradient(circle at 50% 30%, rgba(241, 196, 15, 0.18), rgba(10, 22, 42, 0.92) 68%, #040914 100%)',
+          accent: '#f1c40f',
+          particleColor: '241, 196, 15'
+        }
+      ];
+
+      const creatures = [
+        {
+          id: 'dragon',
+          name: 'تنين الشفق الحيوي',
+          type: 'مخلوق مجنّح ضخم',
+          habitat: 'القمم الجليدية الشفقية والجزر السماوية',
+          tamed: true,
+          wildNote: 'عروق متوهجة باللون الأحمر القرمزي مع هجمات نارية وطاقية عنيفة.',
+          tamedNote: 'توهج فيروزي هادئ على امتداد الأجنحة والعروق مع سرج ضوئي للركوب والتحليق الحر.',
+          saddleLabel: 'سرج ضوئي للطيران نشط'
+        },
+        {
+          id: 'wolf',
+          name: 'ذئب الليل الكريستالي',
+          type: 'مفترس سريع للحزم',
+          habitat: 'غابة الليل المتوهجة',
+          tamed: true,
+          wildNote: 'عروق متوهجة باللون الأحمر ونظرات عدائية عند اقتراب المستكشف.',
+          tamedNote: 'توهج فيروزي هادئ يرافق الخطوات السريعة مع سرج ضوئي خفيف للركوب الأرضي.',
+          saddleLabel: 'سرج ضوئي للركوب الأرضي نشط'
+        },
+        {
+          id: 'tiger',
+          name: 'نمر السبج الناري',
+          type: 'صياد خفي عالي الرشاقة',
+          habitat: 'وادي الصهارة والسبج',
+          tamed: false,
+          wildNote: 'عروق متوهجة باللون الأحمر الناري وتخفٍ سريع بين صخور السبج.',
+          tamedNote: 'يتحول إلى توهج فيروزي متوازن بعد الترويض ويفتح سرجاً ضوئياً للقفز والركوب.',
+          saddleLabel: 'بانتظار الترويض لتفعيل السرج'
+        },
+        {
+          id: 'leviathan',
+          name: 'مخلوق طائر — ليفياثان السحب',
+          type: 'كائن سماوي انسيابي',
+          habitat: 'الجزر السماوية المعلقة',
+          tamed: false,
+          wildNote: 'عروق متوهجة باللون الأحمر أثناء الدوران حول الجزر المعلقة.',
+          tamedNote: 'توهج فيروزي هادئ وسرج ضوئي واسع للرحلات الطويلة بين الجزر.',
+          saddleLabel: 'بانتظار الترويض لتفعيل السرج'
+        }
+      ];
+
+      // =====================================================================
+      // 2. عناصر الواجهة (DOM References)
+      // =====================================================================
+      const views = {
+        store: document.getElementById('view-customization-store'),
+        customization: document.getElementById('view-customization-store'),
+        worlds: document.getElementById('view-worlds'),
+        codex: document.getElementById('view-codex')
+      };
+
+      const navTabs = document.querySelectorAll('.nav-tab[data-tab]');
+      const categoryBtns = document.querySelectorAll('.cat-btn[data-category]');
+      const itemsGrid = document.getElementById('items-grid');
+      const worldsGrid = document.getElementById('worlds-grid');
+      const codexGrid = document.getElementById('codex-grid');
+
+      const toastEl = document.getElementById('holo-toast');
+      const toastTextEl = document.getElementById('holo-toast-text');
+      const toastCloseBtn = document.getElementById('holo-toast-close');
+
+      // =====================================================================
+      // 3. دوال المساعدة والإشعارات
+      // =====================================================================
+      let toastTimer = null;
+      function showToast(message) {
+        toastTextEl.textContent = message;
+        toastEl.classList.remove('hidden');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          toastEl.classList.add('hidden');
+        }, 3800);
       }
-    } else if (u.stateTimer <= 0) {
-      u.state = pick(['walking', 'eating', 'running']);
-      u.stateTimer = u.state === 'eating' ? rand(2.2, 3.5) : rand(2.5, 4.5);
-      u.direction = rand(0, Math.PI * 2);
-      if (Math.random() < 0.35) Audio.sfx(u.sound);
-    }
 
-    let spd = 0;
-    if (u.state === 'walking') spd = u.baseSpeed;
-    else if (u.state === 'running') spd = u.baseSpeed * 2.3;
-
-    if (spd > 0) {
-      const nx = clamp(a.position.x + Math.cos(u.direction) * spd * dt, -95, 95);
-      const nz = clamp(a.position.z + Math.sin(u.direction) * spd * dt, -95, 95);
-      a.position.x = nx;
-      a.position.z = nz;
-      a.rotation.y = Math.atan2(Math.cos(u.direction), Math.sin(u.direction));
-      u.legs.forEach((leg, idx) => {
-        leg.rotation.x = Math.sin(u.phase + idx * 1.5) * (u.state === 'running' ? 0.75 : 0.4);
+      toastCloseBtn.addEventListener('click', () => {
+        toastEl.classList.add('hidden');
       });
-      u.headGroup.rotation.x = 0;
-    } else {
-      u.headGroup.rotation.x = 0.55 + Math.sin(u.phase * 1.5) * 0.1;
-      u.legs.forEach(leg => leg.rotation.x = 0);
-    }
 
-    const wing = a.getObjectByName('wing');
-    if (wing) wing.rotation.z = Math.sin(u.phase * 1.6) * 0.45;
-
-    const baseTerrainY = getTerrainHeight(a.position.x, a.position.z);
-    const hop = spd > 0 ? Math.abs(Math.sin(u.phase)) * 0.12 : 0;
-    a.position.y = baseTerrainY + hop;
-  });
-}
-
-// ═══════════════════════════════════════════════════════════
-// PLAYER MOVEMENT, TERRAIN LOCK & INTERACTIONS
-// ═══════════════════════════════════════════════════════════
-function setupInput() {
-  addEventListener('keydown', e => {
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
-    Game.keys[e.code] = true;
-    if (e.code === 'Space' && Game.isGrounded && Game.player) {
-      Game.velocityY = 12;
-      Game.isGrounded = false;
-      Audio.sfx('jump');
-    }
-    if (e.code === 'KeyB') toggleBuild();
-    if (e.code === 'KeyM') toggleMap();
-    if (e.code === 'KeyE') interactNearby();
-    if (e.code === 'KeyF') chopOrAttack();
-    if (e.code === 'Escape') { closeAllPanels(); toggleMap(false); toggleBuild(false); }
-  });
-  addEventListener('keyup', e => Game.keys[e.code] = false);
-
-  if (!Game.renderer) return;
-  const canvas = Game.renderer.domElement;
-  canvas.addEventListener('mousedown', e => {
-    if (document.querySelector('.panel-overlay.active') || $('map-modal').classList.contains('active')) return;
-    if (Game.buildMode) {
-      if (e.button === 0) placeBlock();
-      else if (e.button === 2) removeBlock();
-      return;
-    }
-    if (e.button === 2 || e.button === 1) {
-      Game.isRotating = true; Game.lastMouseX = e.clientX; Game.lastMouseY = e.clientY;
-    } else if (e.button === 0) {
-      chopOrAttack();
-    }
-  });
-  addEventListener('mouseup', () => { Game.isRotating = false; });
-  addEventListener('mousemove', e => {
-    if (Game.isRotating) {
-      Game.yaw -= (e.clientX - Game.lastMouseX) * 0.004;
-      Game.pitch = clamp(Game.pitch + (e.clientY - Game.lastMouseY) * 0.004, -0.4, 1.1);
-      Game.lastMouseX = e.clientX; Game.lastMouseY = e.clientY;
-    }
-  });
-  addEventListener('contextmenu', e => e.preventDefault());
-  addEventListener('resize', () => {
-    if (!Game.camera || !Game.renderer) return;
-    Game.camera.aspect = innerWidth / innerHeight;
-    Game.camera.updateProjectionMatrix();
-    Game.renderer.setSize(innerWidth, innerHeight);
-  });
-}
-
-function setupMobileControls() {
-  if (!Game.isMobile) return;
-  const zone = $('joystick-zone'), knob = $('joystick-knob');
-  let active = false, sx = 0, sy = 0;
-  zone.addEventListener('touchstart', e => {
-    e.preventDefault(); active = true;
-    const r = zone.getBoundingClientRect();
-    sx = r.left + r.width / 2; sy = r.top + r.height / 2;
-  }, { passive: false });
-  zone.addEventListener('touchmove', e => {
-    if (!active) return;
-    e.preventDefault();
-    const t = e.touches[0];
-    let dx = t.clientX - sx, dy = t.clientY - sy;
-    const len = Math.min(Math.hypot(dx, dy), 48);
-    const ang = Math.atan2(dy, dx);
-    dx = Math.cos(ang) * len; dy = Math.sin(ang) * len;
-    knob.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
-    Game.joystickX = dx / 48; Game.joystickY = dy / 48;
-  }, { passive: false });
-  zone.addEventListener('touchend', () => { active = false; knob.style.transform = 'translate(-50%,-50%)'; Game.joystickX = Game.joystickY = 0; });
-
-  $('jump-btn').onclick = () => { if (Game.isGrounded) { Game.velocityY = 12; Game.isGrounded = false; Audio.sfx('jump'); } };
-  $('attack-btn').onclick = () => chopOrAttack();
-  $('sprint-btn').onclick = () => { Game.isSprinting = !Game.isSprinting; };
-  $('build-btn').onclick = () => toggleBuild();
-}
-
-function chopOrAttack() {
-  if (!Game.player) return;
-  Game.attackAnimTime = 0.28;
-
-  for (let i = Game.trees.length - 1; i >= 0; i--) {
-    const tr = Game.trees[i];
-    if (dist2D(Game.player.position, tr.position) < 3.6) {
-      const hasAxe = Game.profile.crafted.includes('axe');
-      tr.hp -= hasAxe ? 2 : 1;
-      Audio.sfx('chop');
-      if (tr.hp <= 0) {
-        const gained = hasAxe ? 4 : 2;
-        Game.profile.wood += gained;
-        Game.profile.treesChopped = (Game.profile.treesChopped || 0) + 1;
-        addQuestProgress('chop', 1);
-        Game.scene.remove(tr.mesh);
-        Game.trees.splice(i, 1);
-        toast(`تم قطع الشجرة وجمع +${gained} حطب`, '#2ecc71');
-      } else {
-        toast('جاري تقطيع الشجرة...', '#f1c40f', 900);
+      function findItemById(id) {
+        for (const cat of Object.keys(catalog)) {
+          const found = catalog[cat].find((item) => item.id === id);
+          if (found) return { item: found, category: cat };
+        }
+        return null;
       }
-      Game.profile.save();
-      updateHUD();
-      return;
-    }
-  }
 
-  if (Game.thiefEvent.active && Game.thiefEvent.mesh) {
-    if (dist2D(Game.player.position, Game.thiefEvent.mesh.position) < 3.5) {
-      Game.profile.stash.push(Game.thiefEvent.stolenItem);
-      Game.scene.remove(Game.thiefEvent.mesh);
-      Game.thiefEvent = { active: false, mesh: null, stolenItem: null, timer: 0 };
-      Game.profile.save();
-      Audio.sfx('levelup');
-      toast('استعدت الغرض المسروق بنجاح', '#2ecc71');
-      return;
-    }
-  }
+      // =====================================================================
+      // 4. تحديث الشريط العلوي (Top HUD)
+      // =====================================================================
+      function updateTopHud() {
+        const tamedCount = creatures.filter((c) => c.tamed).length;
+        const activeWorld = worlds.find((w) => w.id === state.currentWorldId) || worlds[0];
 
-  Audio.sfx('attack');
-}
+        document.getElementById('hud-health-val').textContent = `${state.health}%`;
+        document.getElementById('hud-health-bar').style.width = `${state.health}%`;
 
-function interactNearby() {
-  if (!Game.player) return;
-  for (const nest of Game.nests) {
-    if (nest.hasEgg && dist2D(Game.player.position, nest.position) < 3.6) {
-      stealEggFromNest(nest);
-      return;
-    }
-  }
-  if (Game.houseBuildSite && dist2D(Game.player.position, Game.houseBuildSite.position) < 5.2) {
-    if (!Game.houseBuildSite.completed) {
-      addWoodToHouse();
-    } else {
-      $('profile-panel').classList.add('active');
-      renderProfile();
-    }
-    return;
-  }
-  if (Game.returnPortal && dist2D(Game.player.position, Game.returnPortal.position) < 4.5) {
-    clearWorld();
-    enterWorld('main');
-  }
-}
+        document.getElementById('hud-shield-val').textContent = `${state.shield}%`;
+        document.getElementById('hud-shield-bar').style.width = `${state.shield}%`;
 
-function updateActionPrompt() {
-  const prompt = $('action-prompt');
-  if (!Game.player) return prompt.classList.remove('active');
+        document.getElementById('hud-tamed-count').textContent = `${tamedCount} / ${creatures.length}`;
+        document.getElementById('hud-credits').textContent = state.credits.toLocaleString('en-US');
 
-  for (const nest of Game.nests) {
-    if (nest.hasEgg && dist2D(Game.player.position, nest.position) < 3.6) {
-      const t = CREATURE_TYPES[nest.typeId];
-      prompt.classList.add('active');
-      $('ap-title').textContent = `عش ${t.name}`;
-      $('ap-desc').textContent = 'أخذ البيضة سيؤدي إلى مطاردة الأم لك';
-      $('ap-btns').innerHTML = `<button style="background:#e67e22;color:#fff;" onclick="window.__stealEgg()">سرقة البيضة (E)</button>`;
-      return;
-    }
-  }
+        document.getElementById('hud-world-name').textContent = activeWorld.name;
+        document.getElementById('hud-world-dot').style.backgroundColor = activeWorld.accent;
+        document.getElementById('hud-world-dot').style.boxShadow = `0 0 8px ${activeWorld.accent}`;
 
-  if (Game.houseBuildSite && dist2D(Game.player.position, Game.houseBuildSite.position) < 5.2) {
-    prompt.classList.add('active');
-    if (!Game.houseBuildSite.completed) {
-      $('ap-title').textContent = Game.houseBuildSite.name;
-      $('ap-desc').textContent = `الحطب المضاف: ${Game.houseBuildSite.woodAdded}/${Game.houseBuildSite.woodNeeded} (لديك ${Game.profile.wood} حطب)`;
-      $('ap-btns').innerHTML = `<button style="background:#2ecc71;color:#000;" onclick="window.__addWood()">إضافة حطب (E)</button>`;
-    } else {
-      $('ap-title').textContent = `منزلك: ${Game.houseBuildSite.name}`;
-      $('ap-desc').textContent = `صندوق التخزين (${Game.profile.stash.length} أغراض) • البيض (${Game.profile.eggs.length})`;
-      $('ap-btns').innerHTML = `<button style="background:#00d2ff;color:#000;" onclick="window.__openHouseProfile()">إدارة المنزل والبيض</button>`;
-    }
-    return;
-  }
-
-  prompt.classList.remove('active');
-}
-window.__stealEgg = () => { for (const n of Game.nests) if (n.hasEgg && dist2D(Game.player.position, n.position) < 3.6) stealEggFromNest(n); };
-window.__addWood = () => addWoodToHouse();
-window.__openHouseProfile = () => { $('profile-panel').classList.add('active'); renderProfile(); };
-
-function getSupportHeightAt(x, z, currentY) {
-  let supportY = getTerrainHeight(x, z);
-  for (const pl of Game.platforms) {
-    const off = pl.worldOffset || new THREE.Vector3(0, 0, 0);
-    const px = pl.mesh.position.x + off.x;
-    const pz = pl.mesh.position.z + off.z;
-    const top = pl.mesh.position.y + off.y + 0.35;
-    if (Math.abs(x - px) < 4.2 && Math.abs(z - pz) < 4.2 && currentY >= top - 0.8 && currentY <= top + 1.4) {
-      supportY = Math.max(supportY, top);
-    }
-  }
-  return supportY;
-}
-
-function updatePlayer(dt) {
-  const p = Game.player;
-  if (!p) return;
-
-  let mx = 0, mz = 0;
-  if (Game.keys.KeyW || Game.keys.ArrowUp) mz -= 1;
-  if (Game.keys.KeyS || Game.keys.ArrowDown) mz += 1;
-  if (Game.keys.KeyA || Game.keys.ArrowLeft) mx -= 1;
-  if (Game.keys.KeyD || Game.keys.ArrowRight) mx += 1;
-  if (Game.isMobile) { mx += Game.joystickX; mz += Game.joystickY; }
-
-  const sprinting = Game.keys.ShiftLeft || Game.keys.ShiftRight || Game.isSprinting;
-  const len = Math.hypot(mx, mz);
-  const moving = len > 0.1;
-  const speed = 9.5 * (sprinting && Game.profile.energy > 5 ? 1.7 : 1) * (Game.weatherSpeedModifier || 1);
-
-  if (moving) {
-    mx /= len; mz /= len;
-    const fx = -Math.sin(Game.yaw), fz = -Math.cos(Game.yaw);
-    const rx = Math.cos(Game.yaw), rz = -Math.sin(Game.yaw);
-    const wx = -mz * fx + mx * rx;
-    const wz = -mz * fz + mx * rz;
-
-    const nx = clamp(p.position.x + wx * speed * dt, -120, 120);
-    const nz = clamp(p.position.z + wz * speed * dt, -120, 120);
-    let blocked = false;
-    for (const c of Game.collidables) {
-      if (dist2D({ x: nx, z: nz }, c.position) < (c.userData.radius || 1) + 0.45) { blocked = true; break; }
-    }
-    if (!blocked) {
-      p.position.x = nx;
-      p.position.z = nz;
-      // Immediately snap grounded player to slope/terrain height so character never sinks into hills
-      if (Game.isGrounded) {
-        p.position.y = getSupportHeightAt(nx, nz, p.position.y);
+        document.getElementById('world-atmosphere-layer').style.background = activeWorld.gradient;
       }
-    }
-    p.rotation.y = Math.atan2(wx, wz);
 
-    if (Game.avatar.parts.legL) {
-      const t = performance.now() * 0.014;
-      Game.avatar.parts.legL.rotation.x = Math.sin(t) * 0.65;
-      Game.avatar.parts.legR.rotation.x = -Math.sin(t) * 0.65;
-      Game.avatar.parts.armL.rotation.x = -Math.sin(t) * 0.55;
-      Game.avatar.parts.armR.rotation.x = Math.sin(t) * 0.55;
-      if (Game.avatar.parts.head) Game.avatar.parts.head.rotation.x = Math.sin(t * 2) * 0.04;
-    }
-  } else if (Game.avatar.parts.legL) {
-    ['legL', 'legR', 'armL', 'armR'].forEach(k => { if (Game.avatar.parts[k]) Game.avatar.parts[k].rotation.x *= 0.8; });
-    if (Game.avatar.parts.head) Game.avatar.parts.head.rotation.x *= 0.8;
-  }
+      // =====================================================================
+      // 5. تحديث مجسم الشخصية الهولوجرامي في المنتصف
+      // =====================================================================
+      function updateExplorerRig() {
+        const suit = catalog.suits.find((i) => i.id === state.equipped.suits) || catalog.suits[0];
+        const jet = catalog.jetpacks.find((i) => i.id === state.equipped.jetpacks) || catalog.jetpacks[0];
+        const hair = catalog.hair.find((i) => i.id === state.equipped.hair) || catalog.hair[0];
+        const tool = catalog.tools.find((i) => i.id === state.equipped.tools) || catalog.tools[0];
 
-  if (Game.attackAnimTime > 0) {
-    Game.attackAnimTime -= dt;
-    if (Game.avatar.parts.armR) Game.avatar.parts.armR.rotation.x = -Math.sin((1 - Game.attackAnimTime / 0.28) * Math.PI) * 1.8;
-  }
+        // البدلة والدرع
+        const torso = document.getElementById('rig-torso');
+        const accent = document.getElementById('rig-armor-accent');
+        const core = document.getElementById('rig-core');
+        torso.setAttribute('fill', suit.torsoFill);
+        torso.setAttribute('stroke', suit.accentColor);
+        accent.setAttribute('stroke', suit.accentColor);
+        core.setAttribute('fill', suit.accentColor);
 
-  const supportY = getSupportHeightAt(p.position.x, p.position.z, p.position.y);
+        // الحقيبة النفاثة والجزيئات
+        const jetGroup = document.getElementById('rig-jetpack');
+        const jetParticles = document.getElementById('rig-jet-particles');
+        const nozzleL = document.getElementById('rig-jet-nozzle-l');
+        const nozzleR = document.getElementById('rig-jet-nozzle-r');
 
-  if (!Game.isGrounded || p.position.y > supportY + 0.01) {
-    Game.velocityY -= 26 * dt;
-    p.position.y += Game.velocityY * dt;
-  }
+        if (jet.active) {
+          jetGroup.setAttribute('opacity', '1');
+          jetParticles.setAttribute('opacity', '1');
+          nozzleL.setAttribute('fill', jet.sparkColor);
+          nozzleR.setAttribute('fill', jet.sparkColor);
+          jetParticles.querySelectorAll('circle').forEach((c) => c.setAttribute('fill', jet.sparkColor));
+        } else {
+          jetGroup.setAttribute('opacity', '0.2');
+          jetParticles.setAttribute('opacity', '0');
+        }
 
-  if (p.position.y <= supportY) {
-    p.position.y = supportY;
-    Game.velocityY = 0;
-    Game.isGrounded = true;
-  }
+        // الشعر المتوهج
+        const hairEl = document.getElementById('rig-hair');
+        hairEl.setAttribute('stroke', hair.color);
+        hairEl.setAttribute('fill', `${hair.color}38`);
 
-  Game.towerTraps.forEach(tr => {
-    tr.hitCooldown = Math.max(0, tr.hitCooldown - dt);
-    if (tr.hitCooldown <= 0 && p.position.distanceTo(tr.position) < 1.3) {
-      tr.hitCooldown = 1.2;
-      Game.profile.hp = clamp(Game.profile.hp - 15, 0, 100);
-      $('hp-bar').style.width = Game.profile.hp + '%';
-      damageFlash();
-      Audio.sfx('hurt');
-      toast('أصبت بفخ في برج التحديات', '#ff4757');
-    }
-  });
+        // الأداة الهولوجرامية
+        const toolBlade = document.getElementById('rig-tool-blade');
+        toolBlade.setAttribute('stroke', tool.color);
+        toolBlade.setAttribute('fill', `${tool.color}44`);
 
-  if (Game.motherPursuit.active) {
-    Game.motherPursuit.timer -= dt;
-    if (Game.motherPursuit.timer <= 0) {
-      Game.motherPursuit.active = false;
-      toast('نجحت في الهروب من الأم الغاضبة', '#2ecc71');
-    }
-  }
-
-  if (Game.thiefEvent.active && Game.thiefEvent.mesh) {
-    Game.thiefEvent.timer -= dt;
-    Game.thiefEvent.mesh.position.x += 2.2 * dt;
-    if (Game.thiefEvent.timer <= 0) {
-      Game.scene.remove(Game.thiefEvent.mesh);
-      Game.thiefEvent = { active: false, mesh: null, stolenItem: null, timer: 0 };
-      toast('هرب المتسلل ومعه غرض واحد فقط', '#ff4757');
-    }
-  }
-
-  updateActionPrompt();
-}
-
-function updateCamera() {
-  const p = Game.player;
-  if (!p) return;
-  const dist = Game.cameraDistance;
-  const cx = p.position.x + Math.sin(Game.yaw) * dist * Math.cos(Game.pitch);
-  const cz = p.position.z + Math.cos(Game.yaw) * dist * Math.cos(Game.pitch);
-  const minCamY = getTerrainHeight(cx, cz) + 1.8;
-  const cy = Math.max(minCamY, p.position.y + 2.0 + Math.sin(Game.pitch) * dist);
-  Game.camera.position.lerp(new THREE.Vector3(cx, cy, cz), 0.25);
-  Game.camera.lookAt(p.position.x, p.position.y + 1.65, p.position.z);
-}
-
-function animate() {
-  if (!Game.renderer) return;
-  requestAnimationFrame(animate);
-  const dt = Math.min(Game.clock.getDelta(), 0.05);
-
-  updateAnimals(dt);
-  updatePlayer(dt);
-  updateCamera();
-  updatePortals(dt);
-  updateCoins(dt);
-  updateNests(dt);
-  updateCampfires(dt);
-  if (Game.buildMode) updateGhost();
-
-  Game.lastAutoSave += dt;
-  if (Game.lastAutoSave > 12 && Game.profile) { Game.lastAutoSave = 0; Game.profile.save(); }
-
-  updateMinimap();
-  Game.renderer.render(Game.scene, Game.camera);
-}
-
-function updateNests(dt) {
-  Game.nests.forEach(n => {
-    if (!n.hasEgg) {
-      n.respawnTimer -= dt;
-      if (n.respawnTimer <= 0) { n.hasEgg = true; n.eggMesh.visible = true; }
-    }
-  });
-}
-
-function updateCampfires(dt) {
-  Game.campfires.forEach(cf => {
-    cf.flame.scale.y = 0.85 + Math.sin(performance.now() * 0.015) * 0.25;
-    if (Game.player && dist2D(Game.player.position, cf.position) < 4) {
-      Game.profile.energy = clamp(Game.profile.energy + 12 * dt, 0, 100);
-      $('energy-bar').style.width = Game.profile.energy + '%';
-    }
-  });
-}
-
-function updateCoins(dt) {
-  if (!Game.player) return;
-  for (let i = Game.coins.length - 1; i >= 0; i--) {
-    const c = Game.coins[i];
-    c.mesh.rotation.y += dt * 3;
-    if (Game.player.position.distanceTo(c.mesh.position) < 2.2) {
-      Game.profile.coins += c.value;
-      if (c.isTowerPrize) {
-        Game.profile.towerCleared = (Game.profile.towerCleared || 0) + 1;
-        addQuestProgress('tower', 1);
+        // نص الحالة وملخص التجهيز
+        document.getElementById('rig-status-caption').textContent = `${suit.name} — ${tool.name}`;
+        document.getElementById('summary-suit').textContent = suit.name;
+        document.getElementById('summary-jetpack').textContent = jet.name;
+        document.getElementById('summary-hair').textContent = hair.name;
+        document.getElementById('summary-tool').textContent = tool.name;
       }
-      Game.scene.remove(c.mesh);
-      Game.coins.splice(i, 1);
-      Game.profile.save();
-      updateHUD();
-      Audio.sfx('coin');
-      toast(`+${c.value} عملة`, '#f1c40f');
-    }
-  }
-}
 
-// ═══════════════════════════════════════════════════════════
-// PORTALS & BLOCK BUILDING
-// ═══════════════════════════════════════════════════════════
-function buildPortals(worldId) {
-  Game.portals = [];
-  if (worldId === 'main') {
-    [['volcano', -22, -22, 'الحمم', 0xff5500], ['ice', 22, -22, 'الجليد', 0x38bdf8], ['sky', -22, 22, 'السماء', 0xa78bfa]].forEach(([wId, x, z, lbl, col]) => {
-      const g = new THREE.Group();
-      const ring = new THREE.Mesh(new THREE.TorusGeometry(1.7, 0.3, 12, 24), new THREE.MeshStandardMaterial({ color: col, emissive: col, emissiveIntensity: 0.7 }));
-      g.add(ring);
-      g.position.set(x, getTerrainHeight(x, z) + 2.2, z);
-      g.userData = { worldId: wId, label: lbl };
-      Game.scene.add(g);
-      Game.portals.push(g);
-    });
-  }
-}
+      // =====================================================================
+      // 6. رسم بطاقات المتجر والتخصيص ولوحة الفحص
+      // =====================================================================
+      function renderCatalogItems() {
+        const list = catalog[state.activeCategory] || [];
+        const isStoreMode = state.activeTab === 'store';
 
-function buildReturnPortal(worldId) {
-  if (worldId === 'main') return;
-  const g = new THREE.Group();
-  const ring = new THREE.Mesh(new THREE.TorusGeometry(1.8, 0.32, 12, 24), new THREE.MeshStandardMaterial({ color: 0x00d2ff, emissive: 0x00d2ff, emissiveIntensity: 0.9 }));
-  g.add(ring);
-  g.position.set(0, getTerrainHeight(0, -6) + 2.2, -6);
-  g.userData = { isReturnPortal: true };
-  Game.scene.add(g);
-  Game.returnPortal = g;
-}
+        document.getElementById('mode-badge').textContent = isStoreMode
+          ? 'متجر المعدات الحيوية'
+          : 'وحدة التخصيص المباشر';
+        document.getElementById('panel-main-title').textContent = isStoreMode
+          ? 'اقتناء وتطوير التجهيزات'
+          : 'تخصيص مستكشف التكنولوجيا الحيوية';
+        document.getElementById('switch-store-custom-btn').textContent = isStoreMode
+          ? 'إلى التخصيص'
+          : 'فتح المتجر';
 
-function updatePortals(dt) {
-  if (!Game.player) return;
-  Game.portalCooldown = Math.max(0, Game.portalCooldown - dt);
-  Game.portals.forEach(p => {
-    p.rotation.z += dt * 0.6;
-    if (Game.player.position.distanceTo(p.position) < 2.4 && Game.portalCooldown <= 0) {
-      Game.portalCooldown = 3;
-      clearWorld();
-      enterWorld(p.userData.worldId);
-    }
-  });
-}
+        categoryBtns.forEach((btn) => {
+          btn.classList.toggle('active', btn.dataset.category === state.activeCategory);
+        });
 
-function clearWorld() {
-  Game.animals = []; Game.trees = []; Game.nests = []; Game.campfires = [];
-  Game.towerTraps = []; Game.collidables = []; Game.platforms = []; Game.coins = [];
-  Game.portals = []; Game.returnPortal = null; Game.houseBuildSite = null;
-  Game.motherPursuit.active = false;
-}
+        itemsGrid.innerHTML = '';
+        list.forEach((item) => {
+          const isOwned = state.ownedIds.has(item.id);
+          const isEquipped = state.equipped[state.activeCategory] === item.id;
+          const isSelected = state.selectedItemId === item.id;
 
-function toggleBuild(force) {
-  Game.buildMode = force !== undefined ? force : !Game.buildMode;
-  $('block-palette').classList.toggle('active', Game.buildMode);
-  $('mode-badge').textContent = Game.buildMode ? 'الوضع: بناء' : 'الوضع: استكشاف';
-  if (!Game.ghost && Game.scene) {
-    Game.ghost = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial({ color: 0x00ff88, wireframe: true }));
-    Game.scene.add(Game.ghost);
-  }
-  if (Game.ghost) Game.ghost.visible = Game.buildMode;
-}
+          const card = document.createElement('div');
+          card.className = `holo-card p-3.5 cursor-pointer flex items-center justify-between gap-3 ${
+            isSelected ? 'is-active' : ''
+          }`;
 
-function updateGhost() {
-  if (!Game.ghost || !Game.player) return;
-  const x = Math.round(Game.player.position.x + Math.sin(Game.player.rotation.y) * 3);
-  const z = Math.round(Game.player.position.z + Math.cos(Game.player.rotation.y) * 3);
-  Game.ghost.position.set(x, getTerrainHeight(x, z) + 0.5, z);
-}
+          const statusText = isEquipped
+            ? 'مجهّز'
+            : isOwned
+              ? 'مملوك'
+              : `${item.price} وحدة`;
 
-function placeBlock() {
-  if (!Game.ghost) return;
-  const info = BLOCKS[Game.selectedBlock];
-  if (Game.profile.coins < info.price) return toast('عملات غير كافية', '#ff4757');
-  Game.profile.coins -= info.price;
-  const m = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshStandardMaterial({ color: info.color, transparent: !!info.transparent, opacity: info.transparent ? 0.65 : 1 }));
-  m.position.copy(Game.ghost.position);
-  Game.scene.add(m);
-  Game.buildings.set(`${m.position.x},${m.position.y},${m.position.z}`, m);
-  Audio.sfx('build');
-  Game.profile.save();
-  updateHUD();
-}
+          const statusBadgeClass = isEquipped
+            ? 'bg-[#00f2fe]/20 text-[#00f2fe] border-[#00f2fe]/50'
+            : isOwned
+              ? 'bg-white/10 text-[#eef9ff] border-white/25'
+              : 'bg-[#f1c40f]/15 text-[#f1c40f] border-[#f1c40f]/45';
 
-function removeBlock() {
-  if (!Game.ghost) return;
-  const key = `${Game.ghost.position.x},${Game.ghost.position.y},${Game.ghost.position.z}`;
-  const m = Game.buildings.get(key);
-  if (m) { Game.scene.remove(m); Game.buildings.delete(key); }
-}
+          card.innerHTML = `
+            <div class="min-w-0">
+              <div class="flex items-center gap-2">
+                <span class="text-[11px] font-bold text-[#00f2fe]">${item.tag}</span>
+              </div>
+              <div class="text-sm font-extrabold text-white truncate mt-0.5">${item.name}</div>
+              <div class="text-[11px] text-[#8fb3c9] mt-1">
+                حماية +${item.defense}% | تناغم +${item.energy}%
+              </div>
+            </div>
+            <span class="shrink-0 px-2.5 py-1 rounded-lg border text-xs font-bold ${statusBadgeClass}">
+              ${statusText}
+            </span>
+          `;
 
-function setWeather(w) {
-  Game.weather.current = w;
-  $('weather-badge').textContent = `الطقس: ${w === 'clear' ? 'صافٍ' : w}`;
-}
+          card.addEventListener('click', () => {
+            state.selectedItemId = item.id;
+            renderCatalogItems();
+            renderInspector();
+          });
 
-function updateMinimap() {
-  const c = $('minimap-canvas');
-  if (!c || !Game.player) return;
-  const ctx = c.getContext('2d');
-  ctx.clearRect(0, 0, c.width, c.height);
-  ctx.fillStyle = 'rgba(0,20,40,0.75)';
-  ctx.beginPath(); ctx.arc(74, 74, 72, 0, Math.PI * 2); ctx.fill();
-  const cx = 74 - Game.player.position.x * 1.1;
-  const cy = 74 - Game.player.position.z * 1.1;
-  ctx.fillStyle = '#f1c40f';
-  Game.animals.forEach(a => { ctx.beginPath(); ctx.arc(cx + a.position.x * 1.1, cy + a.position.z * 1.1, 2.5, 0, Math.PI * 2); ctx.fill(); });
-  ctx.fillStyle = '#fff';
-  ctx.beginPath(); ctx.arc(74, 74, 4, 0, Math.PI * 2); ctx.fill();
-}
-
-// ═══════════════════════════════════════════════════════════
-// PANELS, CRAFTING, BLUEPRINTS, CHALLENGES & 100+ ADDITIONS
-// ═══════════════════════════════════════════════════════════
-function setupUI() {
-  const bl = $('block-list');
-  bl.innerHTML = '';
-  Object.entries(BLOCKS).forEach(([id, b]) => {
-    const btn = document.createElement('button');
-    btn.className = 'block-btn' + (id === Game.selectedBlock ? ' active' : '');
-    btn.style.background = '#' + b.color.toString(16).padStart(6, '0');
-    btn.textContent = b.name;
-    btn.onclick = () => { Game.selectedBlock = id; document.querySelectorAll('.block-btn').forEach(x => x.classList.remove('active')); btn.classList.add('active'); };
-    bl.appendChild(btn);
-  });
-
-  $('btn-map').onclick = () => { $('map-modal').classList.add('active'); drawFullMap(); };
-  $('btn-close-map').onclick = () => $('map-modal').classList.remove('active');
-  $('minimap').onclick = () => { $('map-modal').classList.add('active'); drawFullMap(); };
-
-  $('chat-toggle').onclick = () => $('chat-panel').classList.toggle('active');
-  $('chat-close').onclick = () => $('chat-panel').classList.remove('active');
-  $('chat-send').onclick = () => {
-    const txt = $('chat-input').value.trim();
-    if (!txt) return;
-    $('chat-input').value = '';
-    const d = document.createElement('div');
-    d.className = 'msg self';
-    d.textContent = `${Game.profile.name}: ${txt}`;
-    $('chat-list').appendChild(d);
-  };
-
-  $('btn-profile').onclick = () => { $('profile-panel').classList.add('active'); renderProfile(); };
-  $('btn-close-profile').onclick = () => $('profile-panel').classList.remove('active');
-  $('btn-save-profile').onclick = () => {
-    Game.profile.name = $('input-name').value.trim() || 'مغامر';
-    Game.profile.gender = $('input-gender').value;
-    Game.profile.expression = $('input-expression').value;
-    Game.profile.save();
-    buildPlayer();
-    $('profile-panel').classList.remove('active');
-    toast('تم حفظ البروفايل وتحديث الشخصية الواقعية');
-  };
-
-  $('btn-shop').onclick = () => { $('shop-panel').classList.add('active'); renderShop('weapons'); };
-  $('btn-close-shop').onclick = () => $('shop-panel').classList.remove('active');
-  document.querySelectorAll('[data-shop]').forEach(b => b.onclick = () => renderShop(b.dataset.shop));
-
-  $('btn-craft').onclick = () => { $('craft-panel').classList.add('active'); renderCraft(); };
-  $('btn-close-craft').onclick = () => $('craft-panel').classList.remove('active');
-
-  $('btn-blueprint').onclick = () => { $('blueprint-panel').classList.add('active'); renderBlueprints(); };
-  $('btn-close-blueprint').onclick = () => $('blueprint-panel').classList.remove('active');
-
-  $('btn-quests').onclick = () => { $('quests-panel').classList.add('active'); renderQuests(); };
-  $('btn-close-quests').onclick = () => $('quests-panel').classList.remove('active');
-  $('btn-claim-quests').onclick = () => {
-    let sum = 0;
-    Game.profile.quests.forEach(q => { if (!q.claimed && q.progress >= q.need) { q.claimed = true; sum += q.reward; } });
-    if (!sum) return toast('لا توجد مكافآت جاهزة', '#f1c40f');
-    Game.profile.coins += sum;
-    Game.profile.save(); updateHUD(); renderQuests();
-    toast(`استلمت +${sum} عملة`, '#f1c40f');
-  };
-
-  $('btn-achievements').onclick = () => { $('achievements-panel').classList.add('active'); renderAchievements(); };
-  $('btn-close-achievements').onclick = () => $('achievements-panel').classList.remove('active');
-
-  $('btn-world-challenges').onclick = () => { $('challenges-panel').classList.add('active'); renderWorldChallenges(); };
-  $('btn-close-challenges').onclick = () => $('challenges-panel').classList.remove('active');
-
-  $('btn-ideas').onclick = () => { $('ideas-panel').classList.add('active'); renderIdeasCatalog(); };
-  $('btn-close-ideas').onclick = () => $('ideas-panel').classList.remove('active');
-}
-
-function drawFullMap() {
-  const c = $('map-canvas');
-  if (!c || !Game.player) return;
-  const ctx = c.getContext('2d');
-  ctx.clearRect(0, 0, c.width, c.height);
-  ctx.fillStyle = '#18242b';
-  ctx.fillRect(0, 0, c.width, c.height);
-  const scale = c.width / 260;
-  const toC = (x, z) => ({ x: (x + 130) * scale, y: (z + 130) * scale });
-
-  ctx.fillStyle = '#a3e635';
-  Game.nests.forEach(n => { const p = toC(n.position.x, n.position.z); ctx.beginPath(); ctx.arc(p.x, p.y, 6, 0, Math.PI * 2); ctx.fill(); });
-  ctx.fillStyle = '#f1c40f';
-  Game.animals.forEach(a => { const p = toC(a.position.x, a.position.z); ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI * 2); ctx.fill(); });
-  const pp = toC(Game.player.position.x, Game.player.position.z);
-  ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(pp.x, pp.y, 7, 0, Math.PI * 2); ctx.fill();
-}
-
-function renderProfile() {
-  const p = Game.profile;
-  $('input-name').value = p.name;
-  $('input-gender').value = p.gender;
-  $('input-expression').value = p.expression;
-  $('p-level').textContent = p.level;
-  $('p-coins').textContent = p.coins;
-  $('p-gems').textContent = p.gems;
-  $('p-pets').textContent = p.pets.length;
-  $('p-eggs').textContent = p.eggs.length;
-  $('gender-badge').textContent = p.gender === 'male' ? 'ذكر' : (p.gender === 'female' ? 'أنثى' : 'محايد');
-
-  $('color-grid').innerHTML = '';
-  SKIN_COLORS.forEach(col => {
-    const sw = document.createElement('div');
-    sw.className = 'color-swatch' + (p.skinColor === col ? ' active' : '');
-    sw.style.background = '#' + col.toString(16).padStart(6, '0');
-    sw.onclick = () => { p.skinColor = col; renderProfile(); };
-    $('color-grid').appendChild(sw);
-  });
-
-  const makeChips = (containerId, mapObj, field) => {
-    const box = $(containerId); box.innerHTML = '';
-    Object.entries(mapObj).forEach(([id, info]) => {
-      const b = document.createElement('button');
-      b.className = 'chip-btn' + (p[field] === id ? ' active' : '');
-      b.textContent = info.name;
-      b.onclick = () => { p[field] = id; renderProfile(); };
-      box.appendChild(b);
-    });
-  };
-  makeChips('hair-grid', HAIRSTYLES, 'hairstyle');
-  makeChips('outfits-grid', OUTFITS, 'outfit');
-  makeChips('backpacks-grid', BACKPACKS, 'backpack');
-
-  $('pets-list').innerHTML = p.pets.length
-    ? p.pets.map(pet => `<div class="card-item"><div class="title">${pet.name}</div><div class="sub">مستوى ${pet.level}</div></div>`).join('')
-    : '<p style="color:#8899aa;font-size:.8rem;">لا توجد مخلوقات مروضة بعد</p>';
-
-  const eggsBox = $('eggs-list');
-  eggsBox.innerHTML = '';
-  if (!p.eggs.length) {
-    eggsBox.innerHTML = '<p style="color:#8899aa;font-size:.8rem;">لا توجد بيض حالياً • ابحث عن الأعشاش في العالم</p>';
-  } else {
-    p.eggs.forEach(egg => {
-      const card = document.createElement('div');
-      card.className = 'card-item';
-      card.innerHTML = `<div class="title">${egg.name}</div><div class="sub">جاهزة للفقس</div>`;
-      const b1 = document.createElement('button');
-      b1.className = 'btn btn-warning'; b1.textContent = 'تسريع بـ 80 عملة';
-      b1.onclick = () => hatchEgg(egg, 'coins');
-      const b2 = document.createElement('button');
-      b2.className = 'btn btn-primary'; b2.textContent = 'تسريع بمشاهدة إعلان';
-      b2.onclick = () => hatchEgg(egg, 'ad');
-      card.appendChild(b1); card.appendChild(b2);
-      eggsBox.appendChild(card);
-    });
-  }
-
-  $('stash-list').innerHTML = p.stash.length
-    ? p.stash.map(item => `<div class="card-item"><div class="title">${item}</div><div class="sub">مخزّن في المنزل</div></div>`).join('')
-    : '<p style="color:#8899aa;font-size:.8rem;">صندوق المنزل فارغ</p>';
-
-  const prev = $('profile-preview-canvas');
-  const ctx = prev.getContext('2d');
-  ctx.clearRect(0, 0, prev.width, prev.height);
-  ctx.fillStyle = '#' + (OUTFITS[p.outfit]?.color || 0x2b6cb0).toString(16).padStart(6, '0');
-  ctx.beginPath(); ctx.ellipse(65, 108, 30, 26, 0, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = '#' + (p.skinColor || 0xe0ac69).toString(16).padStart(6, '0');
-  ctx.beginPath(); ctx.ellipse(65, 56, 22, 26, 0, 0, Math.PI * 2); ctx.fill();
-}
-
-function renderShop(cat) {
-  $('shop-coins').textContent = Game.profile.coins;
-  $('shop-gems').textContent = Game.profile.gems;
-  const box = $('shop-items'); box.innerHTML = '';
-  (SHOP[cat] || []).forEach(item => {
-    const card = document.createElement('div');
-    card.className = 'card-item';
-    card.innerHTML = `<div class="title">${item.name}</div><div class="cost">${item.price} عملة</div>`;
-    const btn = document.createElement('button');
-    btn.className = 'btn btn-success'; btn.textContent = 'شراء';
-    btn.onclick = () => {
-      if (Game.profile.coins < item.price) return toast('العملات غير كافية', '#ff4757');
-      Game.profile.coins -= item.price;
-      if (item.gems) Game.profile.gems += item.gems;
-      else if (item.damage) { Game.profile.equippedWeapon = item.id; updateWeaponModel(); }
-      else Game.profile.stash.push(item.name);
-      Game.profile.save(); updateHUD(); renderShop(cat);
-      toast(`تم شراء ${item.name}`);
-    };
-    card.appendChild(btn); box.appendChild(card);
-  });
-}
-
-function renderCraft() {
-  const box = $('craft-list'); box.innerHTML = '';
-  CRAFT_RECIPES.forEach(r => {
-    const card = document.createElement('div');
-    card.className = 'card-item';
-    card.innerHTML = `<div class="title">${r.name}</div><div class="sub">${r.desc}</div><div class="cost">حطب: ${r.wood} • حجر: ${r.stone}</div>`;
-    const btn = document.createElement('button');
-    btn.className = 'btn btn-primary';
-    btn.textContent = Game.profile.crafted.includes(r.id) ? 'مصنوع (إعادة)' : 'صناعة';
-    btn.onclick = () => {
-      if (Game.profile.wood < r.wood || Game.profile.stone < r.stone) return toast('الموارد غير كافية', '#ff4757');
-      Game.profile.wood -= r.wood;
-      Game.profile.stone -= r.stone;
-      if (!Game.profile.crafted.includes(r.id)) Game.profile.crafted.push(r.id);
-      if (r.id === 'torch_fire' && Game.player) {
-        spawnCampfire(Game.player.position.x + Math.sin(Game.player.rotation.y) * 2.5, Game.player.position.z + Math.cos(Game.player.rotation.y) * 2.5);
-        Audio.sfx('fire');
+          itemsGrid.appendChild(card);
+        });
       }
-      if (r.id === 'iron_sword') { Game.profile.equippedWeapon = 'iron_sword'; updateWeaponModel(); }
-      Game.profile.save(); updateHUD(); renderCraft();
-      toast(`تمت صناعة ${r.name}`);
-    };
-    card.appendChild(btn); box.appendChild(card);
-  });
-}
 
-function renderBlueprints() {
-  const box = $('blueprint-list'); box.innerHTML = '';
-  HOUSE_BLUEPRINTS.forEach(bp => {
-    const card = document.createElement('div');
-    card.className = 'card-item';
-    card.innerHTML = `<div class="title">${bp.name}</div><div class="sub">${bp.desc}</div><div class="cost">يتطلب ${bp.woodNeeded} حطب</div>`;
-    const btn = document.createElement('button');
-    btn.className = 'btn btn-success'; btn.textContent = 'اختيار ووضع المخطط';
-    btn.onclick = () => selectBlueprint(bp);
-    card.appendChild(btn); box.appendChild(card);
-  });
-}
+      function renderInspector() {
+        const found = findItemById(state.selectedItemId);
+        if (!found) return;
 
-function renderQuests() {
-  const box = $('quests-list'); box.innerHTML = '';
-  Game.profile.quests.forEach(q => {
-    const pct = clamp((q.progress / q.need) * 100, 0, 100);
-    box.innerHTML += `<div class="quest-item"><div class="info"><div class="title">${q.title} (${q.progress}/${q.need})</div><div class="sub">${q.desc} • مكافأة ${q.reward} عملة</div><div class="bar"><div style="width:${pct}%"></div></div></div><div>${q.claimed ? 'مكتملة' : (pct >= 100 ? 'جاهزة' : 'جارية')}</div></div>`;
-  });
-}
+        const { item, category } = found;
+        const isOwned = state.ownedIds.has(item.id);
+        const isEquipped = state.equipped[category] === item.id;
 
-function renderAchievements() {
-  const box = $('achievements-list'); box.innerHTML = '';
-  ACHIEVEMENTS.forEach(a => {
-    const done = Game.profile.achievements.includes(a.id);
-    box.innerHTML += `<div class="achievement-item"><div class="info"><div class="title">${a.title}</div><div class="sub">${a.desc} • +${a.reward} عملة</div></div><div style="color:${done ? '#2ecc71' : '#9fb0c2'};font-weight:700;">${done ? 'مفتوح' : 'مغلق'}</div></div>`;
-  });
-}
+        const categoryNames = {
+          suits: 'فئة الأزياء والبدلات',
+          jetpacks: 'فئة الحقائب النفاثة',
+          hair: 'فئة قصات الشعر المتوهجة',
+          tools: 'فئة الأدوات الهولوجرامية'
+        };
 
-function renderWorldChallenges() {
-  const box = $('world-challenges-list'); box.innerHTML = '';
-  for (let i = 1; i <= 12; i++) {
-    const card = document.createElement('div');
-    card.className = 'card-item';
-    card.innerHTML = `<div class="title">تحدي ${WORLDS[Game.currentWorld].name} #${i}</div><div class="sub">مكافأة: ${i * 25} عملة + ${i * 15} خبرة</div>`;
-    const btn = document.createElement('button');
-    btn.className = 'btn btn-warning'; btn.textContent = 'إكمال التحدي';
-    btn.onclick = () => {
-      Game.profile.coins += i * 25;
-      Game.profile.xp += i * 15;
-      Game.profile.level = 1 + Math.floor(Game.profile.xp / 100);
-      Game.profile.save(); updateHUD();
-      Audio.sfx('coin');
-      toast(`أنهيت التحدي #${i} وحصلت على +${i * 25} عملة`);
-    };
-    card.appendChild(btn); box.appendChild(card);
-  }
-}
+        document.getElementById('insp-category-label').textContent = categoryNames[category] || 'تجهيز';
+        document.getElementById('insp-title').textContent = item.name;
+        document.getElementById('insp-desc').textContent = item.desc;
 
-function renderIdeasCatalog() {
-  const additions = [
-    'تثبيت أقدام الشخصية بدقة على التضاريس المتموجة ومنع الغوص فيها',
-    'شخصية واقعية وانسيابية بالكبسولات والمفاصل الدوارة', 'تخصيص الجنس، الشعر، الوجه، البشرة، الملابس، والحقيبة',
-    '20 عالماً قابلاً للفتح', '12 تحدياً لكل عالم (240 تحدياً)', 'برج التحديات متعدد الطوابق والفخاخ',
-    'قطع الأشجار وجمع الحطب والحجارة', 'نظام صناعة الأدوات وإشعال النار', 'كتيب بناء المنازل والحدائق وتطويرها تدريجياً',
-    'صندوق تخزين منزلي مع حد أقصى غرض واحد في كل سرقة', 'أعشاش بيض المخلوقات ومطاردة الأم وتسريع الفقس',
-    'تنانين متنوعة، كيميرا، ثعلب مضيء، وخنفساء مدرعة بأصواتها وحركاتها'
-  ];
-  const ideas = [
-    'سباق زمني بين الجزر العائمة', 'صيد المخلوقات النادرة ليلاً', 'تطوير الموقد إلى فرن لصهر المعادن', 'بناء جسر خشبي فوق الأودية',
-    'مبارزة زعماء العوالم', 'جمع البلورات المتوهجة', 'إقامة حديقة حيوانات خاصة', 'تحدي البقاء بلا أسلحة', 'استكشاف الكهوف المظلمة', 'ترقية سرعة الركض والقفز'
-  ];
-  $('ideas-content').innerHTML = `
-    <p><strong style="color:#00d2ff;">مجموعة من الإضافات الوظيفية والأنظمة المفعلة في اللعبة:</strong><br>${additions.join(' • ')}</p>
-    <hr style="border-color:rgba(255,255,255,0.1);margin:10px 0;">
-    <p><strong style="color:#f1c40f;">أفكار ممتعة مضافة لتعزيز التجربة:</strong><br>${ideas.join(' • ')}</p>
-  `;
-}
-</script>
+        document.getElementById('insp-price-badge').textContent =
+          item.price === 0 ? 'أساسي مجاني' : `${item.price} وحدة طاقة`;
+
+        document.getElementById('insp-stat-defense').textContent = `+${item.defense}%`;
+        document.getElementById('insp-bar-defense').style.width = `${Math.min(100, item.defense)}%`;
+
+        document.getElementById('insp-stat-energy').textContent = `+${item.energy}%`;
+        document.getElementById('insp-bar-energy').style.width = `${Math.min(100, item.energy)}%`;
+
+        const actionBtn = document.getElementById('insp-action-btn');
+
+        if (isEquipped) {
+          actionBtn.textContent = 'مجهّز حالياً على الشخصية';
+          actionBtn.className = 'btn-cyan w-full py-3 rounded-xl text-sm font-extrabold opacity-80 cursor-default';
+          actionBtn.disabled = true;
+          actionBtn.onclick = null;
+        } else if (isOwned) {
+          actionBtn.textContent = 'تجهيز على الشخصية الآن';
+          actionBtn.className = 'btn-cyan w-full py-3 rounded-xl text-sm font-extrabold cursor-pointer';
+          actionBtn.disabled = false;
+          actionBtn.onclick = () => {
+            state.equipped[category] = item.id;
+            updateExplorerRig();
+            renderCatalogItems();
+            renderInspector();
+            showToast(`تم تجهيز "${item.name}" على المستكشف.`);
+          };
+        } else {
+          const canAfford = state.credits >= item.price;
+          actionBtn.textContent = canAfford
+            ? `شراء وتجهيز (${item.price} وحدة)`
+            : `الرصيد غير كافٍ (${item.price} وحدة)`;
+          actionBtn.className = `btn-gold w-full py-3 rounded-xl text-sm font-extrabold ${
+            canAfford ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'
+          }`;
+          actionBtn.disabled = !canAfford;
+          actionBtn.onclick = () => {
+            if (state.credits < item.price) return;
+            state.credits -= item.price;
+            state.ownedIds.add(item.id);
+            state.equipped[category] = item.id;
+            updateTopHud();
+            updateExplorerRig();
+            renderCatalogItems();
+            renderInspector();
+            showToast(`تم شراء وتجهيز "${item.name}" بنجاح.`);
+          };
+        }
+      }
+
+      // =====================================================================
+      // 7. رسم عرض العوالم الأربعة (Worlds Selection)
+      // =====================================================================
+      function renderWorlds() {
+        worldsGrid.innerHTML = '';
+
+        worlds.forEach((world) => {
+          const isCurrent = state.currentWorldId === world.id;
+          const card = document.createElement('div');
+          card.className = `holo-card p-5 flex flex-col justify-between gap-4 ${
+            isCurrent ? 'is-active' : ''
+          }`;
+
+          card.innerHTML = `
+            <div class="space-y-3">
+              <div class="h-28 rounded-xl border border-white/15 relative overflow-hidden flex flex-col justify-between p-3"
+                   style="background: ${world.gradient};">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-black/45 border border-white/20 text-white">
+                    ${world.badge}
+                  </span>
+                  <span class="w-2.5 h-2.5 rounded-full" style="background: ${world.accent}; box-shadow: 0 0 12px ${world.accent};"></span>
+                </div>
+                <div class="text-[11px] font-semibold text-white/90 bg-black/40 px-2.5 py-1 rounded-lg w-fit">
+                  ${world.lighting}
+                </div>
+              </div>
+
+              <div>
+                <h3 class="text-lg font-extrabold text-white">${world.name}</h3>
+                <p class="text-xs sm:text-sm text-[#8fb3c9] leading-relaxed mt-1">${world.desc}</p>
+              </div>
+            </div>
+
+            <button type="button"
+              class="${isCurrent ? 'btn-cyan opacity-85 cursor-default' : 'btn-gold cursor-pointer'} w-full py-2.5 rounded-xl text-xs sm:text-sm font-extrabold">
+              ${isCurrent ? 'العالم النشط حالياً' : 'الانتقال إلى هذا العالم'}
+            </button>
+          `;
+
+          const btn = card.querySelector('button');
+          if (!isCurrent) {
+            btn.addEventListener('click', () => {
+              state.currentWorldId = world.id;
+              updateTopHud();
+              renderWorlds();
+              showToast(`تم تفعيل بيئة "${world.name}" وإعدادات الإضاءة والضباب.`);
+            });
+          }
+
+          worldsGrid.appendChild(card);
+        });
+      }
+
+      // =====================================================================
+      // 8. رسم عرض الموسوعة والمخلوقات (Codex / Bestiary)
+      // =====================================================================
+      function renderCodex() {
+        codexGrid.innerHTML = '';
+
+        creatures.forEach((creature) => {
+          const isTamed = creature.tamed;
+          const veinColor = isTamed ? '#00f2fe' : '#ff3b5c';
+          const veinGlow = isTamed ? 'rgba(0, 242, 254, 0.45)' : 'rgba(255, 59, 92, 0.45)';
+
+          const card = document.createElement('div');
+          card.className = 'holo-card p-5 flex flex-col justify-between gap-4';
+          card.style.borderColor = isTamed ? 'rgba(0, 242, 254, 0.38)' : 'rgba(255, 59, 92, 0.38)';
+
+          card.innerHTML = `
+            <div class="space-y-3">
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <span class="text-xs font-bold" style="color: ${veinColor};">${creature.type}</span>
+                  <h3 class="text-lg sm:text-xl font-extrabold text-white mt-0.5">${creature.name}</h3>
+                  <div class="text-xs text-[#8fb3c9] mt-0.5">الموطن: ${creature.habitat}</div>
+                </div>
+
+                <span class="px-3 py-1 rounded-full text-xs font-extrabold border shrink-0"
+                      style="color: ${veinColor}; border-color: ${veinColor}; background: ${veinGlow}22;">
+                  ${isTamed ? 'مروّض — توهج فيروزي' : 'بري — عروق حمراء'}
+                </span>
+              </div>
+
+              <!-- مخطط بصري لحالة العروق والسرج الضوئي -->
+              <div class="p-3.5 rounded-xl bg-black/35 border border-white/10 flex items-center justify-between gap-4">
+                <div class="space-y-1 text-xs">
+                  <div class="font-bold text-white">
+                    ${isTamed ? 'حالة العروق والركوب:' : 'حالة العروق البرية:'}
+                  </div>
+                  <p class="text-[#c4dfee] leading-relaxed">
+                    ${isTamed ? creature.tamedNote : creature.wildNote}
+                  </p>
+                </div>
+
+                <!-- مؤشر بصري للعروق والسرج الضوئي -->
+                <div class="shrink-0 flex flex-col items-center gap-1.5">
+                  <div class="w-12 h-12 rounded-full border-2 flex items-center justify-center"
+                       style="border-color: ${veinColor}; box-shadow: 0 0 18px ${veinGlow};">
+                    <span class="w-4 h-4 rounded-full" style="background: ${veinColor}; box-shadow: 0 0 12px ${veinColor};"></span>
+                  </div>
+                  <span class="text-[10px] font-bold text-center max-w-[92px]" style="color: ${isTamed ? '#00f2fe' : '#f1c40f'};">
+                    ${isTamed ? creature.saddleLabel : 'سرج ضوئي غير نشط'}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between gap-3 pt-1">
+              <span class="text-xs text-[#8fb3c9]">
+                ${isTamed ? 'جاهز للركوب والطيران في العوالم' : 'استخدم سوار الترويض لتحويل التوهج'}
+              </span>
+              <button type="button"
+                class="${isTamed ? 'btn-cyan' : 'btn-gold'} px-4 py-2 rounded-xl text-xs font-extrabold cursor-pointer">
+                ${isTamed ? 'إعادة للوضع البري' : 'ترويض وتفعيل السرج'}
+              </button>
+            </div>
+          `;
+
+          const btn = card.querySelector('button');
+          btn.addEventListener('click', () => {
+            creature.tamed = !creature.tamed;
+            updateTopHud();
+            renderCodex();
+            showToast(
+              creature.tamed
+                ? `تم ترويض "${creature.name}" وتحويل عروقه إلى الفيروزي مع تفعيل السرج الضوئي.`
+                : `عاد "${creature.name}" إلى الحالة البرية مع عروق متوهجة باللون الأحمر.`
+            );
+          });
+
+          codexGrid.appendChild(card);
+        });
+      }
+
+      // =====================================================================
+      // 9. التبديل بين التبويبات ووضع المعاينة الحية
+      // =====================================================================
+      function switchTab(tabName) {
+        state.activeTab = tabName;
+
+        navTabs.forEach((tab) => {
+          tab.classList.toggle('active', tab.dataset.tab === tabName);
+        });
+
+        views.customization.classList.add('hidden');
+        views.worlds.classList.add('hidden');
+        views.codex.classList.add('hidden');
+
+        if (tabName === 'store' || tabName === 'customization') {
+          views.customization.classList.remove('hidden');
+          renderCatalogItems();
+          renderInspector();
+        } else if (tabName === 'worlds') {
+          views.worlds.classList.remove('hidden');
+          renderWorlds();
+        } else if (tabName === 'codex') {
+          views.codex.classList.remove('hidden');
+          renderCodex();
+        }
+      }
+
+      navTabs.forEach((tab) => {
+        tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+      });
+
+      categoryBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          state.activeCategory = btn.dataset.category;
+          const firstItem = catalog[state.activeCategory][0];
+          if (firstItem) {
+            state.selectedItemId = firstItem.id;
+          }
+          renderCatalogItems();
+          renderInspector();
+        });
+      });
+
+      document.getElementById('switch-store-custom-btn').addEventListener('click', () => {
+        switchTab(state.activeTab === 'store' ? 'customization' : 'store');
+      });
+
+      document.getElementById('toggle-hud-btn').addEventListener('click', () => {
+        state.hudHidden = true;
+        document.body.classList.add('hud-hidden');
+      });
+
+      document.getElementById('restore-hud-btn').addEventListener('click', () => {
+        state.hudHidden = false;
+        document.body.classList.remove('hud-hidden');
+      });
+
+      // =====================================================================
+      // 10. كانفاس الجزيئات الحيوية المتحركة في الخلفية
+      // =====================================================================
+      const canvas = document.getElementById('bio-particles-canvas');
+      const ctx = canvas.getContext('2d');
+      let particles = [];
+
+      function resizeParticlesCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+
+      function initParticles() {
+        const count = Math.min(65, Math.floor((window.innerWidth * window.innerHeight) / 24000));
+        particles = Array.from({ length: count }, () => ({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 2.2 + 0.7,
+          vx: (Math.random() - 0.5) * 0.35,
+          vy: -(Math.random() * 0.45 + 0.12),
+          alpha: Math.random() * 0.55 + 0.2
+        }));
+      }
+
+      function animateParticles() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const activeWorld = worlds.find((w) => w.id === state.currentWorldId) || worlds[0];
+        const rgb = activeWorld.particleColor;
+
+        for (const p of particles) {
+          p.x += p.vx;
+          p.y += p.vy;
+
+          if (p.y < -10) {
+            p.y = canvas.height + 10;
+            p.x = Math.random() * canvas.width;
+          }
+          if (p.x < -10) p.x = canvas.width + 10;
+          if (p.x > canvas.width + 10) p.x = -10;
+
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${rgb}, ${p.alpha})`;
+          ctx.fill();
+        }
+
+        requestAnimationFrame(animateParticles);
+      }
+
+      window.addEventListener('resize', () => {
+        resizeParticlesCanvas();
+        initParticles();
+      });
+
+      // =====================================================================
+      // 11. التهيئة الأولية
+      // =====================================================================
+      resizeParticlesCanvas();
+      initParticles();
+      animateParticles();
+
+      updateTopHud();
+      updateExplorerRig();
+      switchTab('customization');
+    })();
+  </script>
 </body>
 </html>
