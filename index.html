@@ -320,6 +320,7 @@
 
     .btn:hover { filter: brightness(1.07); }
     .btn:active { transform: scale(0.97); }
+    .btn:disabled { opacity: 0.65; cursor: not-allowed; }
     .btn-play { background: #ffffff; color: #090a0d; }
     .btn-secondary { background: rgba(255, 255, 255, 0.12); color: #fff; border: 1px solid var(--border); }
     .btn-accent { background: var(--accent); color: #05111a; }
@@ -394,7 +395,7 @@
 
     .utility-actions { display: flex; gap: 6px; flex-wrap: wrap; }
 
-    /* Guest Resume Prompt Banner */
+    /* Guest Account Retention Nudge for Progress Saving */
     .guest-sync-nudge {
       display: none;
       margin: 10px 4% 0;
@@ -1172,7 +1173,7 @@
   </section>
 
   <!-- First-Screen Entry Gate -->
-  <section class="auth-gate open" id="authGate" aria-label="بوابة الدخول">
+  <section class="auth-gate open" id="authGate" aria-label="بوابة الدخول" style="display:flex;">
     <div class="cinema-bg-layer" id="cinemaBgLayer" aria-hidden="true"></div>
     <div class="cinema-vignette" aria-hidden="true"></div>
 
@@ -1608,6 +1609,8 @@
       getAuth,
       GoogleAuthProvider,
       signInWithPopup,
+      signInWithRedirect,
+      getRedirectResult,
       signInWithEmailAndPassword,
       createUserWithEmailAndPassword,
       updateProfile,
@@ -1630,6 +1633,7 @@
     const db = getFirestore(app);
     const auth = getAuth(app);
     const googleProvider = new GoogleAuthProvider();
+    googleProvider.setCustomParameters({ prompt: "select_account" });
 
     const SEVEN_LABELS = [
       "حصري",
@@ -1891,6 +1895,7 @@
     let userSyncStateText = "";
     let shelfSeed = Math.floor(Math.random() * 100000);
     let lastCloudSyncTime = 0;
+    let isAuthActionInFlight = false;
 
     let uiLang = "ar";
     let activeTab = "all";
@@ -2010,4 +2015,1821 @@
     const episodesList = document.getElementById("episodesList");
 
     const nextEpBanner = document.getElementById("nextEpBanner");
-    const nextEpName = docum
+    const nextEpName = document.getElementById("nextEpName");
+    const nextEpCountdown = document.getElementById("nextEpCountdown");
+    const playNextNowBtn = document.getElementById("playNextNowBtn");
+    const cancelAutoNextBtn = document.getElementById("cancelAutoNextBtn");
+
+    const addModal = document.getElementById("addModal");
+    const formModalTitle = document.getElementById("formModalTitle");
+    const submitFormBtn = document.getElementById("submitFormBtn");
+    const openAddModalBtn = document.getElementById("openAddModalBtn");
+    const closeAddBtn = document.getElementById("closeAddBtn");
+    const addItemForm = document.getElementById("addItemForm");
+    const newType = document.getElementById("newType");
+    const movieVideoField = document.getElementById("movieVideoField");
+    const seasonsJsonField = document.getElementById("seasonsJsonField");
+    const newLabelsPicker = document.getElementById("newLabelsPicker");
+
+    function setGateVisible(visible) {
+      if (visible) {
+        authGate.classList.add("open");
+        authGate.style.display = "flex";
+        document.body.classList.add("gate-active");
+      } else {
+        authGate.classList.remove("open");
+        authGate.style.display = "none";
+        document.body.classList.remove("gate-active");
+      }
+    }
+
+    function getActiveUserScopeId() {
+      if (currentFirebaseUser && currentFirebaseUser.uid) {
+        return `uid_${currentFirebaseUser.uid}`;
+      }
+      if (demoUser && demoUser.uid) {
+        return `demo_${demoUser.uid}`;
+      }
+      return "guest";
+    }
+
+    function getScopedProgressStore() {
+      const scope = getActiveUserScopeId();
+      if (!progressMap || typeof progressMap !== "object") progressMap = {};
+      if (!progressMap[scope] || typeof progressMap[scope] !== "object") {
+        const legacyEntries = {};
+        Object.keys(progressMap).forEach((k) => {
+          if (!k.startsWith("uid_") && !k.startsWith("demo_") && k !== "guest") {
+            legacyEntries[k] = progressMap[k];
+            delete progressMap[k];
+          }
+        });
+        progressMap[scope] = legacyEntries;
+      }
+      return progressMap[scope];
+    }
+
+    function getItemProgressPercent(itemId) {
+      const scoped = getScopedProgressStore();
+      const entry = scoped[itemId];
+      if (!entry) return 0;
+      if (typeof entry.percent === "number" && Number.isFinite(entry.percent)) {
+        return Math.max(0, Math.min(100, Math.round(entry.percent)));
+      }
+      if (entry.completed) return 100;
+      return 0;
+    }
+
+    function formatStarRating(ratingVal) {
+      const num = Math.max(1, Math.min(5, Number(ratingVal) || 4.7));
+      const fullStars = Math.round(num);
+      const stars = "★".repeat(fullStars) + "☆".repeat(Math.max(0, 5 - fullStars));
+      return `${stars} (${num.toFixed(1)})`;
+    }
+
+    function canManageCatalog() {
+      if (demoUser || !currentFirebaseUser) return false;
+      const userEmail = (currentFirebaseUser.email || "").trim().toLowerCase();
+      return Boolean(userEmail) && userEmail === ADMIN_EMAIL.trim().toLowerCase();
+    }
+
+    function applyAdminControlsVisibility() {
+      const allowed = canManageCatalog();
+      const displayVal = allowed ? "inline-flex" : "none";
+
+      openAddModalBtn.style.display = displayVal;
+      modalEditItemBtn.style.display = displayVal;
+      modalDeleteItemBtn.style.display = displayVal;
+      openAdsModalBtn.style.display = displayVal;
+      downloadSitemapBtn.style.display = displayVal;
+      downloadRobotsBtn.style.display = displayVal;
+      seedDataBtn.style.display = displayVal;
+
+      if (!allowed) {
+        addModal.classList.remove("open");
+        adsModal.classList.remove("open");
+        editingItemId = null;
+      }
+
+      document.querySelectorAll(".poster-mini-actions").forEach((box) => {
+        box.style.display = allowed ? "flex" : "none";
+      });
+    }
+
+    // AdBlock Detector
+    function refreshBaitElement() {
+      adBaitZone.innerHTML = `<div class="adsbox ad-banner google_ad_unit textads banner_ad" id="baitBoxDynamic">AdBait</div>`;
+    }
+
+    function checkDomBaitBlocked() {
+      const bait = document.getElementById("baitBoxDynamic");
+      if (!bait || !document.body.contains(bait)) return true;
+
+      const rect = bait.getBoundingClientRect();
+      const style = window.getComputedStyle(bait);
+
+      if (
+        style.display === "none" ||
+        style.visibility === "hidden" ||
+        Number(style.opacity) === 0 ||
+        bait.offsetHeight === 0 ||
+        bait.offsetWidth === 0 ||
+        rect.height === 0 ||
+        rect.width === 0
+      ) {
+        return true;
+      }
+
+      const testProbe = document.createElement("div");
+      testProbe.className = "ad-banner adsbygoogle";
+      testProbe.style.position = "fixed";
+      testProbe.style.left = "-9999px";
+      testProbe.style.width = "120px";
+      testProbe.style.height = "60px";
+      document.body.appendChild(testProbe);
+      const probeStyle = window.getComputedStyle(testProbe);
+      const probeRect = testProbe.getBoundingClientRect();
+      const stealthHidden =
+        probeStyle.display === "none" ||
+        probeStyle.visibility === "hidden" ||
+        probeRect.height === 0 ||
+        probeRect.width === 0;
+      testProbe.remove();
+
+      return stealthHidden;
+    }
+
+    async function checkNetworkAdScriptBlocked() {
+      try {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 1400);
+        await fetch(
+          "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",
+          { mode: "no-cors", cache: "no-store", signal: controller.signal }
+        );
+        clearTimeout(timer);
+        return false;
+      } catch (_) {
+        return true;
+      }
+    }
+
+    function setAdblockWallState(isBlocked) {
+      if (isBlocked) {
+        adblockWall.classList.add("open");
+        adblockWall.style.display = "flex";
+        document.body.classList.add("adblock-locked");
+      } else {
+        adblockWall.classList.remove("open");
+        adblockWall.style.display = "none";
+        document.body.classList.remove("adblock-locked");
+      }
+    }
+
+    async function runAdBlockDetection() {
+      refreshBaitElement();
+      await new Promise((r) => setTimeout(r, 80));
+      const domBlocked = checkDomBaitBlocked();
+      const netBlocked = await checkNetworkAdScriptBlocked();
+      const detected = domBlocked || netBlocked;
+      setAdblockWallState(detected);
+      return detected;
+    }
+
+    recheckAdblockBtn.addEventListener("click", () => {
+      runAdBlockDetection();
+    });
+
+    reloadPageAdblockBtn.addEventListener("click", () => {
+      window.location.reload();
+    });
+
+    // Ads Management
+    function renderConfiguredAds() {
+      const hasBottomUrl = Boolean((adsConfig.bottomBannerUrl || "").trim());
+      const hasThirdUrl = Boolean((adsConfig.thirdSlotUrl || "").trim());
+
+      if (hasBottomUrl) {
+        stickyBottomAd.classList.add("active");
+        stickyAdUrlText.textContent = adsConfig.bottomBannerUrl.trim();
+        stickyAdVisitBtn.href = adsConfig.bottomBannerUrl.trim();
+      } else {
+        stickyBottomAd.classList.remove("active");
+      }
+
+      if (hasThirdUrl) {
+        adSlotBanner.classList.add("active");
+        adSlotTitle.textContent = (adsConfig.thirdSlotLabel || "").trim() || "إعلان مميز مفعّل";
+        adSlotPreview.textContent = adsConfig.thirdSlotUrl.trim();
+        adSlotLink.href = adsConfig.thirdSlotUrl.trim();
+      } else {
+        adSlotBanner.classList.remove("active");
+      }
+    }
+
+    function triggerCardClickAdIfConfigured() {
+      const popUrl = (adsConfig.cardPopUrl || "").trim();
+      if (!popUrl) return;
+      try {
+        window.open(popUrl, "_blank", "noopener,noreferrer");
+      } catch (_) {}
+    }
+
+    openAdsModalBtn.addEventListener("click", () => {
+      if (!canManageCatalog()) return;
+      adsFeedback.textContent = "";
+      adsFeedback.className = "auth-feedback";
+      adCardPopUrl.value = adsConfig.cardPopUrl || "";
+      adBottomBannerUrl.value = adsConfig.bottomBannerUrl || "";
+      adThirdSlotUrl.value = adsConfig.thirdSlotUrl || "";
+      adThirdSlotLabel.value = adsConfig.thirdSlotLabel || "";
+      adsModal.classList.add("open");
+    });
+
+    closeAdsBtn.addEventListener("click", () => adsModal.classList.remove("open"));
+    adsModal.addEventListener("click", (e) => {
+      if (e.target === adsModal) adsModal.classList.remove("open");
+    });
+
+    closeStickyAdBtn.addEventListener("click", () => {
+      stickyBottomAd.classList.remove("active");
+    });
+
+    hideAdSlotBtn.addEventListener("click", () => {
+      adSlotBanner.classList.remove("active");
+    });
+
+    adsSettingsForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!canManageCatalog()) return;
+      adsConfig = {
+        cardPopUrl: adCardPopUrl.value.trim(),
+        bottomBannerUrl: adBottomBannerUrl.value.trim(),
+        thirdSlotUrl: adThirdSlotUrl.value.trim(),
+        thirdSlotLabel: adThirdSlotLabel.value.trim() || "إعلان مميز"
+      };
+      localStorage.setItem(ADS_CONFIG_KEY, JSON.stringify(adsConfig));
+      renderConfiguredAds();
+
+      try {
+        await setDoc(doc(db, "settings", "ads_config"), {
+          ...adsConfig,
+          updatedAt: serverTimestamp()
+        }, { merge: true });
+      } catch (_) {}
+
+      adsFeedback.textContent = "تم حفظ وتفعيل الإعلانات التي تم إدخال روابطها.";
+      adsFeedback.className = "auth-feedback success";
+    });
+
+    clearAllAdsBtn.addEventListener("click", () => {
+      if (!canManageCatalog()) return;
+      adsConfig = {
+        cardPopUrl: "",
+        bottomBannerUrl: "",
+        thirdSlotUrl: "",
+        thirdSlotLabel: "إعلان مميز"
+      };
+      adCardPopUrl.value = "";
+      adBottomBannerUrl.value = "";
+      adThirdSlotUrl.value = "";
+      adThirdSlotLabel.value = "";
+      localStorage.setItem(ADS_CONFIG_KEY, JSON.stringify(adsConfig));
+      renderConfiguredAds();
+      adsFeedback.textContent = "تم مسح روابط الإعلانات وإيقاف عرضها.";
+      adsFeedback.className = "auth-feedback success";
+    });
+
+    // Save & Load User Profile + MyList + Per-User Progress in Firestore
+    async function syncUserProfileAndLists(user, extraMeta = {}) {
+      if (!user || !user.uid) return;
+      const userRef = doc(db, "users", user.uid);
+      const userScopeKey = `uid_${user.uid}`;
+      const providerId =
+        extraMeta.provider ||
+        (user.providerData && user.providerData[0]?.providerId) ||
+        "password";
+
+      try {
+        const existingSnap = await getDoc(userRef);
+        const existingData = existingSnap.exists() ? existingSnap.data() : {};
+
+        const remoteList = Array.isArray(existingData.myList) ? existingData.myList : [];
+        const mergedList = Array.from(new Set([...remoteList, ...myList]));
+
+        const localScopeProgress = progressMap[userScopeKey] || {};
+        const guestProgress = progressMap.guest || {};
+        const remoteProgress = existingData.progress && typeof existingData.progress === "object"
+          ? existingData.progress
+          : {};
+
+        const mergedScopeProgress = {
+          ...guestProgress,
+          ...remoteProgress,
+          ...localScopeProgress
+        };
+
+        myList = mergedList;
+        progressMap[userScopeKey] = mergedScopeProgress;
+        localStorage.setItem(LIST_KEY, JSON.stringify(myList));
+        localStorage.setItem(PROGRESS_KEY, JSON.stringify(progressMap));
+
+        const profilePayload = {
+          uid: user.uid,
+          displayName: extraMeta.displayName || user.displayName || existingData.displayName || "مستخدم",
+          email: user.email || existingData.email || "",
+          photoURL: user.photoURL || existingData.photoURL || "",
+          provider: providerId,
+          myList: myList,
+          progress: mergedScopeProgress,
+          lastLoginAt: serverTimestamp()
+        };
+
+        if (!existingSnap.exists() || extraMeta.isNewAccount) {
+          profilePayload.createdAt = serverTimestamp();
+        }
+
+        await setDoc(userRef, profilePayload, { merge: true });
+        lastCloudSyncTime = Date.now();
+        userSyncStateText = "تم حفظ الحساب وقائمتي ونقاط التوقف في Firestore";
+        renderAll();
+        updateHeroListBtn();
+        updateModalListBtn();
+      } catch (err) {
+        console.error("Firestore user sync error:", err);
+        userSyncStateText = "تم تسجيل الدخول (المزامنة المحلية مفعّلة)";
+        renderStatsBadges();
+      }
+    }
+
+    async function persistUserListsToFirestore(forceCloud = false) {
+      localStorage.setItem(LIST_KEY, JSON.stringify(myList));
+      localStorage.setItem(PROGRESS_KEY, JSON.stringify(progressMap));
+      updateGuestNudgeBanner();
+
+      if (!currentFirebaseUser || !currentFirebaseUser.uid) return;
+      const now = Date.now();
+      if (!forceCloud && now - lastCloudSyncTime < 4500) return;
+
+      try {
+        lastCloudSyncTime = now;
+        const userRef = doc(db, "users", currentFirebaseUser.uid);
+        const scopedProgress = progressMap[`uid_${currentFirebaseUser.uid}`] || {};
+        await setDoc(
+          userRef,
+          {
+            myList: myList,
+            progress: scopedProgress,
+            updatedAt: serverTimestamp()
+          },
+          { merge: true }
+        );
+        userSyncStateText = "تمت مزامنة التقدم والقائمة سحابياً";
+        renderStatsBadges();
+      } catch (err) {
+        console.error("Failed to sync progress/myList:", err);
+      }
+    }
+
+    function updateGuestNudgeBanner() {
+      const scoped = getScopedProgressStore();
+      const hasAnyProgress = Object.keys(scoped).some((k) => getItemProgressPercent(k) > 0);
+      const isAuthenticatedAccount = Boolean(currentFirebaseUser && currentFirebaseUser.uid);
+      if (!isAuthenticatedAccount && hasAnyProgress) {
+        guestSyncNudge.classList.add("active");
+      } else {
+        guestSyncNudge.classList.remove("active");
+      }
+    }
+
+    nudgeLoginBtn.addEventListener("click", () => {
+      clearGateFeedback();
+      setGateVisible(true);
+    });
+
+    function openLegalModal(focusTarget = "") {
+      dmcaFeedback.textContent = "";
+      dmcaFeedback.className = "auth-feedback";
+      if (focusTarget && !document.getElementById("dmcaTargetUrl").value) {
+        document.getElementById("dmcaTargetUrl").value = focusTarget;
+      }
+      legalModal.classList.add("open");
+    }
+
+    openCopyrightModalBtn.addEventListener("click", () => openLegalModal());
+    openDmcaModalBtn.addEventListener("click", () => openLegalModal(window.location.href));
+    closeLegalBtn.addEventListener("click", () => legalModal.classList.remove("open"));
+    legalModal.addEventListener("click", (e) => {
+      if (e.target === legalModal) legalModal.classList.remove("open");
+    });
+
+    dmcaForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const noticePayload = {
+        reporterName: document.getElementById("dmcaReporterName").value.trim(),
+        reporterEmail: document.getElementById("dmcaReporterEmail").value.trim(),
+        workTitle: document.getElementById("dmcaWorkTitle").value.trim(),
+        targetUrl: document.getElementById("dmcaTargetUrl").value.trim(),
+        statement: document.getElementById("dmcaStatement").value.trim(),
+        submittedAt: new Date().toISOString()
+      };
+
+      try {
+        await addDoc(collection(db, "dmca_notices"), noticePayload);
+        dmcaFeedback.textContent = "تم تسجيل إشعار DMCA وحفظه بنجاح لمراجعته.";
+        dmcaFeedback.className = "auth-feedback success";
+      } catch (_) {
+        dmcaFeedback.textContent = `تم تجهيز إشعار DMCA بخصوص "${noticePayload.workTitle}". يمكنك إرساله إلى dmca@streamflix-metabox.app.`;
+        dmcaFeedback.className = "auth-feedback success";
+      }
+    });
+
+    function renderCinemaBackground() {
+      const sourcePosters = catalog.length
+        ? [...catalog.map((i) => i.poster), ...CINEMA_BG_POSTERS]
+        : CINEMA_BG_POSTERS;
+      cinemaBgLayer.innerHTML = "";
+      sourcePosters.slice(0, 18).forEach((src) => {
+        const tile = document.createElement("div");
+        tile.className = "cinema-tile";
+        tile.innerHTML = `<img src="${src}" alt="" loading="lazy" />`;
+        cinemaBgLayer.appendChild(tile);
+      });
+    }
+
+    function applyLanguageUI() {
+      const isEn = uiLang === "en";
+      document.documentElement.lang = isEn ? "en" : "ar";
+      document.documentElement.dir = isEn ? "ltr" : "rtl";
+      toggleLangBtn.textContent = isEn ? "AR" : "EN";
+      gateLangBtn.textContent = isEn ? "AR" : "EN";
+
+      const tabLabels = isEn
+        ? ["All", "Movies", "TV Shows", "Anime", "My List"]
+        : ["الكل", "أفلام", "مسلسلات", "أنمي", "قائمتي"];
+      tabBtns.forEach((btn, idx) => {
+        if (tabLabels[idx]) btn.textContent = tabLabels[idx];
+      });
+
+      searchInput.placeholder = isEn ? "Search..." : "ابحث...";
+      reshuffleShelvesBtn.textContent = isEn ? "🎲 Shuffle Shelves" : "🎲 خلط الأقسام";
+      openAdsModalBtn.textContent = isEn ? "📣 Ads" : "📣 الإعلانات";
+      aiOrganizeBtn.textContent = isEn ? "✦ AI Organize" : "✦ تنظيم ذكي بالـ AI";
+      openAddModalBtn.textContent = isEn ? "+ Add" : "+ إضافة";
+      switchAccountBtn.textContent = isEn ? "Account" : "الحساب";
+      logoutBtn.textContent = isEn ? "Sign Out" : "خروج";
+
+      gateSubtitle.textContent = isEn
+        ? "Sign in to save where you left off in every movie or episode and sync your list in Firestore, or start with instant demo access."
+        : "أهلاً بك في عالم الأفلام والمسلسلات والأنمي. سجّل الدخول لحفظ نقطة توقف المشاهدة وقائمتك سحابياً أو ابدأ بالدخول التجريبي.";
+      gateLoginTab.textContent = isEn ? "Sign In" : "تسجيل الدخول";
+      gateSignupTab.textContent = isEn ? "Create Account" : "إنشاء حساب";
+      gateGoogleText.textContent = isEn ? "Continue with Google" : "تسجيل الدخول عبر Google";
+      gateOrText.textContent = isEn ? "OR WITH EMAIL" : "أو بالبريد الإلكتروني";
+      gateNameLabel.textContent = isEn ? "Full Name" : "الاسم الكامل";
+      gateEmailLabel.textContent = isEn ? "Email" : "البريد الإلكتروني";
+      gatePassLabel.textContent = isEn ? "Password" : "كلمة المرور";
+      gateSubmitBtn.textContent = authMode === "signup"
+        ? (isEn ? "Create Account" : "إنشاء الحساب")
+        : (isEn ? "Sign In" : "تسجيل الدخول");
+      gateDemoDiv.textContent = isEn ? "INSTANT TRY" : "تجربة فورية";
+      gateDemoBtn.textContent = isEn ? "⚡ Instant Demo Access" : "⚡ دخول تجريبي فوري";
+    }
+
+    function showGateFeedback(msg, type = "error") {
+      gateFeedback.textContent = msg;
+      gateFeedback.className = `auth-feedback ${type}`;
+    }
+
+    function clearGateFeedback() {
+      gateFeedback.textContent = "";
+      gateFeedback.className = "auth-feedback";
+    }
+
+    function setGateMode(mode) {
+      authMode = mode;
+      clearGateFeedback();
+      const isSignup = mode === "signup";
+      gateLoginTab.classList.toggle("active", !isSignup);
+      gateSignupTab.classList.toggle("active", isSignup);
+      gateNameField.style.display = isSignup ? "flex" : "none";
+      applyLanguageUI();
+    }
+
+    function enterMainPlatformWithUser(userObj) {
+      if (userObj && userObj.isDemo) {
+        demoUser = userObj;
+        localStorage.setItem(DEMO_SESSION_KEY, JSON.stringify(demoUser));
+      } else if (userObj && userObj.uid) {
+        currentFirebaseUser = userObj;
+        demoUser = null;
+        localStorage.removeItem(DEMO_SESSION_KEY);
+      }
+      setGateVisible(false);
+      updateGateAndAuthUI();
+      renderAll();
+    }
+
+    function updateGateAndAuthUI() {
+      const activeUser = currentFirebaseUser || demoUser;
+      if (activeUser) {
+        setGateVisible(false);
+        const name = activeUser.displayName || activeUser.email || "User";
+        const demoTag = activeUser.isDemo ? (uiLang === "en" ? " (Demo)" : " (تجريبي)") : "";
+        userBadge.textContent = `● ${name}${demoTag}`;
+        userBadge.style.display = "inline-flex";
+        logoutBtn.style.display = "inline-flex";
+      } else {
+        setGateVisible(true);
+        userBadge.style.display = "none";
+        logoutBtn.style.display = "none";
+      }
+      applyAdminControlsVisibility();
+      updateGuestNudgeBanner();
+      renderStatsBadges();
+    }
+
+    gateLangBtn.addEventListener("click", () => {
+      uiLang = uiLang === "ar" ? "en" : "ar";
+      applyLanguageUI();
+    });
+
+    toggleLangBtn.addEventListener("click", () => {
+      uiLang = uiLang === "ar" ? "en" : "ar";
+      applyLanguageUI();
+    });
+
+    gateLoginTab.addEventListener("click", () => setGateMode("login"));
+    gateSignupTab.addEventListener("click", () => setGateMode("signup"));
+
+    switchAccountBtn.addEventListener("click", () => {
+      clearGateFeedback();
+      setGateVisible(true);
+    });
+
+    gateGoogleBtn.addEventListener("click", async () => {
+      if (isAuthActionInFlight) return;
+      isAuthActionInFlight = true;
+      gateGoogleBtn.disabled = true;
+      clearGateFeedback();
+
+      try {
+        const cred = await signInWithPopup(auth, googleProvider);
+        enterMainPlatformWithUser(cred.user);
+        await syncUserProfileAndLists(cred.user, { provider: "google.com" });
+      } catch (err) {
+        console.error("Google sign-in error:", err);
+        if (
+          err &&
+          (err.code === "auth/popup-blocked" ||
+            err.code === "auth/cancelled-popup-request" ||
+            err.code === "auth/operation-not-supported-in-this-environment")
+        ) {
+          try {
+            showGateFeedback("جاري التحويل إلى صفحة تسجيل الدخول عبر Google...", "success");
+            await signInWithRedirect(auth, googleProvider);
+            return;
+          } catch (redirectErr) {
+            showGateFeedback(redirectErr.message || err.message, "error");
+          }
+        } else {
+          showGateFeedback(err.message || "تعذر تسجيل الدخول عبر Google.", "error");
+        }
+      } finally {
+        isAuthActionInFlight = false;
+        gateGoogleBtn.disabled = false;
+      }
+    });
+
+    gateEmailForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (isAuthActionInFlight) return;
+      isAuthActionInFlight = true;
+      gateSubmitBtn.disabled = true;
+      clearGateFeedback();
+
+      const nameVal = gateNameInput.value.trim();
+      const emailVal = gateEmailInput.value.trim();
+      const passVal = gatePasswordInput.value;
+
+      try {
+        if (authMode === "signup") {
+          const cred = await createUserWithEmailAndPassword(auth, emailVal, passVal);
+          if (nameVal && cred.user) {
+            await updateProfile(cred.user, { displayName: nameVal });
+          }
+          enterMainPlatformWithUser(cred.user);
+          await syncUserProfileAndLists(cred.user, {
+            provider: "password",
+            displayName: nameVal || emailVal.split("@")[0],
+            isNewAccount: true
+          });
+        } else {
+          const cred = await signInWithEmailAndPassword(auth, emailVal, passVal);
+          enterMainPlatformWithUser(cred.user);
+          await syncUserProfileAndLists(cred.user, { provider: "password" });
+        }
+      } catch (err) {
+        showGateFeedback(err.message || "فشلت عملية المصادقة.", "error");
+      } finally {
+        isAuthActionInFlight = false;
+        gateSubmitBtn.disabled = false;
+      }
+    });
+
+    gateDemoBtn.addEventListener("click", () => {
+      clearGateFeedback();
+      const demoAccount = {
+        uid: "demo_guest_01",
+        displayName: "حساب تجريبي",
+        email: "demo@streamflix.app",
+        isDemo: true
+      };
+      userSyncStateText = "وضع تجريبي — سجّل دخولك لحفظ التقدم سحابياً";
+      enterMainPlatformWithUser(demoAccount);
+    });
+
+    logoutBtn.addEventListener("click", async () => {
+      demoUser = null;
+      currentFirebaseUser = null;
+      userSyncStateText = "";
+      localStorage.removeItem(DEMO_SESSION_KEY);
+      if (auth.currentUser) {
+        try {
+          await signOut(auth);
+        } catch (_) {}
+      }
+      updateGateAndAuthUI();
+      renderAll();
+    });
+
+    getRedirectResult(auth)
+      .then(async (result) => {
+        if (result && result.user) {
+          enterMainPlatformWithUser(result.user);
+          await syncUserProfileAndLists(result.user, { provider: "google.com" });
+        }
+      })
+      .catch((err) => {
+        console.warn("Redirect result check:", err);
+      });
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        currentFirebaseUser = user;
+        demoUser = null;
+        localStorage.removeItem(DEMO_SESSION_KEY);
+        setGateVisible(false);
+        updateGateAndAuthUI();
+        renderAll();
+        await syncUserProfileAndLists(user);
+      } else {
+        currentFirebaseUser = null;
+        updateGateAndAuthUI();
+      }
+    });
+
+    function typeLabel(type) {
+      if (type === "movie") return "فيلم";
+      if (type === "series") return "مسلسل";
+      if (type === "anime") return "أنمي";
+      return type;
+    }
+
+    function escapeXml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&apos;");
+    }
+
+    function getBaseSiteUrl() {
+      const origin = window.location.origin && window.location.origin !== "null"
+        ? window.location.origin
+        : "https://username.github.io";
+      const path = window.location.pathname || "/";
+      const dir = path.endsWith("/") ? path : path.substring(0, path.lastIndexOf("/") + 1);
+      return `${origin}${dir}`;
+    }
+
+    function triggerFileDownload(filename, content, mimeType) {
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function generateSitemapXml() {
+      const baseUrl = getBaseSiteUrl();
+      const today = new Date().toISOString().split("T")[0];
+      const staticPaths = ["", "?tab=movie", "?tab=series", "?tab=anime"];
+
+      const itemUrls = catalog.map((item) => {
+        const slug = encodeURIComponent(String(item.id || item.title || "item"));
+        return `
+  <url>
+    <loc>${escapeXml(baseUrl)}?item=${slug}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>`;
+      });
+
+      const baseUrls = staticPaths.map((p, idx) => `
+  <url>
+    <loc>${escapeXml(baseUrl + p)}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>${idx === 0 ? "1.0" : "0.9"}</priority>
+  </url>`);
+
+      return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${baseUrls.join("")}${itemUrls.join("")}
+</urlset>`;
+    }
+
+    function generateRobotsTxt() {
+      const baseUrl = getBaseSiteUrl();
+      return `User-agent: *
+Allow: /
+
+Sitemap: ${baseUrl}sitemap.xml
+`;
+    }
+
+    function renderLabelsPickerUI() {
+      newLabelsPicker.innerHTML = "";
+      SEVEN_LABELS.forEach((lbl, idx) => {
+        const lab = document.createElement("label");
+        lab.innerHTML = `<input type="checkbox" value="${lbl}" ${idx < 2 ? "checked" : ""} /> ${lbl}`;
+        newLabelsPicker.appendChild(lab);
+      });
+    }
+
+    function toggleFormFieldsByType() {
+      const isMovie = newType.value === "movie";
+      movieVideoField.style.display = isMovie ? "flex" : "none";
+      seasonsJsonField.style.display = isMovie ? "none" : "flex";
+    }
+
+    function openAddModal() {
+      if (!canManageCatalog()) return;
+      editingItemId = null;
+      formModalTitle.textContent = "إضافة عمل جديد إلى Firestore";
+      submitFormBtn.textContent = "حفظ في Firestore";
+      addItemForm.reset();
+      document.getElementById("newYear").value = "2026";
+      document.getElementById("newRating").value = "4.8";
+      document.getElementById("newCountry").value = "الولايات المتحدة";
+      document.getElementById("newRibbon").value = "New Season";
+      document.getElementById("newPoster").value = "https://peach.blender.org/wp-content/uploads/sintel_poster.jpg";
+      document.getElementById("newVideo").value = SAMPLE_V1;
+      renderLabelsPickerUI();
+      toggleFormFieldsByType();
+      addModal.classList.add("open");
+    }
+
+    function openEditModal(item) {
+      if (!canManageCatalog() || !item) return;
+      editingItemId = item.id;
+      formModalTitle.textContent = `تعديل: ${item.title}`;
+      submitFormBtn.textContent = "تحديث البيانات في Firestore";
+
+      renderLabelsPickerUI();
+      newType.value = item.type || "movie";
+      document.getElementById("newGenre").value = item.genre || "خيال علمي";
+      document.getElementById("newCountry").value = item.country || "الولايات المتحدة";
+      document.getElementById("newYear").value = item.year || "2026";
+      document.getElementById("newRating").value = item.rating || "4.8";
+      document.getElementById("newTitle").value = item.title || "";
+      document.getElementById("newRibbon").value = item.ribbon || "";
+      document.getElementById("newPoster").value = item.poster || "";
+      document.getElementById("newVideo").value = item.video || SAMPLE_V1;
+      document.getElementById("newSeasonsJson").value = JSON.stringify(
+        Array.isArray(item.seasons) && item.seasons.length
+          ? item.seasons
+          : [
+              {
+                seasonNumber: 1,
+                title: "الموسم الأول",
+                episodes: [
+                  { ep: 1, name: "الحلقة 1", duration: "10 د", video: SAMPLE_V2 }
+                ]
+              }
+            ],
+        null,
+        2
+      );
+      document.getElementById("newDesc").value = item.desc || "";
+
+      const itemLabels = Array.isArray(item.labels) ? item.labels : [];
+      newLabelsPicker.querySelectorAll("input[type='checkbox']").forEach((cb) => {
+        cb.checked = itemLabels.includes(cb.value);
+      });
+
+      toggleFormFieldsByType();
+      addModal.classList.add("open");
+    }
+
+    async function deleteCatalogItem(item) {
+      if (!canManageCatalog() || !item || !item.id) return;
+      const confirmed = confirm(`هل أنت متأكد من حذف "${item.title}" نهائياً من Firestore؟`);
+      if (!confirmed) return;
+
+      if (String(item.id).startsWith("fallback_")) {
+        catalog = catalog.filter((x) => x.id !== item.id);
+        myList = myList.filter((id) => id !== item.id);
+        await saveList();
+        if (currentItem?.id === item.id) closePlayer();
+        renderAll();
+        return;
+      }
+
+      try {
+        await deleteDoc(doc(db, "catalog", item.id));
+        myList = myList.filter((id) => id !== item.id);
+        await saveList();
+        if (currentItem?.id === item.id) {
+          closePlayer();
+        }
+        await loadCatalogFromFirebase();
+      } catch (err) {
+        alert("فشل الحذف من Firestore: " + err.message);
+      }
+    }
+
+    function aiNormalizeItem(item, index = 0) {
+      const labels = Array.isArray(item.labels) && item.labels.length
+        ? item.labels.filter((l) => SEVEN_LABELS.includes(l))
+        : [];
+      const yearNum = parseInt(item.year, 10) || 2020;
+
+      if (!labels.length) {
+        if (yearNum >= 2025) labels.push("جديد", "رائج الآن");
+        else if (yearNum <= 2014) labels.push("كلاسيكي", "مترجم");
+        else labels.push("الأعلى تقييماً", "حصري");
+      }
+
+      const country = item.country && COUNTRIES_LIST.includes(item.country)
+        ? item.country
+        : COUNTRIES_LIST[index % COUNTRIES_LIST.length];
+
+      const rating = Math.max(1, Math.min(5, Number(item.rating) || (labels.includes("الأعلى تقييماً") ? 4.9 : 4.6)));
+
+      const ribbon = item.ribbon !== undefined
+        ? item.ribbon
+        : (labels.includes("جديد") ? "New Season" : (labels.includes("رائج الآن") ? "New Episode" : ""));
+
+      const top10 = typeof item.top10 === "boolean"
+        ? item.top10
+        : labels.includes("الأعلى تقييماً");
+
+      const aiScore =
+        (labels.includes("رائج الآن") ? 35 : 0) +
+        (labels.includes("جديد") ? 25 : 0) +
+        (labels.includes("الأعلى تقييماً") ? 25 : 0) +
+        (labels.includes("حصري") ? 15 : 0) +
+        (myList.includes(item.id) ? 30 : 0) +
+        Math.max(0, (yearNum - 2000));
+
+      return {
+        ...item,
+        country,
+        rating: Number(rating.toFixed(1)),
+        year: String(item.year || "2025"),
+        desc: item.desc || "عمل متاح للمشاهدة عبر المنصة.",
+        labels: labels.slice(0, 3),
+        ribbon,
+        top10,
+        aiScore
+      };
+    }
+
+    function renderStatsBadges() {
+      const moviesCount = catalog.filter((i) => i.type === "movie").length;
+      const seriesCount = catalog.filter((i) => i.type === "series").length;
+      const animeCount = catalog.filter((i) => i.type === "anime").length;
+      const activeAdsCount = [adsConfig.cardPopUrl, adsConfig.bottomBannerUrl, adsConfig.thirdSlotUrl]
+        .filter((u) => Boolean((u || "").trim())).length;
+      const syncChip = userSyncStateText
+        ? `<span class="stat-chip sync-ok">✓ ${userSyncStateText}</span>`
+        : "";
+      statsBadges.innerHTML = `
+        <span class="stat-chip">أفلام: ${moviesCount}</span>
+        <span class="stat-chip">مسلسلات: ${seriesCount}</span>
+        <span class="stat-chip">أنمي: ${animeCount}</span>
+        <span class="stat-chip">قائمتي: ${myList.length}</span>
+        <span class="stat-chip">إعلانات مفعّلة: ${activeAdsCount}/3</span>
+        ${syncChip}
+      `;
+    }
+
+    function updateContinueWatchingBtn() {
+      const scoped = getScopedProgressStore();
+      const keys = Object.keys(scoped).filter((k) => getItemProgressPercent(k) > 0 && getItemProgressPercent(k) < 100);
+      if (!keys.length) {
+        continueWatchingBtn.style.display = "none";
+        return;
+      }
+      const lastId = keys[keys.length - 1];
+      const found = catalog.find((i) => i.id === lastId);
+      if (found) {
+        const pct = getItemProgressPercent(found.id);
+        continueWatchingBtn.style.display = "inline-flex";
+        continueWatchingBtn.textContent = `↻ استئناف: ${found.title} (${pct}%)`;
+        continueWatchingBtn.onclick = () => openItemModal(found);
+      } else {
+        continueWatchingBtn.style.display = "none";
+      }
+    }
+
+    function organizeWithAI(showToast = false) {
+      catalog = catalog.map((item, idx) => aiNormalizeItem(item, idx));
+      if (aiSortedEnabled) {
+        catalog.sort((a, b) => b.aiScore - a.aiScore);
+      }
+      renderStatsBadges();
+      renderCinemaBackground();
+
+      if (showToast) {
+        aiSortedEnabled = true;
+        localStorage.setItem(AI_SORT_KEY, "1");
+        catalog.sort((a, b) => b.aiScore - a.aiScore);
+        shelfSeed = Math.floor(Math.random() * 100000);
+        renderAll();
+      }
+    }
+
+    function applyAutoSEO(focusItem = null) {
+      const titleEl = document.getElementById("seoTitle");
+      const descEl = document.getElementById("seoDesc");
+      const kwEl = document.getElementById("seoKeywords");
+      const ogTitleEl = document.getElementById("ogTitle");
+      const ogDescEl = document.getElementById("ogDesc");
+      const ogImageEl = document.getElementById("ogImage");
+      const canonicalEl = document.getElementById("canonicalLink");
+      const schemaEl = document.getElementById("jsonLdSchema");
+
+      const baseUrl = getBaseSiteUrl();
+
+      if (focusItem) {
+        const slug = encodeURIComponent(String(focusItem.id || focusItem.title || "item"));
+        const itemUrl = `${baseUrl}?item=${slug}`;
+        const ratingNum = Number(focusItem.rating) || 4.8;
+        const pageTitle = `${focusItem.title} (${focusItem.year || ""}) — ${ratingNum}★ | StreamFlix AI`;
+        const pageDesc = `${focusItem.desc} | ${typeLabel(focusItem.type)} • ${focusItem.genre} • ${focusItem.country || ""} • تقييم ${ratingNum}/5`;
+
+        titleEl.textContent = pageTitle;
+        descEl.setAttribute("content", pageDesc);
+        ogTitleEl.setAttribute("content", pageTitle);
+        ogDescEl.setAttribute("content", pageDesc);
+        if (focusItem.poster) ogImageEl.setAttribute("content", focusItem.poster);
+        canonicalEl.setAttribute("href", itemUrl);
+
+        schemaEl.textContent = JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": focusItem.type === "movie" ? "Movie" : "TVSeries",
+          "name": focusItem.title,
+          "description": focusItem.desc,
+          "genre": focusItem.genre,
+          "countryOfOrigin": {
+            "@type": "Country",
+            "name": focusItem.country || "Global"
+          },
+          "datePublished": String(focusItem.year || ""),
+          "image": focusItem.poster,
+          "url": itemUrl,
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": ratingNum.toFixed(1),
+            "bestRating": "5",
+            "worstRating": "1",
+            "ratingCount": 120 + (String(focusItem.title || "").length * 17)
+          }
+        });
+        return;
+      }
+
+      const tabNames = {
+        all: "كل المحتوى",
+        movie: "أفلام",
+        series: "مسلسلات",
+        anime: "أنمي",
+        mylist: "قائمتي"
+      };
+      const labelText = activeLabel === "all" ? "جميع التسميات" : activeLabel;
+      const countryText = countrySelect.value === "all" ? "كل الدول" : countrySelect.value;
+      const pageTitle = `${tabNames[activeTab] || "المنصة"} • ${labelText} • ${countryText} | StreamFlix AI`;
+      const pageDesc = `مشاهدة ${tabNames[activeTab] || "المحتوى"} (${labelText} - ${countryText}) مع حفظ نقطة توقف المشاهدة لكل حساب.`;
+
+      titleEl.textContent = pageTitle;
+      descEl.setAttribute("content", pageDesc);
+      ogTitleEl.setAttribute("content", pageTitle);
+      ogDescEl.setAttribute("content", pageDesc);
+      if (catalog[0]?.poster) ogImageEl.setAttribute("content", catalog[0].poster);
+      canonicalEl.setAttribute("href", baseUrl);
+      kwEl.setAttribute("content", `StreamFlix, ${tabNames[activeTab]}, ${labelText}, ${countryText}, ${SEVEN_LABELS.join(", ")}`);
+
+      schemaEl.textContent = JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "name": pageTitle,
+        "numberOfItems": catalog.length,
+        "itemListElement": catalog.slice(0, 12).map((item, idx) => ({
+          "@type": "ListItem",
+          "position": idx + 1,
+          "name": item.title,
+          "image": item.poster,
+          "url": `${baseUrl}?item=${encodeURIComponent(String(item.id || idx))}`
+        }))
+      });
+    }
+
+    function createPosterCard(item) {
+      const card = document.createElement("article");
+      card.className = "poster-card";
+
+      const watchNowBadge = item.showWatchNow
+        ? `<span class="ribbon-watch">Watch Now</span>`
+        : "";
+      const ribbonBadge = item.ribbon
+        ? `<span class="ribbon-tag">${item.ribbon}</span>`
+        : "";
+      const top10Badge = item.top10
+        ? `<div class="top10-badge">TOP<br/>10</div>`
+        : "";
+
+      const progressPct = getItemProgressPercent(item.id);
+      const progressText = progressPct > 0 ? `${progressPct}%` : "";
+
+      const fullTypeText = `${typeLabel(item.type)}${item.genre ? " • " + item.genre : ""}`;
+      const yearText = `${item.year || "—"} • ${item.country || ""}`;
+      const descText = item.desc || "لا يوجد وصف متاح لهذا العمل.";
+      const showAdminActions = canManageCatalog();
+      const cardLabels = Array.isArray(item.labels) ? item.labels.slice(0, 3) : [];
+
+      card.innerHTML = `
+        <div class="poster-frame">
+          <span class="corner-n">N</span>
+          ${top10Badge}
+          <img src="${item.poster}" alt="${item.title}" loading="lazy" />
+          <div class="hover-info-overlay" aria-hidden="true">
+            <div class="hover-meta-row">
+              <span class="hover-type-tag">${fullTypeText}</span>
+              <span class="hover-year-tag">${yearText}</span>
+            </div>
+            <p class="hover-desc-text">${descText}</p>
+          </div>
+          <div class="status-ribbon-wrap">
+            ${ribbonBadge}
+            ${watchNowBadge}
+          </div>
+          <div class="watch-progress-track" title="نسبة المشاهدة: ${progressPct}%">
+            <div class="watch-progress-fill" style="width:${progressPct}%;"></div>
+          </div>
+        </div>
+        <div class="poster-caption">
+          <div class="poster-name" title="${item.title}">${item.title}</div>
+          <div class="poster-meta-sub">
+            <span class="poster-stars">${formatStarRating(item.rating)}</span>
+            ${progressText ? `<span class="poster-progress-label">▶ ${progressText}</span>` : `<span>${item.country || ""}</span>`}
+          </div>
+          <div class="poster-card-labels">
+            ${cardLabels.map((lbl) => `<span class="card-chip-tag">${lbl}</span>`).join("")}
+          </div>
+          <div class="poster-mini-actions" style="display:${showAdminActions ? "flex" : "none"};">
+            <button type="button" class="mini-act edit">✎ تعديل</button>
+            <button type="button" class="mini-act del">🗑 حذف</button>
+          </div>
+        </div>
+      `;
+
+      const editBtn = card.querySelector(".mini-act.edit");
+      const delBtn = card.querySelector(".mini-act.del");
+
+      editBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        openEditModal(item);
+      });
+
+      delBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        deleteCatalogItem(item);
+      });
+
+      card.addEventListener("click", () => {
+        triggerCardClickAdIfConfigured();
+        openItemModal(item);
+      });
+      return card;
+    }
+
+    function seededShuffle(arr, seed) {
+      const copy = [...arr];
+      let s = seed % 2147483647;
+      if (s <= 0) s += 2147483646;
+      for (let i = copy.length - 1; i > 0; i--) {
+        s = (s * 16807) % 2147483647;
+        const j = (s - 1) % (i + 1);
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function buildHorizontalShelf(shelfDef, items) {
+      const section = document.createElement("section");
+      section.className = "shelf-section";
+
+      const header = document.createElement("div");
+      header.className = "shelf-header";
+
+      const titleGroup = document.createElement("div");
+      titleGroup.className = "shelf-title-group";
+      titleGroup.innerHTML = `
+        <h2 class="shelf-title">${shelfDef.title} <span class="chevron">›</span></h2>
+        <span class="shelf-context-pill">${shelfDef.contextTag}</span>
+      `;
+
+      const inlineLabels = document.createElement("div");
+      inlineLabels.className = "shelf-labels-inline";
+      inlineLabels.setAttribute("aria-label", "تسميات القسم");
+
+      const allTagBtn = document.createElement("button");
+      allTagBtn.type = "button";
+      allTagBtn.className = "shelf-label-tag" + (activeLabel === "all" ? " active" : "");
+      allTagBtn.textContent = "الكل";
+      allTagBtn.addEventListener("click", () => {
+        activeLabel = "all";
+        renderAll();
+      });
+      inlineLabels.appendChild(allTagBtn);
+
+      SEVEN_LABELS.forEach((lbl) => {
+        const tagBtn = document.createElement("button");
+        tagBtn.type = "button";
+        const isSelected = activeLabel === lbl || shelfDef.highlightLabel === lbl;
+        tagBtn.className = "shelf-label-tag" + (isSelected ? " active" : "");
+        tagBtn.textContent = lbl;
+        tagBtn.addEventListener("click", () => {
+          activeLabel = activeLabel === lbl ? "all" : lbl;
+          renderAll();
+        });
+        inlineLabels.appendChild(tagBtn);
+      });
+
+      header.appendChild(titleGroup);
+      header.appendChild(inlineLabels);
+      section.appendChild(header);
+
+      if (!items.length) {
+        const empty = document.createElement("p");
+        empty.className = "empty-msg";
+        empty.textContent = "لا توجد عناصر في هذا الصف حالياً.";
+        section.appendChild(empty);
+        return section;
+      }
+
+      const wrapper = document.createElement("div");
+      wrapper.className = "shelf-wrapper";
+
+      const row = document.createElement("div");
+      row.className = "shelf-row";
+      items.forEach((item) => row.appendChild(createPosterCard(item)));
+
+      const nextBtn = document.createElement("button");
+      nextBtn.type = "button";
+      nextBtn.className = "scroll-next-btn";
+      nextBtn.setAttribute("aria-label", "تمرير الصف");
+      nextBtn.textContent = "›";
+      nextBtn.addEventListener("click", () => {
+        const isRtl = document.documentElement.dir === "rtl";
+        row.scrollBy({ left: isRtl ? -540 : 540, behavior: "smooth" });
+      });
+
+      wrapper.appendChild(row);
+      wrapper.appendChild(nextBtn);
+      section.appendChild(wrapper);
+      return section;
+    }
+
+    function buildDynamicRandomizedShelves(filtered) {
+      const candidates = [];
+
+      const inProgressItems = filtered.filter((item) => {
+        const pct = getItemProgressPercent(item.id);
+        return pct > 0 && pct < 100;
+      });
+      if (inProgressItems.length) {
+        candidates.push({
+          priorityTop: true,
+          title: "متابعة المشاهدة من حيث توقفت",
+          contextTag: "مرتبط بحسابك",
+          items: inProgressItems
+        });
+      }
+
+      const savedList = filtered.filter((item) => isInList(item.id));
+      if (savedList.length) {
+        candidates.push({
+          priorityTop: false,
+          title: "قائمتي المفضلة",
+          contextTag: "قائمة محفوظة",
+          items: savedList
+        });
+      }
+
+      const labelTitleVariants = {
+        "حصري": ["إنتاجات حصرية للمنصة", "أعمال حصرية لا تفوّتك", "مختارات حصرية"],
+        "جديد": ["وصل حديثاً إلى المكتبة", "إصدارات جديدة ومضافة", "أحدث ما أُضيف"],
+        "الأعلى تقييماً": ["الأعلى تقييماً بالنجوم الذهبية", "روائع بتقييمات مرتفعة", "نخبة التقييمات العالية"],
+        "مدبلج": ["أعمال مدبلجة بالكامل", "مختارات مدبلجة بجودة عالية", "أفلام ومسلسلات مدبلجة"],
+        "مترجم": ["أعمال مترجمة بدقة", "مختارات مترجمة للمشاهدة", "أحدث الترجمات"],
+        "كلاسيكي": ["كلاسيكيات خالدة", "أعمال كلاسيكية مختارة", "أرشيف الكلاسيكيات"],
+        "رائج الآن": ["الأكثر رواجاً الآن", "رائج ومتداول حالياً", "ترند المشاهدة اليوم"]
+      };
+
+      SEVEN_LABELS.forEach((lbl, idx) => {
+        const matched = filtered.filter((item) => Array.isArray(item.labels) && item.labels.includes(lbl));
+        if (matched.length) {
+          const variants = labelTitleVariants[lbl] || [lbl];
+          const chosenTitle = variants[(shelfSeed + idx) % variants.length];
+          candidates.push({
+            priorityTop: false,
+            title: chosenTitle,
+            contextTag: `تسمية: ${lbl}`,
+            highlightLabel: lbl,
+            items: seededShuffle(matched, shelfSeed + idx * 13)
+          });
+        }
+      });
+
+      const countryTitleVariants = {
+        "الولايات المتحدة": ["إنتاجات هوليوود والولايات المتحدة", "أعمال أمريكية مختارة"],
+        "اليابان": ["من اليابان — أنمي وإثارة", "مختارات يابانية"],
+        "كوريا الجنوبية": ["دراما وأعمال من كوريا الجنوبية", "مختارات كورية"],
+        "تركيا": ["أعمال تركية مشوقة", "مختارات درامية تركية"],
+        "فرنسا": ["سينما وأعمال من فرنسا", "مختارات فرنسية"],
+        "مصر": ["إنتاجات مصرية وعربية", "مختارات من مصر"]
+      };
+
+      COUNTRIES_LIST.forEach((cty, idx) => {
+        const matched = filtered.filter((item) => item.country === cty);
+        if (matched.length) {
+          const variants = countryTitleVariants[cty] || [`من ${cty}`];
+          const chosenTitle = variants[(shelfSeed + idx * 7) % variants.length];
+          candidates.push({
+            priorityTop: false,
+            title: chosenTitle,
+            contextTag: `الدولة: ${cty}`,
+            items: seededShuffle(matched, shelfSeed + idx * 29)
+          });
+        }
+      });
+
+      const genres = Array.from(new Set(filtered.map((i) => i.genre).filter(Boolean)));
+      genres.forEach((gnr, idx) => {
+        const matched = filtered.filter((item) => item.genre === gnr);
+        if (matched.length) {
+          candidates.push({
+            priorityTop: false,
+            title: `قسم ${gnr}`,
+            contextTag: `النوع: ${gnr}`,
+            items: seededShuffle(matched, shelfSeed + idx * 41)
+          });
+        }
+      });
+
+      if (!candidates.length) {
+        candidates.push({
+          priorityTop: true,
+          title: "مختارات متاحة للمشاهدة",
+          contextTag: "الكل",
+          items: seededShuffle(filtered, shelfSeed)
+        });
+      }
+
+      const topShelves = candidates.filter((c) => c.priorityTop);
+      const rotatableShelves = seededShuffle(
+        candidates.filter((c) => !c.priorityTop),
+        shelfSeed
+      );
+
+      return [...topShelves, ...rotatableShelves];
+    }
+
+    function renderShelves() {
+      const q = searchInput.value.trim().toLowerCase();
+      const g = genreSelect.value;
+      const cty = countrySelect.value;
+
+      const filtered = catalog.filter((item) => {
+        const matchesTab =
+          activeTab === "all" ||
+          (activeTab === "mylist" && isInList(item.id)) ||
+          item.type === activeTab;
+        const matchesGenre = g === "all" || item.genre === g;
+        const matchesCountry = cty === "all" || item.country === cty;
+        const matchesLabel =
+          activeLabel === "all" ||
+          (Array.isArray(item.labels) && item.labels.includes(activeLabel));
+        const matchesQuery =
+          !q ||
+          item.title.toLowerCase().includes(q) ||
+          item.desc.toLowerCase().includes(q) ||
+          item.genre.toLowerCase().includes(q) ||
+          String(item.country || "").toLowerCase().includes(q) ||
+          String(item.year || "").toLowerCase().includes(q) ||
+          (item.labels || []).some((l) => l.toLowerCase().includes(q));
+
+        return matchesTab && matchesGenre && matchesCountry && matchesLabel && matchesQuery;
+      });
+
+      shelvesContainer.innerHTML = "";
+
+      if (!filtered.length) {
+        shelvesContainer.innerHTML = `<p class="empty-msg">لا توجد عناصر مطابقة للتصفية الحالية.</p>`;
+        return;
+      }
+
+      const dynamicShelves = buildDynamicRandomizedShelves(filtered);
+      dynamicShelves.forEach((shelfDef) => {
+        shelvesContainer.appendChild(buildHorizontalShelf(shelfDef, shelfDef.items));
+      });
+    }
+
+    // Auto-Next Episode Countdown
+    function clearAutoNext(markDismissed = false) {
+      if (autoNextTimer) {
+        clearInterval(autoNextTimer);
+        autoNextTimer = null;
+      }
+      pendingNextTarget = null;
+      if (markDismissed) dismissedForCurrentEp = true;
+      nextEpBanner.classList.remove("show");
+    }
+
+    function getNextEpisodeTarget() {
+      if (!currentItem || !Array.isArray(currentItem.seasons)) return null;
+      const season = currentItem.seasons[currentSeasonIdx];
+      if (!season || !Array.isArray(season.episodes)) return null;
+
+      if (currentEpIdx + 1 < season.episodes.length) {
+        return {
+          sIdx: currentSeasonIdx,
+          eIdx: currentEpIdx + 1,
+          label: `${season.title || "الموسم " + (currentSeasonIdx + 1)} — ${season.episodes[currentEpIdx + 1].name}`
+        };
+      }
+
+      if (currentSeasonIdx + 1 < currentItem.seasons.length) {
+        const nextSeason = currentItem.seasons[currentSeasonIdx + 1];
+        if (Array.isArray(nextSeason.episodes) && nextSeason.episodes.length > 0) {
+          return {
+            sIdx: currentSeasonIdx + 1,
+            eIdx: 0,
+            label: `${nextSeason.title || "الموسم " + (currentSeasonIdx + 2)} — ${nextSeason.episodes[0].name}`
+          };
+        }
+      }
+      return null;
+    }
+
+    function goToNextEpisodeNow() {
+      if (!pendingNextTarget) return;
+      const target = pendingNextTarget;
+      clearAutoNext(false);
+      currentSeasonIdx = target.sIdx;
+      currentEpIdx = target.eIdx;
+      renderSeasonsAndEpisodes();
+    }
+
+    function startAutoNextCountdown() {
+      if (autoNextTimer || dismissedForCurrentEp) return;
+      const nextTarget = getNextEpisodeTarget();
+      if (!nextTarget) return;
+
+      pendingNextTarget = nextTarget;
+      let secondsLeft = 5;
+      nextEpName.textContent = nextTarget.label;
+      nextEpCountdown.textContent = String(secondsLeft);
+      nextEpBanner.classList.add("show");
+
+      autoNextTimer = setInterval(() => {
+        secondsLeft -= 1;
+        if (secondsLeft <= 0) {
+          goToNextEpisodeNow();
+        } else {
+          nextEpCountdown.textContent = String(secondsLeft);
+        }
+      }, 1000);
+    }
+
+    function updatePlayerProgressReadout(pct, secondsVal) {
+      const safePct = Math.max(0, Math.min(100, Math.round(pct || 0)));
+      const secText = Number.isFinite(secondsVal) && secondsVal > 0
+        ? ` (${Math.floor(secondsVal)} ث)`
+        : "";
+      playerProgressText.textContent = `نقطة التوقف المحفوظة: ${safePct}%${secText}`;
+      if (currentFirebaseUser && currentFirebaseUser.uid) {
+        playerSyncHint.textContent = "✓ محفوظ في حسابك السحابي";
+      } else {
+        playerSyncHint.textContent = "سجّل دخولك لمزامنة نقطة التوقف عبر أجهزتك";
+      }
+    }
+
+    async function saveDetailedProgress(id, sIdx, eIdx, currentTimeSec = 0, durationSec = 0, forceCloud = false) {
+      if (!id) return;
+      const scoped = getScopedProgressStore();
+      const prev = scoped[id] || {};
+      const computedPct = durationSec > 0
+        ? Math.max(0, Math.min(100, Math.round((currentTimeSec / durationSec) * 100)))
+        : (typeof prev.percent === "number" ? prev.percent : 5);
+
+      scoped[id] = {
+        sIdx,
+        eIdx,
+        seconds: Math.max(0, Math.floor(currentTimeSec || prev.seconds || 0)),
+        duration: Math.max(0, Math.floor(durationSec || prev.duration || 0)),
+        percent: computedPct,
+        completed: computedPct >= 98,
+        updatedAt: Date.now()
+      };
+
+      updatePlayerProgressReadout(computedPct, scoped[id].seconds);
+      updateContinueWatchingBtn();
+      await persistUserListsToFirestore(forceCloud);
+    }
+
+    function handleTimeUpdate() {
+      if (currentItem && currentItem.id) {
+        const dur = videoPlayer.duration;
+        const cur = videoPlayer.currentTime;
+        if (Number.isFinite(dur) && dur > 0 && Number.isFinite(cur) && cur > 0) {
+          saveDetailedProgress(currentItem.id, currentSeasonIdx, currentEpIdx, cur, dur, false);
+          if (!autoNextTimer && !dismissedForCurrentEp) {
+            const remaining = dur - cur;
+            if (remaining <= PRE_END_SECONDS && remaining > 0) {
+              startAutoNextCountdown();
+            }
+          }
+          if (Math.floor(cur) % 10 === 0) {
+            renderShelves();
+          }
+        }
+      }
+    }
+
+    async function saveList() {
+      localStorage.setItem(LIST_KEY, JSON.stringify(myList));
+      await persistUserListsToFirestore(true);
+    }
+
+    function isInList(id) { return myList.includes(id); }
+
+    async function toggleList(id) {
+      if (!id) return;
+      myList = isInList(id) ? myList.filter((x) => x !== id) : [...myList, id];
+      await saveList();
+      renderAll();
+      updateHeroListBtn();
+      updateModalListBtn();
+    }
+
+    function updateHeroListBtn() {
+      if (!heroItem) return;
+      heroListBtn.textContent = isInList(heroItem.id) ? "✓ في قائمتي" : "+ قائمتي";
+    }
+
+    function updateModalListBtn() {
+      if (!currentItem) return;
+      modalToggleListBtn.textContent = isInList(currentItem.id) ? "إزالة من قائمتي" : "إضافة إلى قائمتي";
+    }
+
+    function setupHero(item) {
+      if (!item) return;
+      heroItem = item;
+      hero.style.backgroundImage = `url('${item.poster}')`;
+      const lbl = item.ribbon || (item.labels && item.labels[0]) || "مميز اليوم";
+      heroBadge.textContent = `${lbl} • ${typeLabel(item.type)} • ${item.genre} • ${item.country || ""}`;
+      heroRatingLine.textContent = `التقييم: ${formatStarRating(item.rating)}`;
+      heroTitle.textContent = item.title;
+      heroDesc.textContent = item.desc;
+      updateHeroListBtn();
+      updateContinueWatchingBtn();
+    }
+
+    function playVideoSource(src, titleLabel, resumeSeconds = 0) {
+      dismissedForCurrentEp = false;
+      clearAutoNext(false);
+      modalTitle.textContent = titleLabel;
+      videoPlayer.src = src;
+
+      const seekOnReady = () => {
+        if (resumeSeconds > 2 && Number.isFinite(videoPlayer.duration) && resumeSeconds < videoPlayer.duration - 5) {
+          try {
+            videoPlayer.currentTime = resumeSeconds;
+          } catch (_) {}
+        }
+        videoPlayer.removeEventListener("loadedmetadata", seekOnReady);
+      };
+      videoPlayer.addEventListener("loadedmetadata", seekOnReady);
+      videoPlayer.play().catch(() => {});
+    }
+
+    function renderSeasonsAndEpisodes() {
+      clearAutoNext(false);
+      dismissedForCurrentEp = false;
+      const scoped = getScopedProgressStore();
+      const savedEntry = scoped[currentItem.id] || {};
+      const resumeSec = (savedEntry.sIdx === currentSeasonIdx && savedEntry.eIdx === currentEpIdx)
+        ? Number(savedEntry.seconds || 0)
+        : 0;
+
+      const hasEpisodes = Array.isArray(currentItem.seasons) && currentItem.seasons.length > 0;
+      if (!hasEpisodes) {
+        episodesBox.style.display = "none";
+        saveDetailedProgress(currentItem.id, 0, 0, resumeSec || 5, 0, true);
+        playVideoSource(currentItem.video, `${currentItem.title} (${currentItem.year})`, resumeSec);
+        return;
+      }
+
+      episodesBox.style.display = "block";
+      seasonSelect.innerHTML = "";
+      currentItem.seasons.forEach((s, idx) => {
+        const opt = document.createElement("option");
+        opt.value = idx;
+        opt.textContent = s.title || `الموسم ${s.seasonNumber}`;
+        seasonSelect.appendChild(opt);
+      });
+      seasonSelect.value = String(currentSeasonIdx);
+
+      const season = currentItem.seasons[currentSeasonIdx] || currentItem.seasons[0];
+      const ep = season.episodes[currentEpIdx] || season.episodes[0];
+      saveDetailedProgress(currentItem.id, currentSeasonIdx, currentEpIdx, resumeSec || 5, 0, true);
+      playVideoSource(ep.video, `${currentItem.title} — ${season.title} / ${ep.name}`, resumeSec);
+
+      episodesList.innerHTML = "";
+      season.episodes.forEach((episode, eIdx) => {
+        const card = document.createElement("div");
+        card.className = "ep-card" + (eIdx === currentEpIdx ? " active" : "");
+        card.innerHTML = `<strong>${episode.name}</strong><span>المدة: ${episode.duration || "—"}</span>`;
+        card.addEventListener("click", () => {
+          currentEpIdx = eIdx;
+          renderSeasonsAndEpisodes();
+        });
+        episodesList.appendChild(card);
+      });
+    }
+
+    function openItemModal(item) {
+      currentItem = item;
+      applyAutoSEO(item);
+      applyAdminControlsVisibility();
+
+      const scoped = getScopedProgressStore();
+      const saved = scoped[item.id];
+      currentSeasonIdx = saved ? Math.min(saved.sIdx || 0, (item.seasons?.length || 1) - 1) : 0;
+      currentEpIdx = saved ? Math.min(saved.eIdx || 0, (item.seasons?.[currentSeasonIdx]?.episodes?.length || 1) - 1) : 0;
+
+      infoTitle.textContent = `${item.title} (${item.year}) • ${formatStarRating(item.rating)}`;
+      infoDesc.textContent = `${item.desc} (${typeLabel(item.type)} • ${item.genre} • ${item.country || ""})`;
+      updatePlayerProgressReadout(getItemProgressPercent(item.id), saved?.seconds || 0);
+      updateModalListBtn();
+      renderSeasonsAndEpisodes();
+      playerModal.classList.add("open");
+    }
+
+    function closePlayer() {
+      if (currentItem && currentItem.id) {
+        const dur = videoPlayer.duration;
+        const cur = videoPlayer.currentTime;
+        if (Number.isFinite(dur) && dur > 0 && Number.isFinite(cur) && cur > 0) {
+          saveDetailedProgress(currentItem.id, currentSeasonIdx, currentEpIdx, cur, dur, true);
+        }
+      }
+      clearAutoNext(false);
+      videoPlayer.pause();
+      videoPlayer.removeAttribute("src");
+      videoPlayer.load();
+      playerModal.classList.remove("open");
+      renderShelves();
+      updateContinueWatchingBtn();
+      applyAutoSEO(null);
+    }
+
+    function renderAll() {
+      renderShelves();
+      renderStatsBadges();
+      renderConfiguredAds();
+      applyAdminControlsVisibility();
+      updateContinueWatchingBtn();
+      updateGuestNudgeBanner();
+      applyAutoSEO(null);
+    }
+
+    async function loadCatalogFromFirebase() {
+      try {
+        const snap = await getDocs(collection(db, "catalog"));
+        if (snap.empty) {
+          dbStatus.textContent = "متصل بـ Firestore (metaverse-metabox) — المجموعة catalog فارغة حالياً";
+          catalog = [];
+        } else {
+          catalog = snap.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }));
+          dbStatus.textContent = `متصل بـ Firestore (metaverse-metabox) — ${catalog.length} عنصر`;
+        }
+        organizeWithAI(false);
+        setupHero(catalog[2] || catalog[0]);
+        renderAll();
+      } catch (err) {
+        console.error(err);
+        dbStatus.textContent = "تعذر الاتصال بـ Firestore — تحقق من قواعد الأمان (Rules)";
+        catalog = DEFAULT_ITEMS.map((item, i) => ({ id: "fallback_" + i, ...item }));
+        organizeWithAI(false);
+        setupHero(catalog[2] || catalog[0]);
+        renderAll();
+      }
+    }
+
+    reshuffleShelvesBtn.addEventListener("click", () => {
+      shelfSeed = Math.floor(Math.random() * 100000);
+      renderShelves();
+    });
+
+    downloadSitemapBtn.addEventListener("click", () => {
+      if (!canManageCatalog()) return;
+      triggerFileDownload("sitemap.xml", generateSitemapXml(), "application/xml;charset=utf-8");
+    });
+
+    downloadRobotsBtn.addEventListener("click", () => {
+      if (!canManageCatalog()) return;
+      triggerFileDownload("robots.txt", generateRobotsTxt(), "text/plain;charset=utf-8");
+    });
+
+    seedDataBtn.addEventListener("click", async () => {
+      if (!canManageCatalog()) return;
+      seedDataBtn.disabled = true;
+      seedDataBtn.textContent = "جاري الإضافة...";
+      try {
+        for (const item of DEFAULT_ITEMS) {
+          await addDoc(collection(db, "catalog"), item);
+        }
+        await loadCatalogFromFirebase();
+      } catch (err) {
+        alert("حدث خطأ أثناء الإضافة: " + err.message);
+      } finally {
+        seedDataBtn.disabled = false;
+        seedDataBtn.textContent = "تعبئة بيانات تجريبية";
+      }
+    });
+
+    aiOrganizeBtn.addEventListener("click", () => organizeWithAI(true));
+    newType.addEventListener("change", toggleFormFieldsByType);
+
+    openAddModalBtn.addEventListener("click", openAddModal);
+    closeAddBtn.addEventListener("click", () => addModal.classList.remove("open"));
+    addModal.addEventListener("click", (e) => {
+      if (e.target === addModal) addModal.classList.remove("open");
+    });
+
+    modalEditItemBtn.addEventListener("click", () => {
+      if (currentItem) openEditModal(currentItem);
+    });
+
+    modalDeleteItemBtn.addEventListener("click", () => {
+      if (currentItem) deleteCatalogItem(currentItem);
+    });
+
+    addItemForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!canManageCatalog()) {
+        alert("هذه الصلاحية مخصصة للحساب المعتمد فقط.");
+        return;
+      }
+      const type = newType.value;
+      const title = document.getElementById("newTitle").value.trim();
+      const genre = document.getElementById("newGenre").value;
+      const country = document.getElementById("newCountry").value;
+      const year = document.getElementById("newYear").value.trim();
+      const rating = Math.max(1, Math.min(5, Number(document.getElementById("newRating").value) || 4.8));
+      const ribbon = document.getElementById("newRibbon").value.trim();
+      const poster = document.getElementById("newPoster").value.trim();
+      const desc = document.getElementById("newDesc").value.trim();
+
+      const selectedLabels = Array.from(
+        newLabelsPicker.querySelectorAll("input[type='checkbox']:checked")
+      ).map((cb) => cb.value);
+
+      const payload = {
+        type,
+        title,
+        genre,
+        country,
+        year,
+        rating: Number(rating.toFixed(1)),
+        ribbon,
+        showWatchNow: ribbon.toLowerCase().includes("episode"),
+        top10: selectedLabels.includes("الأعلى تقييماً"),
+        poster,
+        labels: selectedLabels.length ? selectedLabels : ["جديد"],
+        desc
+      };
+
+      if (type === "movie") {
+        payload.video = document.getElementById("newVideo").value.trim();
+        payload.seasons = [];
+      } else {
+        try {
+          payload.seasons = JSON.parse(document.getElementById("newSeasonsJson").value);
+        } catch (_) {
+          alert("صيغة JSON للمواسم والحلقات غير صحيحة.");
+          return;
+        }
+      }
+
+      try {
+        if (editingItemId && !String(editingItemId).startsWith("fallback_")) {
+          await updateDoc(doc(db, "catalog", editingItemId), payload);
+          if (currentItem?.id === editingItemId) {
+            currentItem = { id: editingItemId, ...payload };
+            infoTitle.textContent = `${currentItem.title} (${currentItem.year}) • ${formatStarRating(currentItem.rating)}`;
+            infoDesc.textContent = currentItem.desc;
+            renderSeasonsAndEpisodes();
+            applyAutoSEO(currentItem);
+          }
+        } else {
+          await addDoc(collection(db, "catalog"), payload);
+        }
+
+        editingItemId = null;
+        addModal.classList.remove("open");
+        addItemForm.reset();
+        renderLabelsPickerUI();
+        await loadCatalogFromFirebase();
+      } catch (err) {
+        alert("فشل الحفظ في Firestore: " + err.message);
+      }
+    });
+
+    tabBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        tabBtns.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        activeTab = btn.dataset.type;
+        renderAll();
+      });
+    });
+
+    seasonSelect.addEventListener("change", () => {
+      currentSeasonIdx = Number(seasonSelect.value) || 0;
+      currentEpIdx = 0;
+      renderSeasonsAndEpisodes();
+    });
+
+    videoPlayer.addEventListener("timeupdate", handleTimeUpdate);
+    videoPlayer.addEventListener("ended", () => {
+      if (currentItem && currentItem.id) {
+        const dur = Number.isFinite(videoPlayer.duration) && videoPlayer.duration > 0 ? videoPlayer.duration : 100;
+        saveDetailedProgress(currentItem.id, currentSeasonIdx, currentEpIdx, dur, dur, true);
+        renderShelves();
+      }
+      startAutoNextCountdown();
+    });
+    playNextNowBtn.addEventListener("click", goToNextEpisodeNow);
+    cancelAutoNextBtn.addEventListener("click", () => clearAutoNext(true));
+
+    window.addEventListener("scroll", () => {
+      document.getElementById("navbar").classList.toggle("scrolled", window.scrollY > 40);
+    });
+
+    searchInput.addEventListener("input", renderShelves);
+    genreSelect.addEventListener("change", renderShelves);
+    countrySelect.addEventListener("change", () => {
+      renderShelves();
+      applyAutoSEO(currentItem);
+    });
+    heroPlayBtn.addEventListener("click", () => openItemModal(heroItem));
+    heroListBtn.addEventListener("click", () => toggleList(heroItem?.id));
+    modalToggleListBtn.addEventListener("click", () => toggleList(currentItem?.id));
+    closePlayerBtn.addEventListener("click", closePlayer);
+    playerModal.addEventListener("click", (e) => {
+      if (e.target === playerModal) closePlayer();
+    });
+
+    renderCinemaBackground();
+    applyLanguageUI();
+    updateGateAndAuthUI();
+    renderLabelsPickerUI();
+    renderConfiguredAds();
+    loadCatalogFromFirebase();
+    runAdBlockDetection();
+    setInterval(runAdBlockDetection, 6000);
+  </script>
+</body>
+</html>
