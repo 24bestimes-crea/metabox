@@ -4,34 +4,29 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
   <title id="seoTitle">StreamFlix AI — منصة أفلام، مسلسلات، وأنمي</title>
-  <meta id="seoDesc" name="description" content="منصة عرض سينمائية للأفلام والمسلسلات والأنمي مع تسجيل دخول عبر جوجل وإنشاء حساب وحفظ بيانات المستخدمين وقوائمهم في Firebase Firestore وحقوق النشر وسياسة DMCA." />
-  <meta id="seoKeywords" name="keywords" content="أفلام, مسلسلات, أنمي, حصري, جديد, الأعلى تقييماً, مدبلج, مترجم, كلاسيكي, رائج الآن, DMCA" />
+  <meta id="seoDesc" name="description" content="منصة عرض سينمائية للأفلام والمسلسلات والأنمي مع تسجيل دخول عبر جوجل وإنشاء حساب وحفظ بيانات المستخدمين وقوائمهم وتقدم المشاهدة في Firebase Firestore وحقوق النشر وسياسة DMCA." />
+  <meta id="seoKeywords" name="keywords" content="أفلام, مسلسلات, أنمي, تسجيل دخول, جوجل, إنشاء حساب, دخول تجريبي, Firebase, Firestore, حقوق النشر, DMCA" />
   <meta id="ogTitle" property="og:title" content="StreamFlix AI — أفلام، مسلسلات، وأنمي" />
-  <meta id="ogDesc" property="og:description" content="تصفح أحدث الأفلام والمسلسلات والأنمي في صفوف أفقية مع حفظ سجل المشاهدة ووضع السينما والبيانات المنظمة." />
+  <meta id="ogDesc" property="og:description" content="تصفح أحدث الأفلام والمسلسلات والأنمي في صفوف أفقية متجددة مع حفظ نقطة توقف المشاهدة لكل حساب وسياسة حقوق النشر وDMCA." />
   <meta id="ogType" property="og:type" content="website" />
+  <meta id="ogImage" property="og:image" content="" />
+  <link id="canonicalLink" rel="canonical" href="" />
   <script id="jsonLdSchema" type="application/ld+json">{}</script>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@500;700;800;900&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet" />
 
   <style>
     :root {
-      --bg: #080a0f;
-      --bg-grad: radial-gradient(circle at 20% 0%, rgba(229, 9, 20, 0.14), transparent 45%),
-                 radial-gradient(circle at 85% 15%, rgba(56, 189, 248, 0.1), transparent 40%),
-                 linear-gradient(180deg, #090b10 0%, #07080c 100%);
-      --bg-row: #11141d;
-      --bg-card: #161b26;
+      --bg: #0a0b0e;
+      --bg-row: #111318;
+      --bg-card: #181c24;
       --text: #ffffff;
       --muted: #9ca3af;
       --red: #e50914;
-      --red-glow: rgba(229, 9, 20, 0.38);
+      --red-glow: rgba(229, 9, 20, 0.35);
       --accent: #38bdf8;
       --gold: #fbbf24;
       --green: #10b981;
       --border: rgba(255, 255, 255, 0.09);
-      --radius: 9px;
+      --radius: 8px;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -41,56 +36,17 @@
     }
 
     body {
-      font-family: "Cairo", "Tajawal", "Segoe UI", Tahoma, sans-serif;
-      background: var(--bg-grad);
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       background-color: var(--bg);
       color: var(--text);
       overflow-x: hidden;
-      line-height: 1.5;
+      line-height: 1.45;
       padding-bottom: 64px;
-      transition: background 0.35s ease;
-    }
-
-    body.cinema-dimmed {
-      background: #020305 !important;
-    }
-
-    body.cinema-dimmed header,
-    body.cinema-dimmed .top-utility,
-    body.cinema-dimmed .ad-slot-banner,
-    body.cinema-dimmed .hero,
-    body.cinema-dimmed main,
-    body.cinema-dimmed .site-footer,
-    body.cinema-dimmed .sticky-bottom-ad {
-      opacity: 0.08;
-      filter: blur(2px);
-      pointer-events: none;
-      transition: opacity 0.35s ease, filter 0.35s ease;
-    }
-
-    body.cinema-dimmed .modal-backdrop.open {
-      background: rgba(1, 2, 4, 0.985);
     }
 
     body.gate-active,
     body.adblock-locked {
       overflow: hidden;
-    }
-
-    /* Hidden Legacy Strips Removed per Spec */
-    .labels-bar,
-    .marquee-wrap {
-      display: none !important;
-    }
-
-    /* Honeypot anti-spam field */
-    .hp-field {
-      position: absolute !important;
-      left: -9999px !important;
-      opacity: 0 !important;
-      height: 0 !important;
-      width: 0 !important;
-      pointer-events: none !important;
     }
 
     /* AdBlock Wall */
@@ -165,7 +121,7 @@
       height: 250px;
     }
 
-    /* Full-Screen First-Visit Auth Gate with Isolated Glassmorphism */
+    /* Full-Screen First-Visit Auth Gate */
     .auth-gate {
       position: fixed;
       inset: 0;
@@ -175,7 +131,7 @@
       justify-content: center;
       padding: 16px;
       overflow: hidden;
-      background: radial-gradient(circle at 50% 25%, rgba(229, 9, 20, 0.2), rgba(5, 7, 12, 0.96) 70%);
+      background: #07080c;
     }
 
     .auth-gate.open {
@@ -189,8 +145,8 @@
       grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
       gap: 10px;
       transform: rotate(-4deg) scale(1.06);
-      opacity: 0.28;
-      filter: saturate(1.2) contrast(1.08);
+      opacity: 0.34;
+      filter: saturate(1.15) contrast(1.08);
       animation: cinemaDrift 28s ease-in-out infinite alternate;
       pointer-events: none;
     }
@@ -220,8 +176,8 @@
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(circle at 50% 42%, rgba(12, 16, 26, 0.45) 0%, rgba(6, 8, 13, 0.92) 72%, #050609 100%),
-        linear-gradient(135deg, rgba(229, 9, 20, 0.12), rgba(56, 189, 248, 0.08));
+        radial-gradient(circle at 50% 42%, rgba(10, 12, 18, 0.52) 0%, rgba(7, 8, 12, 0.92) 72%, #06070a 100%),
+        linear-gradient(to bottom, rgba(7, 8, 12, 0.72), rgba(7, 8, 12, 0.88));
       pointer-events: none;
     }
 
@@ -229,16 +185,15 @@
       position: relative;
       z-index: 2;
       width: 100%;
-      max-width: 455px;
+      max-width: 450px;
       max-height: 94vh;
       overflow-y: auto;
-      background: linear-gradient(155deg, rgba(24, 29, 43, 0.78), rgba(12, 15, 24, 0.88));
-      backdrop-filter: blur(22px) saturate(150%);
-      -webkit-backdrop-filter: blur(22px) saturate(150%);
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      border-radius: 18px;
-      box-shadow: 0 28px 70px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.16);
-      padding: 22px 20px 24px;
+      background: rgba(17, 21, 30, 0.92);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 14px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8);
+      padding: 20px 18px 22px;
     }
 
     .auth-brand-row {
@@ -249,8 +204,8 @@
     }
 
     .auth-subtitle {
-      font-size: 0.85rem;
-      color: #d1d5db;
+      font-size: 0.84rem;
+      color: var(--muted);
       margin-bottom: 14px;
     }
 
@@ -264,15 +219,15 @@
       justify-content: space-between;
       gap: 8px;
       padding: 10px 4%;
-      background: linear-gradient(to bottom, rgba(9, 11, 16, 0.96), rgba(9, 11, 16, 0.52));
-      backdrop-filter: blur(12px);
+      background: linear-gradient(to bottom, rgba(10,11,14,0.96), rgba(10,11,14,0.45));
+      backdrop-filter: blur(10px);
       border-bottom: 1px solid transparent;
       transition: all 0.25s ease;
       flex-wrap: wrap;
     }
 
     header.scrolled {
-      background: rgba(9, 11, 16, 0.98);
+      background: rgba(10, 11, 14, 0.98);
       border-bottom-color: var(--border);
     }
 
@@ -311,7 +266,6 @@
       font-size: 0.8rem;
       font-weight: 700;
       cursor: pointer;
-      font-family: inherit;
     }
 
     .tab-btn.active {
@@ -326,10 +280,10 @@
     .modal input,
     .modal textarea,
     .auth-card input {
-      background: rgba(14, 18, 26, 0.88);
+      background: #10131a;
       color: var(--text);
       border: 1px solid var(--border);
-      border-radius: 8px;
+      border-radius: 7px;
       padding: 7px 10px;
       font-size: 0.84rem;
       outline: none;
@@ -352,7 +306,7 @@
 
     .btn {
       border: none;
-      border-radius: 8px;
+      border-radius: 7px;
       padding: 8px 13px;
       font-size: 0.82rem;
       font-weight: 700;
@@ -361,7 +315,6 @@
       align-items: center;
       justify-content: center;
       gap: 6px;
-      font-family: inherit;
       transition: transform 0.14s ease, filter 0.18s ease;
     }
 
@@ -393,7 +346,7 @@
     .top-utility {
       margin-top: 64px;
       padding: 8px 4%;
-      background: rgba(14, 17, 24, 0.92);
+      background: #0f1116;
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
@@ -440,6 +393,25 @@
     }
 
     .utility-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+
+    /* Guest Resume Prompt Banner */
+    .guest-sync-nudge {
+      display: none;
+      margin: 10px 4% 0;
+      padding: 10px 14px;
+      border-radius: 9px;
+      background: rgba(229, 9, 20, 0.12);
+      border: 1px solid rgba(229, 9, 20, 0.35);
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-size: 0.8rem;
+    }
+
+    .guest-sync-nudge.active {
+      display: flex;
+    }
 
     /* Ad Type 3: Banner / Interstitial Placement Slot */
     .ad-slot-banner {
@@ -513,7 +485,7 @@
     /* Compact Hero */
     .hero {
       position: relative;
-      min-height: clamp(270px, 44vh, 460px);
+      min-height: clamp(260px, 44vh, 460px);
       display: flex;
       align-items: flex-end;
       padding: 28px 4% 34px;
@@ -527,8 +499,8 @@
       position: absolute;
       inset: 0;
       background:
-        linear-gradient(to top, #080a0f 6%, rgba(8, 10, 15, 0.48) 55%, rgba(8, 10, 15, 0.75) 100%),
-        linear-gradient(to left, rgba(8, 10, 15, 0.92) 0%, rgba(8, 10, 15, 0.25) 65%);
+        linear-gradient(to top, var(--bg) 6%, rgba(10,11,14,0.45) 55%, rgba(10,11,14,0.72) 100%),
+        linear-gradient(to left, rgba(10,11,14,0.9) 0%, rgba(10,11,14,0.22) 65%);
     }
 
     .hero-content { position: relative; z-index: 2; max-width: 640px; }
@@ -536,56 +508,104 @@
       display: inline-block;
       background: var(--red);
       color: #fff;
-      font-size: 0.74rem;
+      font-size: 0.72rem;
       font-weight: 800;
       padding: 3px 10px;
       border-radius: 4px;
       margin-bottom: 8px;
     }
+    .hero-rating-line {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+      font-size: 0.82rem;
+      color: var(--gold);
+      font-weight: 800;
+    }
     .hero h1 { font-size: clamp(1.45rem, 3.4vw, 2.5rem); margin-bottom: 8px; }
-    .hero p { color: #e5e7eb; font-size: clamp(0.85rem, 1.4vw, 0.96rem); margin-bottom: 14px; }
+    .hero p { color: #e5e7eb; font-size: clamp(0.84rem, 1.4vw, 0.94rem); margin-bottom: 14px; }
     .btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
 
     /* Horizontal Shelf Rows */
-    main { padding: 20px 4% 38px; }
+    main { padding: 18px 4% 36px; }
 
-    .shelf-section { margin-bottom: 30px; }
+    .shelf-section {
+      margin-bottom: 28px;
+      background: linear-gradient(180deg, rgba(17, 19, 24, 0.72) 0%, rgba(10, 11, 14, 0.25) 100%);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 14px 12px;
+    }
 
     .shelf-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 11px;
       gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 11px;
+    }
+
+    .shelf-title-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
       flex-wrap: wrap;
     }
 
     .shelf-title {
-      font-size: clamp(1rem, 1.8vw, 1.18rem);
+      font-size: clamp(0.98rem, 1.8vw, 1.14rem);
       font-weight: 800;
       color: #f9fafb;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
 
-    .shelf-tag-pill {
-      font-size: 0.7rem;
-      font-weight: 700;
-      color: var(--accent);
-      background: rgba(56, 189, 248, 0.12);
-      border: 1px solid rgba(56, 189, 248, 0.28);
+    .shelf-title .chevron { color: var(--gold); font-size: 1.15rem; }
+
+    .shelf-context-pill {
+      font-size: 0.68rem;
+      font-weight: 800;
       padding: 2px 8px;
       border-radius: 999px;
+      background: rgba(56, 189, 248, 0.14);
+      color: var(--accent);
+      border: 1px solid rgba(56, 189, 248, 0.3);
     }
 
-    .shelf-title .chevron { color: var(--muted); font-size: 1.15rem; }
+    .shelf-labels-inline {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .shelf-label-tag {
+      background: rgba(255, 255, 255, 0.06);
+      color: #e5e7eb;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 3px 9px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .shelf-label-tag:hover,
+    .shelf-label-tag.active {
+      background: var(--red);
+      border-color: var(--red);
+      color: #ffffff;
+    }
 
     .shelf-wrapper { position: relative; }
 
     .shelf-row {
       display: flex;
-      gap: 12px;
+      gap: 11px;
       overflow-x: auto;
       scroll-behavior: smooth;
       padding-bottom: 6px;
@@ -601,7 +621,7 @@
       left: 0;
       height: calc(100% - 34px);
       width: 36px;
-      background: linear-gradient(to right, rgba(8, 10, 15, 0.92), rgba(8, 10, 15, 0));
+      background: linear-gradient(to right, rgba(10,11,14,0.92), rgba(10,11,14,0));
       border: none;
       color: #fff;
       font-size: 1.4rem;
@@ -611,15 +631,15 @@
       align-items: center;
       justify-content: center;
       z-index: 6;
-      opacity: 0.92;
+      opacity: 0.9;
     }
 
-    .scroll-next-btn:hover { background: rgba(8, 10, 15, 0.96); }
+    .scroll-next-btn:hover { background: rgba(10,11,14,0.95); }
 
     /* Vertical Poster Card */
     .poster-card {
-      flex: 0 0 140px;
-      width: 140px;
+      flex: 0 0 138px;
+      width: 138px;
       cursor: pointer;
       display: flex;
       flex-direction: column;
@@ -628,15 +648,15 @@
 
     @media (min-width: 600px) {
       .poster-card {
-        flex: 0 0 164px;
-        width: 164px;
+        flex: 0 0 162px;
+        width: 162px;
       }
     }
 
     @media (min-width: 1024px) {
       .poster-card {
-        flex: 0 0 186px;
-        width: 186px;
+        flex: 0 0 184px;
+        width: 184px;
       }
     }
 
@@ -664,25 +684,6 @@
     .poster-card.touch-peek .poster-frame img {
       filter: brightness(0.32) blur(1px);
       transform: scale(1.03);
-    }
-
-    /* Watch Progress Bar (LocalStorage) */
-    .watch-progress-track {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 4px;
-      background: rgba(255, 255, 255, 0.2);
-      z-index: 5;
-      overflow: hidden;
-    }
-
-    .watch-progress-fill {
-      height: 100%;
-      background: var(--red);
-      box-shadow: 0 0 8px rgba(229, 9, 20, 0.75);
-      transition: width 0.25s ease;
     }
 
     .hover-info-overlay {
@@ -813,16 +814,74 @@
       border-radius: 3px;
     }
 
+    /* Interactive Red Progress Bar at Bottom of Poster Frame */
+    .watch-progress-track {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.22);
+      z-index: 5;
+      overflow: hidden;
+    }
+
+    .watch-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--red);
+      box-shadow: 0 0 8px rgba(229, 9, 20, 0.85);
+      transition: width 0.25s ease;
+    }
+
     .poster-caption { padding: 6px 2px 0; }
 
     .poster-name {
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       font-weight: 700;
       color: #e5e7eb;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      margin-bottom: 3px;
+    }
+
+    .poster-meta-sub {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+      font-size: 0.68rem;
+      color: var(--muted);
       margin-bottom: 4px;
+    }
+
+    .poster-stars {
+      color: var(--gold);
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .poster-progress-label {
+      color: #fca5a5;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .poster-card-labels {
+      display: flex;
+      gap: 3px;
+      flex-wrap: wrap;
+      margin-bottom: 4px;
+    }
+
+    .card-chip-tag {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      color: #d1d5db;
+      font-size: 0.62rem;
+      padding: 1px 6px;
+      border-radius: 4px;
     }
 
     .poster-mini-actions {
@@ -841,7 +900,6 @@
       font-weight: 700;
       padding: 4px 4px;
       cursor: pointer;
-      font-family: inherit;
     }
 
     .mini-act.edit:hover { border-color: var(--accent); color: var(--accent); }
@@ -851,7 +909,7 @@
 
     /* Footer with Copyright & DMCA */
     .site-footer {
-      background: #090b10;
+      background: #0b0d12;
       border-top: 1px solid var(--border);
       padding: 24px 4% 30px;
       color: var(--muted);
@@ -912,7 +970,7 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
-      background: rgba(9, 12, 19, 0.75);
+      background: #0c0f16;
       padding: 5px;
       border-radius: 9px;
       border: 1px solid var(--border);
@@ -928,7 +986,6 @@
       font-size: 0.84rem;
       font-weight: 800;
       cursor: pointer;
-      font-family: inherit;
     }
 
     .auth-mode-btn.active {
@@ -975,12 +1032,11 @@
       color: #a7f3d0;
     }
 
-    /* Modals & Dark Eye-Friendly Viewing Gradient */
+    /* Modals */
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      background: radial-gradient(circle at 50% 20%, rgba(24, 30, 46, 0.92), rgba(4, 5, 8, 0.96));
-      backdrop-filter: blur(8px);
+      background: rgba(0, 0, 0, 0.88);
       display: none;
       align-items: center;
       justify-content: center;
@@ -992,13 +1048,12 @@
 
     .modal {
       width: 100%;
-      max-width: 940px;
+      max-width: 920px;
       max-height: 92vh;
       overflow-y: auto;
-      background: linear-gradient(180deg, #151a26 0%, #0d1018 100%);
-      border-radius: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      box-shadow: 0 28px 80px rgba(0, 0, 0, 0.9);
+      background: #141821;
+      border-radius: 12px;
+      border: 1px solid var(--border);
     }
 
     .modal-top {
@@ -1006,7 +1061,7 @@
       justify-content: space-between;
       align-items: center;
       padding: 12px 16px;
-      background: rgba(10, 13, 20, 0.95);
+      background: #0d1017;
       border-bottom: 1px solid var(--border);
       position: sticky;
       top: 0;
@@ -1023,20 +1078,22 @@
 
     video#videoPlayer {
       width: 100%;
-      max-height: 58vh;
+      max-height: 55vh;
       background: #000;
       display: block;
     }
 
-    .player-toolbar {
+    .player-progress-bar-wrap {
+      padding: 8px 18px;
+      background: #0f131b;
+      border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 10px;
+      font-size: 0.78rem;
+      color: #d1d5db;
       flex-wrap: wrap;
-      padding: 10px 18px;
-      background: rgba(12, 15, 23, 0.92);
-      border-bottom: 1px solid var(--border);
     }
 
     .next-ep-banner {
@@ -1057,7 +1114,7 @@
 
     .modal-info { padding: 16px 18px 22px; }
     .modal-info h3 { margin-bottom: 6px; font-size: 1.15rem; }
-    .modal-info p { color: #b6becb; font-size: 0.9rem; line-height: 1.65; margin-bottom: 14px; }
+    .modal-info p { color: var(--muted); font-size: 0.88rem; line-height: 1.6; margin-bottom: 14px; }
 
     .episodes-box { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
     .episodes-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
@@ -1114,7 +1171,7 @@
     </div>
   </section>
 
-  <!-- First-Screen Entry Gate with Isolated Glassmorphism -->
+  <!-- First-Screen Entry Gate -->
   <section class="auth-gate open" id="authGate" aria-label="بوابة الدخول">
     <div class="cinema-bg-layer" id="cinemaBgLayer" aria-hidden="true"></div>
     <div class="cinema-vignette" aria-hidden="true"></div>
@@ -1126,7 +1183,7 @@
       </div>
 
       <p class="auth-subtitle" id="gateSubtitle">
-        أهلاً بك في عالم الأفلام والمسلسلات والأنمي. سجّل الدخول لحفظ قائمتك ومزامنتها أو ابدأ بالدخول التجريبي.
+        أهلاً بك في عالم الأفلام والمسلسلات والأنمي. سجّل الدخول لحفظ نقطة توقف المشاهدة وقائمتك سحابياً أو ابدأ بالدخول التجريبي.
       </p>
 
       <div class="auth-switch-tabs" role="tablist">
@@ -1140,9 +1197,7 @@
 
       <div class="auth-divider" id="gateOrText">أو بالبريد الإلكتروني</div>
 
-      <form id="gateEmailForm" novalidate>
-        <input type="text" class="hp-field" id="gateHoneyTrap" tabindex="-1" autocomplete="off" />
-
+      <form id="gateEmailForm">
         <div class="form-field" id="gateNameField" style="display:none;">
           <label for="gateNameInput" id="gateNameLabel">الاسم الكامل</label>
           <input type="text" id="gateNameInput" placeholder="مثال: سارة محمد" />
@@ -1194,16 +1249,17 @@
         <option value="أنمي">أنمي</option>
         <option value="أكشن">أكشن</option>
       </select>
-      <select id="countrySelect" aria-label="البلد">
-        <option value="all">كل البلدان</option>
+      <select id="countrySelect" aria-label="الدولة">
+        <option value="all">كل الدول</option>
         <option value="الولايات المتحدة">الولايات المتحدة</option>
         <option value="اليابان">اليابان</option>
         <option value="كوريا الجنوبية">كوريا الجنوبية</option>
-        <option value="العالم العربي">العالم العربي</option>
+        <option value="تركيا">تركيا</option>
         <option value="فرنسا">فرنسا</option>
+        <option value="مصر">مصر</option>
       </select>
       <button class="btn btn-gold" id="openAdsModalBtn" style="display:none;">📣 الإعلانات</button>
-      <button class="btn btn-ai" id="aiOrganizeBtn">✦ خلط وتنظيم ذكي</button>
+      <button class="btn btn-ai" id="aiOrganizeBtn">✦ تنظيم ذكي بالـ AI</button>
       <button class="btn btn-accent" id="openAddModalBtn" style="display:none;">+ إضافة</button>
       <button class="btn btn-secondary" id="toggleLangBtn">EN</button>
       <span class="user-pill" id="userBadge" style="display:none;"></span>
@@ -1216,11 +1272,19 @@
     <span id="dbStatus">حالة Firebase: جاري الاتصال بمشروع metaverse-metabox...</span>
     <div class="stats-badges" id="statsBadges"></div>
     <div class="utility-actions">
-      <button class="btn btn-secondary" id="shuffleFeedNowBtn" style="padding:4px 10px;font-size:0.76rem;">🔀 خلط الخلاصة (Feed)</button>
+      <button class="btn btn-secondary" id="reshuffleShelvesBtn" style="padding:4px 10px;font-size:0.76rem;">🎲 خلط الأقسام</button>
       <button class="btn btn-secondary" id="downloadSitemapBtn" style="display:none;padding:4px 10px;font-size:0.76rem;">⬇ sitemap.xml</button>
       <button class="btn btn-secondary" id="downloadRobotsBtn" style="display:none;padding:4px 10px;font-size:0.76rem;">⬇ robots.txt</button>
       <button class="btn btn-secondary" id="seedDataBtn" style="display:none;padding:4px 10px;font-size:0.76rem;">تعبئة بيانات تجريبية</button>
     </div>
+  </div>
+
+  <!-- Guest Account Retention Nudge for Progress Saving -->
+  <div class="guest-sync-nudge" id="guestSyncNudge" role="status">
+    <span>
+      <strong>🔒 حفظ تقدم المشاهدة سحابياً:</strong> أنت تستخدم وضعاً تجريبياً؛ سجّل دخولك لحفظ نقطة توقفك في كل فيلم أو حلقة عبر الأجهزة والعودة لإكمالها.
+    </span>
+    <button type="button" class="btn btn-red" id="nudgeLoginBtn" style="padding:5px 12px;font-size:0.76rem;">تسجيل الدخول الآن</button>
   </div>
 
   <!-- Ad Type 3: Banner / Interstitial Placement Slot -->
@@ -1236,15 +1300,11 @@
     </div>
   </div>
 
-  <!-- Hidden Legacy Elements Kept in DOM for Compatibility -->
-  <div class="labels-bar" id="labelsBar" aria-hidden="true"></div>
-  <section class="marquee-wrap" aria-hidden="true"><div class="marquee-track" id="marqueeTrack"></div></section>
-  <span id="activeFilterSummary" style="display:none;"></span>
-
   <!-- Compact Hero -->
   <section class="hero" id="hero">
     <div class="hero-content">
       <span class="hero-badge" id="heroBadge">مميز اليوم</span>
+      <div class="hero-rating-line" id="heroRatingLine">★ 4.8 / 5</div>
       <h1 id="heroTitle"></h1>
       <p id="heroDesc"></p>
       <div class="btn-row">
@@ -1255,7 +1315,7 @@
     </div>
   </section>
 
-  <!-- Horizontal Shelf Rows Container -->
+  <!-- Dynamic Randomized Shelf Rows Container -->
   <main id="shelvesContainer"></main>
 
   <!-- Ad Type 2: Sticky Bottom Banner Ad -->
@@ -1298,11 +1358,11 @@
     </div>
   </footer>
 
-  <!-- Ads Settings Modal (3 Ad Types Activated Upon Adding URLs + Blogger Feed Shuffler URL) -->
+  <!-- Ads Settings Modal -->
   <div class="modal-backdrop" id="adsModal" role="dialog" aria-modal="true" aria-labelledby="adsModalTitle">
     <div class="modal" style="max-width:650px;">
       <div class="modal-top">
-        <strong id="adsModalTitle">إدارة الإعلانات الثلاثة وخلاصة JSON العشوائية</strong>
+        <strong id="adsModalTitle">إدارة الإعلانات الثلاثة (تُفعّل عند إدخال الرابط)</strong>
         <button class="close-btn" id="closeAdsBtn" aria-label="إغلاق">✕</button>
       </div>
       <form class="modal-info" id="adsSettingsForm">
@@ -1326,13 +1386,8 @@
           <input type="text" id="adThirdSlotLabel" placeholder="عرض مميز / راعي المنصة" />
         </div>
 
-        <div class="form-field">
-          <label for="bloggerFeedUrl">رابط خلاصة Blogger JSON اختياري (مثال: https://blog.blogspot.com/feeds/posts/default?alt=json)</label>
-          <input type="url" id="bloggerFeedUrl" placeholder="https://example.blogspot.com/feeds/posts/default?alt=json" />
-        </div>
-
         <div class="btn-row">
-          <button type="submit" class="btn btn-green">حفظ وتفعيل الإعدادات</button>
+          <button type="submit" class="btn btn-green">حفظ وتفعيل الإعلانات</button>
           <button type="button" class="btn btn-secondary" id="clearAllAdsBtn">مسح جميع الروابط</button>
         </div>
         <div class="auth-feedback" id="adsFeedback"></div>
@@ -1362,7 +1417,6 @@
         </div>
 
         <form id="dmcaForm">
-          <input type="text" class="hp-field" id="dmcaHoneyTrap" tabindex="-1" autocomplete="off" />
           <h3 style="font-size:1rem;margin-bottom:10px;">نموذج إرسال إشعار DMCA</h3>
           <div class="form-grid">
             <div class="form-field">
@@ -1397,7 +1451,7 @@
     </div>
   </div>
 
-  <!-- Player Modal with Cinema Mode -->
+  <!-- Player Modal -->
   <div class="modal-backdrop" id="playerModal" role="dialog" aria-modal="true">
     <div class="modal">
       <div class="modal-top">
@@ -1406,9 +1460,9 @@
       </div>
       <video id="videoPlayer" controls playsinline></video>
 
-      <div class="player-toolbar">
-        <button type="button" class="btn btn-secondary" id="cinemaModeBtn">🎬 وضع السينما (إطفاء الأنوار)</button>
-        <span id="watchProgressLabel" style="font-size:0.78rem;color:var(--muted);">نسبة المشاهدة المحفوظة: 0%</span>
+      <div class="player-progress-bar-wrap" id="playerProgressStatus">
+        <span id="playerProgressText">نقطة التوقف: 0%</span>
+        <span id="playerSyncHint" style="color:var(--gold);"></span>
       </div>
 
       <div class="next-ep-banner" id="nextEpBanner">
@@ -1449,7 +1503,6 @@
         <button class="close-btn" id="closeAddBtn" aria-label="إغلاق">✕</button>
       </div>
       <form class="modal-info" id="addItemForm">
-        <input type="text" class="hp-field" id="itemHoneyTrap" tabindex="-1" autocomplete="off" />
         <div class="form-grid">
           <div class="form-field">
             <label>النوع</label>
@@ -1460,7 +1513,7 @@
             </select>
           </div>
           <div class="form-field">
-            <label>التصنيف (النوع)</label>
+            <label>التصنيف</label>
             <select id="newGenre">
               <option value="خيال علمي">خيال علمي</option>
               <option value="مغامرة">مغامرة</option>
@@ -1469,18 +1522,23 @@
             </select>
           </div>
           <div class="form-field">
-            <label>البلد</label>
+            <label>الدولة / المنشأ</label>
             <select id="newCountry">
               <option value="الولايات المتحدة">الولايات المتحدة</option>
               <option value="اليابان">اليابان</option>
               <option value="كوريا الجنوبية">كوريا الجنوبية</option>
-              <option value="العالم العربي">العالم العربي</option>
+              <option value="تركيا">تركيا</option>
               <option value="فرنسا">فرنسا</option>
+              <option value="مصر">مصر</option>
             </select>
           </div>
           <div class="form-field">
             <label>سنة الإنتاج</label>
             <input type="text" id="newYear" value="2026" required />
+          </div>
+          <div class="form-field">
+            <label>التقييم (من 1 إلى 5)</label>
+            <input type="number" step="0.1" min="1" max="5" id="newRating" value="4.8" required />
           </div>
         </div>
 
@@ -1587,11 +1645,20 @@
       "الولايات المتحدة",
       "اليابان",
       "كوريا الجنوبية",
-      "العالم العربي",
-      "فرنسا"
+      "تركيا",
+      "فرنسا",
+      "مصر"
     ];
 
     const CINEMA_BG_POSTERS = [
+      "https://peach.blender.org/wp-content/uploads/sintel_poster.jpg",
+      "https://mango.blender.org/wp-content/uploads/2013/05/01_thom_celia_bridge.jpg",
+      "https://download.blender.org/ED/ed_hd.jpg",
+      "https://peach.blender.org/wp-content/uploads/bbb-splash.png",
+      "https://mango.blender.org/wp-content/uploads/2013/05/01_thom_celia_bridge.jpg",
+      "https://peach.blender.org/wp-content/uploads/sintel_poster.jpg",
+      "https://peach.blender.org/wp-content/uploads/bbb-splash.png",
+      "https://download.blender.org/ED/ed_hd.jpg",
       "https://peach.blender.org/wp-content/uploads/sintel_poster.jpg",
       "https://mango.blender.org/wp-content/uploads/2013/05/01_thom_celia_bridge.jpg",
       "https://download.blender.org/ED/ed_hd.jpg",
@@ -1608,9 +1675,9 @@
         type: "series",
         title: "Love is Blind, Habibi",
         genre: "مغامرة",
-        country: "العالم العربي",
+        country: "مصر",
         year: "2026",
-        rating: "4.8",
+        rating: 4.7,
         ribbon: "New Season",
         top10: true,
         labels: ["جديد", "رائج الآن", "حصري"],
@@ -1631,9 +1698,9 @@
         type: "series",
         title: "Daydreamer",
         genre: "مغامرة",
-        country: "كوريا الجنوبية",
+        country: "تركيا",
         year: "2025",
-        rating: "4.6",
+        rating: 4.5,
         ribbon: "Recently Added",
         top10: false,
         labels: ["جديد", "مدبلج"],
@@ -1656,7 +1723,7 @@
         genre: "خيال علمي",
         country: "الولايات المتحدة",
         year: "2026",
-        rating: "4.9",
+        rating: 4.9,
         ribbon: "New Seasons",
         top10: false,
         labels: ["الأعلى تقييماً", "رائج الآن", "مترجم"],
@@ -1679,7 +1746,7 @@
         genre: "أكشن",
         country: "الولايات المتحدة",
         year: "2014",
-        rating: "4.7",
+        rating: 4.8,
         ribbon: "",
         top10: false,
         labels: ["كلاسيكي", "الأعلى تقييماً", "مترجم"],
@@ -1701,7 +1768,7 @@
         genre: "أنمي",
         country: "اليابان",
         year: "2025",
-        rating: "4.7",
+        rating: 4.6,
         ribbon: "New Episode",
         showWatchNow: true,
         top10: false,
@@ -1725,7 +1792,7 @@
         genre: "أكشن",
         country: "الولايات المتحدة",
         year: "2022",
-        rating: "4.8",
+        rating: 4.7,
         ribbon: "",
         top10: false,
         labels: ["الأعلى تقييماً", "حصري", "مترجم"],
@@ -1747,7 +1814,7 @@
         genre: "أكشن",
         country: "فرنسا",
         year: "2024",
-        rating: "4.8",
+        rating: 4.8,
         ribbon: "",
         top10: true,
         labels: ["حصري", "الأعلى تقييماً", "مدبلج"],
@@ -1759,9 +1826,9 @@
         type: "series",
         title: "Breaking Bad",
         genre: "خيال علمي",
-        country: "الولايات المتحدة",
+        country: "كوريا الجنوبية",
         year: "2013",
-        rating: "4.9",
+        rating: 5.0,
         ribbon: "",
         top10: false,
         labels: ["الأعلى تقييماً", "كلاسيكي", "مترجم"],
@@ -1783,7 +1850,7 @@
         genre: "أنمي",
         country: "اليابان",
         year: "2026",
-        rating: "4.9",
+        rating: 4.9,
         ribbon: "New Episode",
         showWatchNow: true,
         top10: true,
@@ -1805,25 +1872,25 @@
 
     const LIST_KEY = "streamflix_fb_list_v1";
     const PROGRESS_KEY = "streamflix_fb_progress_v1";
-    const WATCH_BAR_KEY = "streamflix_watch_progress_pct_v1";
+    const AI_SORT_KEY = "streamflix_ai_sorted_v1";
     const DEMO_SESSION_KEY = "streamflix_demo_user_v1";
     const ADS_CONFIG_KEY = "streamflix_ads_config_v1";
 
     let catalog = [];
     let myList = JSON.parse(localStorage.getItem(LIST_KEY) || "[]");
     let progressMap = JSON.parse(localStorage.getItem(PROGRESS_KEY) || "{}");
-    let watchPctMap = JSON.parse(localStorage.getItem(WATCH_BAR_KEY) || "{}");
+    let aiSortedEnabled = localStorage.getItem(AI_SORT_KEY) === "1";
     let demoUser = JSON.parse(localStorage.getItem(DEMO_SESSION_KEY) || "null");
     let adsConfig = JSON.parse(localStorage.getItem(ADS_CONFIG_KEY) || "null") || {
       cardPopUrl: "",
       bottomBannerUrl: "",
       thirdSlotUrl: "",
-      thirdSlotLabel: "إعلان مميز",
-      bloggerFeedUrl: ""
+      thirdSlotLabel: "إعلان مميز"
     };
     let currentFirebaseUser = null;
     let userSyncStateText = "";
-    let lastFormSubmitTs = 0;
+    let shelfSeed = Math.floor(Math.random() * 100000);
+    let lastCloudSyncTime = 0;
 
     let uiLang = "ar";
     let activeTab = "all";
@@ -1834,7 +1901,6 @@
     let editingItemId = null;
     let currentSeasonIdx = 0;
     let currentEpIdx = 0;
-    let cinemaModeActive = false;
 
     const PRE_END_SECONDS = 25;
     let autoNextTimer = null;
@@ -1855,7 +1921,6 @@
     const adBottomBannerUrl = document.getElementById("adBottomBannerUrl");
     const adThirdSlotUrl = document.getElementById("adThirdSlotUrl");
     const adThirdSlotLabel = document.getElementById("adThirdSlotLabel");
-    const bloggerFeedUrl = document.getElementById("bloggerFeedUrl");
     const clearAllAdsBtn = document.getElementById("clearAllAdsBtn");
     const adsFeedback = document.getElementById("adsFeedback");
 
@@ -1869,6 +1934,9 @@
     const adSlotPreview = document.getElementById("adSlotPreview");
     const adSlotLink = document.getElementById("adSlotLink");
     const hideAdSlotBtn = document.getElementById("hideAdSlotBtn");
+
+    const guestSyncNudge = document.getElementById("guestSyncNudge");
+    const nudgeLoginBtn = document.getElementById("nudgeLoginBtn");
 
     const authGate = document.getElementById("authGate");
     const cinemaBgLayer = document.getElementById("cinemaBgLayer");
@@ -1907,7 +1975,7 @@
     const dbStatus = document.getElementById("dbStatus");
     const statsBadges = document.getElementById("statsBadges");
     const aiOrganizeBtn = document.getElementById("aiOrganizeBtn");
-    const shuffleFeedNowBtn = document.getElementById("shuffleFeedNowBtn");
+    const reshuffleShelvesBtn = document.getElementById("reshuffleShelvesBtn");
     const downloadSitemapBtn = document.getElementById("downloadSitemapBtn");
     const downloadRobotsBtn = document.getElementById("downloadRobotsBtn");
     const seedDataBtn = document.getElementById("seedDataBtn");
@@ -1919,6 +1987,7 @@
     const countrySelect = document.getElementById("countrySelect");
     const hero = document.getElementById("hero");
     const heroBadge = document.getElementById("heroBadge");
+    const heroRatingLine = document.getElementById("heroRatingLine");
     const heroTitle = document.getElementById("heroTitle");
     const heroDesc = document.getElementById("heroDesc");
     const heroPlayBtn = document.getElementById("heroPlayBtn");
@@ -1928,8 +1997,8 @@
     const playerModal = document.getElementById("playerModal");
     const closePlayerBtn = document.getElementById("closePlayerBtn");
     const videoPlayer = document.getElementById("videoPlayer");
-    const cinemaModeBtn = document.getElementById("cinemaModeBtn");
-    const watchProgressLabel = document.getElementById("watchProgressLabel");
+    const playerProgressText = document.getElementById("playerProgressText");
+    const playerSyncHint = document.getElementById("playerSyncHint");
     const modalTitle = document.getElementById("modalTitle");
     const infoTitle = document.getElementById("infoTitle");
     const infoDesc = document.getElementById("infoDesc");
@@ -1941,1576 +2010,4 @@
     const episodesList = document.getElementById("episodesList");
 
     const nextEpBanner = document.getElementById("nextEpBanner");
-    const nextEpName = document.getElementById("nextEpName");
-    const nextEpCountdown = document.getElementById("nextEpCountdown");
-    const playNextNowBtn = document.getElementById("playNextNowBtn");
-    const cancelAutoNextBtn = document.getElementById("cancelAutoNextBtn");
-
-    const addModal = document.getElementById("addModal");
-    const formModalTitle = document.getElementById("formModalTitle");
-    const submitFormBtn = document.getElementById("submitFormBtn");
-    const openAddModalBtn = document.getElementById("openAddModalBtn");
-    const closeAddBtn = document.getElementById("closeAddBtn");
-    const addItemForm = document.getElementById("addItemForm");
-    const newType = document.getElementById("newType");
-    const movieVideoField = document.getElementById("movieVideoField");
-    const seasonsJsonField = document.getElementById("seasonsJsonField");
-    const newLabelsPicker = document.getElementById("newLabelsPicker");
-
-    // Anti-spam helper
-    function isSpamAttempt(honeyId) {
-      const trap = document.getElementById(honeyId);
-      if (trap && trap.value.trim() !== "") return true;
-      const now = Date.now();
-      if (now - lastFormSubmitTs < 1200) return true;
-      lastFormSubmitTs = now;
-      return false;
-    }
-
-    // Fisher-Yates shuffle
-    function shuffleArray(arr) {
-      const copy = [...arr];
-      for (let i = copy.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [copy[i], copy[j]] = [copy[j], copy[i]];
-      }
-      return copy;
-    }
-
-    // Dynamic Feed Shuffler (Blogger JSON Feed + Catalog shuffle)
-    async function fetchAndShuffleBloggerFeed() {
-      const feedUrl = (adsConfig.bloggerFeedUrl || "").trim();
-      if (!feedUrl) return [];
-      try {
-        const res = await fetch(feedUrl, { cache: "no-store" });
-        if (!res.ok) return [];
-        const data = await res.json();
-        const entries = data?.feed?.entry || [];
-        return entries.map((entry, idx) => {
-          const title = entry?.title?.$t || `تدوينة ${idx + 1}`;
-          const rawContent = entry?.content?.$t || entry?.summary?.$t || "";
-          const plainDesc = rawContent.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 160);
-          const thumb = entry?.media$thumbnail?.url?.replace(/\/s\d+(-c)?\//, "/s640/")
-            || CINEMA_BG_POSTERS[idx % CINEMA_BG_POSTERS.length];
-          const cats = (entry?.category || []).map((c) => c.term).filter(Boolean);
-          const matchedLabels = cats.filter((c) => SEVEN_LABELS.includes(c));
-          return aiNormalizeItem({
-            id: "feed_" + (entry?.id?.$t?.split("-").pop() || idx),
-            type: cats.some((c) => /مسلسل|series/i.test(c)) ? "series" : (cats.some((c) => /أنمي|anime/i.test(c)) ? "anime" : "movie"),
-            title,
-            genre: cats[0] || "مغامرة",
-            country: COUNTRIES_LIST[idx % COUNTRIES_LIST.length],
-            year: String(entry?.published?.$t || "2026").slice(0, 4),
-            rating: "4.7",
-            ribbon: "Feed JSON",
-            labels: matchedLabels.length ? matchedLabels : [SEVEN_LABELS[idx % SEVEN_LABELS.length]],
-            poster: thumb,
-            desc: plainDesc || "محتوى مجلوب تلقائياً من خلاصة JSON.",
-            video: SAMPLE_V2
-          });
-        });
-      } catch (_) {
-        return [];
-      }
-    }
-
-    async function runDynamicFeedShuffler(forceReshuffle = false) {
-      const feedItems = await fetchAndShuffleBloggerFeed();
-      if (feedItems.length) {
-        const mergedMap = new Map();
-        [...catalog, ...feedItems].forEach((it) => mergedMap.set(it.id, it));
-        catalog = shuffleArray(Array.from(mergedMap.values()));
-      } else if (forceReshuffle || catalog.length) {
-        catalog = shuffleArray(catalog);
-      }
-      renderCinemaBackground();
-      renderAll();
-    }
-
-    // Single-Account Permission Check
-    function canManageCatalog() {
-      if (demoUser || !currentFirebaseUser) return false;
-      const userEmail = (currentFirebaseUser.email || "").trim().toLowerCase();
-      return Boolean(userEmail) && userEmail === ADMIN_EMAIL.trim().toLowerCase();
-    }
-
-    function applyAdminControlsVisibility() {
-      const allowed = canManageCatalog();
-      const displayVal = allowed ? "inline-flex" : "none";
-
-      openAddModalBtn.style.display = displayVal;
-      modalEditItemBtn.style.display = displayVal;
-      modalDeleteItemBtn.style.display = displayVal;
-      openAdsModalBtn.style.display = displayVal;
-      downloadSitemapBtn.style.display = displayVal;
-      downloadRobotsBtn.style.display = displayVal;
-      seedDataBtn.style.display = displayVal;
-
-      if (!allowed) {
-        addModal.classList.remove("open");
-        adsModal.classList.remove("open");
-        editingItemId = null;
-      }
-
-      document.querySelectorAll(".poster-mini-actions").forEach((box) => {
-        box.style.display = allowed ? "flex" : "none";
-      });
-    }
-
-    // Advanced AdBlock & Stealth Blocker Detector
-    function refreshBaitElement() {
-      adBaitZone.innerHTML = `<div class="adsbox ad-banner google_ad_unit textads banner_ad" id="baitBoxDynamic">AdBait</div>`;
-    }
-
-    function checkDomBaitBlocked() {
-      const bait = document.getElementById("baitBoxDynamic");
-      if (!bait || !document.body.contains(bait)) return true;
-
-      const rect = bait.getBoundingClientRect();
-      const style = window.getComputedStyle(bait);
-
-      if (
-        style.display === "none" ||
-        style.visibility === "hidden" ||
-        Number(style.opacity) === 0 ||
-        bait.offsetHeight === 0 ||
-        bait.offsetWidth === 0 ||
-        rect.height === 0 ||
-        rect.width === 0
-      ) {
-        return true;
-      }
-
-      const testProbe = document.createElement("div");
-      testProbe.className = "ad-banner adsbygoogle";
-      testProbe.style.position = "fixed";
-      testProbe.style.left = "-9999px";
-      testProbe.style.width = "120px";
-      testProbe.style.height = "60px";
-      document.body.appendChild(testProbe);
-      const probeStyle = window.getComputedStyle(testProbe);
-      const probeRect = testProbe.getBoundingClientRect();
-      const stealthHidden =
-        probeStyle.display === "none" ||
-        probeStyle.visibility === "hidden" ||
-        probeRect.height === 0 ||
-        probeRect.width === 0;
-      testProbe.remove();
-
-      return stealthHidden;
-    }
-
-    async function checkNetworkAdScriptBlocked() {
-      try {
-        const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), 1400);
-        await fetch(
-          "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",
-          { mode: "no-cors", cache: "no-store", signal: controller.signal }
-        );
-        clearTimeout(timer);
-        return false;
-      } catch (_) {
-        return true;
-      }
-    }
-
-    function setAdblockWallState(isBlocked) {
-      if (isBlocked) {
-        adblockWall.classList.add("open");
-        document.body.classList.add("adblock-locked");
-      } else {
-        adblockWall.classList.remove("open");
-        document.body.classList.remove("adblock-locked");
-      }
-    }
-
-    async function runAdBlockDetection() {
-      refreshBaitElement();
-      await new Promise((r) => setTimeout(r, 80));
-      const domBlocked = checkDomBaitBlocked();
-      const netBlocked = await checkNetworkAdScriptBlocked();
-      const detected = domBlocked || netBlocked;
-      setAdblockWallState(detected);
-      return detected;
-    }
-
-    recheckAdblockBtn.addEventListener("click", () => runAdBlockDetection());
-    reloadPageAdblockBtn.addEventListener("click", () => window.location.reload());
-
-    // 3 Ad Types Management
-    function renderConfiguredAds() {
-      const hasBottomUrl = Boolean((adsConfig.bottomBannerUrl || "").trim());
-      const hasThirdUrl = Boolean((adsConfig.thirdSlotUrl || "").trim());
-
-      if (hasBottomUrl) {
-        stickyBottomAd.classList.add("active");
-        stickyAdUrlText.textContent = adsConfig.bottomBannerUrl.trim();
-        stickyAdVisitBtn.href = adsConfig.bottomBannerUrl.trim();
-      } else {
-        stickyBottomAd.classList.remove("active");
-      }
-
-      if (hasThirdUrl) {
-        adSlotBanner.classList.add("active");
-        adSlotTitle.textContent = (adsConfig.thirdSlotLabel || "").trim() || "إعلان مميز مفعّل";
-        adSlotPreview.textContent = adsConfig.thirdSlotUrl.trim();
-        adSlotLink.href = adsConfig.thirdSlotUrl.trim();
-      } else {
-        adSlotBanner.classList.remove("active");
-      }
-    }
-
-    function triggerCardClickAdIfConfigured() {
-      const popUrl = (adsConfig.cardPopUrl || "").trim();
-      if (!popUrl) return;
-      try {
-        window.open(popUrl, "_blank", "noopener,noreferrer");
-      } catch (_) {}
-    }
-
-    openAdsModalBtn.addEventListener("click", () => {
-      if (!canManageCatalog()) return;
-      adsFeedback.textContent = "";
-      adsFeedback.className = "auth-feedback";
-      adCardPopUrl.value = adsConfig.cardPopUrl || "";
-      adBottomBannerUrl.value = adsConfig.bottomBannerUrl || "";
-      adThirdSlotUrl.value = adsConfig.thirdSlotUrl || "";
-      adThirdSlotLabel.value = adsConfig.thirdSlotLabel || "";
-      bloggerFeedUrl.value = adsConfig.bloggerFeedUrl || "";
-      adsModal.classList.add("open");
-    });
-
-    closeAdsBtn.addEventListener("click", () => adsModal.classList.remove("open"));
-    adsModal.addEventListener("click", (e) => {
-      if (e.target === adsModal) adsModal.classList.remove("open");
-    });
-
-    closeStickyAdBtn.addEventListener("click", () => stickyBottomAd.classList.remove("active"));
-    hideAdSlotBtn.addEventListener("click", () => adSlotBanner.classList.remove("active"));
-
-    adsSettingsForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      if (!canManageCatalog()) return;
-      adsConfig = {
-        cardPopUrl: adCardPopUrl.value.trim(),
-        bottomBannerUrl: adBottomBannerUrl.value.trim(),
-        thirdSlotUrl: adThirdSlotUrl.value.trim(),
-        thirdSlotLabel: adThirdSlotLabel.value.trim() || "إعلان مميز",
-        bloggerFeedUrl: bloggerFeedUrl.value.trim()
-      };
-      localStorage.setItem(ADS_CONFIG_KEY, JSON.stringify(adsConfig));
-      renderConfiguredAds();
-      await runDynamicFeedShuffler(true);
-
-      try {
-        await setDoc(doc(db, "settings", "ads_config"), {
-          ...adsConfig,
-          updatedAt: serverTimestamp()
-        }, { merge: true });
-      } catch (_) {}
-
-      adsFeedback.textContent = "تم حفظ وتفعيل الإعدادات وخلاصة JSON العشوائية.";
-      adsFeedback.className = "auth-feedback success";
-    });
-
-    clearAllAdsBtn.addEventListener("click", () => {
-      if (!canManageCatalog()) return;
-      adsConfig = {
-        cardPopUrl: "",
-        bottomBannerUrl: "",
-        thirdSlotUrl: "",
-        thirdSlotLabel: "إعلان مميز",
-        bloggerFeedUrl: ""
-      };
-      adCardPopUrl.value = "";
-      adBottomBannerUrl.value = "";
-      adThirdSlotUrl.value = "";
-      adThirdSlotLabel.value = "";
-      bloggerFeedUrl.value = "";
-      localStorage.setItem(ADS_CONFIG_KEY, JSON.stringify(adsConfig));
-      renderConfiguredAds();
-      adsFeedback.textContent = "تم مسح روابط الإعلانات والخلاصة وإيقاف عرضها.";
-      adsFeedback.className = "auth-feedback success";
-    });
-
-    // Save & Load User Profile + MyList + Progress in Firestore
-    async function syncUserProfileAndLists(user, extraMeta = {}) {
-      if (!user || !user.uid) return;
-      const userRef = doc(db, "users", user.uid);
-      const providerId =
-        extraMeta.provider ||
-        (user.providerData && user.providerData[0]?.providerId) ||
-        "password";
-
-      try {
-        const existingSnap = await getDoc(userRef);
-        const existingData = existingSnap.exists() ? existingSnap.data() : {};
-
-        const remoteList = Array.isArray(existingData.myList) ? existingData.myList : [];
-        const mergedList = Array.from(new Set([...remoteList, ...myList]));
-
-        const remoteProgress = existingData.progress && typeof existingData.progress === "object"
-          ? existingData.progress
-          : {};
-        const mergedProgress = { ...remoteProgress, ...progressMap };
-
-        myList = mergedList;
-        progressMap = mergedProgress;
-        localStorage.setItem(LIST_KEY, JSON.stringify(myList));
-        localStorage.setItem(PROGRESS_KEY, JSON.stringify(progressMap));
-
-        const profilePayload = {
-          uid: user.uid,
-          displayName: extraMeta.displayName || user.displayName || existingData.displayName || "مستخدم",
-          email: user.email || existingData.email || "",
-          photoURL: user.photoURL || existingData.photoURL || "",
-          provider: providerId,
-          myList: myList,
-          progress: progressMap,
-          lastLoginAt: serverTimestamp()
-        };
-
-        if (!existingSnap.exists() || extraMeta.isNewAccount) {
-          profilePayload.createdAt = serverTimestamp();
-        }
-
-        await setDoc(userRef, profilePayload, { merge: true });
-        userSyncStateText = "تم حفظ الحساب وقائمتي في Firestore";
-        renderAll();
-        updateHeroListBtn();
-        updateModalListBtn();
-      } catch (err) {
-        console.error("Firestore user sync error:", err);
-        userSyncStateText = "تعذر حفظ بيانات الحساب في Firestore";
-        renderStatsBadges();
-      }
-    }
-
-    async function persistUserListsToFirestore() {
-      if (!currentFirebaseUser || !currentFirebaseUser.uid) return;
-      try {
-        const userRef = doc(db, "users", currentFirebaseUser.uid);
-        await setDoc(
-          userRef,
-          {
-            myList: myList,
-            progress: progressMap,
-            updatedAt: serverTimestamp()
-          },
-          { merge: true }
-        );
-        userSyncStateText = "تمت مزامنة قائمتي في Firestore";
-        renderStatsBadges();
-      } catch (err) {
-        console.error("Failed to sync myList:", err);
-      }
-    }
-
-    function openLegalModal(focusTarget = "") {
-      dmcaFeedback.textContent = "";
-      dmcaFeedback.className = "auth-feedback";
-      if (focusTarget && !document.getElementById("dmcaTargetUrl").value) {
-        document.getElementById("dmcaTargetUrl").value = focusTarget;
-      }
-      legalModal.classList.add("open");
-    }
-
-    openCopyrightModalBtn.addEventListener("click", () => openLegalModal());
-    openDmcaModalBtn.addEventListener("click", () => openLegalModal(window.location.href));
-    closeLegalBtn.addEventListener("click", () => legalModal.classList.remove("open"));
-    legalModal.addEventListener("click", (e) => {
-      if (e.target === legalModal) legalModal.classList.remove("open");
-    });
-
-    dmcaForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      if (isSpamAttempt("dmcaHoneyTrap")) return;
-      const noticePayload = {
-        reporterName: document.getElementById("dmcaReporterName").value.trim(),
-        reporterEmail: document.getElementById("dmcaReporterEmail").value.trim(),
-        workTitle: document.getElementById("dmcaWorkTitle").value.trim(),
-        targetUrl: document.getElementById("dmcaTargetUrl").value.trim(),
-        statement: document.getElementById("dmcaStatement").value.trim(),
-        submittedAt: new Date().toISOString()
-      };
-
-      try {
-        await addDoc(collection(db, "dmca_notices"), noticePayload);
-        dmcaFeedback.textContent = "تم تسجيل إشعار DMCA وحفظه بنجاح لمراجعته.";
-        dmcaFeedback.className = "auth-feedback success";
-      } catch (_) {
-        dmcaFeedback.textContent = `تم تجهيز إشعار DMCA بخصوص "${noticePayload.workTitle}". يمكنك إرساله إلى dmca@streamflix-metabox.app.`;
-        dmcaFeedback.className = "auth-feedback success";
-      }
-    });
-
-    function renderCinemaBackground() {
-      const sourcePosters = catalog.length
-        ? [...catalog.map((i) => i.poster), ...CINEMA_BG_POSTERS]
-        : CINEMA_BG_POSTERS;
-      cinemaBgLayer.innerHTML = "";
-      sourcePosters.slice(0, 18).forEach((src) => {
-        const tile = document.createElement("div");
-        tile.className = "cinema-tile";
-        tile.innerHTML = `<img src="${src}" alt="" loading="lazy" />`;
-        cinemaBgLayer.appendChild(tile);
-      });
-    }
-
-    function applyLanguageUI() {
-      const isEn = uiLang === "en";
-      document.documentElement.lang = isEn ? "en" : "ar";
-      document.documentElement.dir = isEn ? "ltr" : "rtl";
-      toggleLangBtn.textContent = isEn ? "AR" : "EN";
-      gateLangBtn.textContent = isEn ? "AR" : "EN";
-
-      const tabLabels = isEn
-        ? ["All", "Movies", "TV Shows", "Anime", "My List"]
-        : ["الكل", "أفلام", "مسلسلات", "أنمي", "قائمتي"];
-      tabBtns.forEach((btn, idx) => {
-        if (tabLabels[idx]) btn.textContent = tabLabels[idx];
-      });
-
-      searchInput.placeholder = isEn ? "Search..." : "ابحث...";
-      openAdsModalBtn.textContent = isEn ? "📣 Ads" : "📣 الإعلانات";
-      aiOrganizeBtn.textContent = isEn ? "✦ Smart Shuffle" : "✦ خلط وتنظيم ذكي";
-      openAddModalBtn.textContent = isEn ? "+ Add" : "+ إضافة";
-      switchAccountBtn.textContent = isEn ? "Account" : "الحساب";
-      logoutBtn.textContent = isEn ? "Sign Out" : "خروج";
-
-      gateSubtitle.textContent = isEn
-        ? "Sign in to save and sync your account and My List in Firestore, or start with instant demo access."
-        : "أهلاً بك في عالم الأفلام والمسلسلات والأنمي. سجّل الدخول لحفظ قائمتك ومزامنتها أو ابدأ بالدخول التجريبي.";
-      gateLoginTab.textContent = isEn ? "Sign In" : "تسجيل الدخول";
-      gateSignupTab.textContent = isEn ? "Create Account" : "إنشاء حساب";
-      gateGoogleText.textContent = isEn ? "Continue with Google" : "تسجيل الدخول عبر Google";
-      gateOrText.textContent = isEn ? "OR WITH EMAIL" : "أو بالبريد الإلكتروني";
-      gateNameLabel.textContent = isEn ? "Full Name" : "الاسم الكامل";
-      gateEmailLabel.textContent = isEn ? "Email" : "البريد الإلكتروني";
-      gatePassLabel.textContent = isEn ? "Password" : "كلمة المرور";
-      gateSubmitBtn.textContent = authMode === "signup"
-        ? (isEn ? "Create Account" : "إنشاء الحساب")
-        : (isEn ? "Sign In" : "تسجيل الدخول");
-      gateDemoDiv.textContent = isEn ? "INSTANT TRY" : "تجربة فورية";
-      gateDemoBtn.textContent = isEn ? "⚡ Instant Demo Access" : "⚡ دخول تجريبي فوري";
-    }
-
-    function showGateFeedback(msg, type = "error") {
-      gateFeedback.textContent = msg;
-      gateFeedback.className = `auth-feedback ${type}`;
-    }
-
-    function clearGateFeedback() {
-      gateFeedback.textContent = "";
-      gateFeedback.className = "auth-feedback";
-    }
-
-    function setGateMode(mode) {
-      authMode = mode;
-      clearGateFeedback();
-      const isSignup = mode === "signup";
-      gateLoginTab.classList.toggle("active", !isSignup);
-      gateSignupTab.classList.toggle("active", isSignup);
-      gateNameField.style.display = isSignup ? "flex" : "none";
-      applyLanguageUI();
-    }
-
-    function updateGateAndAuthUI() {
-      const activeUser = currentFirebaseUser || demoUser;
-      if (activeUser) {
-        authGate.classList.remove("open");
-        document.body.classList.remove("gate-active");
-        const name = activeUser.displayName || activeUser.email || "User";
-        const demoTag = activeUser.isDemo ? (uiLang === "en" ? " (Demo)" : " (تجريبي)") : "";
-        userBadge.textContent = `● ${name}${demoTag}`;
-        userBadge.style.display = "inline-flex";
-        logoutBtn.style.display = "inline-flex";
-      } else {
-        authGate.classList.add("open");
-        document.body.classList.add("gate-active");
-        userBadge.style.display = "none";
-        logoutBtn.style.display = "none";
-      }
-      applyAdminControlsVisibility();
-      renderStatsBadges();
-    }
-
-    gateLangBtn.addEventListener("click", () => {
-      uiLang = uiLang === "ar" ? "en" : "ar";
-      applyLanguageUI();
-    });
-
-    toggleLangBtn.addEventListener("click", () => {
-      uiLang = uiLang === "ar" ? "en" : "ar";
-      applyLanguageUI();
-    });
-
-    gateLoginTab.addEventListener("click", () => setGateMode("login"));
-    gateSignupTab.addEventListener("click", () => setGateMode("signup"));
-
-    switchAccountBtn.addEventListener("click", () => {
-      clearGateFeedback();
-      authGate.classList.add("open");
-      document.body.classList.add("gate-active");
-    });
-
-    gateGoogleBtn.addEventListener("click", async () => {
-      clearGateFeedback();
-      try {
-        const cred = await signInWithPopup(auth, googleProvider);
-        demoUser = null;
-        localStorage.removeItem(DEMO_SESSION_KEY);
-        await syncUserProfileAndLists(cred.user, { provider: "google.com" });
-        updateGateAndAuthUI();
-      } catch (err) {
-        showGateFeedback(err.message, "error");
-      }
-    });
-
-    gateEmailForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      if (isSpamAttempt("gateHoneyTrap")) return;
-      clearGateFeedback();
-      const nameVal = gateNameInput.value.trim();
-      const emailVal = gateEmailInput.value.trim();
-      const passVal = gatePasswordInput.value;
-
-      try {
-        if (authMode === "signup") {
-          const cred = await createUserWithEmailAndPassword(auth, emailVal, passVal);
-          if (nameVal && cred.user) {
-            await updateProfile(cred.user, { displayName: nameVal });
-          }
-          demoUser = null;
-          localStorage.removeItem(DEMO_SESSION_KEY);
-          await syncUserProfileAndLists(cred.user, {
-            provider: "password",
-            displayName: nameVal || emailVal.split("@")[0],
-            isNewAccount: true
-          });
-          showGateFeedback("تم إنشاء الحساب وحفظ بياناتك بنجاح!", "success");
-        } else {
-          const cred = await signInWithEmailAndPassword(auth, emailVal, passVal);
-          demoUser = null;
-          localStorage.removeItem(DEMO_SESSION_KEY);
-          await syncUserProfileAndLists(cred.user, { provider: "password" });
-          showGateFeedback("تم تسجيل الدخول ومزامنة قائمتك بنجاح!", "success");
-        }
-        updateGateAndAuthUI();
-      } catch (err) {
-        showGateFeedback(err.message, "error");
-      }
-    });
-
-    gateDemoBtn.addEventListener("click", () => {
-      clearGateFeedback();
-      demoUser = {
-        uid: "demo_guest_01",
-        displayName: "حساب تجريبي",
-        email: "demo@streamflix.app",
-        isDemo: true
-      };
-      userSyncStateText = "وضع تجريبي (حفظ محلي)";
-      localStorage.setItem(DEMO_SESSION_KEY, JSON.stringify(demoUser));
-      updateGateAndAuthUI();
-    });
-
-    logoutBtn.addEventListener("click", async () => {
-      demoUser = null;
-      userSyncStateText = "";
-      localStorage.removeItem(DEMO_SESSION_KEY);
-      if (currentFirebaseUser) {
-        try {
-          await signOut(auth);
-        } catch (_) {}
-      }
-      updateGateAndAuthUI();
-    });
-
-    onAuthStateChanged(auth, async (user) => {
-      currentFirebaseUser = user;
-      if (user) {
-        demoUser = null;
-        localStorage.removeItem(DEMO_SESSION_KEY);
-        await syncUserProfileAndLists(user);
-      }
-      updateGateAndAuthUI();
-    });
-
-    function typeLabel(type) {
-      if (type === "movie") return "فيلم";
-      if (type === "series") return "مسلسل";
-      if (type === "anime") return "أنمي";
-      return type;
-    }
-
-    function escapeXml(str) {
-      return String(str || "")
-        .replace(/&/g, "&")
-        .replace(/</g, "<")
-        .replace(/>/g, ">")
-        .replace(/"/g, """)
-        .replace(/'/g, "'");
-    }
-
-    function getBaseSiteUrl() {
-      const origin = window.location.origin && window.location.origin !== "null"
-        ? window.location.origin
-        : "https://username.github.io";
-      const path = window.location.pathname || "/";
-      const dir = path.endsWith("/") ? path : path.substring(0, path.lastIndexOf("/") + 1);
-      return `${origin}${dir}`;
-    }
-
-    function triggerFileDownload(filename, content, mimeType) {
-      const blob = new Blob([content], { type: mimeType });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }
-
-    function generateSitemapXml() {
-      const baseUrl = getBaseSiteUrl();
-      const today = new Date().toISOString().split("T")[0];
-      const staticPaths = ["", "?tab=movie", "?tab=series", "?tab=anime"];
-
-      const itemUrls = catalog.map((item) => {
-        const slug = encodeURIComponent(String(item.id || item.title || "item"));
-        return `
-  <url>
-    <loc>${escapeXml(baseUrl)}?item=${slug}</loc>
-    <lastmod>${today}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>`;
-      });
-
-      const baseUrls = staticPaths.map((p, idx) => `
-  <url>
-    <loc>${escapeXml(baseUrl + p)}</loc>
-    <lastmod>${today}</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>${idx === 0 ? "1.0" : "0.9"}</priority>
-  </url>`);
-
-      return `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${baseUrls.join("")}${itemUrls.join("")}
-</urlset>`;
-    }
-
-    function generateRobotsTxt() {
-      const baseUrl = getBaseSiteUrl();
-      return `User-agent: *
-Allow: /
-
-Sitemap: ${baseUrl}sitemap.xml
-`;
-    }
-
-    function renderLabelsUI() {
-      newLabelsPicker.innerHTML = "";
-      SEVEN_LABELS.forEach((lbl, idx) => {
-        const lab = document.createElement("label");
-        lab.innerHTML = `<input type="checkbox" value="${lbl}" ${idx < 2 ? "checked" : ""} /> ${lbl}`;
-        newLabelsPicker.appendChild(lab);
-      });
-    }
-
-    function toggleFormFieldsByType() {
-      const isMovie = newType.value === "movie";
-      movieVideoField.style.display = isMovie ? "flex" : "none";
-      seasonsJsonField.style.display = isMovie ? "none" : "flex";
-    }
-
-    function openAddModal() {
-      if (!canManageCatalog()) return;
-      editingItemId = null;
-      formModalTitle.textContent = "إضافة عمل جديد إلى Firestore";
-      submitFormBtn.textContent = "حفظ في Firestore";
-      addItemForm.reset();
-      document.getElementById("newYear").value = "2026";
-      document.getElementById("newCountry").value = "الولايات المتحدة";
-      document.getElementById("newRibbon").value = "New Season";
-      document.getElementById("newPoster").value = "https://peach.blender.org/wp-content/uploads/sintel_poster.jpg";
-      document.getElementById("newVideo").value = SAMPLE_V1;
-      renderLabelsUI();
-      toggleFormFieldsByType();
-      addModal.classList.add("open");
-    }
-
-    function openEditModal(item) {
-      if (!canManageCatalog() || !item) return;
-      editingItemId = item.id;
-      formModalTitle.textContent = `تعديل: ${item.title}`;
-      submitFormBtn.textContent = "تحديث البيانات في Firestore";
-
-      renderLabelsUI();
-      newType.value = item.type || "movie";
-      document.getElementById("newGenre").value = item.genre || "خيال علمي";
-      document.getElementById("newCountry").value = item.country || "الولايات المتحدة";
-      document.getElementById("newYear").value = item.year || "2026";
-      document.getElementById("newTitle").value = item.title || "";
-      document.getElementById("newRibbon").value = item.ribbon || "";
-      document.getElementById("newPoster").value = item.poster || "";
-      document.getElementById("newVideo").value = item.video || SAMPLE_V1;
-      document.getElementById("newSeasonsJson").value = JSON.stringify(
-        Array.isArray(item.seasons) && item.seasons.length
-          ? item.seasons
-          : [
-              {
-                seasonNumber: 1,
-                title: "الموسم الأول",
-                episodes: [
-                  { ep: 1, name: "الحلقة 1", duration: "10 د", video: SAMPLE_V2 }
-                ]
-              }
-            ],
-        null,
-        2
-      );
-      document.getElementById("newDesc").value = item.desc || "";
-
-      const itemLabels = Array.isArray(item.labels) ? item.labels : [];
-      newLabelsPicker.querySelectorAll("input[type='checkbox']").forEach((cb) => {
-        cb.checked = itemLabels.includes(cb.value);
-      });
-
-      toggleFormFieldsByType();
-      addModal.classList.add("open");
-    }
-
-    async function deleteCatalogItem(item) {
-      if (!canManageCatalog() || !item || !item.id) return;
-      const confirmed = confirm(`هل أنت متأكد من حذف "${item.title}" نهائياً من Firestore؟`);
-      if (!confirmed) return;
-
-      if (String(item.id).startsWith("fallback_") || String(item.id).startsWith("feed_")) {
-        catalog = catalog.filter((x) => x.id !== item.id);
-        myList = myList.filter((id) => id !== item.id);
-        await saveList();
-        if (currentItem?.id === item.id) closePlayer();
-        renderAll();
-        return;
-      }
-
-      try {
-        await deleteDoc(doc(db, "catalog", item.id));
-        myList = myList.filter((id) => id !== item.id);
-        await saveList();
-        if (currentItem?.id === item.id) {
-          closePlayer();
-        }
-        await loadCatalogFromFirebase();
-      } catch (err) {
-        alert("فشل الحذف من Firestore: " + err.message);
-      }
-    }
-
-    function aiNormalizeItem(item, index = 0) {
-      const labels = Array.isArray(item.labels) && item.labels.length
-        ? item.labels.filter((l) => SEVEN_LABELS.includes(l))
-        : [];
-      const yearNum = parseInt(item.year, 10) || 2020;
-
-      if (!labels.length) {
-        if (yearNum >= 2025) labels.push("جديد", "رائج الآن");
-        else if (yearNum <= 2014) labels.push("كلاسيكي", "مترجم");
-        else labels.push("الأعلى تقييماً", "حصري");
-      }
-
-      const ribbon = item.ribbon !== undefined
-        ? item.ribbon
-        : (labels.includes("جديد") ? "New Season" : (labels.includes("رائج الآن") ? "New Episode" : ""));
-
-      const top10 = typeof item.top10 === "boolean"
-        ? item.top10
-        : labels.includes("الأعلى تقييماً");
-
-      const country = item.country || COUNTRIES_LIST[index % COUNTRIES_LIST.length];
-      const rating = item.rating || (labels.includes("الأعلى تقييماً") ? "4.9" : "4.6");
-
-      return {
-        ...item,
-        country,
-        rating,
-        year: String(item.year || "2025"),
-        desc: item.desc || "عمل متاح للمشاهدة عبر المنصة.",
-        labels: labels.slice(0, 3),
-        ribbon,
-        top10
-      };
-    }
-
-    function renderStatsBadges() {
-      const moviesCount = catalog.filter((i) => i.type === "movie").length;
-      const seriesCount = catalog.filter((i) => i.type === "series").length;
-      const animeCount = catalog.filter((i) => i.type === "anime").length;
-      const activeAdsCount = [adsConfig.cardPopUrl, adsConfig.bottomBannerUrl, adsConfig.thirdSlotUrl]
-        .filter((u) => Boolean((u || "").trim())).length;
-      const syncChip = userSyncStateText
-        ? `<span class="stat-chip sync-ok">✓ ${userSyncStateText}</span>`
-        : "";
-      statsBadges.innerHTML = `
-        <span class="stat-chip">أفلام: ${moviesCount}</span>
-        <span class="stat-chip">مسلسلات: ${seriesCount}</span>
-        <span class="stat-chip">أنمي: ${animeCount}</span>
-        <span class="stat-chip">قائمتي: ${myList.length}</span>
-        <span class="stat-chip">إعلانات مفعّلة: ${activeAdsCount}/3</span>
-        ${syncChip}
-      `;
-    }
-
-    function updateContinueWatchingBtn() {
-      const keys = Object.keys(progressMap);
-      if (!keys.length) {
-        continueWatchingBtn.style.display = "none";
-        return;
-      }
-      const lastId = keys[keys.length - 1];
-      const found = catalog.find((i) => i.id === lastId);
-      if (found) {
-        continueWatchingBtn.style.display = "inline-flex";
-        continueWatchingBtn.textContent = `↻ استئناف: ${found.title}`;
-        continueWatchingBtn.onclick = () => openItemModal(found);
-      } else {
-        continueWatchingBtn.style.display = "none";
-      }
-    }
-
-    // Schema.org Movie / TVSeries / ItemList + Dynamic Meta Tags
-    function applyAutoSEO(focusItem = null) {
-      const titleEl = document.getElementById("seoTitle");
-      const descEl = document.getElementById("seoDesc");
-      const kwEl = document.getElementById("seoKeywords");
-      const ogTitleEl = document.getElementById("ogTitle");
-      const ogDescEl = document.getElementById("ogDesc");
-      const schemaEl = document.getElementById("jsonLdSchema");
-
-      if (focusItem) {
-        const ratingVal = Number(focusItem.rating) || 4.8;
-        const pageTitle = `${focusItem.title} (${focusItem.year || ""}) — StreamFlix AI`;
-        const pageDesc = `${focusItem.desc} | النوع: ${focusItem.genre} | البلد: ${focusItem.country || ""} | تقييم ${ratingVal}/5`;
-        titleEl.textContent = pageTitle;
-        descEl.setAttribute("content", pageDesc);
-        ogTitleEl.setAttribute("content", pageTitle);
-        ogDescEl.setAttribute("content", pageDesc);
-
-        const isMovie = focusItem.type === "movie";
-        schemaEl.textContent = JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": isMovie ? "Movie" : "TVSeries",
-          "name": focusItem.title,
-          "description": focusItem.desc,
-          "genre": focusItem.genre,
-          "countryOfOrigin": {
-            "@type": "Country",
-            "name": focusItem.country || "International"
-          },
-          "datePublished": String(focusItem.year || "2026"),
-          "image": focusItem.poster,
-          "aggregateRating": {
-            "@type": "AggregateRating",
-            "ratingValue": ratingVal,
-            "bestRating": "5",
-            "worstRating": "1",
-            "ratingCount": "1420"
-          }
-        });
-        return;
-      }
-
-      const tabNames = {
-        all: "أفلام ومسلسلات وأنمي",
-        movie: "أفلام سينمائية",
-        series: "مسلسلات حصرية ومترجمة",
-        anime: "عالم الأنمي",
-        mylist: "قائمتي المحفوظة"
-      };
-      const pageTitle = `${tabNames[activeTab] || "المنصة"} — StreamFlix AI`;
-      const pageDesc = `مشاهدة ${tabNames[activeTab] || "الأفلام والمسلسلات"} مع أقسام ديناميكية متجددة وحفظ سجل المشاهدة تلقائياً.`;
-
-      titleEl.textContent = pageTitle;
-      descEl.setAttribute("content", pageDesc);
-      ogTitleEl.setAttribute("content", pageTitle);
-      ogDescEl.setAttribute("content", pageDesc);
-      kwEl.setAttribute("content", `StreamFlix, ${tabNames[activeTab]}, ${SEVEN_LABELS.join(", ")}, ${COUNTRIES_LIST.join(", ")}`);
-
-      schemaEl.textContent = JSON.stringify({
-        "@context": "https://schema.org",
-        "@type": "ItemList",
-        "name": pageTitle,
-        "numberOfItems": catalog.length,
-        "itemListElement": catalog.slice(0, 12).map((item, idx) => ({
-          "@type": "ListItem",
-          "position": idx + 1,
-          "name": item.title,
-          "item": {
-            "@type": item.type === "movie" ? "Movie" : "TVSeries",
-            "name": item.title,
-            "image": item.poster,
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": Number(item.rating) || 4.8,
-              "bestRating": "5",
-              "ratingCount": "850"
-            }
-          }
-        }))
-      });
-    }
-
-    function getWatchPercent(id) {
-      const pct = Number(watchPctMap[id] || 0);
-      return Math.max(0, Math.min(100, pct));
-    }
-
-    function saveWatchPercent(id, pct) {
-      if (!id) return;
-      const clamped = Math.max(0, Math.min(100, Math.round(pct)));
-      watchPctMap[id] = clamped;
-      localStorage.setItem(WATCH_BAR_KEY, JSON.stringify(watchPctMap));
-      if (currentItem && currentItem.id === id) {
-        watchProgressLabel.textContent = `نسبة المشاهدة المحفوظة: ${clamped}%`;
-      }
-      const fillEl = document.querySelector(`.poster-card[data-item-id="${CSS.escape(String(id))}"] .watch-progress-fill`);
-      if (fillEl) {
-        fillEl.style.width = `${clamped}%`;
-      }
-    }
-
-    function createPosterCard(item) {
-      const card = document.createElement("article");
-      card.className = "poster-card";
-      card.setAttribute("data-item-id", String(item.id));
-
-      const watchNowBadge = item.showWatchNow
-        ? `<span class="ribbon-watch">Watch Now</span>`
-        : "";
-      const ribbonBadge = item.ribbon
-        ? `<span class="ribbon-tag">${item.ribbon}</span>`
-        : "";
-      const top10Badge = item.top10
-        ? `<div class="top10-badge">TOP<br/>10</div>`
-        : "";
-
-      const pct = getWatchPercent(item.id);
-      const fullTypeText = `${typeLabel(item.type)}${item.genre ? " • " + item.genre : ""}`;
-      const yearText = `${item.year || "—"} • ★${item.rating || "4.8"}`;
-      const descText = item.desc || "لا يوجد وصف متاح لهذا العمل.";
-      const showAdminActions = canManageCatalog();
-
-      card.innerHTML = `
-        <div class="poster-frame">
-          <span class="corner-n">N</span>
-          ${top10Badge}
-          <img src="${item.poster}" alt="${item.title}" loading="lazy" />
-          <div class="hover-info-overlay" aria-hidden="true">
-            <div class="hover-meta-row">
-              <span class="hover-type-tag">${fullTypeText}</span>
-              <span class="hover-year-tag">${yearText}</span>
-            </div>
-            <p class="hover-desc-text">${descText}</p>
-          </div>
-          <div class="status-ribbon-wrap">
-            ${ribbonBadge}
-            ${watchNowBadge}
-          </div>
-          <div class="watch-progress-track" aria-hidden="true">
-            <div class="watch-progress-fill" style="width:${pct}%;"></div>
-          </div>
-        </div>
-        <div class="poster-caption">
-          <div class="poster-name" title="${item.title}">${item.title}</div>
-          <div class="poster-mini-actions" style="display:${showAdminActions ? "flex" : "none"};">
-            <button type="button" class="mini-act edit">✎ تعديل</button>
-            <button type="button" class="mini-act del">🗑 حذف</button>
-          </div>
-        </div>
-      `;
-
-      // Smooth mobile touch peek without breaking tap-to-open
-      let touchPeekTimer = null;
-      card.addEventListener("touchstart", () => {
-        document.querySelectorAll(".poster-card.touch-peek").forEach((c) => {
-          if (c !== card) c.classList.remove("touch-peek");
-        });
-        card.classList.add("touch-peek");
-        clearTimeout(touchPeekTimer);
-        touchPeekTimer = setTimeout(() => card.classList.remove("touch-peek"), 1800);
-      }, { passive: true });
-
-      const editBtn = card.querySelector(".mini-act.edit");
-      const delBtn = card.querySelector(".mini-act.del");
-
-      editBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        openEditModal(item);
-      });
-
-      delBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        deleteCatalogItem(item);
-      });
-
-      card.addEventListener("click", () => {
-        card.classList.remove("touch-peek");
-        triggerCardClickAdIfConfigured();
-        openItemModal(item);
-      });
-      return card;
-    }
-
-    function buildHorizontalShelf(titleText, tagBadge, items) {
-      const section = document.createElement("section");
-      section.className = "shelf-section";
-
-      const header = document.createElement("div");
-      header.className = "shelf-header";
-      header.innerHTML = `
-        <h2 class="shelf-title">
-          ${titleText}
-          ${tagBadge ? `<span class="shelf-tag-pill">${tagBadge}</span>` : ""}
-          <span class="chevron">›</span>
-        </h2>
-      `;
-      section.appendChild(header);
-
-      if (!items.length) {
-        const empty = document.createElement("p");
-        empty.className = "empty-msg";
-        empty.textContent = "لا توجد عناصر في هذا الصف حالياً.";
-        section.appendChild(empty);
-        return section;
-      }
-
-      const wrapper = document.createElement("div");
-      wrapper.className = "shelf-wrapper";
-
-      const row = document.createElement("div");
-      row.className = "shelf-row";
-      items.forEach((item) => row.appendChild(createPosterCard(item)));
-
-      const nextBtn = document.createElement("button");
-      nextBtn.type = "button";
-      nextBtn.className = "scroll-next-btn";
-      nextBtn.setAttribute("aria-label", "تمرير الصف");
-      nextBtn.textContent = "›";
-      nextBtn.addEventListener("click", () => {
-        const isRtl = document.documentElement.dir === "rtl";
-        row.scrollBy({ left: isRtl ? -540 : 540, behavior: "smooth" });
-      });
-
-      wrapper.appendChild(row);
-      wrapper.appendChild(nextBtn);
-      section.appendChild(wrapper);
-      return section;
-    }
-
-    // Dynamic Shelves: 7 Labels + Genre + Country randomized per load
-    function renderShelves() {
-      const q = searchInput.value.trim().toLowerCase();
-      const g = genreSelect.value;
-      const c = countrySelect.value;
-
-      const filtered = catalog.filter((item) => {
-        const matchesTab =
-          activeTab === "all" ||
-          (activeTab === "mylist" && isInList(item.id)) ||
-          item.type === activeTab;
-        const matchesGenre = g === "all" || item.genre === g;
-        const matchesCountry = c === "all" || (item.country || "") === c;
-        const matchesLabel =
-          activeLabel === "all" ||
-          (Array.isArray(item.labels) && item.labels.includes(activeLabel));
-        const matchesQuery =
-          !q ||
-          item.title.toLowerCase().includes(q) ||
-          item.desc.toLowerCase().includes(q) ||
-          item.genre.toLowerCase().includes(q) ||
-          String(item.country || "").toLowerCase().includes(q) ||
-          String(item.year || "").toLowerCase().includes(q) ||
-          (item.labels || []).some((l) => l.toLowerCase().includes(q));
-
-        return matchesTab && matchesGenre && matchesCountry && matchesLabel && matchesQuery;
-      });
-
-      shelvesContainer.innerHTML = "";
-
-      if (!filtered.length) {
-        shelvesContainer.innerHTML = `<p class="empty-msg">لا توجد عناصر مطابقة للتصفية الحالية.</p>`;
-        return;
-      }
-
-      const sectionsPool = [];
-
-      // 1) Main Featured Shelf
-      sectionsPool.push(buildHorizontalShelf("مختارات متجددة لك", "مباشر", filtered));
-
-      // 2) My List if non-empty
-      const savedList = filtered.filter((item) => isInList(item.id));
-      if (savedList.length) {
-        sectionsPool.push(buildHorizontalShelf("قائمتي المحفوظة", "My List", savedList));
-      }
-
-      // 3) 7 Labels embedded inside shelf-section rows
-      const labelTitleVariants = {
-        "حصري": ["إصدارات حصرية للمنصة", "أعمال حصرية مختارة"],
-        "جديد": ["أحدث الإضافات والمواسم", "وصل حديثاً إلى المكتبة"],
-        "الأعلى تقييماً": ["الأعلى تقييماً لدى المشاهدين", "روائع بتقييمات مرتفعة"],
-        "مدبلج": ["أعمال مدبلجة باحترافية", "دبلجة عربية واضحة"],
-        "مترجم": ["أعمال مترجمة عالية الجودة", "مختارات مترجمة للمشاهدة"],
-        "كلاسيكي": ["أعمال كلاسيكية خالدة", "ذاكرة السينما والدراما الكلاسيكية"],
-        "رائج الآن": ["رائج الآن في الترند", "الأكثر متابعة اليوم"]
-      };
-
-      SEVEN_LABELS.forEach((lbl) => {
-        const matched = filtered.filter((item) => Array.isArray(item.labels) && item.labels.includes(lbl));
-        if (matched.length) {
-          const titles = labelTitleVariants[lbl] || [lbl];
-          const chosenTitle = titles[Math.floor(Math.random() * titles.length)];
-          sectionsPool.push(buildHorizontalShelf(chosenTitle, `تسمية: ${lbl}`, shuffleArray(matched)));
-        }
-      });
-
-      // 4) Sections by Genre (النوع)
-      const genresFound = Array.from(new Set(filtered.map((i) => i.genre).filter(Boolean)));
-      genresFound.forEach((genreName) => {
-        const gItems = filtered.filter((i) => i.genre === genreName);
-        if (gItems.length) {
-          sectionsPool.push(buildHorizontalShelf(`قسم ${genreName}`, `النوع: ${genreName}`, gItems));
-        }
-      });
-
-      // 5) Sections by Country (البلد)
-      const countriesFound = Array.from(new Set(filtered.map((i) => i.country).filter(Boolean)));
-      countriesFound.forEach((countryName) => {
-        const cItems = filtered.filter((i) => i.country === countryName);
-        if (cItems.length) {
-          sectionsPool.push(buildHorizontalShelf(`إنتاج ${countryName}`, `البلد: ${countryName}`, cItems));
-        }
-      });
-
-      // Shuffle dynamic sections after the first main shelf on every load
-      const [firstShelf, ...restShelves] = sectionsPool;
-      shelvesContainer.appendChild(firstShelf);
-      shuffleArray(restShelves).forEach((sec) => shelvesContainer.appendChild(sec));
-    }
-
-    // Auto-Next Episode Countdown
-    function clearAutoNext(markDismissed = false) {
-      if (autoNextTimer) {
-        clearInterval(autoNextTimer);
-        autoNextTimer = null;
-      }
-      pendingNextTarget = null;
-      if (markDismissed) dismissedForCurrentEp = true;
-      nextEpBanner.classList.remove("show");
-    }
-
-    function getNextEpisodeTarget() {
-      if (!currentItem || !Array.isArray(currentItem.seasons)) return null;
-      const season = currentItem.seasons[currentSeasonIdx];
-      if (!season || !Array.isArray(season.episodes)) return null;
-
-      if (currentEpIdx + 1 < season.episodes.length) {
-        return {
-          sIdx: currentSeasonIdx,
-          eIdx: currentEpIdx + 1,
-          label: `${season.title || "الموسم " + (currentSeasonIdx + 1)} — ${season.episodes[currentEpIdx + 1].name}`
-        };
-      }
-
-      if (currentSeasonIdx + 1 < currentItem.seasons.length) {
-        const nextSeason = currentItem.seasons[currentSeasonIdx + 1];
-        if (Array.isArray(nextSeason.episodes) && nextSeason.episodes.length > 0) {
-          return {
-            sIdx: currentSeasonIdx + 1,
-            eIdx: 0,
-            label: `${nextSeason.title || "الموسم " + (currentSeasonIdx + 2)} — ${nextSeason.episodes[0].name}`
-          };
-        }
-      }
-      return null;
-    }
-
-    function goToNextEpisodeNow() {
-      if (!pendingNextTarget) return;
-      const target = pendingNextTarget;
-      clearAutoNext(false);
-      currentSeasonIdx = target.sIdx;
-      currentEpIdx = target.eIdx;
-      renderSeasonsAndEpisodes();
-    }
-
-    function startAutoNextCountdown() {
-      if (autoNextTimer || dismissedForCurrentEp) return;
-      const nextTarget = getNextEpisodeTarget();
-      if (!nextTarget) return;
-
-      pendingNextTarget = nextTarget;
-      let secondsLeft = 5;
-      nextEpName.textContent = nextTarget.label;
-      nextEpCountdown.textContent = String(secondsLeft);
-      nextEpBanner.classList.add("show");
-
-      autoNextTimer = setInterval(() => {
-        secondsLeft -= 1;
-        if (secondsLeft <= 0) {
-          goToNextEpisodeNow();
-        } else {
-          nextEpCountdown.textContent = String(secondsLeft);
-        }
-      }, 1000);
-    }
-
-    function handleTimeUpdate() {
-      const dur = videoPlayer.duration;
-      if (Number.isFinite(dur) && dur > 0 && currentItem?.id) {
-        const pct = (videoPlayer.currentTime / dur) * 100;
-        saveWatchPercent(currentItem.id, pct);
-
-        const remaining = dur - videoPlayer.currentTime;
-        if (!autoNextTimer && !dismissedForCurrentEp && remaining <= PRE_END_SECONDS && remaining > 0) {
-          startAutoNextCountdown();
-        }
-      }
-    }
-
-    async function saveList() {
-      localStorage.setItem(LIST_KEY, JSON.stringify(myList));
-      await persistUserListsToFirestore();
-    }
-
-    async function saveProgress(id, sIdx, eIdx) {
-      progressMap[id] = { sIdx, eIdx };
-      localStorage.setItem(PROGRESS_KEY, JSON.stringify(progressMap));
-      updateContinueWatchingBtn();
-      await persistUserListsToFirestore();
-    }
-
-    function isInList(id) { return myList.includes(id); }
-
-    async function toggleList(id) {
-      if (!id) return;
-      myList = isInList(id) ? myList.filter((x) => x !== id) : [...myList, id];
-      await saveList();
-      renderAll();
-      updateHeroListBtn();
-      updateModalListBtn();
-    }
-
-    function updateHeroListBtn() {
-      if (!heroItem) return;
-      heroListBtn.textContent = isInList(heroItem.id) ? "✓ في قائمتي" : "+ قائمتي";
-    }
-
-    function updateModalListBtn() {
-      if (!currentItem) return;
-      modalToggleListBtn.textContent = isInList(currentItem.id) ? "إزالة من قائمتي" : "إضافة إلى قائمتي";
-    }
-
-    function setupHero(item) {
-      if (!item) return;
-      heroItem = item;
-      hero.style.backgroundImage = `url('${item.poster}')`;
-      const lbl = item.ribbon || (item.labels && item.labels[0]) || "مميز اليوم";
-      heroBadge.textContent = `${lbl} • ${typeLabel(item.type)} • ${item.genre} • ★${item.rating || "4.8"}`;
-      heroTitle.textContent = item.title;
-      heroDesc.textContent = item.desc;
-      updateHeroListBtn();
-      updateContinueWatchingBtn();
-    }
-
-    function playVideoSource(src, titleLabel) {
-      dismissedForCurrentEp = false;
-      clearAutoNext(false);
-      modalTitle.textContent = titleLabel;
-      videoPlayer.src = src;
-      const savedPct = currentItem ? getWatchPercent(currentItem.id) : 0;
-      watchProgressLabel.textContent = `نسبة المشاهدة المحفوظة: ${savedPct}%`;
-      videoPlayer.addEventListener("loadedmetadata", function onMeta() {
-        videoPlayer.removeEventListener("loadedmetadata", onMeta);
-        if (savedPct > 2 && savedPct < 96 && Number.isFinite(videoPlayer.duration) && videoPlayer.duration > 0) {
-          videoPlayer.currentTime = (savedPct / 100) * videoPlayer.duration;
-        }
-      });
-      videoPlayer.play().catch(() => {});
-    }
-
-    function renderSeasonsAndEpisodes() {
-      clearAutoNext(false);
-      dismissedForCurrentEp = false;
-      const hasEpisodes = Array.isArray(currentItem.seasons) && currentItem.seasons.length > 0;
-      if (!hasEpisodes) {
-        episodesBox.style.display = "none";
-        saveProgress(currentItem.id, 0, 0);
-        playVideoSource(currentItem.video, `${currentItem.title} (${currentItem.year})`);
-        return;
-      }
-
-      episodesBox.style.display = "block";
-      seasonSelect.innerHTML = "";
-      currentItem.seasons.forEach((s, idx) => {
-        const opt = document.createElement("option");
-        opt.value = idx;
-        opt.textContent = s.title || `الموسم ${s.seasonNumber}`;
-        seasonSelect.appendChild(opt);
-      });
-      seasonSelect.value = String(currentSeasonIdx);
-
-      const season = currentItem.seasons[currentSeasonIdx] || currentItem.seasons[0];
-      const ep = season.episodes[currentEpIdx] || season.episodes[0];
-      saveProgress(currentItem.id, currentSeasonIdx, currentEpIdx);
-      playVideoSource(ep.video, `${currentItem.title} — ${season.title} / ${ep.name}`);
-
-      episodesList.innerHTML = "";
-      season.episodes.forEach((episode, eIdx) => {
-        const card = document.createElement("div");
-        card.className = "ep-card" + (eIdx === currentEpIdx ? " active" : "");
-        card.innerHTML = `<strong>${episode.name}</strong><span>المدة: ${episode.duration || "—"}</span>`;
-        card.addEventListener("click", () => {
-          currentEpIdx = eIdx;
-          renderSeasonsAndEpisodes();
-        });
-        episodesList.appendChild(card);
-      });
-    }
-
-    function openItemModal(item) {
-      currentItem = item;
-      applyAutoSEO(item);
-      applyAdminControlsVisibility();
-      const saved = progressMap[item.id];
-      currentSeasonIdx = saved ? Math.min(saved.sIdx, (item.seasons?.length || 1) - 1) : 0;
-      currentEpIdx = saved ? Math.min(saved.eIdx, (item.seasons?.[currentSeasonIdx]?.episodes?.length || 1) - 1) : 0;
-
-      infoTitle.textContent = `${item.title} (${item.year}) • ★${item.rating || "4.8"}`;
-      infoDesc.textContent = item.desc;
-      updateModalListBtn();
-      renderSeasonsAndEpisodes();
-      playerModal.classList.add("open");
-    }
-
-    function setCinemaMode(enabled) {
-      cinemaModeActive = Boolean(enabled);
-      document.body.classList.toggle("cinema-dimmed", cinemaModeActive);
-      cinemaModeBtn.textContent = cinemaModeActive
-        ? "💡 إضاءة الأنوار (إلغاء وضع السينما)"
-        : "🎬 وضع السينما (إطفاء الأنوار)";
-    }
-
-    function closePlayer() {
-      setCinemaMode(false);
-      clearAutoNext(false);
-      videoPlayer.pause();
-      videoPlayer.removeAttribute("src");
-      videoPlayer.load();
-      playerModal.classList.remove("open");
-      applyAutoSEO(null);
-    }
-
-    cinemaModeBtn.addEventListener("click", () => {
-      setCinemaMode(!cinemaModeActive);
-    });
-
-    function renderAll() {
-      renderShelves();
-      renderStatsBadges();
-      renderConfiguredAds();
-      applyAdminControlsVisibility();
-      updateContinueWatchingBtn();
-      applyAutoSEO(null);
-    }
-
-    async function loadCatalogFromFirebase() {
-      try {
-        const snap = await getDocs(collection(db, "catalog"));
-        if (snap.empty) {
-          dbStatus.textContent = "متصل بـ Firestore (metaverse-metabox) — عرض مكتبة البداية";
-          catalog = DEFAULT_ITEMS.map((item, i) => aiNormalizeItem({ id: "starter_" + i, ...item }, i));
-        } else {
-          catalog = snap.docs.map((docSnap, i) => aiNormalizeItem({ id: docSnap.id, ...docSnap.data() }, i));
-          dbStatus.textContent = `متصل بـ Firestore (metaverse-metabox) — ${catalog.length} عنصر`;
-        }
-        await runDynamicFeedShuffler(true);
-        setupHero(catalog[Math.floor(Math.random() * Math.min(3, catalog.length))] || catalog[0]);
-      } catch (err) {
-        console.error(err);
-        dbStatus.textContent = "تعذر الاتصال بـ Firestore — عرض النسخة المحلية";
-        catalog = DEFAULT_ITEMS.map((item, i) => aiNormalizeItem({ id: "fallback_" + i, ...item }, i));
-        await runDynamicFeedShuffler(true);
-        setupHero(catalog[2] || catalog[0]);
-      }
-    }
-
-    downloadSitemapBtn.addEventListener("click", () => {
-      if (!canManageCatalog()) return;
-      triggerFileDownload("sitemap.xml", generateSitemapXml(), "application/xml;charset=utf-8");
-    });
-
-    downloadRobotsBtn.addEventListener("click", () => {
-      if (!canManageCatalog()) return;
-      triggerFileDownload("robots.txt", generateRobotsTxt(), "text/plain;charset=utf-8");
-    });
-
-    seedDataBtn.addEventListener("click", async () => {
-      if (!canManageCatalog()) return;
-      seedDataBtn.disabled = true;
-      seedDataBtn.textContent = "جاري الإضافة...";
-      try {
-        for (const item of DEFAULT_ITEMS) {
-          await addDoc(collection(db, "catalog"), item);
-        }
-        await loadCatalogFromFirebase();
-      } catch (err) {
-        alert("حدث خطأ أثناء الإضافة: " + err.message);
-      } finally {
-        seedDataBtn.disabled = false;
-        seedDataBtn.textContent = "تعبئة بيانات تجريبية";
-      }
-    });
-
-    aiOrganizeBtn.addEventListener("click", () => runDynamicFeedShuffler(true));
-    shuffleFeedNowBtn.addEventListener("click", () => runDynamicFeedShuffler(true));
-    newType.addEventListener("change", toggleFormFieldsByType);
-
-    openAddModalBtn.addEventListener("click", openAddModal);
-    closeAddBtn.addEventListener("click", () => addModal.classList.remove("open"));
-    addModal.addEventListener("click", (e) => {
-      if (e.target === addModal) addModal.classList.remove("open");
-    });
-
-    modalEditItemBtn.addEventListener("click", () => {
-      if (currentItem) openEditModal(currentItem);
-    });
-
-    modalDeleteItemBtn.addEventListener("click", () => {
-      if (currentItem) deleteCatalogItem(currentItem);
-    });
-
-    addItemForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      if (isSpamAttempt("itemHoneyTrap")) return;
-      if (!canManageCatalog()) {
-        alert("هذه الصلاحية مخصصة للحساب المعتمد فقط.");
-        return;
-      }
-      const type = newType.value;
-      const title = document.getElementById("newTitle").value.trim();
-      const genre = document.getElementById("newGenre").value;
-      const country = document.getElementById("newCountry").value;
-      const year = document.getElementById("newYear").value.trim();
-      const ribbon = document.getElementById("newRibbon").value.trim();
-      const poster = document.getElementById("newPoster").value.trim();
-      const desc = document.getElementById("newDesc").value.trim();
-
-      const selectedLabels = Array.from(
-        newLabelsPicker.querySelectorAll("input[type='checkbox']:checked")
-      ).map((cb) => cb.value);
-
-      const payload = {
-        type,
-        title,
-        genre,
-        country,
-        year,
-        rating: selectedLabels.includes("الأعلى تقييماً") ? "4.9" : "4.7",
-        ribbon,
-        showWatchNow: ribbon.toLowerCase().includes("episode"),
-        top10: selectedLabels.includes("الأعلى تقييماً"),
-        poster,
-        labels: selectedLabels.length ? selectedLabels : ["جديد"],
-        desc
-      };
-
-      if (type === "movie") {
-        payload.video = document.getElementById("newVideo").value.trim();
-        payload.seasons = [];
-      } else {
-        try {
-          payload.seasons = JSON.parse(document.getElementById("newSeasonsJson").value);
-        } catch (_) {
-          alert("صيغة JSON للمواسم والحلقات غير صحيحة.");
-          return;
-        }
-      }
-
-      try {
-        if (editingItemId && !String(editingItemId).startsWith("fallback_") && !String(editingItemId).startsWith("starter_") && !String(editingItemId).startsWith("feed_")) {
-          await updateDoc(doc(db, "catalog", editingItemId), payload);
-          if (currentItem?.id === editingItemId) {
-            currentItem = { id: editingItemId, ...payload };
-            infoTitle.textContent = `${currentItem.title} (${currentItem.year})`;
-            infoDesc.textContent = currentItem.desc;
-            renderSeasonsAndEpisodes();
-            applyAutoSEO(currentItem);
-          }
-        } else {
-          await addDoc(collection(db, "catalog"), payload);
-        }
-
-        editingItemId = null;
-        addModal.classList.remove("open");
-        addItemForm.reset();
-        renderLabelsUI();
-        await loadCatalogFromFirebase();
-      } catch (err) {
-        alert("فشل الحفظ في Firestore: " + err.message);
-      }
-    });
-
-    tabBtns.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        tabBtns.forEach((b) => b.classList.remove("active"));
-        btn.classList.add("active");
-        activeTab = btn.dataset.type;
-        renderAll();
-      });
-    });
-
-    seasonSelect.addEventListener("change", () => {
-      currentSeasonIdx = Number(seasonSelect.value) || 0;
-      currentEpIdx = 0;
-      renderSeasonsAndEpisodes();
-    });
-
-    videoPlayer.addEventListener("timeupdate", handleTimeUpdate);
-    videoPlayer.addEventListener("ended", () => {
-      if (currentItem?.id) saveWatchPercent(currentItem.id, 100);
-      startAutoNextCountdown();
-    });
-    playNextNowBtn.addEventListener("click", goToNextEpisodeNow);
-    cancelAutoNextBtn.addEventListener("click", () => clearAutoNext(true));
-
-    window.addEventListener("scroll", () => {
-      document.getElementById("navbar").classList.toggle("scrolled", window.scrollY > 40);
-    });
-
-    searchInput.addEventListener("input", renderShelves);
-    genreSelect.addEventListener("change", renderShelves);
-    countrySelect.addEventListener("change", renderShelves);
-    heroPlayBtn.addEventListener("click", () => openItemModal(heroItem));
-    heroListBtn.addEventListener("click", () => toggleList(heroItem?.id));
-    modalToggleListBtn.addEventListener("click", () => toggleList(currentItem?.id));
-    closePlayerBtn.addEventListener("click", closePlayer);
-    playerModal.addEventListener("click", (e) => {
-      if (e.target === playerModal) closePlayer();
-    });
-
-    renderCinemaBackground();
-    applyLanguageUI();
-    updateGateAndAuthUI();
-    renderLabelsUI();
-    renderConfiguredAds();
-    loadCatalogFromFirebase();
-    runAdBlockDetection();
-    setInterval(runAdBlockDetection, 6000);
-  </script>
-</body>
-</html>
+    const nextEpName = docum
