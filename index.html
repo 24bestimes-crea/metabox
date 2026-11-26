@@ -3,33 +3,42 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
-  <title id="seoTitle">StreamFlix AI — منصة أفلام، مسلسلات، وأنمي</title>
-  <meta id="seoDesc" name="description" content="منصة عرض سينمائية للأفلام والمسلسلات والأنمي مع تسجيل دخول عبر جوجل وإنشاء حساب وحفظ بيانات المستخدمين وقوائمهم في Firebase Firestore وحقوق النشر وسياسة DMCA." />
-  <meta id="seoKeywords" name="keywords" content="أفلام, مسلسلات, أنمي, تسجيل دخول, جوجل, إنشاء حساب, دخول تجريبي, Firebase, Firestore, حقوق النشر, DMCA" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  <meta name="theme-color" content="#e50914" />
+  <link id="canonicalLink" rel="canonical" href="" />
+  <title id="seoTitle">StreamFlix AI — منصة أفلام، مسلسلات، وأنمي عالية الجودة</title>
+  <meta id="seoDesc" name="description" content="منصة عرض سينمائية متطورة للأفلام والمسلسلات والأنمي مع تتبع تقدم المشاهدة، سلايدر تفاعلي، سيو متكامل، مزامنة قائمة المشاهدة عبر Firebase Firestore، وحقوق النشر وسياسة DMCA." />
+  <meta id="seoKeywords" name="keywords" content="أفلام مترجمة, مسلسلات حصرية, أنمي أونلاين, مشاهدة مباشرة, الأكثر مشاهدة, ترند, StreamFlix, Firebase, DMCA" />
   <meta id="ogTitle" property="og:title" content="StreamFlix AI — أفلام، مسلسلات، وأنمي" />
-  <meta id="ogDesc" property="og:description" content="تصفح أحدث الأفلام والمسلسلات والأنمي في صفوف أفقية مع مزامنة قائمة المشاهدة لكل حساب وسياسة حقوق النشر وDMCA." />
+  <meta id="ogDesc" property="og:description" content="تصفح أحدث الأفلام والمسلسلات والأنمي مع مؤشر تقدم المشاهدة، سلايدر سينمائي، ومزامنة القوائم لكل حساب." />
   <meta id="ogType" property="og:type" content="website" />
+  <meta id="ogImage" property="og:image" content="https://peach.blender.org/wp-content/uploads/sintel_poster.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet" />
+
   <script id="jsonLdSchema" type="application/ld+json">{}</script>
 
   <style>
     :root {
-      --bg: #0a0b0e;
-      --bg-row: #111318;
-      --bg-card: #181c24;
-      --bg-elevated: #1e2430;
+      --bg: #07080c;
+      --bg-elevated: #0e1017;
+      --bg-row: #11141c;
+      --bg-card: #171b24;
       --text: #ffffff;
       --muted: #9ca3af;
       --red: #e50914;
-      --red-glow: rgba(229, 9, 20, 0.35);
+      --red-dark: #b20710;
+      --red-glow: rgba(229, 9, 20, 0.38);
       --accent: #38bdf8;
       --gold: #fbbf24;
       --green: #10b981;
       --border: rgba(255, 255, 255, 0.09);
       --border-strong: rgba(255, 255, 255, 0.16);
-      --radius: 8px;
+      --radius: 10px;
+      --font-main: "Cairo", "Tajawal", "Segoe UI", Tahoma, sans-serif;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -40,17 +49,31 @@
     }
 
     body {
-      font-family: "Cairo", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      font-family: var(--font-main);
       background-color: var(--bg);
+      background-image:
+        radial-gradient(circle at 15% 8%, rgba(229, 9, 20, 0.11), transparent 36%),
+        radial-gradient(circle at 88% 18%, rgba(56, 189, 248, 0.08), transparent 38%),
+        radial-gradient(circle at 50% 85%, rgba(251, 191, 36, 0.05), transparent 45%);
       color: var(--text);
       overflow-x: hidden;
-      line-height: 1.5;
-      padding-bottom: 72px;
+      line-height: 1.55;
+      padding-bottom: 68px;
+      letter-spacing: -0.01em;
     }
 
     body.gate-active,
     body.adblock-locked {
       overflow: hidden;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
     }
 
     /* AdBlock Wall */
@@ -105,7 +128,7 @@
     .adblock-card p {
       font-size: 0.88rem;
       color: #d1d5db;
-      line-height: 1.65;
+      line-height: 1.7;
       margin-bottom: 16px;
     }
 
@@ -125,7 +148,7 @@
       height: 250px;
     }
 
-    /* Full-Screen First-Visit Auth Gate */
+    /* Full-Screen Auth Gate with Enhanced Cinema Background */
     .auth-gate {
       position: fixed;
       inset: 0;
@@ -135,7 +158,7 @@
       justify-content: center;
       padding: 16px;
       overflow: hidden;
-      background: #07080c;
+      background: #06070b;
     }
 
     .auth-gate.open {
@@ -144,29 +167,31 @@
 
     .cinema-bg-layer {
       position: absolute;
-      inset: -12%;
+      inset: -14%;
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-      gap: 10px;
-      transform: rotate(-4deg) scale(1.06);
-      opacity: 0.34;
-      filter: saturate(1.15) contrast(1.08);
-      animation: cinemaDrift 28s ease-in-out infinite alternate;
+      grid-template-columns: repeat(auto-fill, minmax(136px, 1fr));
+      gap: 12px;
+      transform: rotate(-3.5deg) scale(1.06);
+      opacity: 0.42;
+      filter: saturate(1.25) contrast(1.1);
+      animation: cinemaDrift 30s ease-in-out infinite alternate;
       pointer-events: none;
     }
 
     @keyframes cinemaDrift {
-      0% { transform: rotate(-4deg) scale(1.05) translate3d(0, 0, 0); }
-      100% { transform: rotate(-2.5deg) scale(1.1) translate3d(-18px, -14px, 0); }
+      0% { transform: rotate(-3.5deg) scale(1.05) translate3d(0, 0, 0); }
+      50% { transform: rotate(-2deg) scale(1.09) translate3d(-14px, -10px, 0); }
+      100% { transform: rotate(-4deg) scale(1.11) translate3d(12px, -16px, 0); }
     }
 
     .cinema-tile {
       position: relative;
       aspect-ratio: 2 / 3;
-      border-radius: 8px;
+      border-radius: 10px;
       overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       background: #12151e;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.5);
     }
 
     .cinema-tile img {
@@ -180,8 +205,8 @@
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(circle at 50% 42%, rgba(10, 12, 18, 0.52) 0%, rgba(7, 8, 12, 0.92) 72%, #06070a 100%),
-        linear-gradient(to bottom, rgba(7, 8, 12, 0.72), rgba(7, 8, 12, 0.88));
+        radial-gradient(circle at 50% 45%, rgba(229, 9, 20, 0.14) 0%, rgba(7, 9, 15, 0.78) 55%, rgba(5, 6, 10, 0.96) 100%),
+        linear-gradient(135deg, rgba(6, 7, 11, 0.85), rgba(14, 18, 28, 0.78));
       pointer-events: none;
     }
 
@@ -189,15 +214,15 @@
       position: relative;
       z-index: 2;
       width: 100%;
-      max-width: 450px;
+      max-width: 456px;
       max-height: 94vh;
       overflow-y: auto;
-      background: rgba(17, 21, 30, 0.94);
-      backdrop-filter: blur(18px);
+      background: rgba(16, 20, 30, 0.9);
+      backdrop-filter: blur(20px);
       border: 1px solid var(--border-strong);
-      border-radius: 14px;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85);
-      padding: 20px 18px 22px;
+      border-radius: 16px;
+      box-shadow: 0 28px 70px rgba(0, 0, 0, 0.88), 0 0 0 1px rgba(229, 9, 20, 0.15);
+      padding: 22px 20px 24px;
     }
 
     .auth-brand-row {
@@ -208,12 +233,13 @@
     }
 
     .auth-subtitle {
-      font-size: 0.84rem;
-      color: var(--muted);
+      font-size: 0.86rem;
+      color: #cbd5e1;
       margin-bottom: 14px;
+      line-height: 1.65;
     }
 
-    /* Header */
+    /* Updated Header */
     header {
       position: fixed;
       top: 0; left: 0; right: 0;
@@ -221,37 +247,38 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
+      gap: 10px;
       padding: 10px 4%;
-      background: linear-gradient(to bottom, rgba(10,11,14,0.97), rgba(10,11,14,0.58));
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid transparent;
+      background: linear-gradient(to bottom, rgba(7, 8, 12, 0.97), rgba(7, 8, 12, 0.72));
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       transition: all 0.25s ease;
       flex-wrap: wrap;
     }
 
     header.scrolled {
-      background: rgba(10, 11, 14, 0.98);
-      border-bottom-color: var(--border);
-      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
+      background: rgba(7, 8, 12, 0.98);
+      border-bottom-color: var(--border-strong);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
     }
 
     .brand {
-      font-size: clamp(1.15rem, 2.5vw, 1.45rem);
+      font-size: clamp(1.15rem, 2.5vw, 1.48rem);
       font-weight: 900;
       color: var(--red);
       text-decoration: none;
       display: flex;
       align-items: center;
-      gap: 6px;
-      letter-spacing: 0.3px;
+      gap: 7px;
+      letter-spacing: 0.2px;
     }
 
     .brand span {
       font-size: 0.65rem;
-      background: rgba(255,255,255,0.1);
-      color: #e5e7eb;
-      padding: 2px 7px;
+      background: linear-gradient(135deg, rgba(229, 9, 20, 0.25), rgba(56, 189, 248, 0.2));
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: #f9fafb;
+      padding: 2px 8px;
       border-radius: 999px;
       font-weight: 800;
     }
@@ -264,26 +291,26 @@
     }
 
     .tab-btn {
-      background: rgba(255, 255, 255, 0.07);
+      background: rgba(255, 255, 255, 0.06);
       color: var(--text);
       border: 1px solid var(--border);
       border-radius: 999px;
-      padding: 5px 12px;
+      padding: 5px 13px;
       font-size: 0.8rem;
       font-weight: 700;
-      cursor: pointer;
       font-family: inherit;
+      cursor: pointer;
       transition: all 0.18s ease;
     }
 
     .tab-btn:hover {
-      background: rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.12);
     }
 
     .tab-btn.active {
       background: var(--red);
       border-color: var(--red);
-      box-shadow: 0 0 16px var(--red-glow);
+      box-shadow: 0 0 18px var(--red-glow);
     }
 
     .controls input,
@@ -292,20 +319,20 @@
     .modal input,
     .modal textarea,
     .auth-card input {
-      background: #10131a;
+      background: #0e121a;
       color: var(--text);
       border: 1px solid var(--border);
-      border-radius: 7px;
-      padding: 7px 10px;
+      border-radius: 8px;
+      padding: 7px 11px;
       font-size: 0.84rem;
       outline: none;
       font-family: inherit;
       max-width: 100%;
-      transition: border-color 0.18s ease, box-shadow 0.18s ease;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
 
     .controls input {
-      width: 155px;
+      width: 158px;
     }
 
     .controls input:focus,
@@ -315,32 +342,32 @@
     .modal select:focus,
     .auth-card input:focus {
       border-color: var(--accent);
-      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.16);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.14);
     }
 
     .btn {
       border: none;
-      border-radius: 7px;
+      border-radius: 8px;
       padding: 8px 13px;
       font-size: 0.82rem;
       font-weight: 700;
+      font-family: inherit;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
-      font-family: inherit;
-      transition: transform 0.14s ease, filter 0.18s ease, background-color 0.18s ease;
+      transition: transform 0.14s ease, filter 0.18s ease, box-shadow 0.18s ease;
     }
 
-    .btn:hover { filter: brightness(1.07); }
+    .btn:hover { filter: brightness(1.08); }
     .btn:active { transform: scale(0.97); }
-    .btn-play { background: #ffffff; color: #090a0d; }
-    .btn-secondary { background: rgba(255, 255, 255, 0.12); color: #fff; border: 1px solid var(--border); }
+    .btn-play { background: #ffffff; color: #090a0d; box-shadow: 0 6px 20px rgba(255, 255, 255, 0.18); }
+    .btn-secondary { background: rgba(255, 255, 255, 0.1); color: #fff; border: 1px solid var(--border); }
     .btn-accent { background: var(--accent); color: #05111a; }
     .btn-ai { background: linear-gradient(135deg, #6366f1, #38bdf8); color: #fff; }
     .btn-green { background: var(--green); color: #052e16; }
-    .btn-red { background: var(--red); color: #fff; }
+    .btn-red { background: var(--red); color: #fff; box-shadow: 0 6px 18px rgba(229, 9, 20, 0.25); }
     .btn-gold { background: var(--gold); color: #111827; }
     .btn-google { background: #ffffff; color: #111827; border: 1px solid #d1d5db; }
 
@@ -351,7 +378,7 @@
       background: rgba(16, 185, 129, 0.14);
       border: 1px solid rgba(16, 185, 129, 0.35);
       color: #a7f3d0;
-      padding: 5px 10px;
+      padding: 5px 11px;
       border-radius: 999px;
       font-size: 0.76rem;
       font-weight: 700;
@@ -361,7 +388,7 @@
     .top-utility {
       margin-top: 64px;
       padding: 8px 4%;
-      background: #0f1116;
+      background: rgba(13, 16, 23, 0.92);
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
@@ -380,10 +407,10 @@
 
     @media (max-width: 540px) {
       .top-utility {
-        margin-top: 142px;
+        margin-top: 138px;
       }
       .controls input {
-        width: 112px;
+        width: 118px;
       }
     }
 
@@ -398,7 +425,7 @@
     .stat-chip {
       background: rgba(255, 255, 255, 0.06);
       border: 1px solid var(--border);
-      padding: 2px 8px;
+      padding: 2px 9px;
       border-radius: 999px;
     }
 
@@ -415,7 +442,7 @@
       margin: 12px 4%;
       padding: 12px 16px;
       border-radius: 10px;
-      background: linear-gradient(135deg, rgba(251, 191, 36, 0.13), rgba(56, 189, 248, 0.1));
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.12), rgba(56, 189, 248, 0.1));
       border: 1px solid rgba(251, 191, 36, 0.35);
       align-items: center;
       justify-content: space-between;
@@ -435,7 +462,6 @@
       padding: 2px 8px;
       border-radius: 4px;
       margin-inline-end: 8px;
-      flex-shrink: 0;
     }
 
     /* Ad Type 2: Sticky Bottom Banner Ad */
@@ -465,10 +491,9 @@
       color: #f9fafb;
       display: flex;
       align-items: center;
-      flex-wrap: nowrap;
+      flex-wrap: wrap;
       gap: 6px;
       min-width: 0;
-      flex: 1;
     }
 
     .sticky-ad-url {
@@ -477,40 +502,37 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 100%;
+      max-width: 240px;
     }
 
     .labels-bar {
       padding: 10px 4%;
-      background: #12141b;
+      background: #10131a;
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       gap: 8px;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
+      scrollbar-width: thin;
     }
-
-    .labels-bar::-webkit-scrollbar { display: none; }
 
     .label-chip {
       white-space: nowrap;
       background: var(--bg-card);
       color: #e5e7eb;
       border: 1px solid var(--border);
-      padding: 5px 12px;
-      border-radius: 7px;
+      padding: 5px 13px;
+      border-radius: 8px;
       font-size: 0.8rem;
       font-weight: 700;
-      cursor: pointer;
       font-family: inherit;
+      cursor: pointer;
       transition: all 0.16s ease;
     }
 
     .label-chip:hover {
-      border-color: var(--border-strong);
-      background: var(--bg-elevated);
+      border-color: rgba(255, 255, 255, 0.24);
     }
 
     .label-chip.active {
@@ -521,8 +543,8 @@
 
     /* Animated Marquee Slider */
     .marquee-wrap {
-      padding: 11px 4%;
-      background: #0d0f14;
+      padding: 12px 4%;
+      background: linear-gradient(to right, rgba(13, 15, 22, 0.96), rgba(18, 22, 32, 0.96));
       border-bottom: 1px solid var(--border);
       overflow: hidden;
     }
@@ -533,7 +555,7 @@
       align-items: center;
       font-size: 0.82rem;
       color: var(--muted);
-      margin-bottom: 8px;
+      margin-bottom: 9px;
       gap: 8px;
       flex-wrap: wrap;
     }
@@ -546,7 +568,7 @@
       display: flex;
       gap: 12px;
       width: max-content;
-      animation: marqueeScroll 38s linear infinite;
+      animation: marqueeScroll 40s linear infinite;
     }
 
     .marquee-track-box:hover .marquee-track { animation-play-state: paused; }
@@ -557,52 +579,65 @@
     }
 
     .slide-pill {
-      width: 235px;
+      width: 242px;
       background: var(--bg-card);
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 7px;
+      border-radius: 10px;
+      padding: 7px 9px;
       display: flex;
       align-items: center;
-      gap: 9px;
+      gap: 10px;
       cursor: pointer;
       flex-shrink: 0;
-      transition: border-color 0.18s ease, background-color 0.18s ease;
+      transition: border-color 0.2s ease, transform 0.2s ease;
     }
 
     .slide-pill:hover {
-      border-color: var(--border-strong);
-      background: var(--bg-elevated);
+      border-color: rgba(229, 9, 20, 0.55);
+      transform: translateY(-2px);
     }
 
     .slide-pill img {
-      width: 42px;
-      height: 60px;
+      width: 44px;
+      height: 62px;
       object-fit: cover;
-      border-radius: 5px;
+      border-radius: 6px;
       flex-shrink: 0;
     }
 
     .slide-pill-info { min-width: 0; }
     .slide-pill-info strong {
       display: block;
-      font-size: 0.82rem;
+      font-size: 0.83rem;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .slide-pill-info span { font-size: 0.7rem; color: var(--gold); font-weight: 700; }
+    .slide-pill-info span { font-size: 0.72rem; color: var(--gold); font-weight: 700; }
 
-    /* Compact Hero */
+    /* Enhanced Hero & Featured Slider */
     .hero {
       position: relative;
-      min-height: clamp(260px, 44vh, 460px);
+      min-height: clamp(300px, 48vh, 500px);
       display: flex;
       align-items: flex-end;
-      padding: 28px 4% 34px;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 32px 4% 38px;
       background-size: cover;
-      background-position: center;
+      background-position: center 25%;
       border-bottom: 1px solid var(--border);
+      transition: background-image 0.45s ease;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 75% 30%, rgba(56, 189, 248, 0.14), transparent 45%),
+                  radial-gradient(circle at 20% 70%, rgba(229, 9, 20, 0.18), transparent 45%);
+      pointer-events: none;
+      z-index: 1;
     }
 
     .hero::after {
@@ -610,41 +645,78 @@
       position: absolute;
       inset: 0;
       background:
-        linear-gradient(to top, var(--bg) 6%, rgba(10,11,14,0.45) 55%, rgba(10,11,14,0.72) 100%),
-        linear-gradient(to left, rgba(10,11,14,0.9) 0%, rgba(10,11,14,0.22) 65%);
+        linear-gradient(to top, var(--bg) 5%, rgba(7, 8, 12, 0.42) 55%, rgba(7, 8, 12, 0.76) 100%),
+        linear-gradient(to left, rgba(7, 8, 12, 0.92) 0%, rgba(7, 8, 12, 0.25) 68%);
+      z-index: 1;
     }
 
-    .hero-content { position: relative; z-index: 2; max-width: 620px; }
+    .hero-content { position: relative; z-index: 2; max-width: 650px; }
     .hero-badge {
       display: inline-block;
       background: var(--red);
       color: #fff;
-      font-size: 0.72rem;
+      font-size: 0.73rem;
       font-weight: 800;
-      padding: 3px 10px;
-      border-radius: 4px;
-      margin-bottom: 8px;
+      padding: 3px 11px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      box-shadow: 0 4px 14px var(--red-glow);
     }
-    .hero h1 { font-size: clamp(1.45rem, 3.4vw, 2.5rem); margin-bottom: 8px; line-height: 1.25; }
-    .hero p { color: #e5e7eb; font-size: clamp(0.84rem, 1.4vw, 0.94rem); margin-bottom: 14px; }
+    .hero h1 { font-size: clamp(1.5rem, 3.5vw, 2.65rem); margin-bottom: 9px; font-weight: 900; line-height: 1.2; }
+    .hero p { color: #e5e7eb; font-size: clamp(0.86rem, 1.45vw, 0.98rem); margin-bottom: 16px; line-height: 1.65; }
     .btn-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
 
-    /* Horizontal Shelf Rows */
-    main { padding: 18px 4% 36px; }
+    .hero-slider-controls {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+    }
 
-    .shelf-section { margin-bottom: 28px; }
+    .hero-dots {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .hero-dot {
+      width: 22px;
+      height: 5px;
+      border-radius: 999px;
+      border: none;
+      background: rgba(255, 255, 255, 0.28);
+      cursor: pointer;
+      transition: all 0.22s ease;
+    }
+
+    .hero-dot.active {
+      width: 34px;
+      background: var(--red);
+      box-shadow: 0 0 12px var(--red-glow);
+    }
+
+    .hero-arrows {
+      display: flex;
+      gap: 6px;
+    }
+
+    /* Horizontal Shelf Rows */
+    main { padding: 20px 4% 38px; }
+
+    .shelf-section { margin-bottom: 30px; }
 
     .shelf-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 11px;
-      gap: 10px;
-      flex-wrap: wrap;
+      margin-bottom: 12px;
     }
 
     .shelf-title {
-      font-size: clamp(0.98rem, 1.8vw, 1.14rem);
+      font-size: clamp(1rem, 1.85vw, 1.18rem);
       font-weight: 800;
       color: #f9fafb;
       display: inline-flex;
@@ -655,19 +727,14 @@
 
     .shelf-title .chevron { color: var(--muted); font-size: 1.15rem; }
 
-    .shelf-meta-count {
-      font-size: 0.75rem;
-      color: var(--muted);
-    }
-
     .shelf-wrapper { position: relative; }
 
     .shelf-row {
       display: flex;
-      gap: 11px;
+      gap: 12px;
       overflow-x: auto;
       scroll-behavior: smooth;
-      padding-bottom: 6px;
+      padding-bottom: 8px;
       scrollbar-width: none;
       -webkit-overflow-scrolling: touch;
     }
@@ -678,48 +745,48 @@
       position: absolute;
       top: 0;
       left: 0;
-      height: calc(100% - 34px);
-      width: 36px;
-      background: linear-gradient(to right, rgba(10,11,14,0.92), rgba(10,11,14,0));
+      height: calc(100% - 36px);
+      width: 38px;
+      background: linear-gradient(to right, rgba(7, 8, 12, 0.94), rgba(7, 8, 12, 0));
       border: none;
       color: #fff;
-      font-size: 1.4rem;
+      font-size: 1.45rem;
       font-weight: 900;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       z-index: 6;
-      opacity: 0.9;
+      opacity: 0.92;
     }
 
-    .scroll-next-btn:hover { background: rgba(10,11,14,0.95); }
+    .scroll-next-btn:hover { background: rgba(7, 8, 12, 0.96); }
 
     /* Vertical Poster Card */
     .poster-card {
-      flex: 0 0 138px;
-      width: 138px;
+      flex: 0 0 142px;
+      width: 142px;
       cursor: pointer;
       display: flex;
       flex-direction: column;
-      transition: transform 0.2s ease;
+      transition: transform 0.22s ease;
     }
 
     @media (min-width: 600px) {
       .poster-card {
-        flex: 0 0 162px;
-        width: 162px;
+        flex: 0 0 166px;
+        width: 166px;
       }
     }
 
     @media (min-width: 1024px) {
       .poster-card {
-        flex: 0 0 184px;
-        width: 184px;
+        flex: 0 0 188px;
+        width: 188px;
       }
     }
 
-    .poster-card:hover { transform: translateY(-4px); }
+    .poster-card:hover { transform: translateY(-5px); }
 
     .poster-frame {
       position: relative;
@@ -729,6 +796,12 @@
       overflow: hidden;
       background: var(--bg-card);
       border: 1px solid var(--border);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.42);
+    }
+
+    .poster-card:hover .poster-frame,
+    .poster-card.touch-peek .poster-frame {
+      border-color: rgba(255, 255, 255, 0.24);
     }
 
     .poster-frame img {
@@ -736,13 +809,13 @@
       height: 100%;
       object-fit: cover;
       display: block;
-      transition: filter 0.22s ease, transform 0.25s ease;
+      transition: filter 0.24s ease, transform 0.28s ease;
     }
 
     .poster-card:hover .poster-frame img,
     .poster-card.touch-peek .poster-frame img {
-      filter: brightness(0.32) blur(1px);
-      transform: scale(1.03);
+      filter: brightness(0.3) blur(1.2px);
+      transform: scale(1.04);
     }
 
     .hover-info-overlay {
@@ -752,17 +825,17 @@
       background: linear-gradient(
         to top,
         rgba(8, 10, 15, 0.97) 0%,
-        rgba(12, 15, 22, 0.88) 65%,
-        rgba(12, 15, 22, 0.72) 100%
+        rgba(12, 15, 22, 0.9) 65%,
+        rgba(12, 15, 22, 0.74) 100%
       );
-      padding: 34px 9px 9px;
+      padding: 36px 9px 12px;
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
       gap: 6px;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.2s ease;
+      transition: opacity 0.22s ease;
       text-align: right;
     }
 
@@ -783,7 +856,7 @@
       border: 1px solid rgba(56, 189, 248, 0.35);
       font-size: 0.66rem;
       font-weight: 800;
-      padding: 2px 5px;
+      padding: 2px 6px;
       border-radius: 4px;
     }
 
@@ -793,14 +866,14 @@
       border: 1px solid rgba(251, 191, 36, 0.35);
       font-size: 0.66rem;
       font-weight: 800;
-      padding: 2px 5px;
+      padding: 2px 6px;
       border-radius: 4px;
     }
 
     .hover-desc-text {
-      font-size: 0.72rem;
+      font-size: 0.73rem;
       color: #f3f4f6;
-      line-height: 1.42;
+      line-height: 1.45;
       display: -webkit-box;
       -webkit-line-clamp: 5;
       -webkit-box-orient: vertical;
@@ -817,7 +890,7 @@
       font-size: 0.7rem;
       line-height: 1;
       padding: 4px 5px;
-      border-radius: 2px;
+      border-radius: 3px;
       z-index: 3;
     }
 
@@ -839,7 +912,7 @@
 
     .status-ribbon-wrap {
       position: absolute;
-      bottom: 6px;
+      bottom: 8px;
       left: 0;
       right: 0;
       display: flex;
@@ -859,8 +932,8 @@
       color: #fff;
       font-size: 0.66rem;
       font-weight: 800;
-      padding: 2px 7px;
-      border-radius: 3px;
+      padding: 2px 8px;
+      border-radius: 4px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.65);
     }
 
@@ -869,32 +942,48 @@
       color: #111827;
       font-size: 0.64rem;
       font-weight: 800;
-      padding: 2px 7px;
-      border-radius: 3px;
+      padding: 2px 8px;
+      border-radius: 4px;
     }
 
-    .watch-progress-bar {
+    /* Watch Progress Indicator on Card */
+    .card-progress-track {
       position: absolute;
       bottom: 0;
       left: 0;
       right: 0;
-      height: 3px;
-      background: rgba(255, 255, 255, 0.16);
+      height: 4px;
+      background: rgba(255, 255, 255, 0.22);
       z-index: 5;
+      overflow: hidden;
     }
 
-    .watch-progress-fill {
+    .card-progress-fill {
       height: 100%;
-      width: 65%;
-      background: var(--red);
+      background: linear-gradient(90deg, var(--red), #ff4b55);
+      transition: width 0.25s ease;
     }
 
-    .poster-caption { padding: 6px 2px 0; }
+    .card-progress-label {
+      position: absolute;
+      top: 6px;
+      left: 38px;
+      z-index: 3;
+      background: rgba(16, 185, 129, 0.9);
+      color: #042214;
+      font-size: 0.62rem;
+      font-weight: 900;
+      padding: 2px 6px;
+      border-radius: 4px;
+      pointer-events: none;
+    }
+
+    .poster-caption { padding: 7px 2px 0; }
 
     .poster-name {
-      font-size: 0.78rem;
+      font-size: 0.8rem;
       font-weight: 700;
-      color: #e5e7eb;
+      color: #f3f4f6;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -904,7 +993,7 @@
     .poster-mini-actions {
       display: flex;
       gap: 4px;
-      opacity: 0.9;
+      opacity: 0.92;
     }
 
     .mini-act {
@@ -912,12 +1001,12 @@
       background: rgba(255, 255, 255, 0.06);
       border: 1px solid var(--border);
       color: #d1d5db;
-      border-radius: 4px;
+      border-radius: 5px;
       font-size: 0.68rem;
       font-weight: 700;
+      font-family: inherit;
       padding: 4px 4px;
       cursor: pointer;
-      font-family: inherit;
     }
 
     .mini-act.edit:hover { border-color: var(--accent); color: var(--accent); }
@@ -927,11 +1016,11 @@
 
     /* Footer with Copyright & DMCA */
     .site-footer {
-      background: #0b0d12;
+      background: linear-gradient(to top, #050609, #0b0e14);
       border-top: 1px solid var(--border);
-      padding: 24px 4% 30px;
+      padding: 26px 4% 32px;
       color: var(--muted);
-      font-size: 0.82rem;
+      font-size: 0.83rem;
     }
 
     .footer-grid {
@@ -943,12 +1032,12 @@
 
     .footer-col h3 {
       color: #ffffff;
-      font-size: 0.94rem;
+      font-size: 0.95rem;
       margin-bottom: 8px;
     }
 
     .footer-col p {
-      line-height: 1.65;
+      line-height: 1.7;
       margin-bottom: 8px;
     }
 
@@ -1003,8 +1092,8 @@
       border-radius: 6px;
       font-size: 0.84rem;
       font-weight: 800;
-      cursor: pointer;
       font-family: inherit;
+      cursor: pointer;
     }
 
     .auth-mode-btn.active {
@@ -1051,11 +1140,12 @@
       color: #a7f3d0;
     }
 
-    /* Modals */
+    /* Modals & Dynamic Watch Backdrop */
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.88);
+      background: rgba(4, 5, 9, 0.9);
+      backdrop-filter: blur(8px);
       display: none;
       align-items: center;
       justify-content: center;
@@ -1066,14 +1156,36 @@
     .modal-backdrop.open { display: flex; }
 
     .modal {
+      position: relative;
       width: 100%;
-      max-width: 920px;
+      max-width: 940px;
       max-height: 92vh;
       overflow-y: auto;
-      background: #141821;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.85);
+      background: #121620;
+      border-radius: 14px;
+      border: 1px solid var(--border-strong);
+      box-shadow: 0 28px 70px rgba(0, 0, 0, 0.88);
+    }
+
+    .watch-ambient-bg {
+      position: relative;
+      background-size: cover;
+      background-position: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .watch-ambient-bg::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(8, 10, 16, 0.82), rgba(14, 18, 28, 0.96));
+      backdrop-filter: blur(18px);
+      z-index: 0;
+    }
+
+    .watch-ambient-bg > * {
+      position: relative;
+      z-index: 1;
     }
 
     .modal-top {
@@ -1081,7 +1193,7 @@
       justify-content: space-between;
       align-items: center;
       padding: 12px 16px;
-      background: #0d1017;
+      background: rgba(10, 13, 20, 0.94);
       border-bottom: 1px solid var(--border);
       position: sticky;
       top: 0;
@@ -1094,28 +1206,27 @@
       border: none;
       font-size: 1.4rem;
       cursor: pointer;
-      line-height: 1;
-      padding: 2px 6px;
     }
 
     video#videoPlayer {
       width: 100%;
-      max-height: 55vh;
+      max-height: 56vh;
       background: #000;
       display: block;
     }
 
-    .player-controls-strip {
+    .player-toolbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
+      gap: 10px;
       flex-wrap: wrap;
-      padding: 8px 18px;
-      background: #10141d;
+      padding: 9px 18px;
+      background: rgba(15, 19, 29, 0.92);
+      border-top: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
       font-size: 0.78rem;
-      color: var(--muted);
+      color: #cbd5e1;
     }
 
     .next-ep-banner {
@@ -1135,12 +1246,12 @@
     .next-ep-text span { color: var(--accent); font-weight: 800; }
 
     .modal-info { padding: 16px 18px 22px; }
-    .modal-info h3 { margin-bottom: 6px; font-size: 1.15rem; }
-    .modal-info p { color: var(--muted); font-size: 0.88rem; line-height: 1.65; margin-bottom: 14px; }
+    .modal-info h3 { margin-bottom: 6px; font-size: 1.18rem; }
+    .modal-info p { color: #cbd5e1; font-size: 0.89rem; line-height: 1.68; margin-bottom: 14px; }
 
     .episodes-box { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
     .episodes-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
-    .episodes-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; }
+    .episodes-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(195px, 1fr)); gap: 10px; }
 
     .ep-card {
       background: var(--bg-card);
@@ -1148,12 +1259,12 @@
       border-radius: 8px;
       padding: 10px 12px;
       cursor: pointer;
-      transition: border-color 0.16s ease, background-color 0.16s ease;
+      transition: border-color 0.18s ease, transform 0.18s ease;
     }
 
     .ep-card:hover {
-      border-color: var(--border-strong);
-      background: var(--bg-elevated);
+      border-color: rgba(255, 255, 255, 0.25);
+      transform: translateY(-2px);
     }
 
     .ep-card.active { border-color: var(--red); background: rgba(229, 9, 20, 0.16); }
@@ -1162,7 +1273,7 @@
 
     .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(185px, 1fr)); gap: 12px; }
     .form-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
-    .form-field label { font-size: 0.82rem; color: var(--muted); }
+    .form-field label { font-size: 0.82rem; color: #cbd5e1; }
 
     .labels-picker { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
     .labels-picker label {
@@ -1175,6 +1286,15 @@
       border-radius: 7px;
       font-size: 0.8rem;
       cursor: pointer;
+    }
+
+    .hp-field {
+      position: absolute;
+      left: -9999px;
+      opacity: 0;
+      pointer-events: none;
+      height: 0;
+      overflow: hidden;
     }
   </style>
 </head>
@@ -1193,7 +1313,7 @@
         يرجى إيقاف مانع الإعلانات أو الإضافات الحاجبة للإعلانات (بما في ذلك أوضاع الحجب الخفي / DNS / الإضافات) ثم الضغط على زر إعادة الفحص لمتابعة استخدام المنصة.
       </p>
       <div class="btn-row" style="justify-content:center;">
-        <button type="button" class="btn btn-green" id="recheckAdblockBtn">↻ تم الإيقاف — إعادة الفحص</button>
+        <button type="button" class="btn btn-green" id="recheckAdblockBtn">تم الإيقاف — إعادة الفحص</button>
         <button type="button" class="btn btn-secondary" id="reloadPageAdblockBtn">تحديث الصفحة</button>
       </div>
     </div>
@@ -1226,19 +1346,23 @@
       <div class="auth-divider" id="gateOrText">أو بالبريد الإلكتروني</div>
 
       <form id="gateEmailForm">
+        <div class="hp-field" aria-hidden="true">
+          <input type="text" id="gateWebsiteTrap" tabindex="-1" autocomplete="off" />
+        </div>
+
         <div class="form-field" id="gateNameField" style="display:none;">
           <label for="gateNameInput" id="gateNameLabel">الاسم الكامل</label>
-          <input type="text" id="gateNameInput" placeholder="مثال: سارة محمد" />
+          <input type="text" id="gateNameInput" placeholder="مثال: سارة محمد" maxlength="80" />
         </div>
 
         <div class="form-field">
           <label for="gateEmailInput" id="gateEmailLabel">البريد الإلكتروني</label>
-          <input type="email" id="gateEmailInput" placeholder="name@example.com" required />
+          <input type="email" id="gateEmailInput" placeholder="name@example.com" maxlength="120" required />
         </div>
 
         <div class="form-field">
           <label for="gatePasswordInput" id="gatePassLabel">كلمة المرور</label>
-          <input type="password" id="gatePasswordInput" placeholder="••••••••" minlength="6" required />
+          <input type="password" id="gatePasswordInput" placeholder="••••••••" minlength="6" maxlength="128" required />
         </div>
 
         <button type="submit" class="btn btn-red" id="gateSubmitBtn" style="width:100%;padding:10px 14px;margin-top:4px;">
@@ -1249,7 +1373,7 @@
       <div class="auth-divider" id="gateDemoDiv">تجربة فورية</div>
 
       <button type="button" class="btn btn-accent" id="gateDemoBtn" style="width:100%;padding:10px 14px;">
-        ⚡ دخول تجريبي فوري
+        دخول تجريبي فوري
       </button>
 
       <div class="auth-feedback" id="gateFeedback"></div>
@@ -1269,7 +1393,7 @@
     </nav>
 
     <div class="controls">
-      <input type="search" id="searchInput" placeholder="ابحث (/)..." aria-label="بحث" />
+      <input type="search" id="searchInput" placeholder="ابحث..." aria-label="بحث" maxlength="80" />
       <select id="genreSelect" aria-label="التصنيف">
         <option value="all">كل التصنيفات</option>
         <option value="خيال علمي">خيال علمي</option>
@@ -1277,14 +1401,8 @@
         <option value="أنمي">أنمي</option>
         <option value="أكشن">أكشن</option>
       </select>
-      <select id="sortSelect" aria-label="ترتيب النتائج">
-        <option value="default">الترتيب الافتراضي</option>
-        <option value="ai">الأعلى ملاءمة (AI)</option>
-        <option value="year_desc">الأحدث سنة</option>
-        <option value="title_asc">أبجدياً (أ - ي)</option>
-      </select>
-      <button class="btn btn-gold" id="openAdsModalBtn" style="display:none;">📣 الإعلانات</button>
-      <button class="btn btn-ai" id="aiOrganizeBtn">✦ تنظيم ذكي بالـ AI</button>
+      <button class="btn btn-gold" id="openAdsModalBtn" style="display:none;">الإعلانات</button>
+      <button class="btn btn-ai" id="aiOrganizeBtn">تنظيم ذكي بالـ AI</button>
       <button class="btn btn-accent" id="openAddModalBtn" style="display:none;">+ إضافة</button>
       <button class="btn btn-secondary" id="toggleLangBtn">EN</button>
       <span class="user-pill" id="userBadge" style="display:none;"></span>
@@ -1297,8 +1415,8 @@
     <span id="dbStatus">حالة Firebase: جاري الاتصال بمشروع metaverse-metabox...</span>
     <div class="stats-badges" id="statsBadges"></div>
     <div class="utility-actions">
-      <button class="btn btn-secondary" id="downloadSitemapBtn" style="display:none;padding:4px 10px;font-size:0.76rem;">⬇ sitemap.xml</button>
-      <button class="btn btn-secondary" id="downloadRobotsBtn" style="display:none;padding:4px 10px;font-size:0.76rem;">⬇ robots.txt</button>
+      <button class="btn btn-secondary" id="downloadSitemapBtn" style="display:none;padding:4px 10px;font-size:0.76rem;">sitemap.xml</button>
+      <button class="btn btn-secondary" id="downloadRobotsBtn" style="display:none;padding:4px 10px;font-size:0.76rem;">robots.txt</button>
       <button class="btn btn-secondary" id="seedDataBtn" style="display:none;padding:4px 10px;font-size:0.76rem;">تعبئة بيانات تجريبية</button>
     </div>
   </div>
@@ -1311,7 +1429,7 @@
       <span id="adSlotPreview" style="color:var(--gold);font-size:0.78rem;margin-inline-start:8px;"></span>
     </div>
     <div class="btn-row">
-      <a class="btn btn-gold" id="adSlotLink" href="#" target="_blank" rel="noopener noreferrer" style="padding:5px 12px;font-size:0.78rem;text-decoration:none;">فتح الإعلان ↗</a>
+      <a class="btn btn-gold" id="adSlotLink" href="#" target="_blank" rel="noopener noreferrer" style="padding:5px 12px;font-size:0.78rem;text-decoration:none;">فتح الإعلان</a>
       <button type="button" class="btn btn-secondary" id="hideAdSlotBtn" style="padding:5px 10px;font-size:0.76rem;">إخفاء</button>
     </div>
   </div>
@@ -1322,7 +1440,7 @@
   <!-- Animated Marquee Slider -->
   <section class="marquee-wrap" aria-label="سلايدر متحرك">
     <div class="marquee-header">
-      <strong>✦ شريط العروض والتسميات المتحرك</strong>
+      <strong>شريط العروض والتسميات المتحرك</strong>
       <span id="activeFilterSummary">الكل • كل التسميات</span>
     </div>
     <div class="marquee-track-box">
@@ -1330,17 +1448,25 @@
     </div>
   </section>
 
-  <!-- Compact Hero -->
-  <section class="hero" id="hero">
+  <!-- Enhanced Hero Slider -->
+  <section class="hero" id="hero" aria-label="العروض المميزة">
     <div class="hero-content">
       <span class="hero-badge" id="heroBadge">مميز اليوم</span>
       <h1 id="heroTitle"></h1>
       <p id="heroDesc"></p>
       <div class="btn-row">
-        <button class="btn btn-play" id="heroPlayBtn">▶ تشغيل الآن</button>
-        <button class="btn btn-accent" id="continueWatchingBtn" style="display:none;">↻ استئناف المشاهدة</button>
+        <button class="btn btn-play" id="heroPlayBtn">تشغيل الآن</button>
+        <button class="btn btn-accent" id="continueWatchingBtn" style="display:none;">استئناف المشاهدة</button>
         <button class="btn btn-secondary" id="heroListBtn">+ قائمتي</button>
       </div>
+    </div>
+
+    <div class="hero-slider-controls" aria-label="التنقل بين عروض السلايدر">
+      <div class="hero-arrows">
+        <button type="button" class="btn btn-secondary" id="heroPrevBtn" style="padding:5px 10px;font-size:0.82rem;">السابق</button>
+        <button type="button" class="btn btn-secondary" id="heroNextBtn" style="padding:5px 10px;font-size:0.82rem;">التالي</button>
+      </div>
+      <div class="hero-dots" id="heroDots"></div>
     </div>
   </section>
 
@@ -1353,9 +1479,9 @@
       <span class="ad-badge-pill">إعلان أسفل الشاشة</span>
       <span class="sticky-ad-url" id="stickyAdUrlText"></span>
     </div>
-    <div class="btn-row" style="flex-shrink:0;">
-      <a class="btn btn-gold" id="stickyAdVisitBtn" href="#" target="_blank" rel="noopener noreferrer" style="padding:5px 11px;font-size:0.76rem;text-decoration:none;">زيارة ↗</a>
-      <button type="button" class="btn btn-secondary" id="closeStickyAdBtn" style="padding:5px 9px;font-size:0.76rem;">✕</button>
+    <div class="btn-row">
+      <a class="btn btn-gold" id="stickyAdVisitBtn" href="#" target="_blank" rel="noopener noreferrer" style="padding:5px 11px;font-size:0.76rem;text-decoration:none;">زيارة</a>
+      <button type="button" class="btn btn-secondary" id="closeStickyAdBtn" style="padding:5px 9px;font-size:0.76rem;">إغلاق</button>
     </div>
   </div>
 
@@ -1363,7 +1489,7 @@
   <footer class="site-footer" id="siteFooter">
     <div class="footer-grid">
       <div class="footer-col">
-        <h3>© حقوق النشر والملكية الفكرية (Copyright)</h3>
+        <h3>حقوق النشر والملكية الفكرية (Copyright)</h3>
         <p>
           جميع الحقوق محفوظة © 2026 لمنصة <strong>StreamFlix AI</strong> (مشروع Firebase: <code>metaverse-metabox</code>). تصميم الواجهة وبرمجة المنصة محفوظة لصاحب المشروع، بينما تعود حقوق العلامات التجارية والبوسترات والمواد المرئية المعروضة إلى أصحابها الأصليين أو الجهات المرخّصة لها.
         </p>
@@ -1375,8 +1501,8 @@
           تحترم منصة <strong>StreamFlix AI</strong> حقوق الملكية الفكرية وتلتزم بأحكام قانون الألفية للملكية الرقمية (<strong>DMCA</strong>). إذا كنت مالك حقوق نشر أو مفوضاً عنه وتعتقد أن أي محتوى أو رابط أو بيانات مدرجة في المنصة يشكّل انتهاكاً لحقوقك، يمكنك تقديم إشعار إزالة فوري.
         </p>
         <div class="footer-links">
-          <button type="button" class="btn btn-secondary" id="openCopyrightModalBtn" style="padding:5px 11px;font-size:0.78rem;">📄 بيان حقوق النشر</button>
-          <button type="button" class="btn btn-red" id="openDmcaModalBtn" style="padding:5px 11px;font-size:0.78rem;">⚖ تقديم إشعار DMCA</button>
+          <button type="button" class="btn btn-secondary" id="openCopyrightModalBtn" style="padding:5px 11px;font-size:0.78rem;">بيان حقوق النشر</button>
+          <button type="button" class="btn btn-red" id="openDmcaModalBtn" style="padding:5px 11px;font-size:0.78rem;">تقديم إشعار DMCA</button>
         </div>
       </div>
     </div>
@@ -1392,9 +1518,12 @@
     <div class="modal" style="max-width:650px;">
       <div class="modal-top">
         <strong id="adsModalTitle">إدارة الإعلانات الثلاثة (تُفعّل عند إدخال الرابط)</strong>
-        <button class="close-btn" id="closeAdsBtn" aria-label="إغلاق">✕</button>
+        <button class="close-btn" id="closeAdsBtn" aria-label="إغلاق">×</button>
       </div>
       <form class="modal-info" id="adsSettingsForm">
+        <div class="hp-field" aria-hidden="true">
+          <input type="text" id="adsTrapField" tabindex="-1" autocomplete="off" />
+        </div>
         <div class="form-field">
           <label for="adCardPopUrl">1. رابط إعلان منبثق عند الضغط على البطاقة (يُفعّل عند إدخال الرابط)</label>
           <input type="url" id="adCardPopUrl" placeholder="https://example-ad.com/card-popup" />
@@ -1412,7 +1541,7 @@
 
         <div class="form-field">
           <label for="adThirdSlotLabel">عنوان قصير للإعلان الثالث (اختياري)</label>
-          <input type="text" id="adThirdSlotLabel" placeholder="عرض مميز / راعي المنصة" />
+          <input type="text" id="adThirdSlotLabel" placeholder="عرض مميز / راعي المنصة" maxlength="80" />
         </div>
 
         <div class="btn-row">
@@ -1429,7 +1558,7 @@
     <div class="modal" style="max-width:680px;">
       <div class="modal-top">
         <strong id="legalModalTitle">حقوق النشر وسياسة DMCA</strong>
-        <button class="close-btn" id="closeLegalBtn" aria-label="إغلاق">✕</button>
+        <button class="close-btn" id="closeLegalBtn" aria-label="إغلاق">×</button>
       </div>
       <div class="modal-info">
         <div class="legal-box" id="copyrightDetailsBox">
@@ -1446,55 +1575,64 @@
         </div>
 
         <form id="dmcaForm">
+          <div class="hp-field" aria-hidden="true">
+            <input type="text" id="dmcaTrapField" tabindex="-1" autocomplete="off" />
+          </div>
           <h3 style="font-size:1rem;margin-bottom:10px;">نموذج إرسال إشعار DMCA</h3>
           <div class="form-grid">
             <div class="form-field">
               <label for="dmcaReporterName">اسم مقدم الإشعار / المالك</label>
-              <input type="text" id="dmcaReporterName" value="إدارة حقوق الملكية" required />
+              <input type="text" id="dmcaReporterName" value="إدارة حقوق الملكية" maxlength="100" required />
             </div>
             <div class="form-field">
               <label for="dmcaReporterEmail">البريد الإلكتروني للتواصل</label>
-              <input type="email" id="dmcaReporterEmail" value="rights-owner@example.com" required />
+              <input type="email" id="dmcaReporterEmail" value="rights-owner@example.com" maxlength="120" required />
             </div>
           </div>
 
           <div class="form-field">
             <label for="dmcaWorkTitle">اسم العمل المحمي بحقوق النشر أو عنوانه في المنصة</label>
-            <input type="text" id="dmcaWorkTitle" placeholder="مثال: اسم الفيلم أو المسلسل أو الأنمي" required />
+            <input type="text" id="dmcaWorkTitle" placeholder="مثال: اسم الفيلم أو المسلسل أو الأنمي" maxlength="140" required />
           </div>
 
           <div class="form-field">
             <label for="dmcaTargetUrl">رابط أو معرّف المحتوى المطلوب مراجعته / إزالته</label>
-            <input type="text" id="dmcaTargetUrl" placeholder="مثال: https://example.com/?item=..." required />
+            <input type="text" id="dmcaTargetUrl" placeholder="مثال: https://example.com/?item=..." maxlength="300" required />
           </div>
 
           <div class="form-field">
             <label for="dmcaStatement">إقرار حسن النية وتفاصيل الإشعار</label>
-            <textarea id="dmcaStatement" rows="3" required>أقرّ بصفتي مالك حقوق النشر أو المفوض الرسمي بالتصرف نيابة عنه بأنني أعتقد بحسن نية أن استخدام المادة المشار إليها غير مصرّح به بموجب القانون أو من قِبل مالك الحقوق.</textarea>
+            <textarea id="dmcaStatement" rows="3" maxlength="1500" required>أقرّ بصفتي مالك حقوق النشر أو المفوض الرسمي بالتصرف نيابة عنه بأنني أعتقد بحسن نية أن استخدام المادة المشار إليها غير مصرّح به بموجب القانون أو من قِبل مالك الحقوق.</textarea>
           </div>
 
-          <button type="submit" class="btn btn-red">إرسال إشعار DMCA</button>
+          <button type="submit" class="btn btn-red" id="dmcaSubmitBtn">إرسال إشعار DMCA</button>
           <div class="auth-feedback" id="dmcaFeedback"></div>
         </form>
       </div>
     </div>
   </div>
 
-  <!-- Player Modal -->
+  <!-- Player Modal with Dynamic Watch Background & Enhanced Controls -->
   <div class="modal-backdrop" id="playerModal" role="dialog" aria-modal="true">
-    <div class="modal">
+    <div class="modal watch-ambient-bg" id="watchAmbientModal">
       <div class="modal-top">
         <strong id="modalTitle">المشغّل</strong>
-        <button class="close-btn" id="closePlayerBtn" aria-label="إغلاق">✕</button>
+        <button class="close-btn" id="closePlayerBtn" aria-label="إغلاق">×</button>
       </div>
-      <video id="videoPlayer" controls playsinline></video>
+      <video id="videoPlayer" controls playsinline preload="metadata"></video>
 
-      <div class="player-controls-strip">
-        <span id="playerStatusHint">تحكم سريع بالمشاهدة:</span>
+      <div class="player-toolbar">
+        <span id="resumeNoticeText">مشاهدة بجودة عالية وتلقائية لحفظ موضع التوقف</span>
         <div class="btn-row">
-          <button type="button" class="btn btn-secondary" id="rewind10Btn" style="padding:4px 10px;font-size:0.75rem;">⏪ -10ث</button>
-          <button type="button" class="btn btn-secondary" id="forward10Btn" style="padding:4px 10px;font-size:0.75rem;">+10ث ⏩</button>
-          <button type="button" class="btn btn-secondary" id="reportDmcaItemBtn" style="padding:4px 10px;font-size:0.75rem;">⚖ إبلاغ DMCA</button>
+          <label for="playbackSpeedSelect" style="color:#9ca3af;">السرعة:</label>
+          <select id="playbackSpeedSelect" aria-label="سرعة التشغيل" style="padding:4px 8px;font-size:0.76rem;">
+            <option value="0.75">0.75x</option>
+            <option value="1" selected>1.0x</option>
+            <option value="1.25">1.25x</option>
+            <option value="1.5">1.5x</option>
+            <option value="2">2.0x</option>
+          </select>
+          <button type="button" class="btn btn-secondary" id="restartVideoBtn" style="padding:4px 9px;font-size:0.76rem;">إعادة من البداية</button>
         </div>
       </div>
 
@@ -1503,7 +1641,7 @@
           الحلقة التالية: <strong id="nextEpName"></strong> — سيتم التشغيل خلال <span id="nextEpCountdown">5</span> ثوانٍ
         </div>
         <div class="btn-row">
-          <button class="btn btn-red" id="playNextNowBtn">▶ تشغيل الآن</button>
+          <button class="btn btn-red" id="playNextNowBtn">تشغيل الآن</button>
           <button class="btn btn-secondary" id="cancelAutoNextBtn">إلغاء</button>
         </div>
       </div>
@@ -1513,8 +1651,8 @@
         <p id="infoDesc"></p>
         <div class="btn-row">
           <button class="btn btn-secondary" id="modalToggleListBtn"></button>
-          <button class="btn btn-accent" id="modalEditItemBtn" style="display:none;">✎ تعديل العمل</button>
-          <button class="btn btn-red" id="modalDeleteItemBtn" style="display:none;">🗑 حذف العمل</button>
+          <button class="btn btn-accent" id="modalEditItemBtn" style="display:none;">تعديل العمل</button>
+          <button class="btn btn-red" id="modalDeleteItemBtn" style="display:none;">حذف العمل</button>
         </div>
 
         <div class="episodes-box" id="episodesBox" style="display:none;">
@@ -1533,12 +1671,16 @@
     <div class="modal">
       <div class="modal-top">
         <strong id="formModalTitle">إضافة عمل جديد إلى Firestore</strong>
-        <button class="close-btn" id="closeAddBtn" aria-label="إغلاق">✕</button>
+        <button class="close-btn" id="closeAddBtn" aria-label="إغلاق">×</button>
       </div>
       <form class="modal-info" id="addItemForm">
+        <div class="hp-field" aria-hidden="true">
+          <input type="text" id="itemTrapField" tabindex="-1" autocomplete="off" />
+        </div>
+
         <div class="form-grid">
           <div class="form-field">
-            <label>النوع</label>
+            <label for="newType">النوع</label>
             <select id="newType">
               <option value="movie">فيلم (movie)</option>
               <option value="series">مسلسل (series)</option>
@@ -1546,7 +1688,7 @@
             </select>
           </div>
           <div class="form-field">
-            <label>التصنيف</label>
+            <label for="newGenre">التصنيف</label>
             <select id="newGenre">
               <option value="خيال علمي">خيال علمي</option>
               <option value="مغامرة">مغامرة</option>
@@ -1555,23 +1697,23 @@
             </select>
           </div>
           <div class="form-field">
-            <label>سنة الإنتاج</label>
-            <input type="text" id="newYear" value="2026" required />
+            <label for="newYear">سنة الإنتاج</label>
+            <input type="text" id="newYear" value="2026" maxlength="10" required />
           </div>
         </div>
 
         <div class="form-field">
-          <label>العنوان</label>
-          <input type="text" id="newTitle" placeholder="مثال: FROM" required />
+          <label for="newTitle">العنوان</label>
+          <input type="text" id="newTitle" placeholder="مثال: FROM" maxlength="140" required />
         </div>
 
         <div class="form-field">
-          <label>شارة البطاقة السفلية (مثال: New Season / Recently Added / Watch Now)</label>
-          <input type="text" id="newRibbon" placeholder="New Season" />
+          <label for="newRibbon">شارة البطاقة السفلية (مثال: New Season / Recently Added / Watch Now)</label>
+          <input type="text" id="newRibbon" placeholder="New Season" maxlength="40" />
         </div>
 
         <div class="form-field">
-          <label>صورة البوستر الطولي (Poster URL)</label>
+          <label for="newPoster">صورة البوستر الطولي (Poster URL)</label>
           <input type="url" id="newPoster" value="https://peach.blender.org/wp-content/uploads/sintel_poster.jpg" required />
         </div>
 
@@ -1581,12 +1723,12 @@
         </div>
 
         <div class="form-field" id="movieVideoField">
-          <label>رابط الفيلم الكامل (MP4)</label>
+          <label for="newVideo">رابط الفيلم الكامل (MP4)</label>
           <input type="url" id="newVideo" value="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4" />
         </div>
 
         <div class="form-field" id="seasonsJsonField" style="display:none;">
-          <label>المواسم والحلقات (JSON)</label>
+          <label for="newSeasonsJson">المواسم والحلقات (JSON)</label>
           <textarea id="newSeasonsJson" rows="5">[
   {
     "seasonNumber": 1,
@@ -1599,8 +1741,8 @@
         </div>
 
         <div class="form-field">
-          <label>الوصف</label>
-          <textarea id="newDesc" rows="2" placeholder="نبذة مختصرة..." required></textarea>
+          <label for="newDesc">الوصف</label>
+          <textarea id="newDesc" rows="2" placeholder="نبذة مختصرة..." maxlength="600" required></textarea>
         </div>
 
         <button type="submit" class="btn btn-green" id="submitFormBtn">حفظ في Firestore</button>
@@ -1814,8 +1956,7 @@
         top10: true,
         labels: ["حصري", "الأعلى تقييماً", "مدبلج"],
         poster: "https://download.blender.org/ED/ed_hd.jpg",
-        desc: "فيلم تشويق ومغامرات يتبع خططاً ذكية مستوحاة من أرسين لوبين لاستعادة حق قديم.",
-        video: SAMPLE_V1
+        desc: "فيلم تشويق ومغامرات يتبع خططاً ذكية مستوحاة من أرسين لوبين لاستعادة حق قديم."
       },
       {
         type: "series",
@@ -1884,27 +2025,30 @@
     let uiLang = "ar";
     let activeTab = "all";
     let activeLabel = "all";
-    let activeSort = aiSortedEnabled ? "ai" : "default";
     let authMode = "login";
     let heroItem = null;
+    let heroSlides = [];
+    let heroIndex = 0;
+    let heroAutoTimer = null;
     let currentItem = null;
     let editingItemId = null;
     let currentSeasonIdx = 0;
     let currentEpIdx = 0;
-    let touchedCardEl = null;
+    let lastProgressSaveTs = 0;
+    let lastFormSubmitTs = 0;
+    let touchCycleTimer = null;
 
     const PRE_END_SECONDS = 25;
     let autoNextTimer = null;
     let pendingNextTarget = null;
     let dismissedForCurrentEp = false;
 
-    // AdBlock Wall DOM
+    // DOM References
     const adblockWall = document.getElementById("adblockWall");
     const adBaitZone = document.getElementById("adBaitZone");
     const recheckAdblockBtn = document.getElementById("recheckAdblockBtn");
     const reloadPageAdblockBtn = document.getElementById("reloadPageAdblockBtn");
 
-    // Ads DOM
     const openAdsModalBtn = document.getElementById("openAdsModalBtn");
     const adsModal = document.getElementById("adsModal");
     const closeAdsBtn = document.getElementById("closeAdsBtn");
@@ -1927,7 +2071,6 @@
     const adSlotLink = document.getElementById("adSlotLink");
     const hideAdSlotBtn = document.getElementById("hideAdSlotBtn");
 
-    // Gate & Auth DOM
     const authGate = document.getElementById("authGate");
     const cinemaBgLayer = document.getElementById("cinemaBgLayer");
     const gateLangBtn = document.getElementById("gateLangBtn");
@@ -1955,16 +2098,13 @@
     const logoutBtn = document.getElementById("logoutBtn");
     const toggleLangBtn = document.getElementById("toggleLangBtn");
 
-    // Legal & DMCA DOM
     const openCopyrightModalBtn = document.getElementById("openCopyrightModalBtn");
     const openDmcaModalBtn = document.getElementById("openDmcaModalBtn");
-    const reportDmcaItemBtn = document.getElementById("reportDmcaItemBtn");
     const legalModal = document.getElementById("legalModal");
     const closeLegalBtn = document.getElementById("closeLegalBtn");
     const dmcaForm = document.getElementById("dmcaForm");
     const dmcaFeedback = document.getElementById("dmcaFeedback");
 
-    // Catalog & Player DOM
     const dbStatus = document.getElementById("dbStatus");
     const statsBadges = document.getElementById("statsBadges");
     const aiOrganizeBtn = document.getElementById("aiOrganizeBtn");
@@ -1979,9 +2119,6 @@
     const tabBtns = document.querySelectorAll(".tab-btn");
     const searchInput = document.getElementById("searchInput");
     const genreSelect = document.getElementById("genreSelect");
-    const sortSelect = document.getElementById("sortSelect");
-    sortSelect.value = activeSort;
-
     const hero = document.getElementById("hero");
     const heroBadge = document.getElementById("heroBadge");
     const heroTitle = document.getElementById("heroTitle");
@@ -1989,12 +2126,17 @@
     const heroPlayBtn = document.getElementById("heroPlayBtn");
     const continueWatchingBtn = document.getElementById("continueWatchingBtn");
     const heroListBtn = document.getElementById("heroListBtn");
+    const heroPrevBtn = document.getElementById("heroPrevBtn");
+    const heroNextBtn = document.getElementById("heroNextBtn");
+    const heroDots = document.getElementById("heroDots");
 
     const playerModal = document.getElementById("playerModal");
+    const watchAmbientModal = document.getElementById("watchAmbientModal");
     const closePlayerBtn = document.getElementById("closePlayerBtn");
     const videoPlayer = document.getElementById("videoPlayer");
-    const rewind10Btn = document.getElementById("rewind10Btn");
-    const forward10Btn = document.getElementById("forward10Btn");
+    const playbackSpeedSelect = document.getElementById("playbackSpeedSelect");
+    const restartVideoBtn = document.getElementById("restartVideoBtn");
+    const resumeNoticeText = document.getElementById("resumeNoticeText");
     const modalTitle = document.getElementById("modalTitle");
     const infoTitle = document.getElementById("infoTitle");
     const infoDesc = document.getElementById("infoDesc");
@@ -2022,6 +2164,37 @@
     const seasonsJsonField = document.getElementById("seasonsJsonField");
     const newLabelsPicker = document.getElementById("newLabelsPicker");
 
+    // Form Protection Helpers
+    function isBotHoneypotTriggered(trapEl) {
+      return Boolean(trapEl && trapEl.value.trim().length > 0);
+    }
+
+    function canSubmitFormNow(minIntervalMs = 900) {
+      const now = Date.now();
+      if (now - lastFormSubmitTs < minIntervalMs) return false;
+      lastFormSubmitTs = now;
+      return true;
+    }
+
+    function isSafeHttpUrl(rawUrl) {
+      const val = String(rawUrl || "").trim();
+      if (!val) return false;
+      try {
+        const parsed = new URL(val);
+        return parsed.protocol === "https:" || parsed.protocol === "http:";
+      } catch (_) {
+        return false;
+      }
+    }
+
+    function sanitizeText(str, maxLen = 400) {
+      return String(str || "")
+        .replace(/[<>]/g, "")
+        .trim()
+        .slice(0, maxLen);
+    }
+
+    // Single-Account Permission Check
     function canManageCatalog() {
       if (demoUser || !currentFirebaseUser) return false;
       const userEmail = (currentFirebaseUser.email || "").trim().toLowerCase();
@@ -2139,24 +2312,22 @@
 
     // 3 Ad Types Management
     function renderConfiguredAds() {
-      const hasBottomUrl = Boolean((adsConfig.bottomBannerUrl || "").trim());
-      const hasThirdUrl = Boolean((adsConfig.thirdSlotUrl || "").trim());
+      const bottomUrl = (adsConfig.bottomBannerUrl || "").trim();
+      const thirdUrl = (adsConfig.thirdSlotUrl || "").trim();
 
-      if (hasBottomUrl) {
+      if (bottomUrl && isSafeHttpUrl(bottomUrl)) {
         stickyBottomAd.classList.add("active");
-        stickyAdUrlText.textContent = adsConfig.bottomBannerUrl.trim();
-        stickyAdVisitBtn.href = adsConfig.bottomBannerUrl.trim();
-        document.body.style.paddingBottom = "74px";
+        stickyAdUrlText.textContent = bottomUrl;
+        stickyAdVisitBtn.href = bottomUrl;
       } else {
         stickyBottomAd.classList.remove("active");
-        document.body.style.paddingBottom = "32px";
       }
 
-      if (hasThirdUrl) {
+      if (thirdUrl && isSafeHttpUrl(thirdUrl)) {
         adSlotBanner.classList.add("active");
         adSlotTitle.textContent = (adsConfig.thirdSlotLabel || "").trim() || "إعلان مميز مفعّل";
-        adSlotPreview.textContent = adsConfig.thirdSlotUrl.trim();
-        adSlotLink.href = adsConfig.thirdSlotUrl.trim();
+        adSlotPreview.textContent = thirdUrl;
+        adSlotLink.href = thirdUrl;
       } else {
         adSlotBanner.classList.remove("active");
       }
@@ -2164,7 +2335,7 @@
 
     function triggerCardClickAdIfConfigured() {
       const popUrl = (adsConfig.cardPopUrl || "").trim();
-      if (!popUrl) return;
+      if (!popUrl || !isSafeHttpUrl(popUrl)) return;
       try {
         window.open(popUrl, "_blank", "noopener,noreferrer");
       } catch (_) {}
@@ -2188,7 +2359,6 @@
 
     closeStickyAdBtn.addEventListener("click", () => {
       stickyBottomAd.classList.remove("active");
-      document.body.style.paddingBottom = "32px";
     });
 
     hideAdSlotBtn.addEventListener("click", () => {
@@ -2198,11 +2368,23 @@
     adsSettingsForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       if (!canManageCatalog()) return;
+      if (isBotHoneypotTriggered(document.getElementById("adsTrapField")) || !canSubmitFormNow()) return;
+
+      const cardUrl = adCardPopUrl.value.trim();
+      const botUrl = adBottomBannerUrl.value.trim();
+      const thdUrl = adThirdSlotUrl.value.trim();
+
+      if ((cardUrl && !isSafeHttpUrl(cardUrl)) || (botUrl && !isSafeHttpUrl(botUrl)) || (thdUrl && !isSafeHttpUrl(thdUrl))) {
+        adsFeedback.textContent = "يرجى إدخال روابط صحيحة تبدأ بـ http:// أو https://";
+        adsFeedback.className = "auth-feedback error";
+        return;
+      }
+
       adsConfig = {
-        cardPopUrl: adCardPopUrl.value.trim(),
-        bottomBannerUrl: adBottomBannerUrl.value.trim(),
-        thirdSlotUrl: adThirdSlotUrl.value.trim(),
-        thirdSlotLabel: adThirdSlotLabel.value.trim() || "إعلان مميز"
+        cardPopUrl: cardUrl,
+        bottomBannerUrl: botUrl,
+        thirdSlotUrl: thdUrl,
+        thirdSlotLabel: sanitizeText(adThirdSlotLabel.value, 80) || "إعلان مميز"
       };
       localStorage.setItem(ADS_CONFIG_KEY, JSON.stringify(adsConfig));
       renderConfiguredAds();
@@ -2238,7 +2420,7 @@
       adsFeedback.className = "auth-feedback success";
     });
 
-    // Save & Load User Profile + MyList + Progress in Firestore (`users/{uid}`)
+    // Save & Load User Profile + MyList + Progress in Firestore
     async function syncUserProfileAndLists(user, extraMeta = {}) {
       if (!user || !user.uid) return;
       const userRef = doc(db, "users", user.uid);
@@ -2311,13 +2493,10 @@
       }
     }
 
-    function openLegalModal(focusTarget = "", prefillTitle = "") {
+    function openLegalModal(focusTarget = "") {
       dmcaFeedback.textContent = "";
       dmcaFeedback.className = "auth-feedback";
-      if (prefillTitle) {
-        document.getElementById("dmcaWorkTitle").value = prefillTitle;
-      }
-      if (focusTarget) {
+      if (focusTarget && !document.getElementById("dmcaTargetUrl").value) {
         document.getElementById("dmcaTargetUrl").value = focusTarget;
       }
       legalModal.classList.add("open");
@@ -2325,10 +2504,6 @@
 
     openCopyrightModalBtn.addEventListener("click", () => openLegalModal());
     openDmcaModalBtn.addEventListener("click", () => openLegalModal(window.location.href));
-    reportDmcaItemBtn.addEventListener("click", () => {
-      if (!currentItem) return;
-      openLegalModal(`${getBaseSiteUrl()}?item=${encodeURIComponent(currentItem.id || currentItem.title)}`, currentItem.title);
-    });
     closeLegalBtn.addEventListener("click", () => legalModal.classList.remove("open"));
     legalModal.addEventListener("click", (e) => {
       if (e.target === legalModal) legalModal.classList.remove("open");
@@ -2336,12 +2511,14 @@
 
     dmcaForm.addEventListener("submit", async (e) => {
       e.preventDefault();
+      if (isBotHoneypotTriggered(document.getElementById("dmcaTrapField")) || !canSubmitFormNow()) return;
+
       const noticePayload = {
-        reporterName: document.getElementById("dmcaReporterName").value.trim(),
-        reporterEmail: document.getElementById("dmcaReporterEmail").value.trim(),
-        workTitle: document.getElementById("dmcaWorkTitle").value.trim(),
-        targetUrl: document.getElementById("dmcaTargetUrl").value.trim(),
-        statement: document.getElementById("dmcaStatement").value.trim(),
+        reporterName: sanitizeText(document.getElementById("dmcaReporterName").value, 100),
+        reporterEmail: sanitizeText(document.getElementById("dmcaReporterEmail").value, 120),
+        workTitle: sanitizeText(document.getElementById("dmcaWorkTitle").value, 140),
+        targetUrl: sanitizeText(document.getElementById("dmcaTargetUrl").value, 300),
+        statement: sanitizeText(document.getElementById("dmcaStatement").value, 1500),
         submittedAt: new Date().toISOString()
       };
 
@@ -2382,9 +2559,9 @@
         if (tabLabels[idx]) btn.textContent = tabLabels[idx];
       });
 
-      searchInput.placeholder = isEn ? "Search (/)..." : "ابحث (/)...";
-      openAdsModalBtn.textContent = isEn ? "📣 Ads" : "📣 الإعلانات";
-      aiOrganizeBtn.textContent = isEn ? "✦ AI Organize" : "✦ تنظيم ذكي بالـ AI";
+      searchInput.placeholder = isEn ? "Search..." : "ابحث...";
+      openAdsModalBtn.textContent = isEn ? "Ads" : "الإعلانات";
+      aiOrganizeBtn.textContent = isEn ? "AI Organize" : "تنظيم ذكي بالـ AI";
       openAddModalBtn.textContent = isEn ? "+ Add" : "+ إضافة";
       switchAccountBtn.textContent = isEn ? "Account" : "الحساب";
       logoutBtn.textContent = isEn ? "Sign Out" : "خروج";
@@ -2403,7 +2580,7 @@
         ? (isEn ? "Create Account" : "إنشاء الحساب")
         : (isEn ? "Sign In" : "تسجيل الدخول");
       gateDemoDiv.textContent = isEn ? "INSTANT TRY" : "تجربة فورية";
-      gateDemoBtn.textContent = isEn ? "⚡ Instant Demo Access" : "⚡ دخول تجريبي فوري";
+      gateDemoBtn.textContent = isEn ? "Instant Demo Access" : "دخول تجريبي فوري";
     }
 
     function showGateFeedback(msg, type = "error") {
@@ -2433,7 +2610,7 @@
         document.body.classList.remove("gate-active");
         const name = activeUser.displayName || activeUser.email || "User";
         const demoTag = activeUser.isDemo ? (uiLang === "en" ? " (Demo)" : " (تجريبي)") : "";
-        userBadge.textContent = `● ${name}${demoTag}`;
+        userBadge.textContent = `• ${name}${demoTag}`;
         userBadge.style.display = "inline-flex";
         logoutBtn.style.display = "inline-flex";
       } else {
@@ -2467,6 +2644,7 @@
 
     gateGoogleBtn.addEventListener("click", async () => {
       clearGateFeedback();
+      if (!canSubmitFormNow(600)) return;
       try {
         const cred = await signInWithPopup(auth, googleProvider);
         demoUser = null;
@@ -2481,8 +2659,10 @@
     gateEmailForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       clearGateFeedback();
-      const nameVal = gateNameInput.value.trim();
-      const emailVal = gateEmailInput.value.trim();
+      if (isBotHoneypotTriggered(document.getElementById("gateWebsiteTrap")) || !canSubmitFormNow()) return;
+
+      const nameVal = sanitizeText(gateNameInput.value, 80);
+      const emailVal = sanitizeText(gateEmailInput.value, 120);
       const passVal = gatePasswordInput.value;
 
       try {
@@ -2790,7 +2970,7 @@ Sitemap: ${baseUrl}sitemap.xml
       const activeAdsCount = [adsConfig.cardPopUrl, adsConfig.bottomBannerUrl, adsConfig.thirdSlotUrl]
         .filter((u) => Boolean((u || "").trim())).length;
       const syncChip = userSyncStateText
-        ? `<span class="stat-chip sync-ok">✓ ${userSyncStateText}</span>`
+        ? `<span class="stat-chip sync-ok">${userSyncStateText}</span>`
         : "";
       statsBadges.innerHTML = `
         <span class="stat-chip">أفلام: ${moviesCount}</span>
@@ -2811,8 +2991,9 @@ Sitemap: ${baseUrl}sitemap.xml
       const lastId = keys[keys.length - 1];
       const found = catalog.find((i) => i.id === lastId);
       if (found) {
+        const pct = getItemWatchPercent(found.id);
         continueWatchingBtn.style.display = "inline-flex";
-        continueWatchingBtn.textContent = `↻ استئناف: ${found.title}`;
+        continueWatchingBtn.textContent = `استئناف: ${found.title}${pct > 0 ? ` (${pct}%)` : ""}`;
         continueWatchingBtn.onclick = () => openItemModal(found);
       } else {
         continueWatchingBtn.style.display = "none";
@@ -2821,16 +3002,18 @@ Sitemap: ${baseUrl}sitemap.xml
 
     function organizeWithAI(showToast = false) {
       catalog = catalog.map(aiNormalizeItem);
-      if (showToast || activeSort === "ai") {
-        aiSortedEnabled = true;
-        activeSort = "ai";
-        sortSelect.value = "ai";
-        localStorage.setItem(AI_SORT_KEY, "1");
+      if (aiSortedEnabled) {
         catalog.sort((a, b) => b.aiScore - a.aiScore);
-        if (showToast) renderAll();
       }
       renderStatsBadges();
       renderCinemaBackground();
+
+      if (showToast) {
+        aiSortedEnabled = true;
+        localStorage.setItem(AI_SORT_KEY, "1");
+        catalog.sort((a, b) => b.aiScore - a.aiScore);
+        renderAll();
+      }
     }
 
     function applyAutoSEO(focusItem = null) {
@@ -2839,55 +3022,67 @@ Sitemap: ${baseUrl}sitemap.xml
       const kwEl = document.getElementById("seoKeywords");
       const ogTitleEl = document.getElementById("ogTitle");
       const ogDescEl = document.getElementById("ogDesc");
+      const ogImageEl = document.getElementById("ogImage");
+      const canonicalEl = document.getElementById("canonicalLink");
       const schemaEl = document.getElementById("jsonLdSchema");
 
+      const currentUrl = `${getBaseSiteUrl()}${focusItem ? `?item=${encodeURIComponent(String(focusItem.id || focusItem.title))}` : (activeTab !== "all" ? `?tab=${activeTab}` : "")}`;
+      canonicalEl.setAttribute("href", currentUrl);
+
       if (focusItem) {
-        const pageTitle = `${focusItem.title} (${focusItem.year || ""}) — StreamFlix AI`;
+        const pageTitle = `مشاهدة ${focusItem.title} (${focusItem.year || ""}) — ${typeLabel(focusItem.type)} | StreamFlix AI`;
         const pageDesc = `${focusItem.desc} | تصنيف: ${focusItem.genre} | ${typeLabel(focusItem.type)}`;
         titleEl.textContent = pageTitle;
         descEl.setAttribute("content", pageDesc);
         ogTitleEl.setAttribute("content", pageTitle);
         ogDescEl.setAttribute("content", pageDesc);
+        if (focusItem.poster && ogImageEl) ogImageEl.setAttribute("content", focusItem.poster);
+        kwEl.setAttribute("content", `${focusItem.title}, ${typeLabel(focusItem.type)}, ${focusItem.genre}, مشاهدة أونلاين, ${(focusItem.labels || []).join(", ")}`);
 
+        const isMovie = focusItem.type === "movie";
         schemaEl.textContent = JSON.stringify({
           "@context": "https://schema.org",
-          "@type": focusItem.type === "movie" ? "Movie" : "TVSeries",
+          "@type": isMovie ? "Movie" : "TVSeries",
           "name": focusItem.title,
           "description": focusItem.desc,
           "genre": focusItem.genre,
           "datePublished": String(focusItem.year || ""),
-          "image": focusItem.poster
+          "image": focusItem.poster,
+          "url": currentUrl,
+          "inLanguage": "ar"
         });
         return;
       }
 
       const tabNames = {
-        all: "Your Next Watch",
-        movie: "Movies",
-        series: "TV Shows",
-        anime: "Anime",
-        mylist: "My List"
+        all: "أحدث الأفلام والمسلسلات والأنمي",
+        movie: "أفلام مترجمة ومدبلجة",
+        series: "مسلسلات حصرية ومواسم كاملة",
+        anime: "حلقات وأفلام أنمي",
+        mylist: "قائمتي المحفوظة"
       };
-      const labelText = activeLabel === "all" ? "All Labels" : activeLabel;
-      const pageTitle = `${tabNames[activeTab] || "Catalog"} — ${labelText} | StreamFlix AI`;
-      const pageDesc = `مشاهدة ${tabNames[activeTab] || "المحتوى"} ضمن تسمية ${labelText} مع صفوف أفقية ومزامنة قائمة المستخدم.`;
+      const labelText = activeLabel === "all" ? "الترند وكل التسميات" : activeLabel;
+      const pageTitle = `${tabNames[activeTab] || "المكتبة"} — ${labelText} | StreamFlix AI`;
+      const pageDesc = `مشاهدة ${tabNames[activeTab] || "المحتوى"} ضمن ${labelText} مع تتبع تقدم المشاهدة ومزامنة القوائم.`;
 
       titleEl.textContent = pageTitle;
       descEl.setAttribute("content", pageDesc);
       ogTitleEl.setAttribute("content", pageTitle);
       ogDescEl.setAttribute("content", pageDesc);
+      if (heroItem?.poster && ogImageEl) ogImageEl.setAttribute("content", heroItem.poster);
       kwEl.setAttribute("content", `StreamFlix, ${tabNames[activeTab]}, ${labelText}, ${SEVEN_LABELS.join(", ")}`);
 
       schemaEl.textContent = JSON.stringify({
         "@context": "https://schema.org",
         "@type": "ItemList",
         "name": pageTitle,
+        "url": currentUrl,
         "numberOfItems": catalog.length,
-        "itemListElement": catalog.slice(0, 12).map((item, idx) => ({
+        "itemListElement": catalog.slice(0, 15).map((item, idx) => ({
           "@type": "ListItem",
           "position": idx + 1,
           "name": item.title,
-          "url": window.location.href
+          "url": `${getBaseSiteUrl()}?item=${encodeURIComponent(String(item.id || idx))}`
         }))
       });
     }
@@ -2916,9 +3111,23 @@ Sitemap: ${baseUrl}sitemap.xml
       });
     }
 
+    // Watch Progress Helpers (0% - 100%)
+    function getItemWatchPercent(itemId) {
+      const prog = progressMap[itemId];
+      if (!prog) return 0;
+      if (typeof prog.percent === "number" && Number.isFinite(prog.percent)) {
+        return Math.max(0, Math.min(100, Math.round(prog.percent)));
+      }
+      if (typeof prog.sIdx === "number" || typeof prog.eIdx === "number") {
+        return 15;
+      }
+      return 0;
+    }
+
     function createPosterCard(item) {
       const card = document.createElement("article");
       card.className = "poster-card";
+      card.dataset.itemId = item.id;
 
       const watchNowBadge = item.showWatchNow
         ? `<span class="ribbon-watch">Watch Now</span>`
@@ -2930,9 +3139,14 @@ Sitemap: ${baseUrl}sitemap.xml
         ? `<div class="top10-badge">TOP<br/>10</div>`
         : "";
 
-      const hasProgress = Boolean(progressMap[item.id]);
-      const progressBarHtml = hasProgress
-        ? `<div class="watch-progress-bar"><div class="watch-progress-fill"></div></div>`
+      const watchPct = getItemWatchPercent(item.id);
+      const progressBarHtml = watchPct > 0
+        ? `
+          <div class="card-progress-label">${watchPct}%</div>
+          <div class="card-progress-track" aria-label="نسبة المشاهدة ${watchPct}%">
+            <div class="card-progress-fill" style="width:${watchPct}%;"></div>
+          </div>
+        `
         : "";
 
       const fullTypeText = `${typeLabel(item.type)}${item.genre ? " • " + item.genre : ""}`;
@@ -2944,6 +3158,7 @@ Sitemap: ${baseUrl}sitemap.xml
         <div class="poster-frame">
           <span class="corner-n">N</span>
           ${top10Badge}
+          ${progressBarHtml}
           <img src="${item.poster}" alt="${item.title}" loading="lazy" />
           <div class="hover-info-overlay" aria-hidden="true">
             <div class="hover-meta-row">
@@ -2956,13 +3171,12 @@ Sitemap: ${baseUrl}sitemap.xml
             ${ribbonBadge}
             ${watchNowBadge}
           </div>
-          ${progressBarHtml}
         </div>
         <div class="poster-caption">
           <div class="poster-name" title="${item.title}">${item.title}</div>
           <div class="poster-mini-actions" style="display:${showAdminActions ? "flex" : "none"};">
-            <button type="button" class="mini-act edit">✎ تعديل</button>
-            <button type="button" class="mini-act del">🗑 حذف</button>
+            <button type="button" class="mini-act edit">تعديل</button>
+            <button type="button" class="mini-act del">حذف</button>
           </div>
         </div>
       `;
@@ -2980,22 +3194,31 @@ Sitemap: ${baseUrl}sitemap.xml
         deleteCatalogItem(item);
       });
 
-      card.addEventListener("click", (e) => {
-        const isTouchCoarse = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
-        if (isTouchCoarse && !card.classList.contains("touch-peek")) {
-          if (touchedCardEl && touchedCardEl !== card) {
-            touchedCardEl.classList.remove("touch-peek");
-          }
-          card.classList.add("touch-peek");
-          touchedCardEl = card;
-          return;
-        }
-        card.classList.remove("touch-peek");
-        touchedCardEl = null;
+      card.addEventListener("click", () => {
         triggerCardClickAdIfConfigured();
         openItemModal(item);
       });
       return card;
+    }
+
+    // Automatic Touch Cycling for Cards on Touch / Mobile Screens
+    function setupAutoTouchCardCycling() {
+      if (touchCycleTimer) {
+        clearInterval(touchCycleTimer);
+        touchCycleTimer = null;
+      }
+      const isTouchCapable = window.matchMedia("(hover: none), (pointer: coarse)").matches;
+      if (!isTouchCapable) return;
+
+      let idx = 0;
+      touchCycleTimer = setInterval(() => {
+        const cards = Array.from(document.querySelectorAll("#shelvesContainer .poster-card"));
+        cards.forEach((c) => c.classList.remove("touch-peek"));
+        if (!cards.length) return;
+        idx = idx % cards.length;
+        cards[idx].classList.add("touch-peek");
+        idx += 1;
+      }, 2600);
     }
 
     function buildHorizontalShelf(titleText, items) {
@@ -3004,10 +3227,7 @@ Sitemap: ${baseUrl}sitemap.xml
 
       const header = document.createElement("div");
       header.className = "shelf-header";
-      header.innerHTML = `
-        <h2 class="shelf-title">${titleText} <span class="chevron">›</span></h2>
-        <span class="shelf-meta-count">${items.length} عمل</span>
-      `;
+      header.innerHTML = `<h2 class="shelf-title">${titleText} <span class="chevron">›</span></h2>`;
       section.appendChild(header);
 
       if (!items.length) {
@@ -3041,20 +3261,6 @@ Sitemap: ${baseUrl}sitemap.xml
       return section;
     }
 
-    function getSortedItems(list) {
-      const arr = [...list];
-      if (activeSort === "ai") {
-        return arr.sort((a, b) => (b.aiScore || 0) - (a.aiScore || 0));
-      }
-      if (activeSort === "year_desc") {
-        return arr.sort((a, b) => (parseInt(b.year, 10) || 0) - (parseInt(a.year, 10) || 0));
-      }
-      if (activeSort === "title_asc") {
-        return arr.sort((a, b) => String(a.title || "").localeCompare(String(b.title || ""), ["ar", "en"]));
-      }
-      return arr;
-    }
-
     function renderShelves() {
       const q = searchInput.value.trim().toLowerCase();
       const g = genreSelect.value;
@@ -3068,7 +3274,7 @@ Sitemap: ${baseUrl}sitemap.xml
       };
       activeFilterSummary.textContent = `${tabNames[activeTab]} • ${activeLabel === "all" ? "كل التسميات (7)" : activeLabel}`;
 
-      const filteredRaw = catalog.filter((item) => {
+      const filtered = catalog.filter((item) => {
         const matchesTab =
           activeTab === "all" ||
           (activeTab === "mylist" && isInList(item.id)) ||
@@ -3088,12 +3294,11 @@ Sitemap: ${baseUrl}sitemap.xml
         return matchesTab && matchesGenre && matchesLabel && matchesQuery;
       });
 
-      const filtered = getSortedItems(filteredRaw);
-
       shelvesContainer.innerHTML = "";
 
       if (!filtered.length) {
         shelvesContainer.innerHTML = `<p class="empty-msg">لا توجد عناصر مطابقة للتصفية الحالية.</p>`;
+        setupAutoTouchCardCycling();
         return;
       }
 
@@ -3109,9 +3314,11 @@ Sitemap: ${baseUrl}sitemap.xml
       shelvesContainer.appendChild(buildHorizontalShelf("Award-Winning TV Shows", awardOrTop.length ? awardOrTop : filtered));
       shelvesContainer.appendChild(buildHorizontalShelf("K-Dramas & Anime", animeOrDrama.length ? animeOrDrama : filtered));
       shelvesContainer.appendChild(buildHorizontalShelf("Critically Acclaimed TV Shows", criticallyAcclaimed.length ? criticallyAcclaimed : filtered));
+
+      setupAutoTouchCardCycling();
     }
 
-    // Auto-Next Episode Countdown (5s starting 25s before end)
+    // Auto-Next Episode Countdown
     function clearAutoNext(markDismissed = false) {
       if (autoNextTimer) {
         clearInterval(autoNextTimer);
@@ -3178,7 +3385,37 @@ Sitemap: ${baseUrl}sitemap.xml
       }, 1000);
     }
 
+    function recordPlaybackProgress() {
+      if (!currentItem || !currentItem.id) return;
+      const dur = videoPlayer.duration;
+      const cur = videoPlayer.currentTime;
+      if (!Number.isFinite(dur) || dur <= 0) return;
+
+      const pct = Math.max(1, Math.min(100, Math.round((cur / dur) * 100)));
+      const prev = progressMap[currentItem.id] || {};
+      progressMap[currentItem.id] = {
+        ...prev,
+        sIdx: currentSeasonIdx,
+        eIdx: currentEpIdx,
+        timeSec: Math.floor(cur),
+        percent: Math.max(prev.percent || 0, pct)
+      };
+      localStorage.setItem(PROGRESS_KEY, JSON.stringify(progressMap));
+
+      const cardProgressBar = document.querySelector(`.poster-card[data-item-id="${currentItem.id}"] .card-progress-fill`);
+      const cardProgressLbl = document.querySelector(`.poster-card[data-item-id="${currentItem.id}"] .card-progress-label`);
+      if (cardProgressBar) cardProgressBar.style.width = `${progressMap[currentItem.id].percent}%`;
+      if (cardProgressLbl) cardProgressLbl.textContent = `${progressMap[currentItem.id].percent}%`;
+
+      const now = Date.now();
+      if (now - lastProgressSaveTs > 8000) {
+        lastProgressSaveTs = now;
+        persistUserListsToFirestore();
+      }
+    }
+
     function handleTimeUpdate() {
+      recordPlaybackProgress();
       if (autoNextTimer || dismissedForCurrentEp) return;
       const dur = videoPlayer.duration;
       if (!Number.isFinite(dur) || dur <= 0) return;
@@ -3193,8 +3430,9 @@ Sitemap: ${baseUrl}sitemap.xml
       await persistUserListsToFirestore();
     }
 
-    async function saveProgress(id, sIdx, eIdx) {
-      progressMap[id] = { sIdx, eIdx };
+    async function saveProgress(id, sIdx, eIdx, extra = {}) {
+      const prev = progressMap[id] || {};
+      progressMap[id] = { ...prev, sIdx, eIdx, ...extra };
       localStorage.setItem(PROGRESS_KEY, JSON.stringify(progressMap));
       updateContinueWatchingBtn();
       await persistUserListsToFirestore();
@@ -3213,7 +3451,7 @@ Sitemap: ${baseUrl}sitemap.xml
 
     function updateHeroListBtn() {
       if (!heroItem) return;
-      heroListBtn.textContent = isInList(heroItem.id) ? "✓ في قائمتي" : "+ قائمتي";
+      heroListBtn.textContent = isInList(heroItem.id) ? "في قائمتي" : "+ قائمتي";
     }
 
     function updateModalListBtn() {
@@ -3231,24 +3469,83 @@ Sitemap: ${baseUrl}sitemap.xml
       heroDesc.textContent = item.desc;
       updateHeroListBtn();
       updateContinueWatchingBtn();
+      renderHeroDots();
     }
 
-    function playVideoSource(src, titleLabel) {
+    function initHeroSlider(items) {
+      heroSlides = Array.isArray(items) && items.length ? items.slice(0, 6) : [];
+      if (!heroSlides.length) return;
+      heroIndex = Math.min(2, heroSlides.length - 1);
+      setupHero(heroSlides[heroIndex]);
+      restartHeroAutoSlide();
+    }
+
+    function renderHeroDots() {
+      heroDots.innerHTML = "";
+      heroSlides.forEach((slide, idx) => {
+        const dot = document.createElement("button");
+        dot.type = "button";
+        dot.className = "hero-dot" + (idx === heroIndex ? " active" : "");
+        dot.setAttribute("aria-label", `عرض ${slide.title}`);
+        dot.addEventListener("click", () => {
+          heroIndex = idx;
+          setupHero(heroSlides[heroIndex]);
+          applyAutoSEO(null);
+          restartHeroAutoSlide();
+        });
+        heroDots.appendChild(dot);
+      });
+    }
+
+    function stepHeroSlide(delta) {
+      if (!heroSlides.length) return;
+      heroIndex = (heroIndex + delta + heroSlides.length) % heroSlides.length;
+      setupHero(heroSlides[heroIndex]);
+      applyAutoSEO(null);
+      restartHeroAutoSlide();
+    }
+
+    function restartHeroAutoSlide() {
+      if (heroAutoTimer) clearInterval(heroAutoTimer);
+      if (heroSlides.length > 1) {
+        heroAutoTimer = setInterval(() => {
+          heroIndex = (heroIndex + 1) % heroSlides.length;
+          setupHero(heroSlides[heroIndex]);
+        }, 7000);
+      }
+    }
+
+    function playVideoSource(src, titleLabel, resumeSec = 0) {
       dismissedForCurrentEp = false;
       clearAutoNext(false);
       modalTitle.textContent = titleLabel;
-      videoPlayer.src = src || SAMPLE_V1;
+      videoPlayer.playbackRate = Number(playbackSpeedSelect.value) || 1;
+      videoPlayer.src = src;
+
+      const onLoaded = () => {
+        if (resumeSec > 5 && resumeSec < videoPlayer.duration - 8) {
+          videoPlayer.currentTime = resumeSec;
+          resumeNoticeText.textContent = `تم الاستئناف من الثانية ${resumeSec}`;
+        } else {
+          resumeNoticeText.textContent = "مشاهدة بجودة عالية وتلقائية لحفظ موضع التوقف";
+        }
+        videoPlayer.removeEventListener("loadedmetadata", onLoaded);
+      };
+      videoPlayer.addEventListener("loadedmetadata", onLoaded);
       videoPlayer.play().catch(() => {});
     }
 
     function renderSeasonsAndEpisodes() {
       clearAutoNext(false);
       dismissedForCurrentEp = false;
+      const savedProg = progressMap[currentItem?.id] || {};
+      const resumeSec = Number(savedProg.timeSec) || 0;
       const hasEpisodes = Array.isArray(currentItem.seasons) && currentItem.seasons.length > 0;
+
       if (!hasEpisodes) {
         episodesBox.style.display = "none";
-        saveProgress(currentItem.id, 0, 0);
-        playVideoSource(currentItem.video, `${currentItem.title} (${currentItem.year})`);
+        saveProgress(currentItem.id, 0, 0, { percent: Math.max(savedProg.percent || 0, 12) });
+        playVideoSource(currentItem.video, `${currentItem.title} (${currentItem.year})`, resumeSec);
         return;
       }
 
@@ -3263,12 +3560,12 @@ Sitemap: ${baseUrl}sitemap.xml
       seasonSelect.value = String(currentSeasonIdx);
 
       const season = currentItem.seasons[currentSeasonIdx] || currentItem.seasons[0];
-      const ep = (season.episodes && season.episodes[currentEpIdx]) || (season.episodes && season.episodes[0]) || { name: "الحلقة 1", video: SAMPLE_V2 };
-      saveProgress(currentItem.id, currentSeasonIdx, currentEpIdx);
-      playVideoSource(ep.video, `${currentItem.title} — ${season.title} / ${ep.name}`);
+      const ep = season.episodes[currentEpIdx] || season.episodes[0];
+      saveProgress(currentItem.id, currentSeasonIdx, currentEpIdx, { percent: Math.max(savedProg.percent || 0, 12) });
+      playVideoSource(ep.video, `${currentItem.title} — ${season.title} / ${ep.name}`, resumeSec);
 
       episodesList.innerHTML = "";
-      (season.episodes || []).forEach((episode, eIdx) => {
+      season.episodes.forEach((episode, eIdx) => {
         const card = document.createElement("div");
         card.className = "ep-card" + (eIdx === currentEpIdx ? " active" : "");
         card.innerHTML = `<strong>${episode.name}</strong><span>المدة: ${episode.duration || "—"}</span>`;
@@ -3281,13 +3578,13 @@ Sitemap: ${baseUrl}sitemap.xml
     }
 
     function openItemModal(item) {
-      if (!item) return;
       currentItem = item;
+      watchAmbientModal.style.backgroundImage = item.poster ? `url('${item.poster}')` : "none";
       applyAutoSEO(item);
       applyAdminControlsVisibility();
       const saved = progressMap[item.id];
-      currentSeasonIdx = saved ? Math.max(0, Math.min(saved.sIdx, (item.seasons?.length || 1) - 1)) : 0;
-      currentEpIdx = saved ? Math.max(0, Math.min(saved.eIdx, (item.seasons?.[currentSeasonIdx]?.episodes?.length || 1) - 1)) : 0;
+      currentSeasonIdx = saved ? Math.min(saved.sIdx || 0, (item.seasons?.length || 1) - 1) : 0;
+      currentEpIdx = saved ? Math.min(saved.eIdx || 0, (item.seasons?.[currentSeasonIdx]?.episodes?.length || 1) - 1) : 0;
 
       infoTitle.textContent = `${item.title} (${item.year})`;
       infoDesc.textContent = item.desc;
@@ -3297,11 +3594,14 @@ Sitemap: ${baseUrl}sitemap.xml
     }
 
     function closePlayer() {
+      recordPlaybackProgress();
+      persistUserListsToFirestore();
       clearAutoNext(false);
       videoPlayer.pause();
       videoPlayer.removeAttribute("src");
       videoPlayer.load();
       playerModal.classList.remove("open");
+      renderAll();
       applyAutoSEO(null);
     }
 
@@ -3326,14 +3626,14 @@ Sitemap: ${baseUrl}sitemap.xml
           dbStatus.textContent = `متصل بـ Firestore (metaverse-metabox) — ${catalog.length} عنصر`;
         }
         organizeWithAI(false);
-        setupHero(catalog[2] || catalog[0]);
+        initHeroSlider(catalog.length ? catalog : DEFAULT_ITEMS);
         renderAll();
       } catch (err) {
         console.error(err);
         dbStatus.textContent = "تعذر الاتصال بـ Firestore — تحقق من قواعد الأمان (Rules)";
         catalog = DEFAULT_ITEMS.map((item, i) => ({ id: "fallback_" + i, ...item }));
         organizeWithAI(false);
-        setupHero(catalog[2] || catalog[0]);
+        initHeroSlider(catalog);
         renderAll();
       }
     }
@@ -3366,13 +3666,6 @@ Sitemap: ${baseUrl}sitemap.xml
     });
 
     aiOrganizeBtn.addEventListener("click", () => organizeWithAI(true));
-    sortSelect.addEventListener("change", () => {
-      activeSort = sortSelect.value;
-      aiSortedEnabled = activeSort === "ai";
-      localStorage.setItem(AI_SORT_KEY, aiSortedEnabled ? "1" : "0");
-      renderShelves();
-    });
-
     newType.addEventListener("change", toggleFormFieldsByType);
 
     openAddModalBtn.addEventListener("click", openAddModal);
@@ -3395,13 +3688,20 @@ Sitemap: ${baseUrl}sitemap.xml
         alert("هذه الصلاحية مخصصة للحساب المعتمد فقط.");
         return;
       }
+      if (isBotHoneypotTriggered(document.getElementById("itemTrapField")) || !canSubmitFormNow()) return;
+
       const type = newType.value;
-      const title = document.getElementById("newTitle").value.trim();
+      const title = sanitizeText(document.getElementById("newTitle").value, 140);
       const genre = document.getElementById("newGenre").value;
-      const year = document.getElementById("newYear").value.trim();
-      const ribbon = document.getElementById("newRibbon").value.trim();
+      const year = sanitizeText(document.getElementById("newYear").value, 10);
+      const ribbon = sanitizeText(document.getElementById("newRibbon").value, 40);
       const poster = document.getElementById("newPoster").value.trim();
-      const desc = document.getElementById("newDesc").value.trim();
+      const desc = sanitizeText(document.getElementById("newDesc").value, 600);
+
+      if (!title || !isSafeHttpUrl(poster)) {
+        alert("يرجى إدخال عنوان صحيح ورابط بوستر يبدأ بـ http:// أو https://");
+        return;
+      }
 
       const selectedLabels = Array.from(
         newLabelsPicker.querySelectorAll("input[type='checkbox']:checked")
@@ -3421,16 +3721,16 @@ Sitemap: ${baseUrl}sitemap.xml
       };
 
       if (type === "movie") {
-        payload.video = document.getElementById("newVideo").value.trim();
+        const vidUrl = document.getElementById("newVideo").value.trim();
+        if (!isSafeHttpUrl(vidUrl)) {
+          alert("يرجى إدخال رابط فيديو صحيح يبدأ بـ http:// أو https://");
+          return;
+        }
+        payload.video = vidUrl;
         payload.seasons = [];
       } else {
         try {
-          const parsedSeasons = JSON.parse(document.getElementById("newSeasonsJson").value);
-          if (!Array.isArray(parsedSeasons)) {
-            alert("يجب أن تكون بيانات المواسم والحلقات مصفوفة JSON صحيحة.");
-            return;
-          }
-          payload.seasons = parsedSeasons;
+          payload.seasons = JSON.parse(document.getElementById("newSeasonsJson").value);
         } catch (_) {
           alert("صيغة JSON للمواسم والحلقات غير صحيحة.");
           return;
@@ -3476,15 +3776,13 @@ Sitemap: ${baseUrl}sitemap.xml
       renderSeasonsAndEpisodes();
     });
 
-    rewind10Btn.addEventListener("click", () => {
-      if (!videoPlayer.src) return;
-      videoPlayer.currentTime = Math.max(0, (videoPlayer.currentTime || 0) - 10);
+    playbackSpeedSelect.addEventListener("change", () => {
+      videoPlayer.playbackRate = Number(playbackSpeedSelect.value) || 1;
     });
 
-    forward10Btn.addEventListener("click", () => {
-      if (!videoPlayer.src) return;
-      const maxTime = Number.isFinite(videoPlayer.duration) ? videoPlayer.duration : (videoPlayer.currentTime || 0) + 10;
-      videoPlayer.currentTime = Math.min(maxTime, (videoPlayer.currentTime || 0) + 10);
+    restartVideoBtn.addEventListener("click", () => {
+      videoPlayer.currentTime = 0;
+      videoPlayer.play().catch(() => {});
     });
 
     videoPlayer.addEventListener("timeupdate", handleTimeUpdate);
@@ -3492,23 +3790,11 @@ Sitemap: ${baseUrl}sitemap.xml
     playNextNowBtn.addEventListener("click", goToNextEpisodeNow);
     cancelAutoNextBtn.addEventListener("click", () => clearAutoNext(true));
 
+    heroPrevBtn.addEventListener("click", () => stepHeroSlide(-1));
+    heroNextBtn.addEventListener("click", () => stepHeroSlide(1));
+
     window.addEventListener("scroll", () => {
       document.getElementById("navbar").classList.toggle("scrolled", window.scrollY > 40);
-    });
-
-    document.addEventListener("keydown", (e) => {
-      const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : "";
-      const isTyping = tag === "input" || tag === "textarea" || tag === "select";
-
-      if (e.key === "/" && !isTyping && !authGate.classList.contains("open")) {
-        e.preventDefault();
-        searchInput.focus();
-      } else if (e.key === "Escape") {
-        if (playerModal.classList.contains("open")) closePlayer();
-        if (addModal.classList.contains("open")) addModal.classList.remove("open");
-        if (adsModal.classList.contains("open")) adsModal.classList.remove("open");
-        if (legalModal.classList.contains("open")) legalModal.classList.remove("open");
-      }
     });
 
     searchInput.addEventListener("input", renderShelves);
